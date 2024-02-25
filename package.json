@@ -1,0 +1,19 @@
+{
+  "name": "blindpay",
+  "version": "1.0.0",
+  "description": "Node.js library for the BlindPay API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blindpaylabs/blindpay-node.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/blindpaylabs/blindpay-node/issues"
+  },
+  "homepage": "https://github.com/blindpaylabs/blindpay-node#readme"
+}
