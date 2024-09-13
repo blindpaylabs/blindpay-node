@@ -46,7 +46,3 @@ export interface AccessTokenOut {
   token: string;
   expires_at: string;
 }
-
-export interface SuccessResponse {
-  success: boolean;
-}
