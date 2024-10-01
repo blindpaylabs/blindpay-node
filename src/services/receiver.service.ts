@@ -4,9 +4,9 @@ import {
   Receiver,
   UpdateReceiverAddressIn,
   UpdateReceiverProfileIn,
-  SuccessResponse,
 } from "../types/receiver-types";
 import { ErrorResponse } from "../types/error-response";
+import { SuccessResponse } from "../types/success-response";
 
 export class ReceiverService extends BaseService {
   protected endpoint = "/instances/{instance_id}/receivers";

@@ -10,9 +10,9 @@ import {
   ApplicantOut,
   ComplianceOut,
   AccessTokenOut,
-  SuccessResponse,
 } from "../types/onboarding-types";
 import { ErrorResponse } from "../types/error-response";
+import { SuccessResponse } from "../types/success-response";
 
 export class OnboardingService extends BaseService {
   protected endpoint = "/instances/{instance_id}/onboarding";

@@ -1,6 +1,5 @@
 import { BaseService } from "./base.service";
 import {
-  Payout,
   PayoutOnEvmOut,
   CreatePayoutOnEvmIn,
   GetPayoutOut,
