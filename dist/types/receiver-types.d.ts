@@ -24,6 +24,3 @@ export interface UpdateReceiverProfileIn {
     name: string;
     type: string;
 }
-export interface SuccessResponse {
-    success: boolean;
-}

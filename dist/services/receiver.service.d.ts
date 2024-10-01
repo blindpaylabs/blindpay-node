@@ -1,6 +1,7 @@
 import { BaseService } from "./base.service";
-import { CreateReceiverIn, Receiver, UpdateReceiverAddressIn, UpdateReceiverProfileIn, SuccessResponse } from "../types/receiver-types";
+import { CreateReceiverIn, Receiver, UpdateReceiverAddressIn, UpdateReceiverProfileIn } from "../types/receiver-types";
 import { ErrorResponse } from "../types/error-response";
+import { SuccessResponse } from "../types/success-response";
 export declare class ReceiverService extends BaseService {
     protected endpoint: string;
     private replaceInstanceId;

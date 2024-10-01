@@ -1,6 +1,7 @@
 import { BaseService } from "./base.service";
-import { BusinessDetailsIn, BusinessDetailsOut, BusinessProfileIn, BusinessProfileOut, OwnershipDocumentsIn, OwnershipDocumentsOut, ApplicantIn, ApplicantOut, ComplianceOut, AccessTokenOut, SuccessResponse } from "../types/onboarding-types";
+import { BusinessDetailsIn, BusinessDetailsOut, BusinessProfileIn, BusinessProfileOut, OwnershipDocumentsIn, OwnershipDocumentsOut, ApplicantIn, ApplicantOut, ComplianceOut, AccessTokenOut } from "../types/onboarding-types";
 import { ErrorResponse } from "../types/error-response";
+import { SuccessResponse } from "../types/success-response";
 export declare class OnboardingService extends BaseService {
     protected endpoint: string;
     private replaceInstanceId;
