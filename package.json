@@ -1,0 +1,25 @@
+{
+  "name": "blindpay",
+  "version": "1.0.0",
+  "description": "Node.js library for the BlindPay API",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blindpaylabs/blindpay-node.git"
+  },
+  "author": "Gabriel Miranda Lyra",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/blindpaylabs/blindpay-node/issues"
+  },
+  "homepage": "https://github.com/blindpaylabs/blindpay-node#readme",
+  "devDependencies": {
+    "typescript": "^4.9.4"
+  }
+}
