@@ -3,7 +3,7 @@ export declare abstract class BaseService {
     protected readonly baseUrl: string;
     protected readonly headers: Headers;
     protected readonly instanceId?: string | undefined;
-    protected abstract endpoint: string;
+    protected abstract BASE_PATH: string;
     constructor(baseUrl: string, headers: Headers, instanceId?: string | undefined);
     protected replaceInstanceId(path: string, instanceId?: string): string;
     private request;

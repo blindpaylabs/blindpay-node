@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "ES2024",
     "module": "CommonJS",
     "declaration": true,
     "outDir": "./dist",

@@ -1,14 +1,14 @@
 import { BaseService } from "./base.service";
-import { CreateQuoteIn, CreateQuoteOut, CheckQuoteIn, CheckQuoteOut } from "../types/quote-types";
+import { FX, Quote } from "../types/quote-types";
 import { ErrorResponse } from "../types/error-response";
 export declare class QuoteService extends BaseService {
-    protected endpoint: string;
-    createQuote(instanceId: string, quoteData: CreateQuoteIn): Promise<{
-        data: CreateQuoteOut | null;
+    protected BASE_PATH: string;
+    createQuote(quoteData: Quote, instanceId?: string): Promise<{
+        data: Quote | null;
         error: ErrorResponse | null;
     }>;
-    checkQuote(instanceId: string, checkData: CheckQuoteIn): Promise<{
-        data: CheckQuoteOut | null;
+    getFXRate(checkData: FX, instanceId?: string): Promise<{
+        data: Quote | null;
         error: ErrorResponse | null;
     }>;
 }

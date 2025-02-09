@@ -1,57 +1,4 @@
-export interface Receiver {
-    id: string;
-    type: ReceiverType;
-    kyc_type: KYCType;
-    email: string;
-    tax_id: string;
-    address_line_1: string;
-    address_line_2?: string;
-    city: string;
-    state_province_region: string;
-    country: CountryCode;
-    postal_code: string;
-    ip_address: string;
-    image_url: string;
-    phone_number: string;
-    proof_of_address_doc_type: AddressDocType;
-    proof_of_address_doc_file: string;
-    first_name: string;
-    last_name: string;
-    date_of_birth: string;
-    id_doc_country: string;
-    id_doc_type: IDDocType;
-    id_doc_front_file: string;
-    id_doc_back_file: string;
-    legal_name: string;
-    alternate_name: string;
-    formation_date: string;
-    website: string;
-    owners: {
-        first_name: string;
-        last_name: string;
-        role: string;
-        date_of_birth: string;
-        tax_id: string;
-        address_line_1: string;
-        address_line_2?: string;
-        city: string;
-        state_province_region: string;
-        country: string;
-        postal_code: string;
-        id_doc_country: string;
-        id_doc_type: IDDocType;
-        id_doc_front_file: string;
-        id_doc_back_file: string;
-    }[];
-    incorporation_doc_file: string;
-    proof_of_ownership_doc_file: string;
-    source_of_funds_doc_type: SourceOfFundsDocType;
-    source_of_funds_doc_file: string;
-    individual_holding_doc_front_file: string;
-    purpose_of_transactions: PurposeOfTransactions;
-    purpose_of_transactions_explanation: string;
-    external_id: string;
-}
+import { CountryCode } from "./util-types";
 export declare enum ReceiverType {
     INDIVIDUAL = "individual",
     BUSINESS = "business"
@@ -62,9 +9,16 @@ export declare enum KYCType {
     ENHANCED = "enhanced"
 }
 export declare enum IDDocType {
-    PASSPORT = 0,
-    ID_CARD = 1,
-    DRIVERS = 2
+    PASSPORT = "PASSPORT",
+    ID_CARD = "ID_CARD",
+    DRIVERS = "DRIVERS"
+}
+export declare enum AddressDocType {
+    UTILITY_BILL = "UTILITY_BILL",
+    BANK_STATEMENT = "BANK_STATEMENT",
+    RENTAL_AGREEMENT = "RENTAL_AGREEMENT",
+    TAX_DOCUMENT = "TAX_DOCUMENT",
+    GOVERNMENT_CORRESPONDENCE = "GOVERNMENT_CORRESPONDENCE"
 }
 export declare enum SourceOfFundsDocType {
     BUSINESS_INCOME = "business_income",
@@ -85,366 +39,93 @@ export declare enum PurposeOfTransactions {
     RECEIVE_SALARY = "receive_salary",
     OTHER = "other"
 }
-export declare enum AddressDocType {
-    UTILITY_BILL = 0,
-    BANK_STATEMENT = 1,
-    RENTAL_AGREEMENT = 2,
-    TAX_DOCUMENT = 3,
-    GOVERNMENT_CORRESPONDENCE = 4
+interface BaseOwner {
+    first_name: string;
+    last_name: string;
+    role: string;
+    date_of_birth: string;
+    tax_id: string;
+    address_line_1: string;
+    address_line_2?: string;
+    city: string;
+    state_province_region: string;
+    country: string;
+    postal_code: string;
+    id_doc_country: string;
+    id_doc_type: IDDocType;
+    id_doc_front_file: string;
+    id_doc_back_file: string;
 }
-export declare enum CountryCode {
-    Afghanistan = "AF",
-    Albania = "AL",
-    Algeria = "DZ",
-    AmericanSamoa = "AS",
-    Andorra = "AD",
-    Angola = "AO",
-    Anguilla = "AI",
-    Antarctica = "AQ",
-    AntiguaAndBarbuda = "AG",
-    Argentina = "AR",
-    Armenia = "AM",
-    Aruba = "AW",
-    Australia = "AU",
-    Austria = "AT",
-    Azerbaijan = "AZ",
-    Bahamas = "BS",
-    Bahrain = "BH",
-    Bangladesh = "BD",
-    Barbados = "BB",
-    Belarus = "BY",
-    Belgium = "BE",
-    Belize = "BZ",
-    Benin = "BJ",
-    Bermuda = "BM",
-    Bhutan = "BT",
-    Bolivia = "BO",
-    Bonaire = "BQ",
-    BosniaAndHerzegovina = "BA",
-    Botswana = "BW",
-    BouvetIsland = "BV",
-    Brazil = "BR",
-    BritishIndianOceanTerritory = "IO",
-    BruneiDarussalam = "BN",
-    Bulgaria = "BG",
-    BurkinaFaso = "BF",
-    Burundi = "BI",
-    CaboVerde = "CV",
-    Cambodia = "KH",
-    Cameroon = "CM",
-    Canada = "CA",
-    CaymanIslands = "KY",
-    CentralAfricanRepublic = "CF",
-    Chad = "TD",
-    Chile = "CL",
-    China = "CN",
-    ChristmasIsland = "CX",
-    CocosIslands = "CC",
-    Colombia = "CO",
-    Comoros = "KM",
-    Congo = "CD",
-    CongoRepublic = "CG",
-    CookIslands = "CK",
-    CostaRica = "CR",
-    Croatia = "HR",
-    Cuba = "CU",
-    Curacao = "CW",
-    Cyprus = "CY",
-    CzechRepublic = "CZ",
-    CoteDIvoire = "CI",
-    Denmark = "DK",
-    Djibouti = "DJ",
-    Dominica = "DM",
-    DominicanRepublic = "DO",
-    Ecuador = "EC",
-    Egypt = "EG",
-    ElSalvador = "SV",
-    EquatorialGuinea = "GQ",
-    Eritrea = "ER",
-    Estonia = "EE",
-    Eswatini = "SZ",
-    Ethiopia = "ET",
-    FalklandIslands = "FK",
-    FaroeIslands = "FO",
-    Fiji = "FJ",
-    Finland = "FI",
-    France = "FR",
-    FrenchGuiana = "GF",
-    FrenchPolynesia = "PF",
-    FrenchSouthernTerritories = "TF",
-    Gabon = "GA",
-    Gambia = "GM",
-    Georgia = "GE",
-    Germany = "DE",
-    Ghana = "GH",
-    Gibraltar = "GI",
-    Greece = "GR",
-    Greenland = "GL",
-    Grenada = "GD",
-    Guadeloupe = "GP",
-    Guam = "GU",
-    Guatemala = "GT",
-    Guernsey = "GG",
-    Guinea = "GN",
-    GuineaBissau = "GW",
-    Guyana = "GY",
-    Haiti = "HT",
-    HeardIslandAndMcDonaldIslands = "HM",
-    HolySee = "VA",
-    Honduras = "HN",
-    HongKong = "HK",
-    Hungary = "HU",
-    Iceland = "IS",
-    India = "IN",
-    Indonesia = "ID",
-    Iran = "IR",
-    Iraq = "IQ",
-    Ireland = "IE",
-    IsleOfMan = "IM",
-    Israel = "IL",
-    Italy = "IT",
-    Jamaica = "JM",
-    Japan = "JP",
-    Jersey = "JE",
-    Jordan = "JO",
-    Kazakhstan = "KZ",
-    Kenya = "KE",
-    Kiribati = "KI",
-    KoreaNorth = "KP",
-    KoreaSouth = "KR",
-    Kuwait = "KW",
-    Kyrgyzstan = "KG",
-    Laos = "LA",
-    Latvia = "LV",
-    Lebanon = "LB",
-    Lesotho = "LS",
-    Liberia = "LR",
-    Libya = "LY",
-    Liechtenstein = "LI",
-    Lithuania = "LT",
-    Luxembourg = "LU",
-    Macao = "MO",
-    Madagascar = "MG",
-    Malawi = "MW",
-    Malaysia = "MY",
-    Maldives = "MV",
-    Mali = "ML",
-    Malta = "MT",
-    MarshallIslands = "MH",
-    Martinique = "MQ",
-    Mauritania = "MR",
-    Mauritius = "MU",
-    Mayotte = "YT",
-    Mexico = "MX",
-    Micronesia = "FM",
-    Moldova = "MD",
-    Monaco = "MC",
-    Mongolia = "MN",
-    Montenegro = "ME",
-    Montserrat = "MS",
-    Morocco = "MA",
-    Mozambique = "MZ",
-    Myanmar = "MM",
-    Namibia = "NA",
-    Nauru = "NR",
-    Nepal = "NP",
-    Netherlands = "NL",
-    NewCaledonia = "NC",
-    NewZealand = "NZ",
-    Nicaragua = "NI",
-    Niger = "NE",
-    Nigeria = "NG",
-    Niue = "NU",
-    NorfolkIsland = "NF",
-    NorthernMarianaIslands = "MP",
-    Norway = "NO",
-    Oman = "OM",
-    Pakistan = "PK",
-    Palau = "PW",
-    Palestine = "PS",
-    Panama = "PA",
-    PapuaNewGuinea = "PG",
-    Paraguay = "PY",
-    Peru = "PE",
-    Philippines = "PH",
-    Pitcairn = "PN",
-    Poland = "PL",
-    Portugal = "PT",
-    PuertoRico = "PR",
-    Qatar = "QA",
-    RepublicOfNorthMacedonia = "MK",
-    Romania = "RO",
-    RussianFederation = "RU",
-    Rwanda = "RW",
-    Reunion = "RE",
-    SaintBarthelemy = "BL",
-    SaintHelena = "SH",
-    SaintKittsAndNevis = "KN",
-    SaintLucia = "LC",
-    SaintMartin = "MF",
-    SaintPierreAndMiquelon = "PM",
-    SaintVincentAndTheGrenadines = "VC",
-    Samoa = "WS",
-    SanMarino = "SM",
-    SaoTomeAndPrincipe = "ST",
-    SaudiArabia = "SA",
-    Senegal = "SN",
-    Serbia = "RS",
-    Seychelles = "SC",
-    SierraLeone = "SL",
-    Singapore = "SG",
-    SintMaarten = "SX",
-    Slovakia = "SK",
-    Slovenia = "SI",
-    SolomonIslands = "SB",
-    Somalia = "SO",
-    SouthAfrica = "ZA",
-    SouthGeorgiaAndTheSouthSandwichIslands = "GS",
-    SouthSudan = "SS",
-    Spain = "ES",
-    SriLanka = "LK",
-    Sudan = "SD",
-    Suriname = "SR",
-    SvalbardAndJanMayen = "SJ",
-    Sweden = "SE",
-    Switzerland = "CH",
-    SyrianArabRepublic = "SY",
-    Taiwan = "TW",
-    Tajikistan = "TJ",
-    Tanzania = "TZ",
-    Thailand = "TH",
-    TimorLeste = "TL",
-    Togo = "TG",
-    Tokelau = "TK",
-    Tonga = "TO",
-    TrinidadAndTobago = "TT",
-    Tunisia = "TN",
-    Turkey = "TR",
-    Turkmenistan = "TM",
-    TurksAndCaicosIslands = "TC",
-    Tuvalu = "TV",
-    Uganda = "UG",
-    Ukraine = "UA",
-    UnitedArabEmirates = "AE",
-    UnitedKingdom = "GB",
-    UnitedStatesMinorOutlyingIslands = "UM",
-    UnitedStatesOfAmerica = "US",
-    Uruguay = "UY",
-    Uzbekistan = "UZ",
-    Vanuatu = "VU",
-    Venezuela = "VE",
-    Vietnam = "VN",
-    VirginIslandsBritish = "VG",
-    VirginIslandsUS = "VI",
-    WallisAndFutuna = "WF",
-    WesternSahara = "EH",
-    Yemen = "YE",
-    Zambia = "ZM",
-    Zimbabwe = "ZW",
-    AlandIslands = "AX"
+interface ResponseOwner extends BaseOwner {
+    id: string;
 }
-export interface CreateReceiver {
+interface RequestOwner extends BaseOwner {
+}
+interface CommonReceiverFields {
+    email: string;
+    tax_id: string | null;
+    address_line_1: string | null;
+    address_line_2?: string | null;
+    city: string | null;
+    state_province_region: string | null;
+    country: CountryCode;
+    postal_code: string | null;
+    ip_address: string | null;
+    image_url: string | null;
+    phone_number: string | null;
+    proof_of_address_doc_type: AddressDocType | null;
+    proof_of_address_doc_file: string | null;
+    first_name: string | null;
+    last_name: string | null;
+    date_of_birth: string | null;
+    id_doc_country: string | null;
+    id_doc_type: IDDocType | null;
+    id_doc_front_file: string | null;
+    id_doc_back_file: string | null;
+    legal_name: string | null;
+    alternate_name: string | null;
+    formation_date: string | null;
+    website: string | null;
+    incorporation_doc_file: string | null;
+    proof_of_ownership_doc_file: string | null;
+    source_of_funds_doc_type: SourceOfFundsDocType | null;
+    source_of_funds_doc_file: string | null;
+    individual_holding_doc_front_file: string | null;
+    purpose_of_transactions: PurposeOfTransactions | null;
+    purpose_of_transactions_explanation: string | null;
+    external_id: string | null;
+}
+export interface CreateReceiverRequest extends CommonReceiverFields {
     type: ReceiverType;
     kyc_type: KYCType;
-    email: string;
-    tax_id: string;
-    address_line_1: string;
-    address_line_2?: string;
-    city: string;
-    state_province_region: string;
-    country: CountryCode;
-    postal_code: string;
-    ip_address: string;
-    image_url: string;
-    phone_number: string;
-    proof_of_address_doc_type: AddressDocType;
-    proof_of_address_doc_file: string;
-    first_name: string;
-    last_name: string;
-    date_of_birth: string;
-    id_doc_country: string;
-    id_doc_type: IDDocType;
-    id_doc_front_file: string;
-    id_doc_back_file: string;
-    legal_name: string;
-    alternate_name: string;
-    formation_date: string;
-    website: string;
-    owners: {
-        first_name: string;
-        last_name: string;
-        role: string;
-        date_of_birth: string;
-        tax_id: string;
-        address_line_1: string;
-        address_line_2?: string;
-        city: string;
-        state_province_region: string;
-        country: string;
-        postal_code: string;
-        id_doc_country: string;
-        id_doc_type: IDDocType;
-        id_doc_front_file: string;
-        id_doc_back_file: string;
-    }[];
-    incorporation_doc_file: string;
-    proof_of_ownership_doc_file: string;
-    source_of_funds_doc_type: SourceOfFundsDocType;
-    source_of_funds_doc_file: string;
-    individual_holding_doc_front_file: string;
-    purpose_of_transactions: PurposeOfTransactions;
-    purpose_of_transactions_explanation: string;
-    external_id: string;
+    owners?: RequestOwner[];
 }
-export interface UpdateReceiver {
-    email: string;
-    tax_id: string;
-    address_line_1: string;
-    address_line_2?: string;
-    city: string;
-    state_province_region: string;
-    country: CountryCode;
-    postal_code: string;
-    ip_address: string;
-    image_url: string;
-    phone_number: string;
-    proof_of_address_doc_type: AddressDocType;
-    proof_of_address_doc_file: string;
-    first_name: string;
-    last_name: string;
-    date_of_birth: string;
-    id_doc_country: string;
-    id_doc_type: IDDocType;
-    id_doc_front_file: string;
-    id_doc_back_file: string;
-    legal_name: string;
-    alternate_name: string;
-    formation_date: string;
-    website: string;
-    owners: {
-        id: string;
-        first_name: string;
-        last_name: string;
-        role: string;
-        date_of_birth: string;
-        tax_id: string;
-        address_line_1: string;
-        address_line_2?: string;
-        city: string;
-        state_province_region: string;
-        country: string;
-        postal_code: string;
-        id_doc_country: string;
-        id_doc_type: IDDocType;
-        id_doc_front_file: string;
-        id_doc_back_file: string;
-    }[];
-    incorporation_doc_file: string;
-    proof_of_ownership_doc_file: string;
-    source_of_funds_doc_type: SourceOfFundsDocType;
-    source_of_funds_doc_file: string;
-    individual_holding_doc_front_file: string;
-    purpose_of_transactions: PurposeOfTransactions;
-    purpose_of_transactions_explanation: string;
-    external_id: string;
+export interface UpdateReceiverRequest extends CommonReceiverFields {
+    owners?: ResponseOwner[];
 }
+export interface ReceiverResponse extends CommonReceiverFields {
+    id: string;
+    type: ReceiverType;
+    kyc_type: KYCType;
+    kyc_status: string;
+    kyc_warnings: Array<{
+        code: string | null;
+        message: string | null;
+        resolution_status: string | null;
+        warning_id: string | null;
+    }>;
+    owners: ResponseOwner[];
+    instance_id: string;
+    aiprise_validation_key: string;
+    created_at: string;
+    updated_at: string;
+    limit: {
+        per_transaction: number;
+        daily: number;
+        monthly: number;
+    };
+}
+export interface DeleteReceiverResponse {
+    success: boolean;
+}
+export {};

@@ -1,22 +1,23 @@
 import { BaseService } from "./base.service";
-import { PayoutOnEvmOut, CreatePayoutOnEvmIn, GetPayoutOut } from "../types/payout-types";
+import { Payout, PayoutEVM } from "../types/payout-types";
 import { ErrorResponse } from "../types/error-response";
 export declare class PayoutService extends BaseService {
-    protected endpoint: string;
-    getPayoutById(payoutId: string, instanceId?: string): Promise<{
-        data: GetPayoutOut | null;
+    protected BASE_PATH: string;
+    protected EXTERNAL_PATH: string;
+    retrievePayout(payoutId: string, instanceId?: string): Promise<{
+        data: Payout | null;
         error: ErrorResponse | null;
     }>;
-    getPayoutTrackById(payoutId: string): Promise<{
-        data: GetPayoutOut | null;
+    retrievePayouts(instanceId?: string): Promise<{
+        data: Payout[] | null;
         error: ErrorResponse | null;
     }>;
-    createPayoutOnEvm(payoutData: CreatePayoutOnEvmIn, instanceId?: string): Promise<{
-        data: PayoutOnEvmOut | null;
+    retrievePayoutTrack(payoutId: string): Promise<{
+        data: Payout | null;
         error: ErrorResponse | null;
     }>;
-    getPayouts(instanceId?: string): Promise<{
-        data: GetPayoutOut[] | null;
+    createPayout(payout: PayoutEVM, instanceId?: string): Promise<{
+        data: Payout | null;
         error: ErrorResponse | null;
     }>;
 }

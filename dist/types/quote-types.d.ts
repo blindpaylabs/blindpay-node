@@ -1,19 +1,31 @@
-export interface CreateQuoteIn {
-    amount: number;
-    currency: string;
+import { Network } from "./payout-types";
+export declare enum CurrencyType {
+    Sender = "sender",
+    Receiver = "receiver"
 }
-export interface CreateQuoteOut {
-    id: string;
-    amount: number;
-    currency: string;
-    rate: number;
+export declare enum Token {
+    USDC = "USDC",
+    USDT = "USDT",
+    USDB = "USDB",
+    USDX = "USDX",
+    BRL = "BRL",
+    USD = "USD",
+    MXN = "MXN",
+    COP = "COP",
+    ARS = "ARS"
 }
-export interface CheckQuoteIn {
-    amount: number;
-    currency: string;
+export interface Quote {
+    bank_account_id: string;
+    currency_type: CurrencyType;
+    cover_fees: boolean | null;
+    request_amount: number;
+    network: Network;
+    token: Token;
+    partner_fee_id: string | null;
 }
-export interface CheckQuoteOut {
-    id: string;
-    valid_until: string;
-    rate: number;
+export interface FX {
+    from: Token;
+    to: Token;
+    request_amount: number;
+    currency_type: CurrencyType;
 }

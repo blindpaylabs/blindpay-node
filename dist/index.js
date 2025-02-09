@@ -13,10 +13,10 @@ var __createBinding = (this && this.__createBinding) || (Object.create ? (functi
 var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 exports.Blindpay = void 0;
 var blindpay_1 = require("./blindpay");
-Object.defineProperty(exports, "Blindpay", { enumerable: true, get: function () { return blindpay_1.Blindpay; } });
+__createBinding(exports, blindpay_1, "Blindpay");
 __exportStar(require("./types/api-key"), exports);
 __exportStar(require("./types/available-country"), exports);
 __exportStar(require("./types/available-currency"), exports);
