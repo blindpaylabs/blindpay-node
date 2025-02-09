@@ -1,182 +1,146 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.OnboardingService = void 0;
-var base_service_1 = require("./base.service");
-var OnboardingService = /** @class */ (function (_super) {
-    __extends(OnboardingService, _super);
-    function OnboardingService() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.endpoint = "/instances/{instance_id}/onboarding";
-        return _this;
+const base_service_1 = require("./base.service");
+/**
+ * Service for managing the onboarding process of instances, including business details,
+ * profiles, ownership documents, applicant information, and compliance checks.
+ */
+class OnboardingService extends base_service_1.BaseService {
+    BASE_PATH = "/instances/{instance_id}/onboarding";
+    /**
+     * Creates or updates business details for an instance
+     * @param details - The business details to create or update
+     * @param instanceId - The instance ID (15 characters)
+     * @returns A promise containing a success response or an error
+     * @throws Error if the instance ID is invalid
+     */
+    async upsertBusinessDetails(details, instanceId) {
+        const path = this.replaceInstanceId(`${this.BASE_PATH}/business_details`, instanceId);
+        return this._put(path, details);
     }
-    OnboardingService.prototype.upsertBusinessDetails = function (instanceId, details) {
-        return __awaiter(this, void 0, void 0, function () {
-            var path;
-            return __generator(this, function (_a) {
-                path = this.replaceInstanceId("".concat(this.endpoint, "/business_details"), instanceId);
-                return [2 /*return*/, this._put(path, details)];
-            });
-        });
-    };
-    OnboardingService.prototype.getBusinessDetails = function (instanceId) {
-        return __awaiter(this, void 0, void 0, function () {
-            var path;
-            return __generator(this, function (_a) {
-                path = this.replaceInstanceId("".concat(this.endpoint, "/business_details"), instanceId);
-                return [2 /*return*/, this._get(path)];
-            });
-        });
-    };
-    OnboardingService.prototype.upsertBusinessProfile = function (instanceId, profile) {
-        return __awaiter(this, void 0, void 0, function () {
-            var path;
-            return __generator(this, function (_a) {
-                path = this.replaceInstanceId("".concat(this.endpoint, "/business_profile"), instanceId);
-                return [2 /*return*/, this._put(path, profile)];
-            });
-        });
-    };
-    OnboardingService.prototype.getBusinessProfile = function (instanceId) {
-        return __awaiter(this, void 0, void 0, function () {
-            var path;
-            return __generator(this, function (_a) {
-                path = this.replaceInstanceId("".concat(this.endpoint, "/business_profile"), instanceId);
-                return [2 /*return*/, this._get(path)];
-            });
-        });
-    };
-    OnboardingService.prototype.upsertOwnershipDocuments = function (instanceId, documents) {
-        return __awaiter(this, void 0, void 0, function () {
-            var path;
-            return __generator(this, function (_a) {
-                path = this.replaceInstanceId("".concat(this.endpoint, "/ownership_documents"), instanceId);
-                return [2 /*return*/, this._put(path, documents)];
-            });
-        });
-    };
-    OnboardingService.prototype.getOwnershipDocuments = function (instanceId) {
-        return __awaiter(this, void 0, void 0, function () {
-            var path;
-            return __generator(this, function (_a) {
-                path = this.replaceInstanceId("".concat(this.endpoint, "/ownership_documents"), instanceId);
-                return [2 /*return*/, this._get(path)];
-            });
-        });
-    };
-    OnboardingService.prototype.upsertApplicant = function (instanceId, applicant) {
-        return __awaiter(this, void 0, void 0, function () {
-            var path;
-            return __generator(this, function (_a) {
-                path = this.replaceInstanceId("".concat(this.endpoint, "/applicant"), instanceId);
-                return [2 /*return*/, this._put(path, applicant)];
-            });
-        });
-    };
-    OnboardingService.prototype.getApplicant = function (instanceId) {
-        return __awaiter(this, void 0, void 0, function () {
-            var path;
-            return __generator(this, function (_a) {
-                path = this.replaceInstanceId("".concat(this.endpoint, "/applicant"), instanceId);
-                return [2 /*return*/, this._get(path)];
-            });
-        });
-    };
-    OnboardingService.prototype.startKYB = function (instanceId) {
-        return __awaiter(this, void 0, void 0, function () {
-            var path;
-            return __generator(this, function (_a) {
-                path = this.replaceInstanceId("".concat(this.endpoint, "/kyb"), instanceId);
-                return [2 /*return*/, this._post(path, {})];
-            });
-        });
-    };
-    OnboardingService.prototype.getCompliance = function (instanceId) {
-        return __awaiter(this, void 0, void 0, function () {
-            var path;
-            return __generator(this, function (_a) {
-                path = this.replaceInstanceId("".concat(this.endpoint, "/compliance"), instanceId);
-                return [2 /*return*/, this._get(path)];
-            });
-        });
-    };
-    OnboardingService.prototype.getAccessToken = function (instanceId) {
-        return __awaiter(this, void 0, void 0, function () {
-            var path;
-            return __generator(this, function (_a) {
-                path = this.replaceInstanceId("".concat(this.endpoint, "/access_token"), instanceId);
-                return [2 /*return*/, this._get(path)];
-            });
-        });
-    };
-    OnboardingService.prototype.completeSumsubSdk = function (instanceId) {
-        return __awaiter(this, void 0, void 0, function () {
-            var path;
-            return __generator(this, function (_a) {
-                path = this.replaceInstanceId("".concat(this.endpoint, "/sumsub_sdk"), instanceId);
-                return [2 /*return*/, this._post(path, {})];
-            });
-        });
-    };
-    OnboardingService.prototype.completeOnboarding = function (instanceId) {
-        return __awaiter(this, void 0, void 0, function () {
-            var path;
-            return __generator(this, function (_a) {
-                path = this.replaceInstanceId("".concat(this.endpoint, "/complete"), instanceId);
-                return [2 /*return*/, this._post(path, {})];
-            });
-        });
-    };
-    return OnboardingService;
-}(base_service_1.BaseService));
+    /**
+     * Retrieves the business details for an instance
+     * @param instanceId - The instance ID (15 characters)
+     * @returns A promise containing the business details or an error
+     * @throws Error if the instance ID is invalid
+     */
+    async getBusinessDetails(instanceId) {
+        const path = this.replaceInstanceId(`${this.BASE_PATH}/business_details`, instanceId);
+        return this._get(path);
+    }
+    /**
+     * Creates or updates the business profile for an instance
+     * @param profile - The business profile data to create or update
+     * @param instanceId - The instance ID (15 characters)
+     * @returns A promise containing a success response or an error
+     * @throws Error if the instance ID is invalid
+     */
+    async upsertBusinessProfile(profile, instanceId) {
+        const path = this.replaceInstanceId(`${this.BASE_PATH}/business_profile`, instanceId);
+        return this._put(path, profile);
+    }
+    /**
+     * Retrieves the business profile for an instance
+     * @param instanceId - The instance ID (15 characters)
+     * @returns A promise containing the business profile or an error
+     * @throws Error if the instance ID is invalid
+     */
+    async getBusinessProfile(instanceId) {
+        const path = this.replaceInstanceId(`${this.BASE_PATH}/business_profile`, instanceId);
+        return this._get(path);
+    }
+    /**
+     * Creates or updates ownership documents for an instance
+     * @param documents - The ownership documents to create or update
+     * @param instanceId - The instance ID (15 characters)
+     * @returns A promise containing a success response or an error
+     * @throws Error if the instance ID is invalid
+     */
+    async upsertOwnershipDocuments(documents, instanceId) {
+        const path = this.replaceInstanceId(`${this.BASE_PATH}/ownership_documents`, instanceId);
+        return this._put(path, documents);
+    }
+    /**
+     * Retrieves the ownership documents for an instance
+     * @param instanceId - The instance ID (15 characters)
+     * @returns A promise containing the ownership documents or an error
+     * @throws Error if the instance ID is invalid
+     */
+    async getOwnershipDocuments(instanceId) {
+        const path = this.replaceInstanceId(`${this.BASE_PATH}/ownership_documents`, instanceId);
+        return this._get(path);
+    }
+    /**
+     * Creates or updates applicant information for an instance
+     * @param applicant - The applicant information to create or update
+     * @param instanceId - The instance ID (15 characters)
+     * @returns A promise containing a success response or an error
+     * @throws Error if the instance ID is invalid
+     */
+    async upsertApplicant(applicant, instanceId) {
+        const path = this.replaceInstanceId(`${this.BASE_PATH}/applicant`, instanceId);
+        return this._put(path, applicant);
+    }
+    /**
+     * Retrieves the applicant information for an instance
+     * @param instanceId - The instance ID (15 characters)
+     * @returns A promise containing the applicant information or an error
+     * @throws Error if the instance ID is invalid
+     */
+    async getApplicant(instanceId) {
+        const path = this.replaceInstanceId(`${this.BASE_PATH}/applicant`, instanceId);
+        return this._get(path);
+    }
+    /**
+     * Initiates the Know Your Business (KYB) process for an instance
+     * @param instanceId - The instance ID (15 characters)
+     * @returns A promise containing a success response or an error
+     * @throws Error if the instance ID is invalid
+     */
+    async startKYB(instanceId) {
+        const path = this.replaceInstanceId(`${this.BASE_PATH}/kyb`, instanceId);
+        return this._post(path, {});
+    }
+    /**
+     * Retrieves the compliance information for an instance
+     * @param instanceId - The instance ID (15 characters)
+     * @returns A promise containing the compliance information or an error
+     * @throws Error if the instance ID is invalid
+     */
+    async getCompliance(instanceId) {
+        const path = this.replaceInstanceId(`${this.BASE_PATH}/compliance`, instanceId);
+        return this._get(path);
+    }
+    /**
+     * Retrieves the access token for an instance
+     * @param instanceId - The instance ID (15 characters)
+     * @returns A promise containing the access token or an error
+     * @throws Error if the instance ID is invalid
+     */
+    async getAccessToken(instanceId) {
+        const path = this.replaceInstanceId(`${this.BASE_PATH}/access_token`, instanceId);
+        return this._get(path);
+    }
+    /**
+     * Marks the SumSub SDK flow as completed for an instance
+     * @param instanceId - The instance ID (15 characters)
+     * @returns A promise containing a success response or an error
+     * @throws Error if the instance ID is invalid
+     */
+    async completeSumsubSdk(instanceId) {
+        const path = this.replaceInstanceId(`${this.BASE_PATH}/sumsub_sdk`, instanceId);
+        return this._post(path, {});
+    }
+    /**
+     * Marks the onboarding process as complete for an instance
+     * @param instanceId - The instance ID (15 characters)
+     * @returns A promise containing a success response or an error
+     * @throws Error if the instance ID is invalid
+     */
+    async completeOnboarding(instanceId) {
+        const path = this.replaceInstanceId(`${this.BASE_PATH}/complete`, instanceId);
+        return this._post(path, {});
+    }
+}
 exports.OnboardingService = OnboardingService;

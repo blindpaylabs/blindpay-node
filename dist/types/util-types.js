@@ -1,6 +1,33 @@
 "use strict";
-exports.__esModule = true;
-exports.CountryCode = void 0;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CountryCode = exports.TransferType = exports.Country = exports.Network = void 0;
+var Network;
+(function (Network) {
+    Network["Sepolia"] = "sepolia";
+    Network["Base"] = "base";
+    Network["ArbitrumSepolia"] = "arbitrum_sepolia";
+    Network["BaseSepolia"] = "base_sepolia";
+    Network["Arbitrum"] = "arbitrum";
+    Network["Polygon"] = "polygon";
+    Network["PolygonAmoy"] = "polygon_amoy";
+})(Network = exports.Network || (exports.Network = {}));
+var Country;
+(function (Country) {
+    Country["Brazil"] = "BR";
+    Country["UnitedStatesOfAmerica"] = "US";
+    Country["Mexico"] = "MX";
+    Country["Colombia"] = "CO";
+    Country["Argentina"] = "AR";
+})(Country = exports.Country || (exports.Country = {}));
+var TransferType;
+(function (TransferType) {
+    TransferType["WIRE"] = "wire";
+    TransferType["ACH"] = "ach";
+    TransferType["PIX"] = "pix";
+    TransferType["SPEI_BITSO"] = "spei_bitso";
+    TransferType["TRANSFERS_BITSO"] = "transfers_bitso";
+    TransferType["ACH_COP_BITSO"] = "ach_cop_bitso";
+})(TransferType = exports.TransferType || (exports.TransferType = {}));
 var CountryCode;
 (function (CountryCode) {
     CountryCode["Afghanistan"] = "AF";

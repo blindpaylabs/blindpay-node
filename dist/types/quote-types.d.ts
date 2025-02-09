@@ -1,4 +1,4 @@
-import { Network } from "./payout-types";
+import { Network } from "./util-types";
 export declare enum CurrencyType {
     Sender = "sender",
     Receiver = "receiver"

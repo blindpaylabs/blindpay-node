@@ -2,6 +2,30 @@ export interface ErrorResponse {
     name: string;
     message: string;
 }
+export declare enum Network {
+    Sepolia = "sepolia",
+    Base = "base",
+    ArbitrumSepolia = "arbitrum_sepolia",
+    BaseSepolia = "base_sepolia",
+    Arbitrum = "arbitrum",
+    Polygon = "polygon",
+    PolygonAmoy = "polygon_amoy"
+}
+export declare enum Country {
+    Brazil = "BR",
+    UnitedStatesOfAmerica = "US",
+    Mexico = "MX",
+    Colombia = "CO",
+    Argentina = "AR"
+}
+export declare enum TransferType {
+    WIRE = "wire",
+    ACH = "ach",
+    PIX = "pix",
+    SPEI_BITSO = "spei_bitso",
+    TRANSFERS_BITSO = "transfers_bitso",
+    ACH_COP_BITSO = "ach_cop_bitso"
+}
 export declare enum CountryCode {
     Afghanistan = "AF",
     Albania = "AL",

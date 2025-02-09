@@ -1,26 +1,10 @@
 import { Token } from "./quote-types";
+import { Network, TransferType } from "./util-types";
 export declare enum PayoutStatus {
     Processing = "processing",
     Failed = "failed",
     Refunded = "refunded",
     Completed = "completed"
-}
-export declare enum Network {
-    Sepolia = "sepolia",
-    Base = "base",
-    ArbitrumSepolia = "arbitrum_sepolia",
-    BaseSepolia = "base_sepolia",
-    Arbitrum = "arbitrum",
-    Polygon = "polygon",
-    PolygonAmoy = "polygon_amoy"
-}
-export declare enum PayoutType {
-    Wire = "wire",
-    ACH = "ach",
-    PIX = "pix",
-    SpeiBitso = "spei_bitso",
-    TransfersBitso = "transfers_bitso",
-    AchCopBitso = "ach_cop_bitso"
 }
 export interface TrackingTransaction {
     step: string;
@@ -74,7 +58,7 @@ export interface Payout {
     receiver_amount: number;
     partner_fee_amount: number | null;
     name: string;
-    type: PayoutType;
+    type: TransferType;
     pix_key: string | null;
     account_number: string | null;
     routing_number: string | null;

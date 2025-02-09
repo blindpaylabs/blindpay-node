@@ -1,29 +1,41 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.Blindpay = void 0;
-var api_keys_service_1 = require("./services/api-keys.service");
-var available_service_1 = require("./services/available.service");
-var bank_accounts_service_1 = require("./services/bank-accounts.service");
-var instance_service_1 = require("./services/instance.service");
-var onboarding_service_1 = require("./services/onboarding.service");
-var payout_service_1 = require("./services/payout.service");
-var quote_service_1 = require("./services/quote.service");
-var receiver_service_1 = require("./services/receiver.service");
-var defaultBaseUrl = "https://api.blindpay.com/v1";
-var defaultUserAgent = "blindpay-sdk:1.0.0";
-var Blindpay = /** @class */ (function () {
-    function Blindpay(key, instanceId, baseUrl) {
+const api_keys_service_1 = require("./services/api-keys.service");
+const available_service_1 = require("./services/available.service");
+const bank_accounts_service_1 = require("./services/bank-accounts.service");
+const instance_service_1 = require("./services/instance.service");
+const onboarding_service_1 = require("./services/onboarding.service");
+const payout_service_1 = require("./services/payout.service");
+const quote_service_1 = require("./services/quote.service");
+const receiver_service_1 = require("./services/receiver.service");
+const defaultBaseUrl = "https://api.blindpay.com/v1";
+const defaultUserAgent = `blindpay-sdk:1.0.0`;
+class Blindpay {
+    key;
+    instanceId;
+    headers;
+    baseUrl;
+    apiKeys;
+    available;
+    bankAccounts;
+    instances;
+    onboardings;
+    payouts;
+    quotes;
+    receivers;
+    constructor(key, instanceId, baseUrl) {
         this.key = key;
         this.instanceId = instanceId;
         if (!key) {
-            throw new Error('Missing API key. Pass it to the constructor `new Blindpay("bp_123")`');
+            throw new Error('Missing API key. Pass it to the constructor `new Blindpay("your-api-key")`');
         }
         this.baseUrl = baseUrl || defaultBaseUrl;
         this.instanceId = instanceId;
         this.headers = new Headers({
-            Authorization: "Bearer ".concat(this.key),
+            Authorization: `Bearer ${this.key}`,
             "User-Agent": defaultUserAgent,
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         });
         this.apiKeys = new api_keys_service_1.ApiKeysService(this.baseUrl, this.headers, this.instanceId);
         this.bankAccounts = new bank_accounts_service_1.BankAccountsService(this.baseUrl, this.headers, this.instanceId);
@@ -34,6 +46,5 @@ var Blindpay = /** @class */ (function () {
         this.quotes = new quote_service_1.QuoteService(this.baseUrl, this.headers, this.instanceId);
         this.receivers = new receiver_service_1.ReceiverService(this.baseUrl, this.headers, this.instanceId);
     }
-    return Blindpay;
-}());
+}
 exports.Blindpay = Blindpay;

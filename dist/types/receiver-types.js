@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.PurposeOfTransactions = exports.SourceOfFundsDocType = exports.AddressDocType = exports.IDDocType = exports.KYCType = exports.ReceiverType = void 0;
 // Enums
 var ReceiverType;
