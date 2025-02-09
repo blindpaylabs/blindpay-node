@@ -5,13 +5,13 @@ A TypeScript SDK for interacting with the Blindpay API. This SDK provides a simp
 ## Installation
 
 ```bash
-npm install blindpay-sdk
+npm install blindpay
 ```
 
 ## Quick Start
 
 ```typescript
-import { Blindpay } from "blindpay-sdk";
+import { Blindpay } from "blindpay";
 
 // Initialize the SDK with your API key
 const blindpay = new Blindpay("your-api-key");
