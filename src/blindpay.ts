@@ -30,7 +30,7 @@ export class Blindpay {
   ) {
     if (!key) {
       throw new Error(
-        'Missing API key. Pass it to the constructor `new Blindpay("bp_123")`'
+        'Missing API key. Pass it to the constructor `new Blindpay("your-api-key")`'
       );
     }
 
