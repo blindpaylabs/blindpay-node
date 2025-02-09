@@ -1,7 +1,7 @@
 import { ErrorResponse } from "../types/error-response";
 
 export abstract class BaseService {
-  protected abstract endpoint: string;
+  protected abstract BASE_PATH: string;
 
   constructor(
     protected readonly baseUrl: string,

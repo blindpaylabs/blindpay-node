@@ -1,1 +1,4 @@
 node_modules/
+.gitignore
+*.tgz
+src/.DS_Store
