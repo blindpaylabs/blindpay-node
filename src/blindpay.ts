@@ -33,6 +33,9 @@ export class Blindpay {
         'Missing API key. Pass it to the constructor `new Blindpay("your-api-key")`'
       );
     }
+    if (typeof window !== "undefined") {
+      throw new Error("This SDK is not intended for use in the browser.");
+    }
 
     this.baseUrl = baseUrl || defaultBaseUrl;
     this.instanceId = instanceId;
