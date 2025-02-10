@@ -8,7 +8,7 @@ import { QuoteService } from "./services/quote.service";
 import { ReceiverService } from "./services/receiver.service";
 
 const defaultBaseUrl = "https://api.blindpay.com/v1";
-const defaultUserAgent = `blindpay-sdk:1.0.0`;
+const defaultUserAgent = `blindpay-sdk:1.0.4`;
 
 export class Blindpay {
   private readonly headers: Headers;
