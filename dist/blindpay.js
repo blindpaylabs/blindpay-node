@@ -10,7 +10,7 @@ const payout_service_1 = require("./services/payout.service");
 const quote_service_1 = require("./services/quote.service");
 const receiver_service_1 = require("./services/receiver.service");
 const defaultBaseUrl = "https://api.blindpay.com/v1";
-const defaultUserAgent = `blindpay-sdk:1.0.0`;
+const defaultUserAgent = `blindpay-sdk:1.0.4`;
 class Blindpay {
     key;
     instanceId;
@@ -29,6 +29,9 @@ class Blindpay {
         this.instanceId = instanceId;
         if (!key) {
             throw new Error('Missing API key. Pass it to the constructor `new Blindpay("your-api-key")`');
+        }
+        if (typeof window !== "undefined") {
+            throw new Error("This SDK is not intended for use in the browser.");
         }
         this.baseUrl = baseUrl || defaultBaseUrl;
         this.instanceId = instanceId;
