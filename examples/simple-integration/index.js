@@ -1,10 +1,11 @@
-const { Blindpay, CountryCode } = require("../../dist");
+const { Blindpay } = require("blindpay");
 
-const blindpay = new Blindpay();
+const blindpay = new Blindpay("your-api-key");
 
 async function createReceiver() {
-  // const receiver = await blindpay.receivers.
-  // console.log(receiver);
+  const data = await blindpay.payouts.retrievePayoutTrack("po_...");
+
+  return data;
 }
 
 createReceiver();
