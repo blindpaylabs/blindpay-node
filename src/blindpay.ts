@@ -1,3 +1,4 @@
+import { version } from "../package.json";
 import { ApiKeysService } from "./services/api-keys.service";
 import { AvailableService } from "./services/available.service";
 import { BankAccountsService } from "./services/bank-accounts.service";
@@ -8,7 +9,7 @@ import { QuoteService } from "./services/quote.service";
 import { ReceiverService } from "./services/receiver.service";
 
 const defaultBaseUrl = "https://api.blindpay.com/v1";
-const defaultUserAgent = `blindpay-sdk:1.0.4`;
+const defaultUserAgent = `blindpay-sdk:${version}`;
 
 export class Blindpay {
   private readonly headers: Headers;

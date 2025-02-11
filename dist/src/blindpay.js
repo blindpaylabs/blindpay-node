@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Blindpay = void 0;
+const package_json_1 = require("../package.json");
 const api_keys_service_1 = require("./services/api-keys.service");
 const available_service_1 = require("./services/available.service");
 const bank_accounts_service_1 = require("./services/bank-accounts.service");
@@ -10,7 +11,7 @@ const payout_service_1 = require("./services/payout.service");
 const quote_service_1 = require("./services/quote.service");
 const receiver_service_1 = require("./services/receiver.service");
 const defaultBaseUrl = "https://api.blindpay.com/v1";
-const defaultUserAgent = `blindpay-sdk:1.0.4`;
+const defaultUserAgent = `blindpay-sdk:${package_json_1.version}`;
 class Blindpay {
     key;
     instanceId;

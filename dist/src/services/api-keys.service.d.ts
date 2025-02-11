@@ -1,7 +1,6 @@
 import { BaseService } from "./base.service";
 import { BaseResponse } from "../types/util-types";
-import { CreateApiKeyRequest, CreateApiKeyResponse, DeleteApiKeyResponse } from "../types/api-key.types";
-import { ApiKey } from "../types";
+import { ApiKey, CreateApiKeyRequest, CreateApiKeyResponse, DeleteApiKeyResponse } from "../types/api-key.types";
 export declare class ApiKeysService extends BaseService {
     protected readonly BASE_PATH = "/instances/{instance_id}/api-keys";
     private static readonly API_KEY_PATH;
@@ -33,22 +32,9 @@ export declare class ApiKeysService extends BaseService {
      */
     deleteApiKey(apiKeyId: string, instanceId: string): Promise<BaseResponse<DeleteApiKeyResponse>>;
     /**
-     * Validates instance ID format
-     * @param instanceId - The instance ID to validate
-     * @throws Error if the instance ID is invalid
-     */
-    private validateInstanceId;
-    /**
      * Validates API key ID format
      * @param apiKeyId - The API key ID to validate
      * @throws Error if the API key ID is invalid
      */
     private validateApiKeyId;
-    /**
-     * Replaces all parameters in a path string
-     * @param path - The path template
-     * @param params - Object containing parameter values
-     * @returns The path with replaced parameters
-     */
-    private replaceParams;
 }

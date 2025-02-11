@@ -42,15 +42,5 @@ class AvailableService extends base_service_1.BaseService {
         const path = `${this.BASE_PATH}/rails`;
         return this._get(path);
     }
-    /**
-     * Creates a URL-encoded query string from parameters
-     * @param params - Object containing query parameters
-     * @returns A URL-encoded query string
-     */
-    createQueryString(params) {
-        return Object.entries(params)
-            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-            .join("&");
-    }
 }
 exports.AvailableService = AvailableService;

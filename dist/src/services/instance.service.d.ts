@@ -24,17 +24,4 @@ export declare class InstanceService extends BaseService {
      * @returns A promise containing an array of instance members or an error
      */
     getInstanceMembers(instanceId?: string): Promise<BaseResponse<InstanceMember[]>>;
-    /**
-     * Validates instance ID format
-     * @param instanceId - The instance ID to validate
-     * @throws Error if the instance ID is invalid
-     */
-    private validateInstanceId;
-    /**
-     * Replaces all parameters in a path string
-     * @param path - The path template
-     * @param params - Object containing parameter values
-     * @returns The path with replaced parameters
-     */
-    private replaceParams;
 }

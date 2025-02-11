@@ -1,11 +1,11 @@
 import { BaseService } from "./base.service";
 import { BaseResponse } from "../types/util-types";
 import {
+  ApiKey,
   CreateApiKeyRequest,
   CreateApiKeyResponse,
   DeleteApiKeyResponse,
 } from "../types/api-key.types";
-import { ApiKey } from "../types";
 
 export class ApiKeysService extends BaseService {
   protected readonly BASE_PATH = "/instances/{instance_id}/api-keys";
@@ -93,20 +93,6 @@ export class ApiKeysService extends BaseService {
   }
 
   /**
-   * Validates instance ID format
-   * @param instanceId - The instance ID to validate
-   * @throws Error if the instance ID is invalid
-   */
-  private validateInstanceId(instanceId: string): void {
-    if (!instanceId || instanceId.length !== 15) {
-      throw new Error("Instance ID must be exactly 15 characters long");
-    }
-    if (!instanceId.startsWith("in_")) {
-      throw new Error("Instance ID must start with 'in_'");
-    }
-  }
-
-  /**
    * Validates API key ID format
    * @param apiKeyId - The API key ID to validate
    * @throws Error if the API key ID is invalid
@@ -118,19 +104,5 @@ export class ApiKeysService extends BaseService {
     if (!apiKeyId.startsWith("ap_")) {
       throw new Error("API Key ID must start with 'ap_'");
     }
-  }
-
-  /**
-   * Replaces all parameters in a path string
-   * @param path - The path template
-   * @param params - Object containing parameter values
-   * @returns The path with replaced parameters
-   */
-  private replaceParams(path: string, params: Record<string, string>): string {
-    let result = path;
-    Object.entries(params).forEach(([key, value]) => {
-      result = result.replace(`{${key}}`, value);
-    });
-    return result;
   }
 }
