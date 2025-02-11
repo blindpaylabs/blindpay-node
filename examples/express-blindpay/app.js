@@ -7,7 +7,7 @@ app.get("/", (req, res) => {
   const blindpay = new Blindpay("your-api-key");
 
   blindpay.payouts
-    .retrievePayoutTrack("po_2H75fS3XtwCL")
+    .retrievePayoutTrack("po_...")
     .then((response) => {
       res.send(response);
     })
