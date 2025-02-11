@@ -36,12 +36,6 @@ export declare class BankAccountsService extends BaseService {
      */
     deleteBankAccount(receiverId: string, bankAccountId: string, instanceId?: string): Promise<BaseResponse<DeleteBankAccountResponse>>;
     /**
-     * Validates instance ID format
-     * @param instanceId - The instance ID to validate
-     * @throws Error if the instance ID is invalid
-     */
-    private validateInstanceId;
-    /**
      * Validates receiver ID format
      * @param receiverId - The receiver ID to validate
      * @throws Error if the receiver ID is invalid
@@ -53,11 +47,4 @@ export declare class BankAccountsService extends BaseService {
      * @throws Error if the bank account ID is invalid
      */
     private validateBankAccountId;
-    /**
-     * Replaces all parameters in a path string
-     * @param path - The path template
-     * @param params - Object containing parameter values
-     * @returns The path with replaced parameters
-     */
-    private replaceParams;
 }

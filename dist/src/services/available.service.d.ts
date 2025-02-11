@@ -25,10 +25,4 @@ export declare class AvailableService extends BaseService {
      * @returns A promise containing an array of available rails or an error
      */
     getAvailableRails(): Promise<BaseResponse<AvailableRail[]>>;
-    /**
-     * Creates a URL-encoded query string from parameters
-     * @param params - Object containing query parameters
-     * @returns A URL-encoded query string
-     */
-    private createQueryString;
 }

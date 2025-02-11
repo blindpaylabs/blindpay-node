@@ -65,19 +65,6 @@ class ApiKeysService extends base_service_1.BaseService {
         return this._delete(path);
     }
     /**
-     * Validates instance ID format
-     * @param instanceId - The instance ID to validate
-     * @throws Error if the instance ID is invalid
-     */
-    validateInstanceId(instanceId) {
-        if (!instanceId || instanceId.length !== 15) {
-            throw new Error("Instance ID must be exactly 15 characters long");
-        }
-        if (!instanceId.startsWith("in_")) {
-            throw new Error("Instance ID must start with 'in_'");
-        }
-    }
-    /**
      * Validates API key ID format
      * @param apiKeyId - The API key ID to validate
      * @throws Error if the API key ID is invalid
@@ -89,19 +76,6 @@ class ApiKeysService extends base_service_1.BaseService {
         if (!apiKeyId.startsWith("ap_")) {
             throw new Error("API Key ID must start with 'ap_'");
         }
-    }
-    /**
-     * Replaces all parameters in a path string
-     * @param path - The path template
-     * @param params - Object containing parameter values
-     * @returns The path with replaced parameters
-     */
-    replaceParams(path, params) {
-        let result = path;
-        Object.entries(params).forEach(([key, value]) => {
-            result = result.replace(`{${key}}`, value);
-        });
-        return result;
     }
 }
 exports.ApiKeysService = ApiKeysService;

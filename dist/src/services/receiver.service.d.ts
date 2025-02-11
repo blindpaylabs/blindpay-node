@@ -42,22 +42,9 @@ export declare class ReceiverService extends BaseService {
      */
     deleteReceiver(instanceId: string, receiverId: string): Promise<BaseResponse<DeleteReceiverResponse>>;
     /**
-     * Validates instance ID format
-     * @param instanceId - The instance ID to validate
-     * @throws Error if the instance ID is invalid
-     */
-    private validateInstanceId;
-    /**
      * Validates receiver ID format
      * @param receiverId - The receiver ID to validate
      * @throws Error if the receiver ID is invalid
      */
     private validateReceiverId;
-    /**
-     * Replaces all parameters in a path string
-     * @param path - The path template
-     * @param params - Object containing parameter values
-     * @returns The path with replaced parameters
-     */
-    private replaceParams;
 }

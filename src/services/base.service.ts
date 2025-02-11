@@ -9,6 +9,27 @@ export abstract class BaseService {
     protected readonly instanceId?: string
   ) {}
 
+  protected replaceParams(
+    path: string,
+    params: Record<string, string>
+  ): string {
+    let result = path;
+    Object.entries(params).forEach(([key, value]) => {
+      result = result.replace(`{${key}}`, value);
+    });
+    return result;
+  }
+
+  protected validateInstanceId(instanceId: string): void {
+    const instance = instanceId || this.instanceId || "";
+    if (!instance || instance.length !== 15) {
+      throw new Error("Instance ID must be exactly 15 characters long");
+    }
+    if (!instance.startsWith("in_")) {
+      throw new Error("Instance ID must start with 'in_'");
+    }
+  }
+
   protected replaceInstanceId(path: string, instanceId?: string): string {
     const in_id = this.instanceId || instanceId || "";
     if (!in_id) {

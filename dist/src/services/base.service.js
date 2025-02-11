@@ -10,6 +10,22 @@ class BaseService {
         this.headers = headers;
         this.instanceId = instanceId;
     }
+    replaceParams(path, params) {
+        let result = path;
+        Object.entries(params).forEach(([key, value]) => {
+            result = result.replace(`{${key}}`, value);
+        });
+        return result;
+    }
+    validateInstanceId(instanceId) {
+        const instance = instanceId || this.instanceId || "";
+        if (!instance || instance.length !== 15) {
+            throw new Error("Instance ID must be exactly 15 characters long");
+        }
+        if (!instance.startsWith("in_")) {
+            throw new Error("Instance ID must start with 'in_'");
+        }
+    }
     replaceInstanceId(path, instanceId) {
         const in_id = this.instanceId || instanceId || "";
         if (!in_id) {

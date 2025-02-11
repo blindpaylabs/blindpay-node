@@ -46,31 +46,5 @@ class InstanceService extends base_service_1.BaseService {
         });
         return this._get(path);
     }
-    /**
-     * Validates instance ID format
-     * @param instanceId - The instance ID to validate
-     * @throws Error if the instance ID is invalid
-     */
-    validateInstanceId(instanceId) {
-        if (!instanceId || instanceId.length !== 15) {
-            throw new Error("Instance ID must be exactly 15 characters long");
-        }
-        if (!instanceId.startsWith("in_")) {
-            throw new Error("Instance ID must start with 'in_'");
-        }
-    }
-    /**
-     * Replaces all parameters in a path string
-     * @param path - The path template
-     * @param params - Object containing parameter values
-     * @returns The path with replaced parameters
-     */
-    replaceParams(path, params) {
-        let result = path;
-        Object.entries(params).forEach(([key, value]) => {
-            result = result.replace(`{${key}}`, value);
-        });
-        return result;
-    }
 }
 exports.InstanceService = InstanceService;
