@@ -70,8 +70,11 @@ export abstract class BaseService {
     }
   }
 
-  protected async _get<T>(path: string) {
-    return this.request<T>("GET", path);
+  protected async _get<T>(path: string, queryParams?: Record<string, string>) {
+    const queryString = queryParams
+      ? `?${new URLSearchParams(queryParams).toString()}`
+      : "";
+    return this.request<T>("GET", `${path}${queryString}`);
   }
 
   protected async _post<T>(path: string, body: unknown) {

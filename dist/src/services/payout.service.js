@@ -26,9 +26,12 @@ class PayoutService extends base_service_1.BaseService {
      * @returns A promise containing an array of payouts or an error
      * @throws Error if the instance ID is provided and invalid
      */
-    async retrievePayouts(instanceId) {
+    async retrievePayouts(limit, offset, instanceId) {
         const path = this.replaceInstanceId(this.BASE_PATH, instanceId);
-        return this._get(path);
+        return this._get(path, {
+            limit: limit?.toString() ?? "25",
+            offset: offset?.toString() ?? "0",
+        });
     }
     /**
      * Retrieves tracking information for a specific payout using the external tracking endpoint

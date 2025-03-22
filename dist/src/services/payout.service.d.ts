@@ -25,7 +25,7 @@ export declare class PayoutService extends BaseService {
      * @returns A promise containing an array of payouts or an error
      * @throws Error if the instance ID is provided and invalid
      */
-    retrievePayouts(instanceId?: string): Promise<{
+    retrievePayouts(limit?: number, offset?: number, instanceId?: string): Promise<{
         data: Payout[] | null;
         error: ErrorResponse | null;
     }>;

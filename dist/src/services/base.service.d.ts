@@ -9,7 +9,7 @@ export declare abstract class BaseService {
     protected validateInstanceId(instanceId: string): void;
     protected replaceInstanceId(path: string, instanceId?: string): string;
     private request;
-    protected _get<T>(path: string): Promise<{
+    protected _get<T>(path: string, queryParams?: Record<string, string>): Promise<{
         data: T | null;
         error: ErrorResponse | null;
     }>;

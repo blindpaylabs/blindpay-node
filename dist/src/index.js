@@ -28,3 +28,4 @@ __exportStar(require("./types/onboarding-types"), exports);
 __exportStar(require("./types/payout-types"), exports);
 __exportStar(require("./types/quote-types"), exports);
 __exportStar(require("./types/receiver-types"), exports);
+__exportStar(require("./types/payin-quote-types"), exports);
