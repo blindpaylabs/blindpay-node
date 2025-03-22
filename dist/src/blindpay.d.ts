@@ -6,6 +6,7 @@ import { OnboardingService } from "./services/onboarding.service";
 import { PayoutService } from "./services/payout.service";
 import { QuoteService } from "./services/quote.service";
 import { ReceiverService } from "./services/receiver.service";
+import { PayinQuoteService } from "./services/payin-quote.service";
 export declare class Blindpay {
     readonly key: string;
     readonly instanceId?: string | undefined;
@@ -19,5 +20,6 @@ export declare class Blindpay {
     readonly payouts: PayoutService;
     readonly quotes: QuoteService;
     readonly receivers: ReceiverService;
+    readonly payinQuotes: PayinQuoteService;
     constructor(key: string, instanceId?: string | undefined, baseUrl?: string);
 }

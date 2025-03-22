@@ -35,10 +35,15 @@ export class PayoutService extends BaseService {
    * @throws Error if the instance ID is provided and invalid
    */
   async retrievePayouts(
+    limit?: number,
+    offset?: number,
     instanceId?: string
   ): Promise<{ data: Payout[] | null; error: ErrorResponse | null }> {
     const path = this.replaceInstanceId(this.BASE_PATH, instanceId);
-    return this._get<Payout[]>(path);
+    return this._get<Payout[]>(path, {
+      limit: limit?.toString() ?? "25",
+      offset: offset?.toString() ?? "0",
+    });
   }
 
   /**

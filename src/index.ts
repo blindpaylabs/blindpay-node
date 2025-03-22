@@ -11,3 +11,4 @@ export * from "./types/onboarding-types";
 export * from "./types/payout-types";
 export * from "./types/quote-types";
 export * from "./types/receiver-types";
+export * from "./types/payin-quote-types";

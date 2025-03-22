@@ -58,8 +58,11 @@ class BaseService {
             };
         }
     }
-    async _get(path) {
-        return this.request("GET", path);
+    async _get(path, queryParams) {
+        const queryString = queryParams
+            ? `?${new URLSearchParams(queryParams).toString()}`
+            : "";
+        return this.request("GET", `${path}${queryString}`);
     }
     async _post(path, body) {
         return this.request("POST", path, body);

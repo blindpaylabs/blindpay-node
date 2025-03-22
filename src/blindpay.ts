@@ -7,6 +7,7 @@ import { OnboardingService } from "./services/onboarding.service";
 import { PayoutService } from "./services/payout.service";
 import { QuoteService } from "./services/quote.service";
 import { ReceiverService } from "./services/receiver.service";
+import { PayinQuoteService } from "./services/payin-quote.service";
 
 const defaultBaseUrl = "https://api.blindpay.com/v1";
 const defaultUserAgent = `blindpay-sdk:${version}`;
@@ -23,6 +24,7 @@ export class Blindpay {
   readonly payouts: PayoutService;
   readonly quotes: QuoteService;
   readonly receivers: ReceiverService;
+  readonly payinQuotes: PayinQuoteService;
 
   constructor(
     readonly key: string,
@@ -79,6 +81,11 @@ export class Blindpay {
     );
     this.quotes = new QuoteService(this.baseUrl, this.headers, this.instanceId);
     this.receivers = new ReceiverService(
+      this.baseUrl,
+      this.headers,
+      this.instanceId
+    );
+    this.payinQuotes = new PayinQuoteService(
       this.baseUrl,
       this.headers,
       this.instanceId

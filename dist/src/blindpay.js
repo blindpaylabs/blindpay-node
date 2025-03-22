@@ -10,6 +10,7 @@ const onboarding_service_1 = require("./services/onboarding.service");
 const payout_service_1 = require("./services/payout.service");
 const quote_service_1 = require("./services/quote.service");
 const receiver_service_1 = require("./services/receiver.service");
+const payin_quote_service_1 = require("./services/payin-quote.service");
 const defaultBaseUrl = "https://api.blindpay.com/v1";
 const defaultUserAgent = `blindpay-sdk:${package_json_1.version}`;
 class Blindpay {
@@ -25,6 +26,7 @@ class Blindpay {
     payouts;
     quotes;
     receivers;
+    payinQuotes;
     constructor(key, instanceId, baseUrl) {
         this.key = key;
         this.instanceId = instanceId;
@@ -49,6 +51,7 @@ class Blindpay {
         this.payouts = new payout_service_1.PayoutService(this.baseUrl, this.headers, this.instanceId);
         this.quotes = new quote_service_1.QuoteService(this.baseUrl, this.headers, this.instanceId);
         this.receivers = new receiver_service_1.ReceiverService(this.baseUrl, this.headers, this.instanceId);
+        this.payinQuotes = new payin_quote_service_1.PayinQuoteService(this.baseUrl, this.headers, this.instanceId);
     }
 }
 exports.Blindpay = Blindpay;
