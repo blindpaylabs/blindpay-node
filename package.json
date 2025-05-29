@@ -1,9 +1,9 @@
 {
   "name": "blindpay",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Node.js library for the BlindPay API",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && tsc",
     "dev": "tsc --watch --project tsconfig.json",
