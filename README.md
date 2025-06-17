@@ -251,4 +251,4 @@ npm run dev
 
 ## Support
 
-For support, please contact support@blindpay.com or visit our documentation at https://docs.blindpay.com.
+For support, please contact support@blindpay.com or visit our documentation at [https://blindpay.com/docs](https://blindpay.com/docs/getting-started/overview).
