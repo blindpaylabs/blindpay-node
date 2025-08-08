@@ -41,7 +41,6 @@ export class Blindpay {
     }
 
     this.baseUrl = baseUrl || defaultBaseUrl;
-    this.instanceId = instanceId;
 
     this.headers = new Headers({
       Authorization: `Bearer ${this.key}`,
