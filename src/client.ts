@@ -224,18 +224,3 @@ export class Blindpay {
         );
     }
 }
-
-
-
-
-const blindpay = new Blindpay('bl_123456789');
-
-(async function() {
-    await blindpay.payouts.createEvm({
-        instanceId: "in_146Els9MTj5l",
-        quote_id: "qu_146Els9MTj5l",
-        sender_wallet_address: "0x123...890",
-    })
-})();
-
-
