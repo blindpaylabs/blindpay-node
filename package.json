@@ -1,30 +1,64 @@
 {
-  "name": "blindpay",
-  "version": "1.0.7",
-  "description": "Node.js library for the BlindPay API",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
-  "scripts": {
-    "build": "rm -rf dist && tsc",
-    "dev": "tsc --watch --project tsconfig.json",
-    "prepublishOnly": "npm version patch && npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "files": [
-    "dist",
-    "README.md"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/blindpaylabs/blindpay-node.git"
-  },
-  "author": "Gabriel Miranda Lyra",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/blindpaylabs/blindpay-node/issues"
-  },
-  "homepage": "https://github.com/blindpaylabs/blindpay-node#readme",
-  "devDependencies": {
-    "typescript": "^4.9.4"
-  }
+    "name": "@blindpay/node",
+    "version": "1.0.0",
+    "description": "Official Node.js SDK for Blindpay API - Global payments infrastructure",
+    "keywords": [
+        "blindpay",
+        "payments",
+        "api",
+        "sdk",
+        "global-payments",
+        "payment-processing"
+    ],
+    "homepage": "https://github.com/blindpaylabs/blindpay-node",
+    "author": "Blindpay <gabriel@blindpay.com> (https://blindpay.com/)",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/blindpaylabs/blindpay-node.git"
+    },
+    "bugs": "https://github.com/blindpaylabs/blindpay-node/issues",
+    "engines": {
+        "node": ">=18.*"
+    },
+    "main": "dist/index.js",
+    "module": "dist/index.mjs",
+    "types": "dist/index.d.ts",
+    "devDependencies": {
+        "@biomejs/biome": "2.2.2",
+        "@changesets/cli": "2.29.6",
+        "@types/node": ">=12.0.0",
+        "@vitest/coverage-v8": "3.2.4",
+        "tsup": "8.5.0",
+        "typescript": "5.9.2",
+        "vitest": "3.2.4",
+        "vitest-fetch-mock": "0.4.5"
+    },
+    "peerDependencies": {
+        "@types/node": ">=18.x.x"
+    },
+    "peerDependenciesMeta": {
+        "@types/node": {
+            "optional": true
+        }
+    },
+    "license": "MIT",
+    "files": [
+        "dist/**"
+    ],
+    "scripts": {
+        "build": "tsup src/index.ts src/resources/ --format cjs,esm --dts",
+        "lint:check": "biome check .",
+        "lint:fix": "biome check --write .",
+        "test": "vitest run",
+        "test:coverage": "vitest run --coverage",
+        "release": "bun run build && changeset publish"
+    },
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.js"
+        }
+    },
+    "packageManager": "bun@1.2.18"
 }

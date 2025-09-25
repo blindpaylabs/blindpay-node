@@ -1,0 +1,90 @@
+name: Bug Report
+description: Report a bug in the BlindPay Node.js SDK
+labels: ["Type: Bug", "Status: Needs Triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Please provide as much detail as possible to help us resolve the issue quickly.
+
+  - type: textarea
+    attributes:
+      label: Describe the Bug
+      description: A clear and concise description of what the bug is.
+      placeholder: "Example: The payins.createEvm() method throws an unexpected error when..."
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Link to Minimal Reproduction
+      description: |
+        A link to a GitHub repository, CodeSandbox, or similar with a minimal reproduction of the issue.
+        This helps us understand and fix the problem faster.
+      placeholder: "https://github.com/your-username/blindpay-bug-reproduction"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: |
+        Clear steps to reproduce the behavior. Include code snippets if relevant.
+        Make sure syntax highlighting is correct for code blocks.
+
+  - type: textarea
+    attributes:
+      label: ✅ Expected Behavior
+      description: A clear description of what you expected to happen.
+      placeholder: "The method should return a successful response with..."
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: ❌ Actual Behavior
+      description: What actually happened? Include error messages, stack traces, or unexpected responses.
+      placeholder: "Instead, it throws an error: ..."
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: SDK Version
+      description: Which version of the sdk are you using?
+      placeholder: "1.0.0"
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Node.js Version
+      description: What version of Node.js are you running?
+      placeholder: "18.x"
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Operating System
+      description: What OS are you using?
+      placeholder: "macOS 14.0, Ubuntu 22.04, Windows 11, etc."
+
+  - type: textarea
+    attributes:
+      label: Additional Context
+      description: |
+        Add any other context about the problem here. Screenshots, logs, or related issues are helpful.
+      placeholder: "Any additional information that might help us understand the issue..."
+
+  - type: checkboxes
+    attributes:
+      label: Checklist
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have provided a minimal reproduction case
+          required: true
+        - label: I am using a supported Node.js version (>=18.x)
+          required: true
