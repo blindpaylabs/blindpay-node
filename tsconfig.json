@@ -1,14 +1,31 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "CommonJS",
-    "declaration": true,
-    "outDir": "./dist",
-    "strict": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
-  },
-  "include": ["src"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "alwaysStrict": true,
+        "declaration": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "stripInternal": true,
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "noEmit": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "skipLibCheck": true,
+        "outDir": "dist",
+        "resolveJsonModule": true,
+        "strict": true,
+        "target": "es6",
+        "noUncheckedIndexedAccess": false,
+        "noImplicitOverride": true,
+        "useUnknownInCatchVariables": true,
+        "verbatimModuleSyntax": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "incremental": false,
+        "rootDir": "./src",
+        "types": ["vitest/globals"]
+    },
+    "include": ["src"]
 }

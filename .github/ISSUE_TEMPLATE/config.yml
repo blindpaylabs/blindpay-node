@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: BlindPay documentation
+    url: https://api.blindpay.com/reference
+    about: Check our comprehensive API documentation and guides
+  - name: Security issues
+    url: mailto:gabriel@blindpay.com
+    about: Please report security vulnerabilities privately via email
