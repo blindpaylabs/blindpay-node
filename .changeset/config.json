@@ -7,5 +7,6 @@
     "access": "public",
     "baseBranch": "main",
     "updateInternalDependencies": "patch",
-    "ignore": []
+    "ignore": [],
+    "repository": "https://github.com/blindpaylabs/blindpay-node"
 }
