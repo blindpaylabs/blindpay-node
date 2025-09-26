@@ -14,8 +14,8 @@ jobs:
   lint:
     uses: ./.github/workflows/lint.yaml
   tests:
-    needs: lint
+    needs: [lint]
     uses: ./.github/workflows/tests.yaml
   publish:
-    needs: tests
+    needs: [tests]
     uses: ./.github/workflows/publish.yaml
