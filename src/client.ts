@@ -48,7 +48,7 @@ export class Blindpay {
 
     constructor(apiKey: string) {
         if (!apiKey) {
-            throw new BlindpayError("API key not provided");
+            throw new BlindpayError("Api key not provided, get your api key on blindpay dashboard");
         }
 
         this.apiKey = apiKey;
