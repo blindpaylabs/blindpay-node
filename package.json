@@ -1,5 +1,5 @@
 {
-    "name": "blindpay-node",
+    "name": "@blindpay-node",
     "version": "1.0.0",
     "description": "Official Node.js SDK for Blindpay API - Global payments infrastructure",
     "keywords": [
@@ -51,7 +51,7 @@
         "lint:fix": "biome check --write .",
         "test": "vitest run",
         "test:coverage": "vitest run --coverage",
-        "ci:publish": "npm login && npm publish --access public",
+        "ci:publish": "npm publish --access public",
         "ci:version": "changeset version && bun install --no-frozen-lockfile"
     },
     "exports": {
