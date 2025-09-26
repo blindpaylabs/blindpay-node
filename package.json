@@ -51,7 +51,7 @@
         "lint:fix": "biome check --write .",
         "test": "vitest run",
         "test:coverage": "vitest run --coverage",
-        "ci:publish": "bun publish -r --access public",
+        "ci:publish": "bun publish --access public",
         "ci:version": "changeset version && bun install --no-frozen-lockfile"
     },
     "exports": {
