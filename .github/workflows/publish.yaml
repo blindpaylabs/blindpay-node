@@ -19,6 +19,7 @@ jobs:
         with:
           # fetch all git history so that changesets can generate changelogs with the correct commits
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -33,6 +34,12 @@ jobs:
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "gabriel@blindpay.com"
+          git config --global user.name "Blindpay Bot"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
 
       - name: Publish to npm
         id: changesets
