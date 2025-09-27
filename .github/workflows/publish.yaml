@@ -36,6 +36,16 @@ jobs:
 
       - name: Build package
         run: bun run build
+
+      - name: Debug npm authentication
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          echo "Testing npm authentication..."
+          npm whoami || echo "Authentication failed"
+          echo "Token length: ${#NPM_TOKEN}"
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1
