@@ -40,24 +40,6 @@ jobs:
       - name: Build package
         run: bun run build
 
-      - name: Debug npm authentication
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-          echo "Testing npm authentication..."
-          npm whoami || echo "Authentication failed"
-          echo "Token length: ${#NPM_TOKEN}"
+      - run: npm publish --provenance --access public
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Create Release Pull Request or Publish
-        id: changesets
-        uses: changesets/action@v1
-        with:
-          version: bun ci:version
-          commit: 'chore: update versions'
-          title: 'Release plan'
-          publish: bun ci:publish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
