@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { Blindpay } from "../../client";
+import { BlindPay } from "../../client";
 
 describe("Instances", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new Blindpay("test-key");
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     describe("Get instance members", () => {
         it("should get instance members", async () => {
@@ -25,9 +25,7 @@ describe("Instances", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.instances.getMembers({
-                instanceId: "in_000000000000",
-            });
+            const { data, error } = await blindpay.instances.getMembers();
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedMembers);
@@ -41,7 +39,6 @@ describe("Instances", () => {
             });
 
             const { data, error } = await blindpay.instances.update({
-                instanceId: "in_000000000000",
                 name: "New Instance Name",
             });
 
@@ -56,9 +53,7 @@ describe("Instances", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.instances.delete({
-                instanceId: "in_000000000000",
-            });
+            const { data, error } = await blindpay.instances.delete();
 
             expect(error).toBeNull();
             expect(data).toEqual({ data: null });
@@ -71,10 +66,7 @@ describe("Instances", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.instances.deleteMember({
-                instanceId: "in_000000000000",
-                id: "us_000000000000",
-            });
+            const { data, error } = await blindpay.instances.deleteMember("us_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual({ data: null });
@@ -88,8 +80,7 @@ describe("Instances", () => {
             });
 
             const { data, error } = await blindpay.instances.updateMemberRole({
-                instanceId: "in_000000000000",
-                id: "us_000000000000",
+                memberId: "us_000000000000",
                 role: "checker",
             });
 

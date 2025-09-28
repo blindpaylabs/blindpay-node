@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { Blindpay } from "../../client";
+import { BlindPay } from "../../client";
 import type {
     CreateBlockchainWalletResponse,
     GetBlockchainWalletResponse,
@@ -9,7 +9,7 @@ import type {
 describe("Blockchain wallets", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new Blindpay("test-key");
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     describe("Get blockchain wallet message", () => {
         it("should get blockchain wallet message", async () => {
@@ -19,10 +19,8 @@ describe("Blockchain wallets", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.wallets.blockchain.getWalletMessage({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
-            });
+            const { data, error } =
+                await blindpay.wallets.blockchain.getWalletMessage("re_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedMessage);
@@ -47,10 +45,7 @@ describe("Blockchain wallets", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.wallets.blockchain.list({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
-            });
+            const { data, error } = await blindpay.wallets.blockchain.list("re_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedWallets);
@@ -74,8 +69,7 @@ describe("Blockchain wallets", () => {
             });
 
             const { data, error } = await blindpay.wallets.blockchain.create({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
+                receiver_id: "re_000000000000",
                 name: "Wallet Display Name",
                 network: "polygon",
                 address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
@@ -103,8 +97,7 @@ describe("Blockchain wallets", () => {
             });
 
             const { data, error } = await blindpay.wallets.blockchain.get({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
+                receiver_id: "re_000000000000",
                 id: "bw_000000000000",
             });
 
@@ -120,8 +113,7 @@ describe("Blockchain wallets", () => {
             });
 
             const { data, error } = await blindpay.wallets.blockchain.delete({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
+                receiver_id: "re_000000000000",
                 id: "bw_000000000000",
             });
 

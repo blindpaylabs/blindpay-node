@@ -14,14 +14,17 @@ pnpm add @blindpay/node
 bun add @blindpay/node
 ```
 
-## 🔑 Authentication
+## Authentication
 
-Get your API key from the Blindpay (https://app.blindpay.com/instances/{instanceId}/api-keys) and initialize the client:
+To get started, you will need both your API key and your instance id, you can obtain your API key and instance id from the Blindpay dashboard [https://app.blindpay.com/instances/{instanceId}/api-keys](https://app.blindpay.com/instances/{instanceId}/api-keys)
 
 ```typescript
-import { Blindpay } from '@blindpay/node';
+import { BlindPay } from '@blindpay/node';x
 
-const blindpay = new Blindpay('your-api-key-here');
+const blindpay = new BlindPay({
+    apiKey: 'your-api-key-here',
+    instanceId: 'your-instance-id-here'
+  });
 ```
 
 ## Quick Start
@@ -30,8 +33,11 @@ const blindpay = new Blindpay('your-api-key-here');
 
 ```typescript
 async function getAvailableRails() {
-    const blindpay = new Blindpay("your-api-key");
-    
+    const blindpay = new BlindPay({
+      apiKey: 'your-api-key-here',
+      instanceId: 'your-instance-id-here'
+    });
+
     const { data, error } = await blindpay.available.getRails();
     
     if (error) {
@@ -44,29 +50,11 @@ async function getAvailableRails() {
  getAvailableRails()
 ```
 
-## Response Format
+## Response format
 
-All API methods return a consistent response format:
+All API methods return a consistent response format
 
-```typescript
-export type BlindpayApiResponse<T> = BlindpayErrorResponse | BlindpaySuccessResponse<T>
-
-export type ErrorResponse = {
-    message: string;
-}
-
-export type BlindpayErrorResponse = {
-    data: null
-    error: ErrorResponse;
-}
-
-export type BlindpaySuccessResponse<T> = {
-    data: T;
-    error: null;
-}
-```
-
-### Success Response
+### Success response
 
 ```typescript
 {
@@ -75,7 +63,7 @@ export type BlindpaySuccessResponse<T> = {
 }
 ```
 
-### Error Response
+### Error response
 
 ```typescript
 {
@@ -86,9 +74,9 @@ export type BlindpaySuccessResponse<T> = {
 }
 ```
 
-## Error Handling
+## Error handling
 
-The SDK uses a consistent error handling pattern. Always check for errors:
+This SDK uses a consistent error handling pattern. Always check for errors:
 
 ```typescript
 const { data, error } = await blindpay.payins.list({
@@ -108,16 +96,12 @@ For detailed API documentation, visit:
 - [Blindpay API documentation](https://blindpay.com/docs/getting-started/overview)
 - [API Reference](https://api.blindpay.com/reference)
 
-## 🆘 Support
+## Support
 
 - 📧 Email: [gabriel@blindpay.com](mailto:gabriel@blindpay.com)
-- 🐛 Issues: [GitHub Issues](https://github.com/blindpaylabs/node/issues)
+- 🐛 Issues: [GitHub Issues](https://github.com/blindpaylabs/blindpay-node/issues)
 
-## 🏷️ Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for a list of changes and version history.
-
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 

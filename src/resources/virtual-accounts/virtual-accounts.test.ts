@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { Blindpay } from "../../client";
+import { BlindPay } from "../../client";
 import type { CreateVirtualAccountResponse, GetVirtualAccountResponse } from "./index";
 
 describe("Virtual accounts", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new Blindpay("test-key");
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     describe("Update virtual account", () => {
         it("should update a virtual account", async () => {
@@ -14,8 +14,7 @@ describe("Virtual accounts", () => {
             });
 
             const { data, error } = await blindpay.virtualAccounts.update({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
+                receiver_id: "re_000000000000",
                 blockchain_wallet_id: "bw_000000000000",
                 token: "USDC",
             });
@@ -64,8 +63,7 @@ describe("Virtual accounts", () => {
             });
 
             const { data, error } = await blindpay.virtualAccounts.create({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
+                receiver_id: "re_000000000000",
                 blockchain_wallet_id: "bw_000000000000",
                 token: "USDC",
             });
@@ -113,10 +111,7 @@ describe("Virtual accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.virtualAccounts.get({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
-            });
+            const { data, error } = await blindpay.virtualAccounts.get("re_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedVirtualAccount);

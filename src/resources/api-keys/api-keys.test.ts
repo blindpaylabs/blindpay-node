@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { Blindpay } from "../../client";
+import { BlindPay } from "../../client";
 import type { CreateApiKeyResponse, GetApiKeyResponse, ListApiKeysResponse } from ".";
 
 describe("Api keys", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new Blindpay("test-key");
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     describe("Create api key", () => {
         it("should create an api key", async () => {
@@ -19,7 +19,6 @@ describe("Api keys", () => {
             });
 
             const { data, error } = await blindpay.instances.apiKeys.create({
-                instanceId: "in_000000000000",
                 name: "test",
                 permission: "full_access",
             });
@@ -48,10 +47,7 @@ describe("Api keys", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.instances.apiKeys.get({
-                instanceId: "in_000000000000",
-                id: "ap_000000000000",
-            });
+            const { data, error } = await blindpay.instances.apiKeys.get("ap_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedApiKey);
@@ -79,9 +75,7 @@ describe("Api keys", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.instances.apiKeys.list({
-                instanceId: "in_000000000000",
-            });
+            const { data, error } = await blindpay.instances.apiKeys.list();
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedApiKeys);
@@ -99,10 +93,7 @@ describe("Api keys", () => {
                 }
             );
 
-            const { data, error } = await blindpay.instances.apiKeys.delete({
-                instanceId: "in_000000000000",
-                id: "ap_000000000000",
-            });
+            const { data, error } = await blindpay.instances.apiKeys.delete("ap_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual({

@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { Blindpay } from "../../client";
+import { BlindPay } from "../../client";
 import type { CreateWebhookEndpointResponse, ListWebhookEndpointsResponse } from "./index";
 
 describe("Webhooks", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new Blindpay("test-key");
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     describe("Create webhook endpoint", () => {
         it("should create a webhook endpoint", async () => {
@@ -17,7 +17,6 @@ describe("Webhooks", () => {
             });
 
             const { data, error } = await blindpay.instances.webhookEndpoints.create({
-                instanceId: "in_000000000000",
                 url: "https://example.com/webhook",
                 events: ["receiver.new"],
             });
@@ -44,9 +43,7 @@ describe("Webhooks", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.instances.webhookEndpoints.list({
-                instanceId: "in_000000000000",
-            });
+            const { data, error } = await blindpay.instances.webhookEndpoints.list();
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedWebhookEndpoints);
@@ -60,10 +57,8 @@ describe("Webhooks", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.instances.webhookEndpoints.delete({
-                instanceId: "in_000000000000",
-                id: "we_000000000000",
-            });
+            const { data, error } =
+                await blindpay.instances.webhookEndpoints.delete("we_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedResponse);
@@ -77,10 +72,8 @@ describe("Webhooks", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.instances.webhookEndpoints.getSecret({
-                instanceId: "in_000000000000",
-                id: "we_000000000000",
-            });
+            const { data, error } =
+                await blindpay.instances.webhookEndpoints.getSecret("we_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedWebhookSecret);
@@ -95,9 +88,7 @@ describe("Webhooks", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.instances.webhookEndpoints.getPortalAccessUrl({
-                instanceId: "in_000000000000",
-            });
+            const { data, error } = await blindpay.instances.webhookEndpoints.getPortalAccessUrl();
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedWebhookUrl);

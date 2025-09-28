@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { Blindpay } from "../../client";
+import { BlindPay } from "../../client";
 
 describe("Offramp wallets", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new Blindpay("test-key");
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     describe("List offramp wallets", () => {
         it("should list offramp wallets", async () => {
@@ -27,9 +27,8 @@ describe("Offramp wallets", () => {
             });
 
             const { data, error } = await blindpay.wallets.offramp.list({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
-                bankAccountId: "ba_000000000000",
+                receiver_id: "re_000000000000",
+                bank_account_id: "ba_000000000000",
             });
 
             expect(error).toBeNull();
@@ -51,11 +50,10 @@ describe("Offramp wallets", () => {
             });
 
             const { data, error } = await blindpay.wallets.offramp.create({
-                instanceId: "in_000000000000",
                 external_id: "your_external_id",
                 network: "tron",
-                receiverId: "re_000000000000",
-                bankAccountId: "ba_000000000000",
+                receiver_id: "re_000000000000",
+                bank_account_id: "ba_000000000000",
             });
 
             expect(error).toBeNull();
@@ -82,10 +80,9 @@ describe("Offramp wallets", () => {
             });
 
             const { data, error } = await blindpay.wallets.offramp.get({
-                instanceId: "in_000000000000",
                 id: "ow_000000000000",
-                bankAccountId: "ba_000000000000",
-                receiverId: "re_000000000000",
+                bank_account_id: "ba_000000000000",
+                receiver_id: "re_000000000000",
             });
 
             expect(error).toBeNull();
