@@ -1,10 +1,6 @@
 import type { BlindpayApiResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
-export type ListPartnerFeesInput = {
-    instanceId: string;
-};
-
 export type ListPartnerFeesResponse = Array<{
     id: string;
     instance_id: string;
@@ -18,7 +14,6 @@ export type ListPartnerFeesResponse = Array<{
 }>;
 
 export type CreatePartnerFeeInput = {
-    instanceId: string;
     virtual_account_set?: boolean | null;
     evm_wallet_address: string;
     name: string;
@@ -41,10 +36,7 @@ export type CreatePartnerFeeResponse = {
     stellar_wallet_address?: string;
 };
 
-export type GetPartnerFeeInput = {
-    instanceId: string;
-    id: string;
-};
+export type GetPartnerFeeInput = string;
 
 export type GetPartnerFeeResponse = {
     id: string;
@@ -58,31 +50,22 @@ export type GetPartnerFeeResponse = {
     stellar_wallet_address?: string | null;
 };
 
-export type DeletePartnerFeeInput = {
-    instanceId: string;
-    id: string;
-};
+export type DeletePartnerFeeInput = string;
 
-export function createPartnerFeesResource(client: InternalApiClient) {
+export function createPartnerFeesResource(instanceId: string, client: InternalApiClient) {
     return {
-        list({
-            instanceId,
-        }: ListPartnerFeesInput): Promise<BlindpayApiResponse<ListPartnerFeesResponse>> {
+        list(): Promise<BlindpayApiResponse<ListPartnerFeesResponse>> {
             return client.get(`/instances/${instanceId}/partner-fees`);
         },
         create({
-            instanceId,
             ...data
         }: CreatePartnerFeeInput): Promise<BlindpayApiResponse<CreatePartnerFeeResponse>> {
             return client.post(`/instances/${instanceId}/partner-fees`, data);
         },
-        get({
-            instanceId,
-            id,
-        }: GetPartnerFeeInput): Promise<BlindpayApiResponse<GetPartnerFeeResponse>> {
+        get(id: GetPartnerFeeInput): Promise<BlindpayApiResponse<GetPartnerFeeResponse>> {
             return client.get(`/instances/${instanceId}/partner-fees/${id}`);
         },
-        delete({ instanceId, id }: DeletePartnerFeeInput): Promise<BlindpayApiResponse<void>> {
+        delete(id: DeletePartnerFeeInput): Promise<BlindpayApiResponse<void>> {
             return client.delete(`/instances/${instanceId}/partner-fees/${id}`);
         },
     };

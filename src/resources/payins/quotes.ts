@@ -2,7 +2,6 @@ import type { BlindpayApiResponse, Currency, CurrencyType, StablecoinToken } fro
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type CreatePayinQuoteInput = {
-    instanceId: string;
     blockchain_wallet_id: string;
     currency_type: CurrencyType;
     payment_method: "ach" | "wire" | "pix" | "spei";
@@ -27,7 +26,6 @@ export type CreatePayinQuoteResponse = {
 };
 
 export type GetPayinFxRateInput = {
-    instanceId: string;
     currency_type: CurrencyType;
     from: Currency;
     to: Currency;
@@ -42,16 +40,14 @@ export type GetPayinFxRateResponse = {
     instance_percentage_fee: number;
 };
 
-export function createPayinQuotesResource(client: InternalApiClient) {
+export function createPayinQuotesResource(instanceId: string, client: InternalApiClient) {
     return {
         create({
-            instanceId,
             ...data
         }: CreatePayinQuoteInput): Promise<BlindpayApiResponse<CreatePayinQuoteResponse>> {
             return client.post(`/instances/${instanceId}/payin-quotes`, data);
         },
         getFxRate({
-            instanceId,
             ...data
         }: GetPayinFxRateInput): Promise<BlindpayApiResponse<GetPayinFxRateResponse>> {
             return client.post(`/instances/${instanceId}/payin-quotes/fx`, data);

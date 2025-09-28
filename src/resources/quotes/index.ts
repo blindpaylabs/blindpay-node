@@ -9,7 +9,6 @@ import type {
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type CreateQuoteInput = {
-    instanceId: string;
     bank_account_id: string;
     currency_type: CurrencyType;
     network?: Network | null;
@@ -47,7 +46,6 @@ export type CreateQuoteResponse = {
 };
 
 export type GetFxRateInput = {
-    instanceId: string;
     currency_type: CurrencyType;
     from: Currency;
     to: Currency;
@@ -62,19 +60,13 @@ export type GetFxRateResponse = {
     instance_percentage_fee: number;
 };
 
-export function createQuotesResource(client: InternalApiClient) {
+export function createQuotesResource(instanceId: string, client: InternalApiClient) {
     return {
-        create({
-            instanceId,
-            ...data
-        }: CreateQuoteInput): Promise<BlindpayApiResponse<CreateQuoteResponse>> {
+        create({ ...data }: CreateQuoteInput): Promise<BlindpayApiResponse<CreateQuoteResponse>> {
             return client.post(`/instances/${instanceId}/quotes`, data);
         },
 
-        getFxRate({
-            instanceId,
-            ...data
-        }: GetFxRateInput): Promise<BlindpayApiResponse<GetFxRateResponse>> {
+        getFxRate({ ...data }: GetFxRateInput): Promise<BlindpayApiResponse<GetFxRateResponse>> {
             return client.post(`/instances/${instanceId}/quotes/fx`, data);
         },
     };

@@ -50,9 +50,7 @@
         "lint:check": "biome check .",
         "lint:fix": "biome check --write .",
         "test": "vitest run",
-        "test:coverage": "vitest run --coverage",
-        "ci:publish": "npm publish --access public",
-        "ci:version": "changeset version && bun install --no-frozen-lockfile"
+        "test:coverage": "vitest run --coverage"
     },
     "exports": {
         ".": {

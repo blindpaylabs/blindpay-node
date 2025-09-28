@@ -7,18 +7,27 @@ export type ProofOfAddressDocType =
     | "RENTAL_AGREEMENT"
     | "TAX_DOCUMENT"
     | "GOVERNMENT_CORRESPONDENCE";
+
 export type PurposeOfTransactions =
     | "business_transactions"
     | "charitable_donations"
     | "investment_purposes"
     | "payments_to_friends_or_family_abroad"
     | "personal_or_living_expenses";
+
 export type SourceOfFundsDocType =
     | "business_income"
     | "gambling_proceeds"
     | "gifts"
     | "government_benefits"
-    | "inheritance";
+    | "inheritance"
+    | "investment_loans"
+    | "pension_retirement"
+    | "salary"
+    | "sale_of_assets_real_estate"
+    | "savings"
+    | "esops"
+    | "investment_proceeds";
 
 export type IdentificationDocument = "PASSPORT" | "ID_CARD" | "DRIVERS";
 
@@ -118,15 +127,9 @@ export type Receiver = {
     };
 };
 
-export type ListReceiversInput = {
-    instanceId: string;
-};
-
 export type ListReceiversResponse = Receiver[];
 
 export type CreateReceiverInput = {
-    instanceId: string;
-
     country: Country;
     kyc_type: KycType;
     type: AccountClass;
@@ -169,17 +172,12 @@ export type CreateReceiverResponse = {
     id: string;
 };
 
-export type GetReceiverInput = {
-    instanceId: string;
-    id: string;
-};
+export type GetReceiverInput = string;
 
 export type GetReceiverResponse = Receiver;
 
 export type UpdateReceiverInput = {
-    instanceId: string;
-    id: string;
-
+    receiver_id: string;
     email?: string;
     tax_id?: string;
     address_line_1?: string;
@@ -235,15 +233,9 @@ export type UpdateReceiverInput = {
     tos_id?: string;
 };
 
-export type DeleteReceiverInput = {
-    instanceId: string;
-    id: string;
-};
+export type DeleteReceiverInput = string;
 
-export type GetReceiverLimitsInput = {
-    instanceId: string;
-    id: string;
-};
+export type GetReceiverLimitsInput = string;
 
 export type GetReceiverLimitsResponse = {
     limits: {
@@ -258,40 +250,29 @@ export type GetReceiverLimitsResponse = {
     };
 };
 
-export function createReceiversResource(client: InternalApiClient) {
+export function createReceiversResource(instanceId: string, client: InternalApiClient) {
     return {
-        list({
-            instanceId,
-        }: ListReceiversInput): Promise<BlindpayApiResponse<ListReceiversResponse>> {
+        list(): Promise<BlindpayApiResponse<ListReceiversResponse>> {
             return client.get(`/instances/${instanceId}/receivers`);
         },
         create({
-            instanceId,
             ...data
         }: CreateReceiverInput): Promise<BlindpayApiResponse<CreateReceiverResponse>> {
             return client.post(`/instances/${instanceId}/receivers`, data);
         },
-        get({
-            instanceId,
-            id,
-        }: GetReceiverInput): Promise<BlindpayApiResponse<GetReceiverResponse>> {
-            return client.get(`/instances/${instanceId}/receivers/${id}`);
+        get(receiver_id: GetReceiverInput): Promise<BlindpayApiResponse<GetReceiverResponse>> {
+            return client.get(`/instances/${instanceId}/receivers/${receiver_id}`);
         },
-        update({
-            instanceId,
-            id,
-            ...data
-        }: UpdateReceiverInput): Promise<BlindpayApiResponse<void>> {
-            return client.patch(`/instances/${instanceId}/receivers/${id}`, data);
+        update({ receiver_id, ...data }: UpdateReceiverInput): Promise<BlindpayApiResponse<void>> {
+            return client.patch(`/instances/${instanceId}/receivers/${receiver_id}`, data);
         },
-        delete({ instanceId, id }: DeleteReceiverInput): Promise<BlindpayApiResponse<void>> {
-            return client.delete(`/instances/${instanceId}/receivers/${id}`);
+        delete(receiver_id: DeleteReceiverInput): Promise<BlindpayApiResponse<void>> {
+            return client.delete(`/instances/${instanceId}/receivers/${receiver_id}`);
         },
-        getLimits({
-            instanceId,
-            id,
-        }: GetReceiverLimitsInput): Promise<BlindpayApiResponse<GetReceiverLimitsResponse>> {
-            return client.get(`/instances/${instanceId}/limits/receivers/${id}`);
+        getLimits(
+            receiver_id: GetReceiverLimitsInput
+        ): Promise<BlindpayApiResponse<GetReceiverLimitsResponse>> {
+            return client.get(`/instances/${instanceId}/limits/receivers/${receiver_id}`);
         },
     };
 }
