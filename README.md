@@ -24,8 +24,11 @@ import { BlindPay } from '@blindpay/node';x
 const blindpay = new BlindPay({
     apiKey: 'your-api-key-here',
     instanceId: 'your-instance-id-here'
-  });
+  })
 ```
+
+> [!NOTE]  
+> All api calls are going to use the provided api key and instance id
 
 ## Quick Start
 
