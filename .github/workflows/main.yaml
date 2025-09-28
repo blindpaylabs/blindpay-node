@@ -16,8 +16,3 @@ jobs:
   tests:
     needs: lint
     uses: ./.github/workflows/tests.yaml
-  publish:
-    needs: tests
-    uses: ./.github/workflows/publish.yaml
-    secrets:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
