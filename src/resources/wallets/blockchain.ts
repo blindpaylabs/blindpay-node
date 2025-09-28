@@ -19,14 +19,19 @@ export type ListBlockchainWalletsResponse = Array<{
     receiver_id: string;
 }>;
 
-export type CreateBlockchainWalletInput = {
+export type CreateBlockchainWalletWithAddressInput = {
     receiver_id: string;
     name: string;
     network: Network;
     address: string;
-    is_account_abstraction?: boolean;
-    signature_tx_hash?: string;
-};
+} 
+
+export type CreateBlockchainWalletWithHashInput = {
+    receiver_id: string;
+    name: string;
+    network: Network;
+    signature_tx_hash: string;
+}
 
 export type GetBlockchainWalletInput = {
     receiver_id: string;
@@ -79,15 +84,32 @@ export function createBlockchainWalletsResource(instanceId: string, client: Inte
                 `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets`
             );
         },
-        create({
+        createWithAddress({
             receiver_id,
             ...data
-        }: CreateBlockchainWalletInput): Promise<
+        }: CreateBlockchainWalletWithAddressInput): Promise<
             BlindpayApiResponse<CreateBlockchainWalletResponse>
         > {
             return client.post(
                 `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets`,
-                data
+                {
+                    ...data,
+                    is_account_abstraction: true
+                }
+            );
+        },
+        createWithHash({
+            receiver_id,
+            ...data
+        }: CreateBlockchainWalletWithHashInput): Promise<
+            BlindpayApiResponse<CreateBlockchainWalletResponse>
+        > {
+            return client.post(
+                `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets`,
+                {
+                    ...data,
+                    is_account_abstraction: false
+                }
             );
         },
         getWalletMessage(

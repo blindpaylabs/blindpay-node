@@ -77,7 +77,7 @@ export type Payin = {
 
 export type ListPayinsInput = PaginationParams & {
     status?: TransactionStatus;
-    receiver_id?: Network;
+    receiver_id?: string;
 };
 
 export type ListPayinsResponse = {

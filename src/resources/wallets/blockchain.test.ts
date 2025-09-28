@@ -52,8 +52,36 @@ describe("Blockchain wallets", () => {
         });
     });
 
-    describe("Create blockchain wallet", () => {
-        it("should create a blockchain wallet", async () => {
+    describe("Create blockchain wallet with address", () => {
+        it("should create a blockchain wallet with address (account abstraction)", async () => {
+            const mockedWallet: CreateBlockchainWalletResponse = {
+                id: "bw_000000000000",
+                name: "Wallet Display Name",
+                network: "polygon",
+                address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+                signature_tx_hash: undefined,
+                is_account_abstraction: true,
+                receiver_id: "re_000000000000",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedWallet), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.wallets.blockchain.createWithAddress({
+                receiver_id: "re_000000000000",
+                name: "Wallet Display Name",
+                network: "polygon",
+                address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedWallet);
+        });
+    });
+
+    describe("Create blockchain wallet with hash", () => {
+        it("should create a blockchain wallet with hash (without account abstraction)", async () => {
             const mockedWallet: CreateBlockchainWalletResponse = {
                 id: "bw_000000000000",
                 name: "Wallet Display Name",
@@ -68,11 +96,11 @@ describe("Blockchain wallets", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.wallets.blockchain.create({
+            const { data, error } = await blindpay.wallets.blockchain.createWithHash({
                 receiver_id: "re_000000000000",
                 name: "Wallet Display Name",
                 network: "polygon",
-                address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+                signature_tx_hash: "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
             });
 
             expect(error).toBeNull();
