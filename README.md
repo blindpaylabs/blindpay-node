@@ -82,9 +82,7 @@ All API methods return a consistent response format
 This SDK uses a consistent error handling pattern. Always check for errors:
 
 ```typescript
-const { data, error } = await blindpay.payins.list({
-    instanceId: "your-instance-id",
-});
+const { data, error } = await blindpay.payins.list();
 
 if (error) {
   // Handle error
