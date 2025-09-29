@@ -19,7 +19,7 @@ bun add @blindpay/node
 To get started, you will need both your API key and your instance id, you can obtain your API key and instance id from the Blindpay dashboard [https://app.blindpay.com/instances/{instanceId}/api-keys](https://app.blindpay.com/instances/{instanceId}/api-keys)
 
 ```typescript
-import { BlindPay } from '@blindpay/node';x
+import { BlindPay } from '@blindpay/node';
 
 const blindpay = new BlindPay({
     apiKey: 'your-api-key-here',
