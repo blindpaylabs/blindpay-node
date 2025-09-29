@@ -24,14 +24,14 @@ export type CreateBlockchainWalletWithAddressInput = {
     name: string;
     network: Network;
     address: string;
-} 
+};
 
 export type CreateBlockchainWalletWithHashInput = {
     receiver_id: string;
     name: string;
     network: Network;
     signature_tx_hash: string;
-}
+};
 
 export type GetBlockchainWalletInput = {
     receiver_id: string;
@@ -94,7 +94,7 @@ export function createBlockchainWalletsResource(instanceId: string, client: Inte
                 `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets`,
                 {
                     ...data,
-                    is_account_abstraction: true
+                    is_account_abstraction: true,
                 }
             );
         },
@@ -108,7 +108,7 @@ export function createBlockchainWalletsResource(instanceId: string, client: Inte
                 `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets`,
                 {
                     ...data,
-                    is_account_abstraction: false
+                    is_account_abstraction: false,
                 }
             );
         },
