@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { Blindpay } from "../../client";
+import { BlindPay } from "../../client";
 import type { CreateQuoteResponse, GetFxRateResponse } from "./index";
 
 describe("Quotes", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new Blindpay("test-key");
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     describe("Create quote", () => {
         it("should create a quote", async () => {
@@ -38,7 +38,6 @@ describe("Quotes", () => {
             });
 
             const { data, error } = await blindpay.quotes.create({
-                instanceId: "in_000000000000",
                 bank_account_id: "ba_000000000000",
                 currency_type: "sender",
                 network: "sepolia",
@@ -72,7 +71,6 @@ describe("Quotes", () => {
             });
 
             const { data, error } = await blindpay.quotes.getFxRate({
-                instanceId: "in_000000000000",
                 currency_type: "sender",
                 from: "USD",
                 to: "BRL",

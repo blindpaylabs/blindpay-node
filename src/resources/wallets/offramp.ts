@@ -14,18 +14,15 @@ export type OfframpWallet = {
 };
 
 export type ListOfframpWalletsInput = {
-    instanceId: string;
-    receiverId: string;
-    bankAccountId: string;
+    receiver_id: string;
+    bank_account_id: string;
 };
 
 export type ListOfframpWalletsResponse = OfframpWallet[];
 
 export type CreateOfframpWalletInput = {
-    receiverId: string;
-    instanceId: string;
-    bankAccountId: string;
-
+    receiver_id: string;
+    bank_account_id: string;
     external_id: string;
     network: "tron";
 };
@@ -38,40 +35,40 @@ export type CreateOfframpWalletResponse = {
 };
 
 export type GetOfframpWalletInput = {
-    receiverId: string;
-    instanceId: string;
-    bankAccountId: string;
+    receiver_id: string;
+    bank_account_id: string;
     id: string;
 };
 
 export type GetOfframpWalletResponse = OfframpWallet;
 
-export function createOfframpWalletsResource(client: InternalApiClient) {
+export function createOfframpWalletsResource(instanceId: string, client: InternalApiClient) {
     return {
         list({
-            instanceId,
+            bank_account_id,
+            receiver_id,
         }: ListOfframpWalletsInput): Promise<BlindpayApiResponse<ListOfframpWalletsResponse>> {
-            return client.get(`/instances/${instanceId}/offramp_wallets`);
+            return client.get(
+                `/instances/${instanceId}/receivers/${receiver_id}/bank-accounts/${bank_account_id}/offramp-wallets`
+            );
         },
         create({
-            receiverId,
-            instanceId,
-            bankAccountId,
+            receiver_id,
+            bank_account_id,
             ...data
         }: CreateOfframpWalletInput): Promise<BlindpayApiResponse<CreateOfframpWalletResponse>> {
             return client.post(
-                `/instances/${instanceId}/receivers/${receiverId}/bank-accounts/${bankAccountId}/offramp_wallets`,
+                `/instances/${instanceId}/receivers/${receiver_id}/bank-accounts/${bank_account_id}/offramp-wallets`,
                 data
             );
         },
         get({
-            receiverId,
-            instanceId,
-            bankAccountId,
+            receiver_id,
+            bank_account_id,
             id,
         }: GetOfframpWalletInput): Promise<BlindpayApiResponse<GetOfframpWalletResponse>> {
             return client.get(
-                `/instances/${instanceId}/receivers/${receiverId}/bank-accounts/${bankAccountId}/offramp_wallets/${id}`
+                `/instances/${instanceId}/receivers/${receiver_id}/bank-accounts/${bank_account_id}/offramp-wallets/${id}`
             );
         },
     };

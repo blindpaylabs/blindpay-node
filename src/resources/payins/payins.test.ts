@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { Blindpay } from "../../client";
+import { BlindPay } from "../../client";
 import type {
     CreateEvmPayinResponse,
     ExportPayinsResponse,
@@ -11,7 +11,7 @@ import type {
 describe("Payins", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new Blindpay("test-key");
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     describe("List payins", () => {
         it("should list payins", async () => {
@@ -113,9 +113,7 @@ describe("Payins", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.payins.list({
-                instanceId: "in_000000000000",
-            });
+            const { data, error } = await blindpay.payins.list();
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedPayins);
@@ -213,10 +211,7 @@ describe("Payins", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.payins.get({
-                instanceId: "in_000000000000",
-                id: "pi_000000000000",
-            });
+            const { data, error } = await blindpay.payins.get("pi_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedPayin);
@@ -317,9 +312,7 @@ describe("Payins", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.payins.getTrack({
-                id: "pi_000000000000",
-            });
+            const { data, error } = await blindpay.payins.getTrack("pi_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedPayinTrack);
@@ -420,8 +413,7 @@ describe("Payins", () => {
             });
 
             const { data, error } = await blindpay.payins.export({
-                instanceId: "in_000000000000",
-                params: { status: "processing" },
+                status: "processing",
             });
 
             expect(error).toBeNull();
@@ -499,10 +491,7 @@ describe("Payins", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.payins.createEvm({
-                instanceId: "in_000000000000",
-                payin_quote_id: "pq_000000000000",
-            });
+            const { data, error } = await blindpay.payins.createEvm("pq_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedEvmPayin);

@@ -2,7 +2,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { version } from "../package.json";
 import type { BlindpayApiResponse } from "../types";
 import type { InternalApiClient } from "./internal/api-client";
-import { BlindpayError } from "./internal/blindpay-error";
+import { BlindPayError } from "./internal/blindpay-error";
 import { createApiKeysResource } from "./resources/api-keys";
 import { createAvailableResource } from "./resources/available";
 import { createBankAccountsResource } from "./resources/bank-accounts";
@@ -18,11 +18,12 @@ import { createBlockchainWalletsResource } from "./resources/wallets/blockchain"
 import { createOfframpWalletsResource } from "./resources/wallets/offramp";
 import { createWebhookEndpointsResource } from "./resources/webhooks";
 
-export class Blindpay {
+export class BlindPay {
     // Options
     private readonly baseUrl = "https://api.blindpay.com/v1";
     private readonly headers: Record<string, string>;
     private readonly apiKey: string;
+    private readonly instanceId: string;
     private readonly api: InternalApiClient;
 
     // Resources
@@ -46,12 +47,25 @@ export class Blindpay {
         offramp: ReturnType<typeof createOfframpWalletsResource>;
     };
 
-    constructor(apiKey: string) {
+    constructor({
+        apiKey,
+        instanceId,
+    }: {
+        apiKey: string;
+        instanceId: string;
+    }) {
         if (!apiKey) {
-            throw new BlindpayError("Api key not provided, get your api key on blindpay dashboard");
+            throw new BlindPayError("Api key not provided, get your api key on blindpay dashboard");
+        }
+
+        if (!instanceId) {
+            throw new BlindPayError(
+                "Instance id not provided, get your instance id on blindpay dashboard"
+            );
         }
 
         this.apiKey = apiKey;
+        this.instanceId = instanceId;
 
         this.headers = {
             "Content-Type": "application/json",
@@ -72,32 +86,32 @@ export class Blindpay {
         this.available = createAvailableResource(this.api);
 
         this.instances = {
-            ...createInstancesResource(this.api),
-            apiKeys: createApiKeysResource(this.api),
-            webhookEndpoints: createWebhookEndpointsResource(this.api),
+            ...createInstancesResource(this.instanceId, this.api),
+            apiKeys: createApiKeysResource(this.instanceId, this.api),
+            webhookEndpoints: createWebhookEndpointsResource(this.instanceId, this.api),
         };
 
-        this.partnerFees = createPartnerFeesResource(this.api);
+        this.partnerFees = createPartnerFeesResource(this.instanceId, this.api);
 
         this.payins = {
-            ...createPayinsResource(this.api),
-            quotes: createPayinQuotesResource(this.api),
+            ...createPayinsResource(this.instanceId, this.api),
+            quotes: createPayinQuotesResource(this.instanceId, this.api),
         };
 
-        this.quotes = createQuotesResource(this.api);
+        this.quotes = createQuotesResource(this.instanceId, this.api);
 
-        this.payouts = createPayoutsResource(this.api);
+        this.payouts = createPayoutsResource(this.instanceId, this.api);
 
         this.receivers = {
-            ...createReceiversResource(this.api),
-            bankAccounts: createBankAccountsResource(this.api),
+            ...createReceiversResource(this.instanceId, this.api),
+            bankAccounts: createBankAccountsResource(this.instanceId, this.api),
         };
 
-        this.virtualAccounts = createVirtualAccountsResource(this.api);
+        this.virtualAccounts = createVirtualAccountsResource(this.instanceId, this.api);
 
         this.wallets = {
-            blockchain: createBlockchainWalletsResource(this.api),
-            offramp: createOfframpWalletsResource(this.api),
+            blockchain: createBlockchainWalletsResource(this.instanceId, this.api),
+            offramp: createOfframpWalletsResource(this.instanceId, this.api),
         };
     }
 

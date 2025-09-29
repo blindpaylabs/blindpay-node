@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { Blindpay } from "../../client";
+import { BlindPay } from "../../client";
 import type {
     CreateAchResponse,
     CreateArgentinaTransfersResponse,
@@ -15,7 +15,7 @@ import type {
 describe("Bank accounts", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new Blindpay("test-key");
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     describe("Create pix bank account", () => {
         it("should create a pix bank account", async () => {
@@ -32,8 +32,7 @@ describe("Bank accounts", () => {
             });
 
             const { data, error } = await blindpay.receivers.bankAccounts.createPix({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
+                receiver_id: "re_000000000000",
                 name: "PIX Account",
                 pix_key: "14947677768",
             });
@@ -60,8 +59,7 @@ describe("Bank accounts", () => {
             });
 
             const { data, error } = await blindpay.receivers.bankAccounts.createArgentinaTransfers({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
+                receiver_id: "re_000000000000",
                 name: "Argentina Transfers Account",
                 beneficiary_name: "Individual full name or business name",
                 transfers_type: "CVU",
@@ -91,8 +89,7 @@ describe("Bank accounts", () => {
             });
 
             const { data, error } = await blindpay.receivers.bankAccounts.createSpei({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
+                receiver_id: "re_000000000000",
                 name: "SPEI Account",
                 beneficiary_name: "Individual full name or business name",
                 spei_protocol: "clabe",
@@ -127,8 +124,7 @@ describe("Bank accounts", () => {
             });
 
             const { data, error } = await blindpay.receivers.bankAccounts.createColombiaAch({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
+                receiver_id: "re_000000000000",
                 name: "Colombia ACH Account",
                 account_type: "checking",
                 ach_cop_beneficiary_first_name: "Fernando",
@@ -177,8 +173,7 @@ describe("Bank accounts", () => {
             });
 
             const { data, error } = await blindpay.receivers.bankAccounts.createAch({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
+                receiver_id: "re_000000000000",
                 name: "ACH Account",
                 account_class: "individual",
                 account_number: "1001001234",
@@ -215,8 +210,7 @@ describe("Bank accounts", () => {
             });
 
             const { data, error } = await blindpay.receivers.bankAccounts.createWire({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
+                receiver_id: "re_000000000000",
                 name: "Wire Account",
                 account_number: "1001001234",
                 beneficiary_name: "Individual full name or business name",
@@ -277,8 +271,7 @@ describe("Bank accounts", () => {
             });
 
             const { data, error } = await blindpay.receivers.bankAccounts.createInternationalSwift({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
+                receiver_id: "re_000000000000",
                 name: "International Swift Account",
                 swift_account_holder_name: "John Doe",
                 swift_account_number_iban: "123456789",
@@ -329,8 +322,7 @@ describe("Bank accounts", () => {
             });
 
             const { data, error } = await blindpay.receivers.bankAccounts.get({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
+                receiver_id: "re_000000000000",
                 id: "ba_000000000000",
             });
 
@@ -413,10 +405,7 @@ describe("Bank accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.bankAccounts.list({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
-            });
+            const { data, error } = await blindpay.receivers.bankAccounts.list("re_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedBankAccounts);
@@ -430,8 +419,7 @@ describe("Bank accounts", () => {
             });
 
             const { data, error } = await blindpay.receivers.bankAccounts.delete({
-                instanceId: "in_000000000000",
-                receiverId: "re_000000000000",
+                receiver_id: "re_000000000000",
                 id: "ba_000000000000",
             });
 

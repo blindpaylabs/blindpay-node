@@ -10,10 +10,6 @@ export type InstanceMemberRole =
     | "developer"
     | "viewer";
 
-export type GetInstanceMembersInput = {
-    instanceId: string;
-};
-
 export type GetInstanceMembersResponse = Array<{
     id: string;
     email: string;
@@ -26,53 +22,36 @@ export type GetInstanceMembersResponse = Array<{
 }>;
 
 export type UpdateInstanceInput = {
-    instanceId: string;
-
     name: string;
     receiver_invite_redirect_urL?: string;
 };
 
-export type DeleteInstanceInput = {
-    instanceId: string;
-};
-
-export type DeleteInstanceMemberInput = {
-    instanceId: string;
-    id: string;
-};
+export type DeleteInstanceMemberInput = string;
 
 export type UpdateInstanceMemberRoleInput = {
-    instanceId: string;
-    id: string;
-
+    memberId: string;
     role: InstanceMemberRole;
 };
 
-export function createInstancesResource(client: InternalApiClient) {
+export function createInstancesResource(instanceId: string, client: InternalApiClient) {
     return {
-        getMembers({
-            instanceId,
-        }: GetInstanceMembersInput): Promise<BlindpayApiResponse<GetInstanceMembersResponse>> {
+        getMembers(): Promise<BlindpayApiResponse<GetInstanceMembersResponse>> {
             return client.get(`/instances/${instanceId}/members`);
         },
-        update({ instanceId, ...data }: UpdateInstanceInput): Promise<BlindpayApiResponse<void>> {
+        update({ ...data }: UpdateInstanceInput): Promise<BlindpayApiResponse<void>> {
             return client.put(`/instances/${instanceId}`, data);
         },
-        delete({ instanceId }: DeleteInstanceInput): Promise<BlindpayApiResponse<void>> {
+        delete(): Promise<BlindpayApiResponse<void>> {
             return client.delete(`/instances/${instanceId}`);
         },
-        deleteMember({
-            instanceId,
-            id,
-        }: DeleteInstanceMemberInput): Promise<BlindpayApiResponse<void>> {
-            return client.delete(`/instances/${instanceId}/members/${id}`);
+        deleteMember(memberId: DeleteInstanceMemberInput): Promise<BlindpayApiResponse<void>> {
+            return client.delete(`/instances/${instanceId}/members/${memberId}`);
         },
         updateMemberRole({
-            instanceId,
-            id,
-            ...data
+            memberId,
+            role,
         }: UpdateInstanceMemberRoleInput): Promise<BlindpayApiResponse<void>> {
-            return client.put(`/instances/${instanceId}/members/${id}`, data);
+            return client.put(`/instances/${instanceId}/members/${memberId}`, { role });
         },
     };
 }

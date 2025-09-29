@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { Blindpay } from "../../client";
+import { BlindPay } from "../../client";
 import type {
     CreateReceiverResponse,
     GetReceiverLimitsResponse,
@@ -10,7 +10,7 @@ import type {
 describe("Receivers", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new Blindpay("test-key");
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     describe("List receivers", () => {
         it("should list receivers", async () => {
@@ -95,9 +95,7 @@ describe("Receivers", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.list({
-                instanceId: "in_000000000000",
-            });
+            const { data, error } = await blindpay.receivers.list();
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedReceivers);
@@ -172,7 +170,6 @@ describe("Receivers", () => {
                     "I am a business owner and I want to receive payments from my customers",
                 external_id: "your_company_external_id",
                 tos_id: "to_000000000000",
-                instanceId: "in_000000000000",
             });
             expect(error).toBeNull();
             expect(data).toEqual({ id: "re_000000000000" });
@@ -260,10 +257,7 @@ describe("Receivers", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.get({
-                instanceId: "in_000000000000",
-                id: "re_000000000000",
-            });
+            const { data, error } = await blindpay.receivers.get("re_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedReceiver);
@@ -277,8 +271,7 @@ describe("Receivers", () => {
             });
 
             const { data, error } = await blindpay.receivers.update({
-                instanceId: "in_000000000000",
-                id: "re_000000000000",
+                receiver_id: "re_000000000000",
                 email: "email@example.com",
                 tax_id: "536804398",
                 address_line_1: "738 Plain St",
@@ -346,10 +339,7 @@ describe("Receivers", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.delete({
-                instanceId: "in_000000000000",
-                id: "re_000000000000",
-            });
+            const { data, error } = await blindpay.receivers.delete("re_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual({ data: null });
@@ -374,10 +364,7 @@ describe("Receivers", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.getLimits({
-                instanceId: "in_000000000000",
-                id: "re_000000000000",
-            });
+            const { data, error } = await blindpay.receivers.getLimits("re_000000000000");
             expect(error).toBeNull();
             expect(data).toEqual(mockedReceiverLimits);
         });

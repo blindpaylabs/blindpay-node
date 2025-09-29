@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { Blindpay } from "../../client";
+import { BlindPay } from "../../client";
 import type {
     AuthorizeStellarTokenResponse,
     CreateEvmPayoutResponse,
@@ -13,7 +13,7 @@ import type {
 describe("Payouts", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new Blindpay("test-key");
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     describe("List payouts", () => {
         it("should list payouts", async () => {
@@ -123,9 +123,7 @@ describe("Payouts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.payouts.list({
-                instanceId: "in_000000000000",
-            });
+            const { data, error } = await blindpay.payouts.list();
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedPayouts);
@@ -231,10 +229,7 @@ describe("Payouts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.payouts.get({
-                instanceId: "in_000000000000",
-                id: "pa_000000000000",
-            });
+            const { data, error } = await blindpay.payouts.get("pa_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedPayout);
@@ -342,9 +337,7 @@ describe("Payouts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.payouts.export({
-                instanceId: "in_000000000000",
-            });
+            const { data, error } = await blindpay.payouts.export();
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedExportPayouts);
@@ -450,9 +443,7 @@ describe("Payouts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.payouts.getTrack({
-                id: "pa_000000000000",
-            });
+            const { data, error } = await blindpay.payouts.getTrack("pa_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedPayoutTrack);
@@ -470,7 +461,6 @@ describe("Payouts", () => {
             });
 
             const { data, error } = await blindpay.payouts.authorizeStellarToken({
-                instanceId: "in_000000000000",
                 quote_id: "qu_000000000000",
                 sender_wallet_address: "0x123...890",
             });
@@ -526,7 +516,6 @@ describe("Payouts", () => {
             });
 
             const { data, error } = await blindpay.payouts.createStellar({
-                instanceId: "in_000000000000",
                 quote_id: "qu_000000000000",
                 sender_wallet_address: "0x123...890",
             });
@@ -582,7 +571,6 @@ describe("Payouts", () => {
             });
 
             const { data, error } = await blindpay.payouts.createEvm({
-                instanceId: "in_000000000000",
                 quote_id: "qu_000000000000",
                 sender_wallet_address: "0x123...890",
             });

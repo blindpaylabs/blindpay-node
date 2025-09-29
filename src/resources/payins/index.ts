@@ -75,12 +75,9 @@ export type Payin = {
     };
 };
 
-export type ListPayinsInput = {
-    instanceId: string;
-    params?: PaginationParams & {
-        status?: TransactionStatus;
-        receiver_id?: Network;
-    };
+export type ListPayinsInput = PaginationParams & {
+    status?: TransactionStatus;
+    receiver_id?: string;
 };
 
 export type ListPayinsResponse = {
@@ -89,8 +86,6 @@ export type ListPayinsResponse = {
 };
 
 export type CreatePayinInput = {
-    instanceId: string;
-
     quote_id: string;
     sender_address: string;
     receiver_address: string;
@@ -100,16 +95,11 @@ export type CreatePayinInput = {
     description?: string | null;
 };
 
-export type GetPayinInput = {
-    instanceId: string;
-    id: string;
-};
+export type GetPayinInput = string;
 
 export type GetPayinResponse = Payin;
 
-export type GetPayinTrackInput = {
-    id: string;
-};
+export type GetPayinTrackInput = string;
 
 export type GetPayinTrackResponse = {
     receiver_id: string;
@@ -198,18 +188,13 @@ export type GetPayinTrackResponse = {
     };
 };
 
-export type ExportPayinsInput = {
-    instanceId: string;
-    params?: Pick<PaginationParams, "limit" | "offset"> & { status: TransactionStatus };
+export type ExportPayinsInput = Pick<PaginationParams, "limit" | "offset"> & {
+    status: TransactionStatus;
 };
 
 export type ExportPayinsResponse = Payin[];
 
-export type CreateEvmPayinInput = {
-    instanceId: string;
-
-    payin_quote_id: string;
-};
+export type CreateEvmPayinInput = string;
 
 export type CreateEvmPayinResponse = Pick<
     Payin,
@@ -227,33 +212,30 @@ export type CreateEvmPayinResponse = Pick<
     | "receiver_amount"
 >;
 
-export function createPayinsResource(client: InternalApiClient) {
+export function createPayinsResource(instanceId: string, client: InternalApiClient) {
     return {
-        list({
-            instanceId,
-            params,
-        }: ListPayinsInput): Promise<BlindpayApiResponse<ListPayinsResponse>> {
+        list(params?: ListPayinsInput): Promise<BlindpayApiResponse<ListPayinsResponse>> {
             const queryParams = params ? `?${new URLSearchParams(params)}` : "";
             return client.get(`/instances/${instanceId}/payins${queryParams}`);
         },
-        get({ instanceId, id }: GetPayinInput): Promise<BlindpayApiResponse<GetPayinResponse>> {
-            return client.get(`/instances/${instanceId}/payins/${id}`);
+        get(payinId: GetPayinInput): Promise<BlindpayApiResponse<GetPayinResponse>> {
+            return client.get(`/instances/${instanceId}/payins/${payinId}`);
         },
-        getTrack({ id }: GetPayinTrackInput): Promise<BlindpayApiResponse<GetPayinTrackResponse>> {
-            return client.get(`/e/payins/${id}`);
+        getTrack(payinId: GetPayinTrackInput): Promise<BlindpayApiResponse<GetPayinTrackResponse>> {
+            return client.get(`/e/payins/${payinId}`);
         },
         export({
-            instanceId,
-            params,
+            ...params
         }: ExportPayinsInput): Promise<BlindpayApiResponse<ExportPayinsResponse>> {
             const queryParams = params ? `?${new URLSearchParams(params)}` : "";
             return client.get(`/instances/${instanceId}/export/payins${queryParams}`);
         },
-        createEvm({
-            instanceId,
-            ...data
-        }: CreateEvmPayinInput): Promise<BlindpayApiResponse<CreateEvmPayinResponse>> {
-            return client.post(`/instances/${instanceId}/payins/evm`, data);
+        createEvm(
+            payin_quote_id: CreateEvmPayinInput
+        ): Promise<BlindpayApiResponse<CreateEvmPayinResponse>> {
+            return client.post(`/instances/${instanceId}/payins/evm`, {
+                payin_quote_id,
+            });
         },
     };
 }

@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { Blindpay } from "../../client";
+import { BlindPay } from "../../client";
 import type { CreatePartnerFeeResponse, GetPartnerFeeResponse, ListPartnerFeesResponse } from ".";
 
 describe("Partner fees", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new Blindpay("test-key");
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     describe("List partner fees", () => {
         it("should list partner fees", async () => {
@@ -28,9 +28,7 @@ describe("Partner fees", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.partnerFees.list({
-                instanceId: "in_000000000000",
-            });
+            const { data, error } = await blindpay.partnerFees.list();
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedList);
@@ -57,7 +55,6 @@ describe("Partner fees", () => {
             });
 
             const { data, error } = await blindpay.partnerFees.create({
-                instanceId: "in_000000000000",
                 name: "Display Name",
                 payout_percentage_fee: 0,
                 payout_flat_fee: 0,
@@ -92,10 +89,7 @@ describe("Partner fees", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.partnerFees.get({
-                instanceId: "in_000000000000",
-                id: "fe_000000000000",
-            });
+            const { data, error } = await blindpay.partnerFees.get("fe_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedFee);
@@ -108,10 +102,7 @@ describe("Partner fees", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.partnerFees.delete({
-                instanceId: "in_000000000000",
-                id: "fe_000000000000",
-            });
+            const { data, error } = await blindpay.partnerFees.delete("fe_000000000000");
 
             expect(error).toBeNull();
             expect(data).toEqual({ data: null });

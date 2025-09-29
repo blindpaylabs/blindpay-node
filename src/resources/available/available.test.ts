@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { Blindpay } from "../../client";
+import { BlindPay } from "../../client";
 import type { GetBankDetailsResponse, GetRailsResponse } from ".";
 
 describe("Available", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new Blindpay("test-key");
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     describe("Get bank details", () => {
         it("should get bank details for a rail", async () => {

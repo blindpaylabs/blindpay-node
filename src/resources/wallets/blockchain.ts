@@ -1,19 +1,13 @@
 import type { BlindpayApiResponse, Network } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
-export type GetBlockchainWalletMessage = {
-    receiverId: string;
-    instanceId: string;
-};
+export type GetBlockchainWalletMessage = string;
 
 export type GetBlockchainWalletMessageResponse = {
     message: string;
 };
 
-export type ListBlockchainWalletsInput = {
-    instanceId: string;
-    receiverId: string;
-};
+export type ListBlockchainWalletsInput = string;
 
 export type ListBlockchainWalletsResponse = Array<{
     id: string;
@@ -25,26 +19,27 @@ export type ListBlockchainWalletsResponse = Array<{
     receiver_id: string;
 }>;
 
-export type CreateBlockchainWalletInput = {
-    instanceId: string;
-    receiverId: string;
-
+export type CreateBlockchainWalletWithAddressInput = {
+    receiver_id: string;
     name: string;
     network: Network;
     address: string;
-    is_account_abstraction?: boolean;
-    signature_tx_hash?: string;
+};
+
+export type CreateBlockchainWalletWithHashInput = {
+    receiver_id: string;
+    name: string;
+    network: Network;
+    signature_tx_hash: string;
 };
 
 export type GetBlockchainWalletInput = {
-    instanceId: string;
-    receiverId: string;
+    receiver_id: string;
     id: string;
 };
 
 export type DeleteBlockchainWalletInput = {
-    instanceId: string;
-    receiverId: string;
+    receiver_id: string;
     id: string;
 };
 
@@ -68,80 +63,86 @@ export type CreateBlockchainWalletResponse = {
     receiver_id: string;
 };
 
-export type CreateAssetTrustlineInput = {
-    instanceId: string;
-    address: string;
-};
+export type CreateAssetTrustlineInput = string;
 
 export type CreateAssetTrustlineResponse = {
     xdr: string;
 };
 
 export type MintUsdbStellarInput = {
-    instanceId: string;
     address: string;
     amount: string;
     signedXdr: string;
 };
 
-export function createBlockchainWalletsResource(client: InternalApiClient) {
+export function createBlockchainWalletsResource(instanceId: string, client: InternalApiClient) {
     return {
-        list({
-            instanceId,
-            receiverId,
-        }: ListBlockchainWalletsInput): Promise<
-            BlindpayApiResponse<ListBlockchainWalletsResponse>
-        > {
+        list(
+            receiver_id: ListBlockchainWalletsInput
+        ): Promise<BlindpayApiResponse<ListBlockchainWalletsResponse>> {
             return client.get(
-                `/instances/${instanceId}/receivers/${receiverId}/blockchain-wallets`
+                `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets`
             );
         },
-        create({
-            instanceId,
+        createWithAddress({
+            receiver_id,
             ...data
-        }: CreateBlockchainWalletInput): Promise<
+        }: CreateBlockchainWalletWithAddressInput): Promise<
             BlindpayApiResponse<CreateBlockchainWalletResponse>
         > {
-            return client.post(`/instances/${instanceId}/blockchain-wallets`, data);
+            return client.post(
+                `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets`,
+                {
+                    ...data,
+                    is_account_abstraction: true,
+                }
+            );
         },
-        getWalletMessage({
-            receiverId,
-            instanceId,
-        }: GetBlockchainWalletMessage): Promise<
-            BlindpayApiResponse<GetBlockchainWalletMessageResponse>
+        createWithHash({
+            receiver_id,
+            ...data
+        }: CreateBlockchainWalletWithHashInput): Promise<
+            BlindpayApiResponse<CreateBlockchainWalletResponse>
         > {
+            return client.post(
+                `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets`,
+                {
+                    ...data,
+                    is_account_abstraction: false,
+                }
+            );
+        },
+        getWalletMessage(
+            receiver_id: GetBlockchainWalletMessage
+        ): Promise<BlindpayApiResponse<GetBlockchainWalletMessageResponse>> {
             return client.get(
-                `/instances/${instanceId}/receivers/${receiverId}/blockchain-wallets/sign-message`
+                `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets/sign-message`
             );
         },
         get({
-            instanceId,
-            receiverId,
+            receiver_id,
             id,
         }: GetBlockchainWalletInput): Promise<BlindpayApiResponse<GetBlockchainWalletResponse>> {
             return client.get(
-                `/instances/${instanceId}/receivers/${receiverId}/blockchain-wallets/${id}`
+                `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets/${id}`
             );
         },
         delete({
-            instanceId,
-            receiverId,
+            receiver_id,
             id,
         }: DeleteBlockchainWalletInput): Promise<BlindpayApiResponse<void>> {
             return client.delete(
-                `/instances/${instanceId}/receivers/${receiverId}/blockchain-wallets/${id}`
+                `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets/${id}`
             );
         },
-        createAssetTrustline({
-            instanceId,
-            ...data
-        }: CreateAssetTrustlineInput): Promise<BlindpayApiResponse<CreateAssetTrustlineResponse>> {
-            return client.post(`/instances/${instanceId}/create-asset-trustline`, data);
+        createAssetTrustline(
+            address: CreateAssetTrustlineInput
+        ): Promise<BlindpayApiResponse<CreateAssetTrustlineResponse>> {
+            return client.post(`/instances/${instanceId}/create-asset-trustline`, {
+                address,
+            });
         },
-        mintUsdbStellar({
-            instanceId,
-            ...data
-        }: MintUsdbStellarInput): Promise<BlindpayApiResponse<void>> {
+        mintUsdbStellar({ ...data }: MintUsdbStellarInput): Promise<BlindpayApiResponse<void>> {
             return client.post(`/instances/${instanceId}/mint-usdb-stellar`, data);
         },
     };

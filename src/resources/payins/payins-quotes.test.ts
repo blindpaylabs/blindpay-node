@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { Blindpay } from "../../client";
+import { BlindPay } from "../../client";
 import type { CreatePayinQuoteResponse, GetPayinFxRateResponse } from "./quotes";
 
 describe("Payin quotes", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new Blindpay("test-key");
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     describe("Create payin quote", () => {
         it("should create a payin quote", async () => {
@@ -25,7 +25,6 @@ describe("Payin quotes", () => {
             });
 
             const { data, error } = await blindpay.payins.quotes.create({
-                instanceId: "in_000000000000",
                 blockchain_wallet_id: "bw_000000000000",
                 currency_type: "sender",
                 cover_fees: true,
@@ -58,7 +57,6 @@ describe("Payin quotes", () => {
             });
 
             const { data, error } = await blindpay.payins.quotes.getFxRate({
-                instanceId: "in_000000000000",
                 currency_type: "sender",
                 from: "USD",
                 to: "BRL",
