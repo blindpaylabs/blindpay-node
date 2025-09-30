@@ -303,6 +303,36 @@ export type CreateInternationalSwiftResponse = {
     created_at: string;
 };
 
+export type CreateRtpInput = {
+    receiver_id: string;
+    name: string;
+    beneficiary_name: string;
+    routing_number: string;
+    account_number: string;
+    address_line_1: string;
+    address_line_2?: string;
+    city: string;
+    state_province_region: string;
+    country: Country;
+    postal_code: string;
+};
+
+export type CreateRtpResponse = {
+    id: string;
+    type: "rtp";
+    name: string;
+    beneficiary_name: string;
+    routing_number: string;
+    account_number: string;
+    address_line_1: string;
+    address_line_2: string | null;
+    city: string;
+    state_province_region: string;
+    country: Country;
+    postal_code: string;
+    created_at: string;
+};
+
 export function createBankAccountsResource(instanceId: string, client: InternalApiClient) {
     return {
         list(
@@ -387,6 +417,15 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
         > {
             return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
                 type: "international_swift",
+                ...data,
+            });
+        },
+        createRtp({
+            receiver_id,
+            ...data
+        }: CreateRtpInput): Promise<BlindpayApiResponse<CreateRtpResponse>> {
+            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+                type: "rtp",
                 ...data,
             });
         },
