@@ -6,6 +6,7 @@ import type {
     CreateColombiaAchResponse,
     CreateInternationalSwiftResponse,
     CreatePixResponse,
+    CreateRtpResponse,
     CreateSpeiResponse,
     CreateWireResponse,
     GetBankAccountResponse,
@@ -297,6 +298,46 @@ describe("Bank accounts", () => {
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedInternationalSwiftAccount);
+        });
+    });
+
+    describe("Create RTP bank account", () => {
+        it("should create an RTP bank account", async () => {
+            const mockedRtpAccount: CreateRtpResponse = {
+                id: "ba_JW5ZtlKMlgS1",
+                type: "rtp",
+                name: "John Doe RTP",
+                beneficiary_name: "John Doe",
+                routing_number: "121000358",
+                account_number: "325203027578",
+                address_line_1: "Street of the fools",
+                address_line_2: null,
+                city: "Fools City",
+                state_province_region: "FL",
+                country: "US",
+                postal_code: "22599",
+                created_at: "2025-09-30T04:23:30.823Z",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedRtpAccount), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.receivers.bankAccounts.createRtp({
+                receiver_id: "re_000000000000",
+                name: "John Doe RTP",
+                beneficiary_name: "John Doe",
+                routing_number: "121000358",
+                account_number: "325203027578",
+                address_line_1: "Street of the fools",
+                city: "Fools City",
+                state_province_region: "FL",
+                country: "US",
+                postal_code: "22599",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedRtpAccount);
         });
     });
 
