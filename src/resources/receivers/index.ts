@@ -89,7 +89,7 @@ export type IndividualWithStandardKYC = {
     id_doc_type: IdentificationDocument;
     id_doc_front_file: string;
     id_doc_back_file: string;
-    ai_prise_validation_key: string;
+    aiprise_validation_key: string;
     instance_id: string;
     tos_id: string | null;
     created_at: string;
@@ -132,7 +132,7 @@ export type IndividualWithEnhancedKYC = {
     id_doc_type: IdentificationDocument;
     id_doc_front_file: string;
     id_doc_back_file: string | null;
-    ai_prise_validation_key: string;
+    aiprise_validation_key: string;
     instance_id: string;
     source_of_funds_doc_type: string;
     source_of_funds_doc_file: string;
@@ -183,7 +183,7 @@ export type BusinessWithStandardKYB = {
     external_id: string | null;
     instance_id: string;
     tos_id: string | null;
-    ai_prise_validation_key: string;
+    aiprise_validation_key: string;
     created_at: string;
     updated_at: string;
     limit: {
