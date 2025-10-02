@@ -36,46 +36,49 @@ export type KycType = "light" | "standard" | "enhanced";
 export type OwnerRole = "beneficial_controlling" | "beneficial_owner" | "controlling_person";
 
 export type Owner = {
-    address_line_1: string;
-    address_line_2: string;
-    city: string;
-    country: Country;
-    date_of_birth: string;
-    first_name: string;
-    id_doc_country: Country;
-    id_doc_front_file: string;
-    id_doc_type: IdentificationDocument;
-    last_name: string;
-    postal_code: string;
+    id: string;
+    instance_id: string;
+    receiver_id: string;
     role: OwnerRole;
-    state_province_region: string;
+    first_name: string;
+    last_name: string;
+    date_of_birth: string;
     tax_id: string;
+    address_line_1: string;
+    address_line_2: string | null;
+    city: string;
+    state_province_region: string;
+    country: Country;
+    postal_code: string;
+    id_doc_country: Country;
+    id_doc_type: IdentificationDocument;
+    id_doc_front_file: string;
     id_doc_back_file: string;
-    proof_of_address_doc_file: string;
     proof_of_address_doc_type: ProofOfAddressDocType;
+    proof_of_address_doc_file: string;
 };
 
-export type Receiver = {
+export type IndividualWithStandardKYC = {
     id: string;
-    type: AccountClass;
-    kyc_type: KycType;
+    type: Extract<AccountClass, "individual">;
+    kyc_type: Extract<KycType, "standard">;
     kyc_status: string;
     kyc_warnings: Array<{
         code: string | null;
         message: string | null;
         resolution_status: string | null;
         warning_id: string | null;
-    }>;
+    }> | null;
     email: string;
     tax_id: string;
     address_line_1: string;
-    address_line_2?: string;
+    address_line_2?: string | null;
     city: string;
     state_province_region: string;
     country: Country;
     postal_code: string;
-    ip_address: string;
-    image_url: string;
+    ip_address: string | null;
+    image_url: string | null;
     phone_number: string;
     proof_of_address_doc_type: ProofOfAddressDocType;
     proof_of_address_doc_file: string;
@@ -86,37 +89,100 @@ export type Receiver = {
     id_doc_type: IdentificationDocument;
     id_doc_front_file: string;
     id_doc_back_file: string;
-    legal_name: string;
-    alternate_name: string;
-    formation_date: string;
-    website: string;
-    owners: Array<
-        { id: string } & Pick<
-            Owner,
-            | "first_name"
-            | "last_name"
-            | "address_line_1"
-            | "address_line_2"
-            | "city"
-            | "state_province_region"
-            | "country"
-            | "postal_code"
-            | "id_doc_country"
-            | "id_doc_type"
-            | "id_doc_front_file"
-            | "id_doc_back_file"
-        >
-    >;
-    incorporation_doc_file: string;
-    proof_of_ownership_doc_file: string;
-    source_of_funds_doc_type: SourceOfFundsDocType;
+    aiprise_validation_key: string;
+    instance_id: string;
+    tos_id: string | null;
+    created_at: string;
+    updated_at: string;
+    limit: {
+        per_transaction: number;
+        daily: number;
+        monthly: number;
+    };
+};
+
+export type IndividualWithEnhancedKYC = {
+    id: string;
+    type: Extract<AccountClass, "individual">;
+    kyc_type: Extract<KycType, "enhanced">;
+    kyc_status: string;
+    kyc_warnings: Array<{
+        code: string | null;
+        message: string | null;
+        resolution_status: string | null;
+        warning_id: string | null;
+    }> | null;
+    email: string;
+    tax_id: string;
+    address_line_1: string;
+    address_line_2?: string | null;
+    city: string;
+    state_province_region: string;
+    country: Country;
+    postal_code: string;
+    ip_address: string | null;
+    image_url: string | null;
+    phone_number: string | null;
+    proof_of_address_doc_type: ProofOfAddressDocType;
+    proof_of_address_doc_file: string;
+    first_name: string;
+    last_name: string;
+    date_of_birth: string;
+    id_doc_country: Country;
+    id_doc_type: IdentificationDocument;
+    id_doc_front_file: string;
+    id_doc_back_file: string | null;
+    aiprise_validation_key: string;
+    instance_id: string;
+    source_of_funds_doc_type: string;
     source_of_funds_doc_file: string;
     individual_holding_doc_front_file: string;
     purpose_of_transactions: PurposeOfTransactions;
-    purpose_of_transactions_explanation: string;
-    external_id: string;
+    purpose_of_transactions_explanation: string | null;
+    tos_id: string | null;
+    created_at: string;
+    updated_at: string;
+    limit: {
+        per_transaction: number;
+        daily: number;
+        monthly: number;
+    };
+};
+
+export type BusinessWithStandardKYB = {
+    id: string;
+    type: Extract<AccountClass, "business">;
+    kyc_type: Extract<KycType, "standard">;
+    kyc_status: string;
+    kyc_warnings: Array<{
+        code: string | null;
+        message: string | null;
+        resolution_status: string | null;
+        warning_id: string | null;
+    }> | null;
+    email: string;
+    tax_id: string;
+    address_line_1: string;
+    address_line_2?: string | null;
+    city: string;
+    state_province_region: string;
+    country: Country;
+    postal_code: string;
+    ip_address: string | null;
+    image_url: string | null;
+    phone_number: string;
+    proof_of_address_doc_type: ProofOfAddressDocType;
+    proof_of_address_doc_file: string;
+    legal_name: string;
+    alternate_name: string | null;
+    formation_date: string;
+    website: string | null;
+    owners: Owner[];
+    incorporation_doc_file: string;
+    proof_of_ownership_doc_file: string;
+    external_id: string | null;
     instance_id: string;
-    tos_id: string;
+    tos_id: string | null;
     aiprise_validation_key: string;
     created_at: string;
     updated_at: string;
@@ -127,54 +193,99 @@ export type Receiver = {
     };
 };
 
-export type ListReceiversResponse = Receiver[];
+export type ListReceiversResponse = Array<
+    IndividualWithStandardKYC | IndividualWithEnhancedKYC | BusinessWithStandardKYB
+>;
 
-export type CreateReceiverInput = {
-    country: Country;
-    kyc_type: KycType;
-    type: AccountClass;
+export type CreateIndividualWithStandardKYCInput = {
     address_line_1: string;
     address_line_2?: string;
     city: string;
-    image_url: string;
-    ip_address: string;
-    postal_code: string;
-    state_province_region: string;
-    tax_id: string;
-    alternate_name?: string;
+    country: Country;
     date_of_birth: string;
-    external_id: string;
+    email: string;
     first_name: string;
-    formation_date: string;
-    id_doc_back_file: string;
+    id_doc_country: Country;
     id_doc_front_file: string;
     id_doc_type: IdentificationDocument;
-    id_doc_country: Country;
-    email: string;
-    incorporation_doc_file: string;
-    individual_holding_doc_front_file: string;
+    kyc_type: "standard";
     last_name: string;
+    postal_code: string;
+    proof_of_address_doc_file: string;
+    proof_of_address_doc_type: ProofOfAddressDocType;
+    state_province_region: string;
+    tax_id: string;
+    tos_id: string;
+    type: "individual";
+};
+
+export type CreateIndividualWithStandardKYCResponse = {
+    id: string;
+};
+
+export type CreateIndividualWithEnhancedKYCInput = {
+    address_line_1: string;
+    address_line_2?: string;
+    city: string;
+    country: Country;
+    date_of_birth: string;
+    email: string;
+    first_name: string;
+    id_doc_country: Country;
+    id_doc_front_file: string;
+    id_doc_type: IdentificationDocument;
+    individual_holding_doc_front_file: string;
+    kyc_type: "enhanced";
+    last_name: string;
+    postal_code: string;
+    proof_of_address_doc_file: string;
+    proof_of_address_doc_type: ProofOfAddressDocType;
+    purpose_of_transactions: PurposeOfTransactions;
+    source_of_funds_doc_file: string;
+    source_of_funds_doc_type: SourceOfFundsDocType;
+    state_province_region: string;
+    tax_id: string;
+    tos_id: string;
+    type: "individual";
+};
+
+export type CreateIndividualWithEnhancedKYCResponse = {
+    id: string;
+};
+
+export type CreateBusinessWithStandardKYBInput = {
+    address_line_1: string;
+    address_line_2?: string;
+    alternate_name: string;
+    city: string;
+    country: Country;
+    email: string;
+    formation_date: string;
+    incorporation_doc_file: string;
+    kyc_type: "standard";
     legal_name: string;
     owners: Owner[];
-    phone_number: string;
+    postal_code: string;
     proof_of_address_doc_file: string;
     proof_of_address_doc_type: ProofOfAddressDocType;
     proof_of_ownership_doc_file: string;
-    purpose_of_transactions: PurposeOfTransactions;
-    purpose_of_transactions_explanation: string;
-    source_of_funds_doc_file: string;
-    source_of_funds_doc_type: SourceOfFundsDocType;
+    state_province_region: string;
+    tax_id: string;
     tos_id: string;
-    website: string;
+    type: "business";
+    website: string | null;
 };
 
-export type CreateReceiverResponse = {
+export type CreateBusinessWithStandardKYBResponse = {
     id: string;
 };
 
 export type GetReceiverInput = string;
 
-export type GetReceiverResponse = Receiver;
+export type GetReceiverResponse =
+    | IndividualWithStandardKYC
+    | IndividualWithEnhancedKYC
+    | BusinessWithStandardKYB;
 
 export type UpdateReceiverInput = {
     receiver_id: string;
@@ -255,9 +366,19 @@ export function createReceiversResource(instanceId: string, client: InternalApiC
         list(): Promise<BlindpayApiResponse<ListReceiversResponse>> {
             return client.get(`/instances/${instanceId}/receivers`);
         },
-        create({
-            ...data
-        }: CreateReceiverInput): Promise<BlindpayApiResponse<CreateReceiverResponse>> {
+        createIndividualWithStandardKYC(
+            data: CreateIndividualWithStandardKYCInput
+        ): Promise<BlindpayApiResponse<CreateIndividualWithStandardKYCResponse>> {
+            return client.post(`/instances/${instanceId}/receivers`, data);
+        },
+        createIndividualWithEnhancedKYC(
+            data: CreateIndividualWithEnhancedKYCInput
+        ): Promise<BlindpayApiResponse<CreateIndividualWithEnhancedKYCResponse>> {
+            return client.post(`/instances/${instanceId}/receivers`, data);
+        },
+        createBusinessWithStandardKYB(
+            data: CreateBusinessWithStandardKYBInput
+        ): Promise<BlindpayApiResponse<CreateBusinessWithStandardKYBResponse>> {
             return client.post(`/instances/${instanceId}/receivers`, data);
         },
         get(receiver_id: GetReceiverInput): Promise<BlindpayApiResponse<GetReceiverResponse>> {
