@@ -244,7 +244,8 @@ describe("Receivers", () => {
                 individual_holding_doc_front_file: "https://example.com/image.png",
                 purpose_of_transactions: "personal_or_living_expenses",
                 source_of_funds_doc_type: "savings",
-                purpose_of_transactions_explanation: "I am receiving salary payments from my employer",
+                purpose_of_transactions_explanation:
+                    "I am receiving salary payments from my employer",
                 source_of_funds_doc_file: "https://example.com/image.png",
                 tos_id: "to_3ZZhllJkvo5Z",
             });
