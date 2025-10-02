@@ -13,7 +13,12 @@ export type PurposeOfTransactions =
     | "charitable_donations"
     | "investment_purposes"
     | "payments_to_friends_or_family_abroad"
-    | "personal_or_living_expenses";
+    | "personal_or_living_expenses"
+    | "protect_wealth"
+    | "purchase_good_and_services"
+    | "receive_payment_for_freelancing"
+    | "receive_salary"
+    | "other";
 
 export type SourceOfFundsDocType =
     | "business_income"
@@ -27,7 +32,8 @@ export type SourceOfFundsDocType =
     | "sale_of_assets_real_estate"
     | "savings"
     | "esops"
-    | "investment_proceeds";
+    | "investment_proceeds"
+    | "someone_else_funds";
 
 export type IdentificationDocument = "PASSPORT" | "ID_CARD" | "DRIVERS";
 
@@ -194,6 +200,7 @@ export type BusinessWithStandardKYB = {
 };
 
 export type CreateIndividualWithStandardKYCInput = {
+    externalId?: string;
     address_line_1: string;
     address_line_2?: string;
     city: string;
@@ -218,6 +225,7 @@ export type CreateIndividualWithStandardKYCResponse = {
 };
 
 export type CreateIndividualWithEnhancedKYCInput = {
+    externalId?: string;
     address_line_1: string;
     address_line_2?: string;
     city: string;
@@ -246,6 +254,7 @@ export type CreateIndividualWithEnhancedKYCResponse = {
 };
 
 export type CreateBusinessWithStandardKYBInput = {
+    externalId?: string;
     address_line_1: string;
     address_line_2?: string;
     alternate_name: string;
