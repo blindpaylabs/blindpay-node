@@ -39,21 +39,17 @@ describe("Receivers", () => {
                     country: "BR",
                     postal_code: "01310-100",
                     ip_address: "127.0.0.1",
-                    image_url:
-                        "https://onb-bucket-dev-preview.blindpay.io/1759333693786-55a9391ddff756b6f623bd9e377fcf87.png",
+                    image_url: "https://example.com/image.png",
                     phone_number: "+5511987654321",
                     proof_of_address_doc_type: "UTILITY_BILL",
-                    proof_of_address_doc_file:
-                        "https://onb-bucket-dev-preview.blindpay.io/1759333703656-55a9391ddff756b6f623bd9e377fcf87.png",
+                    proof_of_address_doc_file: "https://example.com/image.png",
                     first_name: "Bernardo",
                     last_name: "Simonassi",
                     date_of_birth: "1998-02-02T00:00:00.000Z",
                     id_doc_country: "BR",
                     id_doc_type: "PASSPORT",
-                    id_doc_front_file:
-                        "https://onb-bucket-dev-preview.blindpay.io/1759333693786-55a9391ddff756b6f623bd9e377fcf87.png",
-                    id_doc_back_file:
-                        "https://onb-bucket-dev-preview.blindpay.io/1759333693786-55a9391ddff756b6f623bd9e377fcf87.png",
+                    id_doc_front_file: "https://example.com/image.png",
+                    id_doc_back_file: "https://example.com/image.png",
                     ai_prise_validation_key: "",
                     instance_id: "in_000000000000",
                     tos_id: "to_3ZZhllJkvo5Z",
@@ -83,23 +79,19 @@ describe("Receivers", () => {
                     image_url: null,
                     phone_number: "+15555555555",
                     proof_of_address_doc_type: "BANK_STATEMENT",
-                    proof_of_address_doc_file:
-                        "https://onb-bucket-dev-preview.blindpay.io/1759348620376-enhanced.png",
+                    proof_of_address_doc_file: "https://example.com/image.png",
                     first_name: "Alice",
                     last_name: "Johnson",
                     date_of_birth: "1990-05-10T00:00:00.000Z",
                     id_doc_country: "US",
                     id_doc_type: "PASSPORT",
-                    id_doc_front_file:
-                        "https://onb-bucket-dev-preview.blindpay.io/1759348580684-enhanced-front.png",
+                    id_doc_front_file: "https://example.com/image.png",
                     id_doc_back_file: null,
                     ai_prise_validation_key: "enhanced-key",
                     instance_id: "in_000000000001",
                     source_of_funds_doc_type: "salary",
-                    source_of_funds_doc_file:
-                        "https://onb-bucket-dev-preview.blindpay.io/1759348629995-enhanced-salary.png",
-                    individual_holding_doc_front_file:
-                        "https://onb-bucket-dev-preview.blindpay.io/1759348609084-enhanced-holding.png",
+                    source_of_funds_doc_file: "https://example.com/image.png",
+                    individual_holding_doc_front_file: "https://example.com/image.png",
                     purpose_of_transactions: "investment_purposes",
                     purpose_of_transactions_explanation: "Investing in stocks",
                     tos_id: "to_nppX66ntvtHs",
@@ -129,8 +121,7 @@ describe("Receivers", () => {
                     image_url: null,
                     phone_number: "+14165555555",
                     proof_of_address_doc_type: "UTILITY_BILL",
-                    proof_of_address_doc_file:
-                        "https://onb-bucket-dev-preview.blindpay.io/1759348620376-business.png",
+                    proof_of_address_doc_file: "https://example.com/image.png",
                     legal_name: "Business Corp",
                     alternate_name: "BizCo",
                     formation_date: "2010-01-01T00:00:00.000Z",
@@ -150,22 +141,17 @@ describe("Receivers", () => {
                             postal_code: "01304-001",
                             id_doc_country: "BR",
                             id_doc_type: "PASSPORT",
-                            id_doc_front_file:
-                                "https://onb-bucket-dev-preview.blindpay.io/1759349053904-55a9391ddff756b6f623bd9e377fcf87.png",
-                            id_doc_back_file:
-                                "https://onb-bucket-dev-preview.blindpay.io/1759349053904-55a9391ddff756b6f623bd9e377fcf87.png",
+                            id_doc_front_file: "https://example.com/image.png",
+                            id_doc_back_file: "https://example.com/image.png",
                             proof_of_address_doc_type: "UTILITY_BILL",
-                            proof_of_address_doc_file:
-                                "https://onb-bucket-dev-preview.blindpay.io/1759349159141-55a9391ddff756b6f623bd9e377fcf87.png",
+                            proof_of_address_doc_file: "https://example.com/image.png",
                             id: "ub_000000000000",
                             instance_id: "in_000000000000",
                             receiver_id: "re_IOxAUL24LG7P",
                         },
                     ],
-                    incorporation_doc_file:
-                        "https://onb-bucket-dev-preview.blindpay.io/1759349053904-business-inc.png",
-                    proof_of_ownership_doc_file:
-                        "https://onb-bucket-dev-preview.blindpay.io/1759349058462-business-ownership.png",
+                    incorporation_doc_file: "https://example.com/image.png",
+                    proof_of_ownership_doc_file: "https://example.com/image.png",
                     external_id: null,
                     instance_id: "in_000000000002",
                     tos_id: "to_nppX66ntvtHs",
@@ -217,11 +203,9 @@ describe("Receivers", () => {
                 date_of_birth: "1998-02-02T00:00:00.000Z",
                 id_doc_country: "BR",
                 id_doc_type: "PASSPORT",
-                id_doc_front_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759333693786-55a9391ddff756b6f623bd9e377fcf87.png",
+                id_doc_front_file: "https://example.com/image.png",
                 proof_of_address_doc_type: "UTILITY_BILL",
-                proof_of_address_doc_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759333703656-55a9391ddff756b6f623bd9e377fcf87.png",
+                proof_of_address_doc_file: "https://example.com/image.png",
                 tos_id: "to_tPiz4bM2nh5K",
             });
 
@@ -254,17 +238,13 @@ describe("Receivers", () => {
                 date_of_birth: "1998-02-02T00:00:00.000Z",
                 id_doc_country: "BR",
                 id_doc_type: "PASSPORT",
-                id_doc_front_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759348580684-55a9391ddff756b6f623bd9e377fcf87.png",
+                id_doc_front_file: "https://example.com/image.png",
                 proof_of_address_doc_type: "UTILITY_BILL",
-                proof_of_address_doc_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759348620376-55a9391ddff756b6f623bd9e377fcf87.png",
-                individual_holding_doc_front_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759348609084-55a9391ddff756b6f623bd9e377fcf87.png",
+                proof_of_address_doc_file: "https://example.com/image.png",
+                individual_holding_doc_front_file: "https://example.com/image.png",
                 purpose_of_transactions: "personal_or_living_expenses",
                 source_of_funds_doc_type: "savings",
-                source_of_funds_doc_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759348629995-55a9391ddff756b6f623bd9e377fcf87.png",
+                source_of_funds_doc_file: "https://example.com/image.png",
                 tos_id: "to_3ZZhllJkvo5Z",
             });
 
@@ -295,15 +275,12 @@ describe("Receivers", () => {
                 legal_name: "Empresa Exemplo Ltda",
                 alternate_name: "Exemplo",
                 formation_date: "2010-05-20T00:00:00.000Z",
-                incorporation_doc_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759349053904-55a9391ddff756b6f623bd9e377fcf87.png",
+                incorporation_doc_file: "https://example.com/image.png",
                 proof_of_address_doc_type: "UTILITY_BILL",
-                proof_of_address_doc_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759349159141-55a9391ddff756b6f623bd9e377fcf87.png",
-                proof_of_ownership_doc_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759349058462-55a9391ddff756b6f623bd9e377fcf87.png",
+                proof_of_address_doc_file: "https://example.com/image.png",
+                proof_of_ownership_doc_file: "https://example.com/image.png",
                 tos_id: "to_nppX66ntvtHs",
-                website: "https://empresaexemplo.com.br",
+                website: "https://site.com/",
                 owners: [
                     {
                         role: "beneficial_owner",
@@ -319,13 +296,10 @@ describe("Receivers", () => {
                         postal_code: "01304-001",
                         id_doc_country: "BR",
                         id_doc_type: "PASSPORT",
-                        id_doc_front_file:
-                            "https://onb-bucket-dev-preview.blindpay.io/1759349053904-55a9391ddff756b6f623bd9e377fcf87.png",
-                        id_doc_back_file:
-                            "https://onb-bucket-dev-preview.blindpay.io/1759349053904-55a9391ddff756b6f623bd9e377fcf87.png",
+                        id_doc_front_file: "https://example.com/image.png",
+                        id_doc_back_file: "https://example.com/image.png",
                         proof_of_address_doc_type: "UTILITY_BILL",
-                        proof_of_address_doc_file:
-                            "https://onb-bucket-dev-preview.blindpay.io/1759349159141-55a9391ddff756b6f623bd9e377fcf87.png",
+                        proof_of_address_doc_file: "https://example.com/image.png",
                         id: "ub_000000000000",
                         instance_id: "in_000000000000",
                         receiver_id: "re_IOxAUL24LG7P",
@@ -362,27 +336,21 @@ describe("Receivers", () => {
                 country: "BR",
                 postal_code: "01310-100",
                 ip_address: "127.0.0.1",
-                image_url:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759348580684-55a9391ddff756b6f623bd9e377fcf87.png",
+                image_url: "https://example.com/image.png",
                 phone_number: "+5511987654321",
                 proof_of_address_doc_type: "UTILITY_BILL",
-                proof_of_address_doc_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759348620376-55a9391ddff756b6f623bd9e377fcf87.png",
+                proof_of_address_doc_file: "https://example.com/image.png",
                 first_name: "Bernardo",
                 last_name: "Simonassi",
                 date_of_birth: "1998-02-02T00:00:00.000Z",
                 id_doc_country: "BR",
                 id_doc_type: "PASSPORT",
-                id_doc_front_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759348580684-55a9391ddff756b6f623bd9e377fcf87.png",
-                id_doc_back_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759348580684-55a9391ddff756b6f623bd9e377fcf87.png",
+                id_doc_front_file: "https://example.com/image.png",
+                id_doc_back_file: "https://example.com/image.png",
                 ai_prise_validation_key: "",
                 source_of_funds_doc_type: "savings",
-                source_of_funds_doc_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759348629995-55a9391ddff756b6f623bd9e377fcf87.png",
-                individual_holding_doc_front_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759348609084-55a9391ddff756b6f623bd9e377fcf87.png",
+                source_of_funds_doc_file: "https://example.com/image.png",
+                individual_holding_doc_front_file: "https://example.com/image.png",
                 purpose_of_transactions: "personal_or_living_expenses",
                 purpose_of_transactions_explanation:
                     "I am receiving salary payments from my employer",
@@ -425,24 +393,20 @@ describe("Receivers", () => {
                 country: "BR",
                 postal_code: "01310-100",
                 ip_address: "127.0.0.1",
-                image_url:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759348580684-55a9391ddff756b6f623bd9e377fcf87.png",
+                image_url: "https://example.com/image.png",
                 phone_number: "+5511987654321",
                 proof_of_address_doc_type: "UTILITY_BILL",
-                proof_of_address_doc_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759348620376-55a9391ddff756b6f623bd9e377fcf87.png",
+                proof_of_address_doc_file: "https://example.com/image.png",
                 first_name: "Bernardo",
                 last_name: "Simonassi",
                 date_of_birth: "1998-02-02T00:00:00.000Z",
                 id_doc_country: "BR",
                 id_doc_type: "PASSPORT",
-                id_doc_front_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759348580684-55a9391ddff756b6f623bd9e377fcf87.png",
-                id_doc_back_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759348580684-55a9391ddff756b6f623bd9e377fcf87.png",
+                id_doc_front_file: "https://example.com/image.png",
+                id_doc_back_file: "https://example.com/image.png",
                 alternate_name: "Exemplo",
                 formation_date: "2010-05-20T00:00:00.000Z",
-                website: "https://empresaexemplo.com.br",
+                website: "https://site.com",
                 owners: [
                     {
                         id: "ub_000000000000",
@@ -459,21 +423,15 @@ describe("Receivers", () => {
                         postal_code: "01304-001",
                         id_doc_country: "BR",
                         id_doc_type: "PASSPORT",
-                        id_doc_front_file:
-                            "https://onb-bucket-dev-preview.blindpay.io/1759348580684-55a9391ddff756b6f623bd9e377fcf87.png",
-                        id_doc_back_file:
-                            "https://onb-bucket-dev-preview.blindpay.io/1759348580684-55a9391ddff756b6f623bd9e377fcf87.png",
+                        id_doc_front_file: "https://example.com/image.png",
+                        id_doc_back_file: "https://example.com/image.png",
                     },
                 ],
-                incorporation_doc_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759349053904-55a9391ddff756b6f623bd9e377fcf87.png",
-                proof_of_ownership_doc_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759349058462-55a9391ddff756b6f623bd9e377fcf87.png",
+                incorporation_doc_file: "https://example.com/image.png",
+                proof_of_ownership_doc_file: "https://example.com/image.png",
                 source_of_funds_doc_type: "savings",
-                source_of_funds_doc_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759348629995-55a9391ddff756b6f623bd9e377fcf87.png",
-                individual_holding_doc_front_file:
-                    "https://onb-bucket-dev-preview.blindpay.io/1759348609084-55a9391ddff756b6f623bd9e377fcf87.png",
+                source_of_funds_doc_file: "https://example.com/image.png",
+                individual_holding_doc_front_file: "https://example.com/image.png",
                 purpose_of_transactions: "personal_or_living_expenses",
                 purpose_of_transactions_explanation:
                     "I am receiving salary payments from my employer",
