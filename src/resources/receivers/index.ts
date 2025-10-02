@@ -32,7 +32,7 @@ export type SourceOfFundsDocType =
     | "savings"
     | "esops"
     | "investment_proceeds"
-    | "someone_else_funds"
+    | "someone_else_funds";
 
 export type IdentificationDocument = "PASSPORT" | "ID_CARD" | "DRIVERS";
 
