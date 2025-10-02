@@ -59,7 +59,7 @@ export type Owner = {
     id_doc_country: Country;
     id_doc_type: IdentificationDocument;
     id_doc_front_file: string;
-    id_doc_back_file: string;
+    id_doc_back_file: string | null;
     proof_of_address_doc_type: ProofOfAddressDocType;
     proof_of_address_doc_file: string;
 };
@@ -212,6 +212,7 @@ export type CreateIndividualWithStandardKYCInput = {
     id_doc_country: Country;
     id_doc_front_file: string;
     id_doc_type: IdentificationDocument;
+    id_doc_back_file: string | null;
     last_name: string;
     postal_code: string;
     proof_of_address_doc_file: string;
@@ -237,6 +238,7 @@ export type CreateIndividualWithEnhancedKYCInput = {
     id_doc_country: Country;
     id_doc_front_file: string;
     id_doc_type: IdentificationDocument;
+    id_doc_back_file: string | null;
     individual_holding_doc_front_file: string;
     last_name: string;
     postal_code: string;
@@ -246,6 +248,7 @@ export type CreateIndividualWithEnhancedKYCInput = {
     purpose_of_transactions: PurposeOfTransactions;
     source_of_funds_doc_file: string;
     source_of_funds_doc_type: SourceOfFundsDocType;
+    purpose_of_transactions_explanation: string | null;
     state_province_region: string;
     tax_id: string;
     tos_id: string;
