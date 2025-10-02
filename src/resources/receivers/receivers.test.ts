@@ -203,6 +203,7 @@ describe("Receivers", () => {
                 id_doc_country: "BR",
                 id_doc_type: "PASSPORT",
                 id_doc_front_file: "https://example.com/image.png",
+                id_doc_back_file: "https://example.com/image.png",
                 proof_of_address_doc_type: "UTILITY_BILL",
                 proof_of_address_doc_file: "https://example.com/image.png",
                 tos_id: "to_tPiz4bM2nh5K",
@@ -237,11 +238,14 @@ describe("Receivers", () => {
                 id_doc_country: "BR",
                 id_doc_type: "PASSPORT",
                 id_doc_front_file: "https://example.com/image.png",
+                id_doc_back_file: "https://example.com/image.png",
                 proof_of_address_doc_type: "UTILITY_BILL",
                 proof_of_address_doc_file: "https://example.com/image.png",
                 individual_holding_doc_front_file: "https://example.com/image.png",
                 purpose_of_transactions: "personal_or_living_expenses",
                 source_of_funds_doc_type: "savings",
+                purpose_of_transactions_explanation:
+                    "I am receiving salary payments from my employer",
                 source_of_funds_doc_file: "https://example.com/image.png",
                 tos_id: "to_3ZZhllJkvo5Z",
             });
