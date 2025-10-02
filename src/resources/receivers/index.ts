@@ -17,7 +17,8 @@ export type PurposeOfTransactions =
     | "protect_wealth"
     | "purchase_good_and_services"
     | "receive_payment_for_freelancing"
-    | "receive_salary";
+    | "receive_salary"
+    | "other";
 
 export type SourceOfFundsDocType =
     | "business_income"
