@@ -176,7 +176,7 @@ export type BusinessWithStandardKYB = {
     postal_code: string;
     ip_address: string | null;
     image_url: string | null;
-    phone_number: string;
+    phone_number: string | null;
     proof_of_address_doc_type: ProofOfAddressDocType;
     proof_of_address_doc_file: string;
     legal_name: string;
@@ -200,7 +200,7 @@ export type BusinessWithStandardKYB = {
 };
 
 export type CreateIndividualWithStandardKYCInput = {
-    externalId?: string;
+    external_id?: string;
     address_line_1: string;
     address_line_2?: string;
     city: string;
@@ -208,6 +208,7 @@ export type CreateIndividualWithStandardKYCInput = {
     date_of_birth: string;
     email: string;
     first_name: string;
+    phone_number: string | null;
     id_doc_country: Country;
     id_doc_front_file: string;
     id_doc_type: IdentificationDocument;
@@ -225,7 +226,7 @@ export type CreateIndividualWithStandardKYCResponse = {
 };
 
 export type CreateIndividualWithEnhancedKYCInput = {
-    externalId?: string;
+    external_id?: string;
     address_line_1: string;
     address_line_2?: string;
     city: string;
@@ -239,6 +240,7 @@ export type CreateIndividualWithEnhancedKYCInput = {
     individual_holding_doc_front_file: string;
     last_name: string;
     postal_code: string;
+    phone_number: string | null;
     proof_of_address_doc_file: string;
     proof_of_address_doc_type: ProofOfAddressDocType;
     purpose_of_transactions: PurposeOfTransactions;
@@ -254,7 +256,7 @@ export type CreateIndividualWithEnhancedKYCResponse = {
 };
 
 export type CreateBusinessWithStandardKYBInput = {
-    externalId?: string;
+    external_id?: string;
     address_line_1: string;
     address_line_2?: string;
     alternate_name: string;
