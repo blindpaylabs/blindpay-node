@@ -423,8 +423,10 @@ describe("Receivers", () => {
                         postal_code: "01304-001",
                         id_doc_country: "BR",
                         id_doc_type: "PASSPORT",
-                        id_doc_front_file: "https://example.com/image.png",
-                        id_doc_back_file: "https://example.com/image.png",
+                        id_doc_front_file:
+                            "https://onb-bucket-dev-preview.blindpay.io/1759348580684-55a9391ddff756b6f623bd9e377fcf87.png",
+                        id_doc_back_file:
+                            "https://onb-bucket-dev-preview.blindpay.io/1759348580684-55a9391ddff756b6f623bd9e377fcf87.png",
                     },
                 ],
                 incorporation_doc_file: "https://example.com/image.png",
