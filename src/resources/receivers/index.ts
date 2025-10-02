@@ -193,10 +193,6 @@ export type BusinessWithStandardKYB = {
     };
 };
 
-export type ListReceiversResponse = Array<
-    IndividualWithStandardKYC | IndividualWithEnhancedKYC | BusinessWithStandardKYB
->;
-
 export type CreateIndividualWithStandardKYCInput = {
     address_line_1: string;
     address_line_2?: string;
@@ -208,7 +204,6 @@ export type CreateIndividualWithStandardKYCInput = {
     id_doc_country: Country;
     id_doc_front_file: string;
     id_doc_type: IdentificationDocument;
-    kyc_type: "standard";
     last_name: string;
     postal_code: string;
     proof_of_address_doc_file: string;
@@ -216,7 +211,6 @@ export type CreateIndividualWithStandardKYCInput = {
     state_province_region: string;
     tax_id: string;
     tos_id: string;
-    type: "individual";
 };
 
 export type CreateIndividualWithStandardKYCResponse = {
@@ -235,7 +229,6 @@ export type CreateIndividualWithEnhancedKYCInput = {
     id_doc_front_file: string;
     id_doc_type: IdentificationDocument;
     individual_holding_doc_front_file: string;
-    kyc_type: "enhanced";
     last_name: string;
     postal_code: string;
     proof_of_address_doc_file: string;
@@ -246,7 +239,6 @@ export type CreateIndividualWithEnhancedKYCInput = {
     state_province_region: string;
     tax_id: string;
     tos_id: string;
-    type: "individual";
 };
 
 export type CreateIndividualWithEnhancedKYCResponse = {
@@ -262,7 +254,6 @@ export type CreateBusinessWithStandardKYBInput = {
     email: string;
     formation_date: string;
     incorporation_doc_file: string;
-    kyc_type: "standard";
     legal_name: string;
     owners: Owner[];
     postal_code: string;
@@ -272,13 +263,16 @@ export type CreateBusinessWithStandardKYBInput = {
     state_province_region: string;
     tax_id: string;
     tos_id: string;
-    type: "business";
     website: string | null;
 };
 
 export type CreateBusinessWithStandardKYBResponse = {
     id: string;
 };
+
+export type ListReceiversResponse = Array<
+    IndividualWithStandardKYC | IndividualWithEnhancedKYC | BusinessWithStandardKYB
+>;
 
 export type GetReceiverInput = string;
 
@@ -369,17 +363,29 @@ export function createReceiversResource(instanceId: string, client: InternalApiC
         createIndividualWithStandardKYC(
             data: CreateIndividualWithStandardKYCInput
         ): Promise<BlindpayApiResponse<CreateIndividualWithStandardKYCResponse>> {
-            return client.post(`/instances/${instanceId}/receivers`, data);
+            return client.post(`/instances/${instanceId}/receivers`, {
+                kyc_type: "standard",
+                type: "individual",
+                ...data,
+            });
         },
         createIndividualWithEnhancedKYC(
             data: CreateIndividualWithEnhancedKYCInput
         ): Promise<BlindpayApiResponse<CreateIndividualWithEnhancedKYCResponse>> {
-            return client.post(`/instances/${instanceId}/receivers`, data);
+            return client.post(`/instances/${instanceId}/receivers`, {
+                kyc_type: "enhanced",
+                type: "individual",
+                ...data,
+            });
         },
         createBusinessWithStandardKYB(
             data: CreateBusinessWithStandardKYBInput
         ): Promise<BlindpayApiResponse<CreateBusinessWithStandardKYBResponse>> {
-            return client.post(`/instances/${instanceId}/receivers`, data);
+            return client.post(`/instances/${instanceId}/receivers`, {
+                kyc_type: "standard",
+                type: "business",
+                ...data,
+            });
         },
         get(receiver_id: GetReceiverInput): Promise<BlindpayApiResponse<GetReceiverResponse>> {
             return client.get(`/instances/${instanceId}/receivers/${receiver_id}`);

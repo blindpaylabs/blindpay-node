@@ -188,8 +188,6 @@ describe("Receivers", () => {
             });
 
             const { data, error } = await blindpay.receivers.createIndividualWithStandardKYC({
-                type: "individual",
-                kyc_type: "standard",
                 email: "bernardo.simonassi@gmail.com",
                 tax_id: "12345678900",
                 address_line_1: "Av. Paulista, 1000",
@@ -223,8 +221,6 @@ describe("Receivers", () => {
             });
 
             const { data, error } = await blindpay.receivers.createIndividualWithEnhancedKYC({
-                type: "individual",
-                kyc_type: "enhanced",
                 email: "bernardo.simonassi@gmail.com",
                 tax_id: "12345678900",
                 address_line_1: "Av. Paulista, 1000",
@@ -262,8 +258,6 @@ describe("Receivers", () => {
             });
 
             const { data, error } = await blindpay.receivers.createBusinessWithStandardKYB({
-                type: "business",
-                kyc_type: "standard",
                 email: "contato@empresa.com.br",
                 tax_id: "20096178000195",
                 address_line_1: "Av. Brigadeiro Faria Lima, 400",
