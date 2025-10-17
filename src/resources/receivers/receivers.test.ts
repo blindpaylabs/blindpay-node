@@ -4,9 +4,11 @@ import type {
     CreateBusinessWithStandardKYBResponse,
     CreateIndividualWithEnhancedKYCResponse,
     CreateIndividualWithStandardKYCResponse,
+    GetLimitIncreaseRequestsResponse,
     GetReceiverLimitsResponse,
     GetReceiverResponse,
     ListReceiversResponse,
+    RequestLimitIncreaseResponse,
 } from ".";
 
 describe("Receivers", () => {
@@ -478,6 +480,70 @@ describe("Receivers", () => {
             const { data, error } = await blindpay.receivers.getLimits("re_YuaMcI2B8zbQ");
             expect(error).toBeNull();
             expect(data).toEqual(mockedReceiverLimits);
+        });
+    });
+
+    describe("Get limit increase requests", () => {
+        it("should get limit increase requests for a receiver", async () => {
+            const mockedLimitIncreaseRequests: GetLimitIncreaseRequestsResponse = [
+                {
+                    id: "rl_000000000000",
+                    receiver_id: "re_YuaMcI2B8zbQ",
+                    status: "in_review",
+                    daily: 50000,
+                    monthly: 250000,
+                    per_transaction: 25000,
+                    supporting_document_file: "https://example.com/bank-statement.pdf",
+                    supporting_document_type: "individual_bank_statement",
+                    created_at: "2025-01-15T10:30:00.000Z",
+                    updated_at: "2025-01-15T10:30:00.000Z",
+                },
+                {
+                    id: "rl_000000000000",
+                    receiver_id: "re_YuaMcI2B8zbQ",
+                    status: "approved",
+                    daily: 30000,
+                    monthly: 150000,
+                    per_transaction: 15000,
+                    supporting_document_file: "https://example.com/proof-of-income.pdf",
+                    supporting_document_type: "individual_proof_of_income",
+                    created_at: "2024-12-10T14:20:00.000Z",
+                    updated_at: "2024-12-12T09:45:00.000Z",
+                },
+            ];
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedLimitIncreaseRequests), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.receivers.getLimitIncreaseRequests("re_YuaMcI2B8zbQ");
+            
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedLimitIncreaseRequests);
+        });
+    });
+
+    describe("Request limit increase", () => {
+        it("should request a limit increase for a receiver", async () => {
+            const mockedResponse: RequestLimitIncreaseResponse = {
+                id: "rl_000000000000",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.receivers.requestLimitIncrease({
+                receiver_id: "re_YuaMcI2B8zbQ",
+                daily: 100000,
+                monthly: 500000,
+                per_transaction: 50000,
+                supporting_document_file: "https://example.com/tax-return.pdf",
+                supporting_document_type: "individual_tax_return",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedResponse);
         });
     });
 });
