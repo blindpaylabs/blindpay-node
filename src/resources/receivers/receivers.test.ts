@@ -516,8 +516,9 @@ describe("Receivers", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.getLimitIncreaseRequests("re_YuaMcI2B8zbQ");
-            
+            const { data, error } =
+                await blindpay.receivers.getLimitIncreaseRequests("re_YuaMcI2B8zbQ");
+
             expect(error).toBeNull();
             expect(data).toEqual(mockedLimitIncreaseRequests);
         });
