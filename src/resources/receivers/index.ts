@@ -369,6 +369,44 @@ export type GetReceiverLimitsResponse = {
     };
 };
 
+export type GetLimitIncreaseRequestsInput = string;
+
+export type LimitIncreaseRequestStatus = "in_review" | "approved" | "rejected";
+
+export type LimitIncreaseRequestSupportingDocumentType =
+    | "individual_bank_statement"
+    | "individual_tax_return"
+    | "individual_proof_of_income"
+    | "business_bank_statement"
+    | "business_financial_statements"
+    | "business_tax_return";
+
+export type GetLimitIncreaseRequestsResponse = Array<{
+    id: string;
+    receiver_id: string;
+    status: LimitIncreaseRequestStatus;
+    daily: number;
+    monthly: number;
+    per_transaction: number;
+    supporting_document_file: string;
+    supporting_document_type: LimitIncreaseRequestSupportingDocumentType;
+    created_at: string;
+    updated_at: string;
+}>;
+
+export type RequestLimitIncreaseInput = {
+    receiver_id: string;
+    daily: number;
+    monthly: number;
+    per_transaction: number;
+    supporting_document_file: string;
+    supporting_document_type: LimitIncreaseRequestSupportingDocumentType;
+};
+
+export type RequestLimitIncreaseResponse = {
+    id: string;
+};
+
 export function createReceiversResource(instanceId: string, client: InternalApiClient) {
     return {
         list(): Promise<BlindpayApiResponse<ListReceiversResponse>> {
@@ -414,6 +452,20 @@ export function createReceiversResource(instanceId: string, client: InternalApiC
             receiver_id: GetReceiverLimitsInput
         ): Promise<BlindpayApiResponse<GetReceiverLimitsResponse>> {
             return client.get(`/instances/${instanceId}/limits/receivers/${receiver_id}`);
+        },
+        getLimitIncreaseRequests(
+            receiver_id: GetLimitIncreaseRequestsInput
+        ): Promise<BlindpayApiResponse<GetLimitIncreaseRequestsResponse>> {
+            return client.get(`/instances/${instanceId}/receivers/${receiver_id}/limit-increase`);
+        },
+        requestLimitIncrease({
+            receiver_id,
+            ...data
+        }: RequestLimitIncreaseInput): Promise<BlindpayApiResponse<RequestLimitIncreaseResponse>> {
+            return client.post(
+                `/instances/${instanceId}/receivers/${receiver_id}/limit-increase`,
+                data
+            );
         },
     };
 }
