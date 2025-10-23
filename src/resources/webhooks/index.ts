@@ -13,7 +13,8 @@ export type WebhookEvents =
     | "payin.new"
     | "payin.update"
     | "payin.complete"
-    | "payin.partnerFee";
+    | "payin.partnerFee"
+    | "tos.accept";
 
 export type CreateWebhookEndpointInput = {
     url: string;
