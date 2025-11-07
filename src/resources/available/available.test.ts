@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "../../client";
-import type { GetBankDetailsResponse, GetRailsResponse } from ".";
+import type { GetBankDetailsResponse, GetRailsResponse, GetSwiftCodeBankDetailsResponse } from ".";
 
 describe("Available", () => {
     afterEach(() => fetchMock.resetMocks());
@@ -92,6 +92,33 @@ describe("Available", () => {
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedRails);
+        });
+    });
+
+    describe("Get swift code bank details", () => {
+        it("should get bank details of a swift code", async () => {
+            const mockedBankDetails: GetSwiftCodeBankDetailsResponse = [
+                {
+                    id: "416",
+                    bank: "BANK OF AMERICA, N.A.",
+                    city: "NEW JERSEY",
+                    branch: "LENDING SERVICES AND OPERATIONS (LSOP)",
+                    swiftCode: "BOFAUS3NLMA",
+                    swiftCodeLink: "https://bank.codes/swift-code/united-states/bofaus3nlma/",
+                    country: "United States",
+                    countrySlug: "united-states",
+                },
+            ];
+            fetchMock.mockResponseOnce(JSON.stringify(mockedBankDetails), {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            const { data, error } = await blindpay.available.getSwiftCodeBankDetails("BOFAUS3NLMA");
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedBankDetails);
         });
     });
 });
