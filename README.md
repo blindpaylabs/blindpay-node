@@ -1,6 +1,6 @@
-# Blindpay Node.js SDK
+# BlindPay Node.js SDK
 
-The official Node.js SDK for [Blindpay](https://blindpay.com) - Global payments infrastructure made simple.
+The official Node.js SDK for [BlindPay](https://blindpay.com) - Global payments infrastructure made simple.
 
 ## Installation
 
@@ -16,7 +16,7 @@ bun add @blindpay/node
 
 ## Authentication
 
-To get started, you will need both your API key and your instance id, you can obtain your API key and instance id from the Blindpay dashboard [https://app.blindpay.com/instances/{instanceId}/api-keys](https://app.blindpay.com/instances/{instanceId}/api-keys)
+To get started, you will need both your API key and your instance id, you can obtain your API key and instance id from the BlindPay dashboard [https://app.blindpay.com/instances/{instanceId}/api-keys](https://app.blindpay.com/instances/{instanceId}/api-keys)
 
 ```typescript
 import { BlindPay } from '@blindpay/node';
@@ -94,7 +94,7 @@ console.log('Success:', data); // fully typed
 ```
 
 For detailed API documentation, visit:
-- [Blindpay API documentation](https://blindpay.com/docs/getting-started/overview)
+- [BlindPay API documentation](https://blindpay.com/docs/getting-started/overview)
 - [API Reference](https://api.blindpay.com/reference)
 
 ## Support
@@ -106,4 +106,4 @@ For detailed API documentation, visit:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Made with ❤️ by the [Blindpay](https://blindpay.com) team
+Made with ❤️ by the [BlindPay](https://blindpay.com) team
