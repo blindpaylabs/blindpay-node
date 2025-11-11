@@ -69,6 +69,19 @@ export type GetRailsResponse = Array<{
     country: string;
 }>;
 
+export type GetSwiftCodeBankDetailsInput = string;
+
+export type GetSwiftCodeBankDetailsResponse = Array<{
+    id: string;
+    bank: string;
+    city: string;
+    branch: string;
+    swiftCode: string;
+    swiftCodeLink: string;
+    country: string;
+    countrySlug: string;
+}>;
+
 export function createAvailableResource(client: InternalApiClient) {
     return {
         getBankDetails(rail: Rail): Promise<BlindpayApiResponse<GetBankDetailsResponse>> {
@@ -76,6 +89,11 @@ export function createAvailableResource(client: InternalApiClient) {
         },
         getRails(): Promise<BlindpayApiResponse<GetRailsResponse>> {
             return client.get("/available/rails");
+        },
+        getSwiftCodeBankDetails(
+            swift: GetSwiftCodeBankDetailsInput
+        ): Promise<BlindpayApiResponse<GetSwiftCodeBankDetailsResponse>> {
+            return client.get(`/available/swift/${swift}`);
         },
     };
 }
