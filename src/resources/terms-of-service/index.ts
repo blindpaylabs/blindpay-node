@@ -1,13 +1,13 @@
 import type { BlindpayApiResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
-export type InitiateTermsOfServiceInput = {
+export type InitiateInput = {
     idempotency_key: string;
     receiver_id: string | null;
     redirect_url: string | null;
 };
 
-export type InitiateTermsOfServiceResponse = {
+export type InitiateResponse = {
     url: string;
 };
 
@@ -17,8 +17,8 @@ export function createTermsOfServiceResource(instanceId: string, client: Interna
             idempotency_key,
             receiver_id,
             redirect_url,
-        }: InitiateTermsOfServiceInput): Promise<
-            BlindpayApiResponse<InitiateTermsOfServiceResponse>
+        }: InitiateInput): Promise<
+            BlindpayApiResponse<InitiateResponse>
         > {
             return client.post(`/e/instances/${instanceId}/tos`, {
                 idempotency_key,
