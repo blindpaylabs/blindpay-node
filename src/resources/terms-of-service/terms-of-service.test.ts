@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "../../client";
-import type { InitiateResponse } from ".";
+import type { InitiateTermsOfServiceResponse } from ".";
 
 describe("Terms of Service", () => {
     afterEach(() => fetchMock.resetMocks());
@@ -9,7 +9,7 @@ describe("Terms of Service", () => {
 
     describe("Initiate Terms of Service", () => {
         it("should initiate terms of service and return a URL", async () => {
-            const mockedUrl: InitiateResponse = {
+            const mockedUrl: InitiateTermsOfServiceResponse = {
                 url: "https://app.blindpay.com/e/terms-of-service?session_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
             };
 
