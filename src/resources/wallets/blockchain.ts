@@ -77,7 +77,7 @@ export type MintUsdbStellarInput = {
 
 export type PrepareSolanaDelegationTransactionInput = {
     token_address: string;
-    amount: string;
+    amount: string; 
     owner_address: string;
 };
 
@@ -167,14 +167,10 @@ export function createBlockchainWalletsResource(instanceId: string, client: Inte
         mintUsdbStellar({ ...data }: MintUsdbStellarInput): Promise<BlindpayApiResponse<void>> {
             return client.post(`/instances/${instanceId}/mint-usdb-stellar`, data);
         },
-        mintUsdbSolana({ ...data }: MintUsdbSolanaInput): Promise<BlindpayApiResponse<void>> {
+        mintUsdbSolana({...data}: MintUsdbSolanaInput): Promise<BlindpayApiResponse<void>> {
             return client.post(`/instances/${instanceId}/mint-usdb-solana`, data);
         },
-        prepareSolanaDelegationTransaction({
-            ...data
-        }: PrepareSolanaDelegationTransactionInput): Promise<
-            BlindpayApiResponse<PrepareSolanaDelegationTransactionResponse>
-        > {
+        prepareSolanaDelegationTransaction({...data}: PrepareSolanaDelegationTransactionInput): Promise<BlindpayApiResponse<PrepareSolanaDelegationTransactionResponse>> {
             return client.post(`/instances/${instanceId}/prepare-delegate-solana`, data);
         },
     };
