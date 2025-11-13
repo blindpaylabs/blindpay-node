@@ -17,9 +17,7 @@ export function createTermsOfServiceResource(instanceId: string, client: Interna
             idempotency_key,
             receiver_id,
             redirect_url,
-        }: InitiateInput): Promise<
-            BlindpayApiResponse<InitiateResponse>
-        > {
+        }: InitiateInput): Promise<BlindpayApiResponse<InitiateResponse>> {
             return client.post(`/e/instances/${instanceId}/tos`, {
                 idempotency_key,
                 receiver_id,
