@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "../../client";
-import type { CreatePayinQuoteResponse, GetPayinFxRateResponse, GetPayinQuoteResponse } from "./quotes";
+import type {
+    CreatePayinQuoteResponse,
+    GetPayinFxRateResponse,
+    GetPayinQuoteResponse,
+} from "./quotes";
 
 describe("Payin quotes", () => {
     afterEach(() => fetchMock.resetMocks());
