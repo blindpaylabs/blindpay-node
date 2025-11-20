@@ -292,8 +292,8 @@ export type PaginationParams = {
 
 export type PaginationMetadata = {
     has_more: boolean;
-    next_page: number;
-    prev_page: number;
+    next_page: string;
+    prev_page: string;
 }
 
 export type TrackingTransaction = {

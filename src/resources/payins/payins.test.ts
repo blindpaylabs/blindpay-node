@@ -104,8 +104,8 @@ describe("Payins", () => {
                 ],
                 pagination: {
                     has_more: true,
-                    next_page: 3,
-                    prev_page: 1,
+                    next_page: "pi_123",
+                    prev_page: "pi_123",
                 },
             };
 
