@@ -46,7 +46,7 @@ export type GetPayinQuoteInput = string;
 
 export type GetPayinQuoteResponse = {
     id: string;
-    payment_method: PayinPaymentMethod,
+    payment_method: PayinPaymentMethod;
     token: StablecoinToken;
     request_amount: number;
     cover_fees: boolean;
