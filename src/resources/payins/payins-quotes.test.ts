@@ -142,13 +142,13 @@ describe("Payin quotes", () => {
                         billing_fee: 100,
                         created_at: "2021-01-01T00:00:00Z",
                         updated_at: "2021-01-01T00:00:00Z",
-                    }
+                    },
                 ],
                 pagination: {
                     has_more: true,
                     next_page: "qu_123",
                     prev_page: "qu_123",
-                }
+                },
             };
 
             fetchMock.mockResponseOnce(JSON.stringify(mockedPayinQuote), {
