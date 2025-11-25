@@ -2,6 +2,9 @@ name: Snyk Security Scan
 
 on: 
   workflow_call:
+    secrets:
+      SNYK_TOKEN:
+        required: true
 
 jobs:
   security:

@@ -19,3 +19,4 @@ jobs:
   snyk:
     needs: [lint, tests]
     uses: ./.github/workflows/snyk.yaml
+    secrets: inherit
