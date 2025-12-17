@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { Webhook } from "svix";
 import { version } from "../package.json";
 import type { BlindpayApiResponse } from "../types";
 import type { InternalApiClient } from "./internal/api-client";
@@ -206,38 +206,38 @@ export class BlindPay {
     }
 
     /**
-     * Verifies the BlindPay webhook signature
+     * Verifies the BlindPay webhook signature using Svix
      *
      * @param params.secret The webhook secret from BlindPay dashboard
-     * @param params.id The value of the `svix-id` header
-     * @param params.timestamp The value of the `svix-timestamp` header
-     * @param params.payload The raw request body
-     * @param params.svixSignature The value of the `svix-signature` header
+     * @param params.headers The webhook headers object containing svix-id, svix-timestamp, and svix-signature
+     * @param params.payload The raw request body as a string
      * @returns {boolean} True if the signature is valid, false otherwise
      */
     verifyWebhookSignature({
         secret,
-        id,
-        timestamp,
+        headers,
         payload,
-        svixSignature,
     }: {
         secret: string;
-        id: string;
-        timestamp: string;
+        headers: {
+            id: string;
+            timestamp: string;
+            signature: string;
+        };
         payload: string;
-        svixSignature: string;
     }): boolean {
-        const signedContent = `${id}.${timestamp}.${payload}`;
-        const secretBytes = Buffer.from(secret.split("_")[1], "base64");
+        try {
+            const webhook = new Webhook(secret);
 
-        const expectedSignature = createHmac("sha256", secretBytes)
-            .update(signedContent)
-            .digest("base64");
+            webhook.verify(payload, {
+                "svix-id": headers.id,
+                "svix-timestamp": headers.timestamp,
+                "svix-signature": headers.signature,
+            });
 
-        return (
-            svixSignature.length === expectedSignature.length &&
-            timingSafeEqual(Buffer.from(svixSignature), Buffer.from(expectedSignature))
-        );
+            return true;
+        } catch {
+            return false;
+        }
     }
 }

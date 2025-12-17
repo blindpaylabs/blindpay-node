@@ -1,6 +1,6 @@
 {
     "name": "@blindpay/node",
-    "version": "2.5.0",
+    "version": "2.6.0",
     "description": "Official Node.js SDK for Blindpay API - Global payments infrastructure",
     "keywords": [
         "blindpay",
@@ -59,5 +59,8 @@
             "require": "./dist/index.js"
         }
     },
-    "packageManager": "bun@1.2.18"
+    "packageManager": "bun@1.2.18",
+    "dependencies": {
+        "svix": "1.82.0"
+    }
 }
