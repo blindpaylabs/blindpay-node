@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-    secrets:
-      NPM_TOKEN:
-        required: true
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
