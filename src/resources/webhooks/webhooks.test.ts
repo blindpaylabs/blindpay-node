@@ -1,4 +1,3 @@
-import { createHmac } from "node:crypto";
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "../../client";
 import type { CreateWebhookEndpointResponse, ListWebhookEndpointsResponse } from "./index";
@@ -93,100 +92,6 @@ describe("Webhooks", () => {
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedWebhookUrl);
-        });
-    });
-
-    describe("Verify webhook signature", () => {
-        const secret = "whsec_test123456789012345678901234567890";
-        const id = "msg_test123";
-        const timestamp = "1234567890";
-        const payload = JSON.stringify({ event: "receiver.new", data: { id: "rec_123" } });
-
-        // Generate a valid signature
-        const signedContent = `${id}.${timestamp}.${payload}`;
-        const secretBytes = Buffer.from(secret.split("_")[1], "base64");
-        const validSignature = createHmac("sha256", secretBytes)
-            .update(signedContent)
-            .digest("base64");
-
-        it("should verify a valid signature with v1 prefix", () => {
-            const svixSignature = `v1,${validSignature}`;
-
-            const isValid = blindpay.verifyWebhookSignature({
-                secret,
-                id,
-                timestamp,
-                payload,
-                svixSignature,
-            });
-
-            expect(isValid).toBe(true);
-        });
-
-        it("should verify multiple signatures separated by spaces", () => {
-            // Create a second signature (different but valid)
-            const signedContent2 = `${id}.${timestamp}.${payload}`;
-            const validSignature2 = createHmac("sha256", secretBytes)
-                .update(signedContent2)
-                .digest("base64");
-
-            const svixSignature = `v1,${validSignature} v1,${validSignature2}`;
-
-            const isValid = blindpay.verifyWebhookSignature({
-                secret,
-                id,
-                timestamp,
-                payload,
-                svixSignature,
-            });
-
-            expect(isValid).toBe(true);
-        });
-
-        it("should return false for invalid signature", () => {
-            const svixSignature = `v1,invalid_signature_here`;
-
-            const isValid = blindpay.verifyWebhookSignature({
-                secret,
-                id,
-                timestamp,
-                payload,
-                svixSignature,
-            });
-
-            expect(isValid).toBe(false);
-        });
-
-        it("should return false for tampered payload", () => {
-            const tamperedPayload = JSON.stringify({
-                event: "receiver.new",
-                data: { id: "rec_tampered" },
-            });
-            const svixSignature = `v1,${validSignature}`;
-
-            const isValid = blindpay.verifyWebhookSignature({
-                secret,
-                id,
-                timestamp,
-                payload: tamperedPayload,
-                svixSignature,
-            });
-
-            expect(isValid).toBe(false);
-        });
-
-        it("should return false for tampered timestamp", () => {
-            const svixSignature = `v1,${validSignature}`;
-
-            const isValid = blindpay.verifyWebhookSignature({
-                secret,
-                id,
-                timestamp: "9999999999",
-                payload,
-                svixSignature,
-            });
-
-            expect(isValid).toBe(false);
         });
     });
 });

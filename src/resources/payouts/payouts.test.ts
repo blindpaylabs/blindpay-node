@@ -114,8 +114,8 @@ describe("Payouts", () => {
                 ],
                 pagination: {
                     has_more: true,
-                    next_page: 3,
-                    prev_page: 1,
+                    next_page: "3",
+                    prev_page: "1",
                 },
             };
 
