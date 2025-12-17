@@ -235,9 +235,23 @@ export class BlindPay {
             .update(signedContent)
             .digest("base64");
 
-        return (
-            svixSignature.length === expectedSignature.length &&
-            timingSafeEqual(Buffer.from(svixSignature), Buffer.from(expectedSignature))
-        );
+        // Handle multiple signatures separated by spaces
+        const signatures = svixSignature.split(" ");
+
+        for (const sig of signatures) {
+            const parts = sig.split(",");
+            if (parts.length === 2 && parts[0] === "v1") {
+                const actualSignature = parts[1]; // Extract signature after "v1," prefix
+
+                if (
+                    actualSignature.length === expectedSignature.length &&
+                    timingSafeEqual(Buffer.from(actualSignature), Buffer.from(expectedSignature))
+                ) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
