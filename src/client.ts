@@ -224,18 +224,18 @@ export class BlindPay {
             timestamp: string;
             signature: string;
         };
-        payload: string; 
+        payload: string;
     }): boolean {
         try {
             const webhook = new Webhook(secret);
 
             webhook.verify(payload, {
-                'svix-id': headers.id,
-                'svix-timestamp': headers.timestamp,
-                'svix-signature': headers.signature,
-              });
+                "svix-id": headers.id,
+                "svix-timestamp": headers.timestamp,
+                "svix-signature": headers.signature,
+            });
 
-            return true
+            return true;
         } catch {
             return false;
         }
