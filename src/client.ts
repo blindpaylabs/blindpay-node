@@ -229,7 +229,11 @@ export class BlindPay {
         try {
             const webhook = new Webhook(secret);
 
-            webhook.verify(payload, headers);
+            webhook.verify(payload, {
+                'svix-id': headers.id,
+                'svix-timestamp': headers.timestamp,
+                'svix-signature': headers.signature,
+              });
 
             return true
         } catch {
