@@ -339,6 +339,6 @@ export type TrackingComplete = {
 
   export type TrackingPartnerFee = {
     step: TrackingStatus
-    transaction_hash?: string | null;
-    completed_at?: string | null;
+    transaction_hash: string | null;
+    completed_at: string | null;
   }
