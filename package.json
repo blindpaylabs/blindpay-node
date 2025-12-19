@@ -47,6 +47,7 @@
     ],
     "scripts": {
         "build": "tsup src/index.ts src/resources/ --format cjs,esm --dts",
+        "check-types": "tsc --noEmit",
         "lint:check": "biome check .",
         "lint:fix": "biome check --write .",
         "test": "vitest run",

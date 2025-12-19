@@ -1,5 +1,7 @@
 import type {
     AccountClass,
+    AchCopDocument,
+    ArgentinaTransfers,
     BankAccountType,
     BlindpayApiResponse,
     Country,
@@ -7,11 +9,6 @@ import type {
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { SpeiProtocol } from "../payouts";
-
-export type ArgentinaTransfers = "CVU" | "CBU" | "ALIAS";
-
-export type AchCopDocument = "CC" | "CE" | "NIT" | "PASS" | "PEP";
-
 export type ListBankAccountsInput = string;
 
 export type ListBankAccountsResponse = {
