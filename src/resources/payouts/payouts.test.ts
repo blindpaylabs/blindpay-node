@@ -1,8 +1,10 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "../../client";
 import type {
+    AuthorizeSolanaResponse,
     AuthorizeStellarTokenResponse,
     CreateEvmPayoutResponse,
+    CreateSolanaPayoutResponse,
     CreateStellarPayoutResponse,
     ExportPayoutsResponse,
     GetPayoutResponse,
@@ -577,6 +579,82 @@ describe("Payouts", () => {
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedEvmPayout);
+        });
+    });
+
+    describe("Authorize solana", () => {
+        it("should authorize solana transaction", async () => {
+            const mockedAuthorizeSolana: AuthorizeSolanaResponse = {
+                serialized_transaction: "AAA...Zey8y0A",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedAuthorizeSolana), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.payouts.authorizeSolana({
+                quote_id: "qu_000000000000",
+                sender_wallet_address: "0x123...890",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedAuthorizeSolana);
+        });
+    });
+
+    describe("Create solana payout", () => {
+        it("should create a solana payout", async () => {
+            const mockedSolanaPayout: CreateSolanaPayoutResponse = {
+                id: "pa_000000000000",
+                status: "processing",
+                sender_wallet_address: "0x123...890",
+                tracking_complete: {
+                    step: "on_hold",
+                    status: "tokens_refunded",
+                    transaction_hash: "0x123...890",
+                    completed_at: "2011-10-05T14:48:00.000Z",
+                },
+                tracking_payment: {
+                    step: "on_hold",
+                    provider_name: "blockchain",
+                    provider_transaction_id: "0x123...890",
+                    provider_status: "canceled",
+                    estimated_time_of_arrival: "5_min",
+                    completed_at: "2011-10-05T14:48:00.000Z",
+                },
+                tracking_transaction: {
+                    step: "processing",
+                    status: "failed",
+                    transaction_hash: "0x123...890",
+                    completed_at: "2011-10-05T14:48:00.000Z",
+                },
+                tracking_partner_fee: {
+                    step: "on_hold",
+                    transaction_hash: "0x123...890",
+                    completed_at: "2011-10-05T14:48:00.000Z",
+                },
+                tracking_liquidity: {
+                    step: "processing",
+                    provider_transaction_id: "0x123...890",
+                    provider_status: "deposited",
+                    estimated_time_of_arrival: "1_business_day",
+                    completed_at: "2011-10-05T14:48:00.000Z",
+                },
+                receiver_id: "re_000000000000",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedSolanaPayout), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.payouts.createSolana({
+                quote_id: "qu_000000000000",
+                sender_wallet_address: "0x123...890",
+                signed_transaction: "AAA...Zey8y0A",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedSolanaPayout);
         });
     });
 });

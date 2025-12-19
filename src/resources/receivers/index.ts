@@ -272,7 +272,7 @@ export type CreateBusinessWithStandardKYBInput = {
     formation_date: string;
     incorporation_doc_file: string;
     legal_name: string;
-    owners: Array<StrictOmit<Owner, 'id'>>;
+    owners: Array<StrictOmit<Owner, "id">>;
     postal_code: string;
     proof_of_address_doc_file: string;
     proof_of_address_doc_type: ProofOfAddressDocType;
@@ -324,7 +324,8 @@ export type UpdateReceiverInput = {
     alternate_name?: string;
     formation_date?: string;
     website?: string;
-    owners?: Array<Pick<
+    owners?: Array<
+        Pick<
             Owner,
             | "first_name"
             | "last_name"
