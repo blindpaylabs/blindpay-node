@@ -24,6 +24,7 @@ describe("Receivers", () => {
                     type: "individual",
                     kyc_type: "standard",
                     kyc_status: "verifying",
+                    is_tos_accepted: true,
                     kyc_warnings: [
                         {
                             code: null,
@@ -66,6 +67,7 @@ describe("Receivers", () => {
                 {
                     id: "re_YuaMcI2B8zbQ",
                     type: "individual",
+                    is_tos_accepted: true,
                     kyc_type: "enhanced",
                     kyc_status: "approved",
                     kyc_warnings: null,
@@ -109,6 +111,8 @@ describe("Receivers", () => {
                     id: "re_IOxAUL24LG7P",
                     type: "business",
                     kyc_type: "standard",
+                    is_tos_accepted: true,
+                    is_fbo: false,
                     kyc_status: "pending",
                     kyc_warnings: null,
                     email: "business@example.com",
@@ -148,8 +152,6 @@ describe("Receivers", () => {
                             proof_of_address_doc_type: "UTILITY_BILL",
                             proof_of_address_doc_file: "https://example.com/image.png",
                             id: "ub_000000000000",
-                            instance_id: "in_000000000000",
-                            receiver_id: "re_IOxAUL24LG7P",
                         },
                     ],
                     incorporation_doc_file: "https://example.com/image.png",
@@ -302,9 +304,6 @@ describe("Receivers", () => {
                         id_doc_back_file: "https://example.com/image.png",
                         proof_of_address_doc_type: "UTILITY_BILL",
                         proof_of_address_doc_file: "https://example.com/image.png",
-                        id: "ub_000000000000",
-                        instance_id: "in_000000000000",
-                        receiver_id: "re_IOxAUL24LG7P",
                     },
                 ],
             });
@@ -318,6 +317,7 @@ describe("Receivers", () => {
         it("should get a receiver", async () => {
             const mockedReceiver: GetReceiverResponse = {
                 id: "re_YuaMcI2B8zbQ",
+                is_tos_accepted: true,
                 type: "individual",
                 kyc_type: "enhanced",
                 kyc_status: "verifying",
@@ -411,7 +411,6 @@ describe("Receivers", () => {
                 website: "https://site.com",
                 owners: [
                     {
-                        id: "ub_000000000000",
                         first_name: "Carlos",
                         last_name: "Silva",
                         role: "beneficial_owner",

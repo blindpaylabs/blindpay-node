@@ -296,18 +296,69 @@ export type PaginationMetadata = {
     prev_page: string;
 }
 
+export type ArgentinaTransfers = "CVU" | "CBU" | "ALIAS";
+
+export type AchCopDocument = "CC" | "CE" | "NIT" | "PASS" | "PEP";
+
+export type PayinTrackingTransaction = {
+    step: TrackingStatus
+    status: 'failed' | 'completed' | null;
+    external_id: string | null;
+    completed_at: string | null;
+    sender_name: string | null;
+    sender_tax_id: string | null;
+    sender_bank_code: string | null;
+    sender_account_number: string | null;
+    trace_number: string | null;
+    transaction_reference: string | null;
+    description: string | null;
+    pse_instruction: {
+      payment_link: string;
+      fid: string;
+      full_name: string;
+      tax_id: string;
+      document_type: Extract<AchCopDocument, 'CC' | 'NIT'>;
+      phone: string;
+      email: string;
+      bank_code: string | null;
+    } | null
+    transfers_instruction: {
+      account: string;
+      type: ArgentinaTransfers;
+      tax_id: string | null;
+    } | null
+  };
+  
+  export type PayinTrackingPayment = {
+    step: TrackingStatus
+    provider_name?: string | null
+    completed_at?: string | null
+  };
+  
+  export type PayinTrackingComplete = {
+    step: TrackingStatus
+    transaction_hash: string | null;
+    completed_at: string | null;
+  };
+  
+  export type PayinTrackingPartnerFee = {
+    step: TrackingStatus
+    transaction_hash?: string | null
+    completed_at?: string | null
+  } 
+
 export type TrackingStatus = 'processing' | 'on_hold' | 'completed';
 
 export type EstimatedTimeOfArrival = '5_min' | '30_min' | '2_hours' | '1_business_day' | '2_business_days' | '5_business_days';
 
-export type TrackingTransaction = {
+export type PayoutTrackingTransaction = {
     step: TrackingStatus
     status: 'failed' | 'found';
     transaction_hash: string | null
     completed_at: string | null
   };
   
-  export type TrackingPayment = {
+  export type PayoutTrackingPayment = {
     step: TrackingStatus
     provider_name: string | null ;
     provider_transaction_id: string | null ;
@@ -322,7 +373,7 @@ export type TrackingTransaction = {
     completed_at: string | null ;
   };
   
-  export type TrackingLiquidity = {
+  export type PayoutTrackingLiquidity = {
     step: TrackingStatus
     provider_transaction_id: string | null ;
     provider_status: 'deposited' | 'converted' | 'withdrawn' | null;
@@ -330,14 +381,14 @@ export type TrackingTransaction = {
     completed_at: string | null ;
   }
   
-export type TrackingComplete = {
+export type PayoutTrackingComplete = {
     step: TrackingStatus
     status: 'tokens_refunded' | 'paid' | null;
     transaction_hash: string | null;
     completed_at: string | null;
   };
 
-  export type TrackingPartnerFee = {
+  export type PayoutTrackingPartnerFee = {
     step: TrackingStatus
     transaction_hash: string | null;
     completed_at: string | null;
