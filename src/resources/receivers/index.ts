@@ -1,5 +1,6 @@
 import type { AccountClass, BlindpayApiResponse, Country } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import type { StrictOmit } from "../../internal/helpers/strict-omit";
 
 export type ProofOfAddressDocType =
     | "UTILITY_BILL"
@@ -43,8 +44,6 @@ export type OwnerRole = "beneficial_controlling" | "beneficial_owner" | "control
 
 export type Owner = {
     id: string;
-    instance_id: string;
-    receiver_id: string;
     role: OwnerRole;
     first_name: string;
     last_name: string;
@@ -66,6 +65,7 @@ export type Owner = {
 
 export type IndividualWithStandardKYC = {
     id: string;
+    is_tos_accepted: boolean;
     type: Extract<AccountClass, "individual">;
     kyc_type: Extract<KycType, "standard">;
     kyc_status: string;
@@ -109,6 +109,7 @@ export type IndividualWithStandardKYC = {
 
 export type IndividualWithEnhancedKYC = {
     id: string;
+    is_tos_accepted: boolean;
     type: Extract<AccountClass, "individual">;
     kyc_type: Extract<KycType, "enhanced">;
     kyc_status: string;
@@ -157,6 +158,8 @@ export type IndividualWithEnhancedKYC = {
 
 export type BusinessWithStandardKYB = {
     id: string;
+    is_tos_accepted: boolean;
+    is_fbo: boolean;
     type: Extract<AccountClass, "business">;
     kyc_type: Extract<KycType, "standard">;
     kyc_status: string;
@@ -269,7 +272,7 @@ export type CreateBusinessWithStandardKYBInput = {
     formation_date: string;
     incorporation_doc_file: string;
     legal_name: string;
-    owners: Owner[];
+    owners: Array<StrictOmit<Owner, "id">>;
     postal_code: string;
     proof_of_address_doc_file: string;
     proof_of_address_doc_type: ProofOfAddressDocType;
@@ -322,7 +325,7 @@ export type UpdateReceiverInput = {
     formation_date?: string;
     website?: string;
     owners?: Array<
-        { id: string } & Pick<
+        Pick<
             Owner,
             | "first_name"
             | "last_name"

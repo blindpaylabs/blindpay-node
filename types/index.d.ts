@@ -296,39 +296,49 @@ export type PaginationMetadata = {
     prev_page: string;
 }
 
+export type TrackingStatus = 'processing' | 'on_hold' | 'completed';
+
+export type EstimatedTimeOfArrival = '5_min' | '30_min' | '2_hours' | '1_business_day' | '2_business_days' | '5_business_days';
+
 export type TrackingTransaction = {
-    step: string;
-    status: string;
-    transaction_hash: string;
-    completed_at: string;
-};
-
-export type TrackingPayment = {
-    step: string;
-    provider_name: string;
-    provider_transaction_id: string;
-    provider_status: string;
-    estimated_time_of_arrival: string;
-    completed_at: string;
-};
-
-export type TrackingLiquidity = {
-    step: string;
-    provider_transaction_id: string;
-    provider_status: string;
-    estimated_time_of_arrival: string;
-    completed_at: string;
-};
-
+    step: TrackingStatus
+    status: 'failed' | 'found';
+    transaction_hash: string | null
+    completed_at: string | null
+  };
+  
+  export type TrackingPayment = {
+    step: TrackingStatus
+    provider_name: string | null ;
+    provider_transaction_id: string | null ;
+    provider_status: 'canceled' | 'failed' | 'returned' | 'sent' | null
+    recipient_name: string | null ;
+    recipient_tax_id: string | null ;
+    recipient_bank_code: string | null ;
+    recipient_branch_code: string | null ;
+    recipient_account_number: string | null ;
+    recipient_account_type: string | null ;
+    estimated_time_of_arrival: EstimatedTimeOfArrival | null ;
+    completed_at: string | null ;
+  };
+  
+  export type TrackingLiquidity = {
+    step: TrackingStatus
+    provider_transaction_id: string | null ;
+    provider_status: 'deposited' | 'converted' | 'withdrawn' | null;
+    estimated_time_of_arrival: EstimatedTimeOfArrival | null;
+    completed_at: string | null ;
+  }
+  
 export type TrackingComplete = {
-    step: string;
-    status: string;
-    transaction_hash: string;
-    completed_at: string;
-};
+    step: TrackingStatus
+    status: 'tokens_refunded' | 'paid' | null;
+    transaction_hash: string | null;
+    completed_at: string | null;
+  };
 
-export type TrackingPartnerFee = {
-    step: string;
-    transaction_hash: string;
-    completed_at: string;
-};
+  export type TrackingPartnerFee = {
+    step: TrackingStatus
+    transaction_hash: string | null;
+    completed_at: string | null;
+  }

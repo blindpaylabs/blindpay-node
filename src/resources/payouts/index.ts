@@ -163,6 +163,33 @@ export type CreateEvmPayoutResponse = {
     receiver_id: string;
 };
 
+export type AuthorizeSolanaInput = {
+    quote_id: string;
+    sender_wallet_address: string;
+};
+
+export type AuthorizeSolanaResponse = {
+    serialized_transaction: string;
+};
+
+export type CreateSolanaPayoutInput = {
+    quote_id: string;
+    sender_wallet_address: string;
+    signed_transaction: string | null;
+};
+
+export type CreateSolanaPayoutResponse = {
+    id: string;
+    status: TransactionStatus;
+    sender_wallet_address: string;
+    tracking_complete: TrackingComplete;
+    tracking_payment: TrackingPayment;
+    tracking_transaction: TrackingTransaction;
+    tracking_partner_fee?: TrackingPartnerFee | null;
+    tracking_liquidity?: TrackingLiquidity | null;
+    receiver_id: string | null;
+};
+
 export function createPayoutsResource(instanceId: string, client: InternalApiClient) {
     return {
         list(params?: ListPayoutsInput): Promise<BlindpayApiResponse<ListPayoutsResponse>> {
@@ -197,6 +224,16 @@ export function createPayoutsResource(instanceId: string, client: InternalApiCli
             ...data
         }: CreateEvmPayoutInput): Promise<BlindpayApiResponse<CreateEvmPayoutResponse>> {
             return client.post(`/instances/${instanceId}/payouts/evm`, data);
+        },
+        authorizeSolana({
+            ...data
+        }: AuthorizeSolanaInput): Promise<BlindpayApiResponse<AuthorizeSolanaResponse>> {
+            return client.post(`/instances/${instanceId}/payouts/solana/authorize`, data);
+        },
+        createSolana({
+            ...data
+        }: CreateSolanaPayoutInput): Promise<BlindpayApiResponse<CreateSolanaPayoutResponse>> {
+            return client.post(`/instances/${instanceId}/payouts/solana`, data);
         },
     };
 }
