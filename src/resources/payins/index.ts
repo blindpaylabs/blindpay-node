@@ -3,11 +3,11 @@ import type {
     Network,
     PaginationMetadata,
     PaginationParams,
+    PayinTrackingComplete,
+    PayinTrackingPartnerFee,
+    PayinTrackingPayment,
+    PayinTrackingTransaction,
     StablecoinToken,
-    TrackingComplete,
-    TrackingPartnerFee,
-    TrackingPayment,
-    TrackingTransaction,
     TransactionStatus,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
@@ -21,10 +21,10 @@ export type Payin = {
     status: TransactionStatus;
     payin_quote_id: string;
     instance_id: string;
-    tracking_transaction?: TrackingTransaction;
-    tracking_payment?: TrackingPayment;
-    tracking_complete?: TrackingComplete;
-    tracking_partner_fee?: TrackingPartnerFee;
+    tracking_transaction?: PayinTrackingTransaction;
+    tracking_payment?: PayinTrackingPayment;
+    tracking_complete?: PayinTrackingComplete;
+    tracking_partner_fee?: PayinTrackingPartnerFee;
     created_at: string;
     updated_at: string;
     image_url?: string;
@@ -110,34 +110,10 @@ export type GetPayinTrackResponse = {
     status: string;
     payin_quote_id: string;
     instance_id: string;
-    tracking_transaction: {
-        step: string;
-        status: string;
-        external_id: string;
-        completed_at: string;
-        sender_name: string;
-        sender_tax_id: string;
-        sender_bank_code: string;
-        sender_account_number: string;
-        trace_number: string;
-        transaction_reference: string;
-        description: string;
-    };
-    tracking_payment: {
-        step: string;
-        provider_name: string;
-        completed_at: string;
-    };
-    tracking_complete: {
-        step: string;
-        transaction_hash: string;
-        completed_at: string;
-    };
-    tracking_partner_fee: {
-        step: string;
-        transaction_hash: string;
-        completed_at: string;
-    };
+    tracking_transaction: PayinTrackingTransaction;
+    tracking_payment: PayinTrackingPayment;
+    tracking_complete: PayinTrackingComplete;
+    tracking_partner_fee: PayinTrackingPartnerFee;
     created_at: string;
     updated_at: string;
     image_url: string;

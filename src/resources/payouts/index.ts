@@ -7,13 +7,13 @@ import type {
     Network,
     PaginationMetadata,
     PaginationParams,
+    PayoutTrackingComplete,
+    PayoutTrackingLiquidity,
+    PayoutTrackingPartnerFee,
+    PayoutTrackingPayment,
+    PayoutTrackingTransaction,
     Rail,
     StablecoinToken,
-    TrackingComplete,
-    TrackingLiquidity,
-    TrackingPartnerFee,
-    TrackingPayment,
-    TrackingTransaction,
     TransactionDocumentType,
     TransactionStatus,
 } from "../../../types";
@@ -29,11 +29,11 @@ export type Payout = {
     signed_transaction: string;
     quote_id: string;
     instance_id: string;
-    tracking_transaction: TrackingTransaction;
-    tracking_payment: TrackingPayment;
-    tracking_liquidity: TrackingLiquidity;
-    tracking_complete: TrackingComplete;
-    tracking_partner_fee: TrackingPartnerFee;
+    tracking_transaction: PayoutTrackingTransaction;
+    tracking_payment: PayoutTrackingPayment;
+    tracking_liquidity: PayoutTrackingLiquidity;
+    tracking_complete: PayoutTrackingComplete;
+    tracking_partner_fee: PayoutTrackingPartnerFee;
     created_at: string;
     updated_at: string;
     image_url: string;
@@ -138,11 +138,11 @@ export type CreateStellarPayoutResponse = {
     id: string;
     status: TransactionStatus;
     sender_wallet_address: string;
-    tracking_complete?: TrackingComplete;
-    tracking_payment?: TrackingPayment;
-    tracking_transaction?: TrackingTransaction;
-    tracking_partner_fee?: TrackingPartnerFee;
-    tracking_liquidity?: TrackingLiquidity;
+    tracking_complete?: PayoutTrackingComplete;
+    tracking_payment?: PayoutTrackingPayment;
+    tracking_transaction?: PayoutTrackingTransaction;
+    tracking_partner_fee?: PayoutTrackingPartnerFee;
+    tracking_liquidity?: PayoutTrackingLiquidity;
     receiver_id: string;
 };
 
@@ -155,11 +155,11 @@ export type CreateEvmPayoutResponse = {
     id: string;
     status: TransactionStatus;
     sender_wallet_address: string;
-    tracking_complete?: TrackingComplete;
-    tracking_payment?: TrackingPayment;
-    tracking_transaction?: TrackingTransaction;
-    tracking_partner_fee?: TrackingPartnerFee;
-    tracking_liquidity?: TrackingLiquidity;
+    tracking_complete?: PayoutTrackingComplete;
+    tracking_payment?: PayoutTrackingPayment;
+    tracking_transaction?: PayoutTrackingTransaction;
+    tracking_partner_fee?: PayoutTrackingPartnerFee;
+    tracking_liquidity?: PayoutTrackingLiquidity;
     receiver_id: string;
 };
 
@@ -182,11 +182,11 @@ export type CreateSolanaPayoutResponse = {
     id: string;
     status: TransactionStatus;
     sender_wallet_address: string;
-    tracking_complete: TrackingComplete;
-    tracking_payment: TrackingPayment;
-    tracking_transaction: TrackingTransaction;
-    tracking_partner_fee?: TrackingPartnerFee | null;
-    tracking_liquidity?: TrackingLiquidity | null;
+    tracking_complete: PayoutTrackingComplete;
+    tracking_payment: PayoutTrackingPayment;
+    tracking_transaction: PayoutTrackingTransaction;
+    tracking_partner_fee?: PayoutTrackingPartnerFee | null;
+    tracking_liquidity?: PayoutTrackingLiquidity | null;
     receiver_id: string | null;
 };
 

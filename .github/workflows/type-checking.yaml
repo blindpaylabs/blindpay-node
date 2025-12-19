@@ -1,0 +1,24 @@
+name: Type Checking
+
+on:
+  workflow_call:
+
+jobs:
+  type-checking:
+    name: Run type checking
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.18
+          
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+        
+      - name: Type checking
+        run: bun run check-types

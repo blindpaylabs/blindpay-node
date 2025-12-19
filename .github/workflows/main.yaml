@@ -13,8 +13,11 @@ permissions:
 jobs:
   lint:
     uses: ./.github/workflows/lint.yaml
+  type-checking:
+    uses: ./.github/workflows/type-checking.yaml
+    needs: [lint]
   tests:
-    needs: lint
+    needs: [lint, type-checking]
     uses: ./.github/workflows/tests.yaml
   snyk:
     needs: [lint, tests]
