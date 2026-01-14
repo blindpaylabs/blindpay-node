@@ -329,27 +329,25 @@ export type PayinTrackingTransaction = {
     } | null
   };
   
-  export type PayinTrackingPayment = {
+export type PayinTrackingPayment = {
     step: TrackingStatus
     provider_name?: string | null
     completed_at?: string | null
   };
   
-  export type PayinTrackingComplete = {
+export type PayinTrackingComplete = {
     step: TrackingStatus
     transaction_hash?: string | null;
     completed_at?: string | null;
   };
   
-  export type PayinTrackingPartnerFee = {
+export type PayinTrackingPartnerFee = {
     step: TrackingStatus
     transaction_hash?: string | null
     completed_at?: string | null
   } 
 
-  
   export type PayinPaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse"
-
 
   export type PayerRules = {
     pix_allowed_tax_ids?: string[] | null;
@@ -374,7 +372,7 @@ export type PayoutTrackingTransaction = {
     completed_at: string | null
   };
   
-  export type PayoutTrackingPayment = {
+export type PayoutTrackingPayment = {
     step: TrackingStatus
     provider_name: string | null ;
     provider_transaction_id: string | null ;
@@ -389,7 +387,7 @@ export type PayoutTrackingTransaction = {
     completed_at: string | null ;
   };
   
-  export type PayoutTrackingLiquidity = {
+export type PayoutTrackingLiquidity = {
     step: TrackingStatus
     provider_transaction_id: string | null ;
     provider_status: 'deposited' | 'converted' | 'withdrawn' | null;
@@ -404,7 +402,7 @@ export type PayoutTrackingComplete = {
     completed_at: string | null;
   };
 
-  export type PayoutTrackingPartnerFee = {
+export type PayoutTrackingPartnerFee = {
     step: TrackingStatus
     transaction_hash: string | null;
     completed_at: string | null;
