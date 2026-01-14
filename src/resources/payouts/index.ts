@@ -115,10 +115,6 @@ export type GetPayoutTrackInput = string;
 
 export type GetPayoutTrackResponse = Payout;
 
-export type ExportPayoutsInput = Pick<PaginationParams, "limit" | "offset">;
-
-export type ExportPayoutsResponse = Payout[];
-
 export type AuthorizeStellarTokenInput = {
     quote_id: string;
     sender_wallet_address: string;
@@ -163,15 +159,6 @@ export type CreateEvmPayoutResponse = {
     receiver_id: string;
 };
 
-export type AuthorizeSolanaInput = {
-    quote_id: string;
-    sender_wallet_address: string;
-};
-
-export type AuthorizeSolanaResponse = {
-    serialized_transaction: string;
-};
-
 export type CreateSolanaPayoutInput = {
     quote_id: string;
     sender_wallet_address: string;
@@ -195,10 +182,6 @@ export function createPayoutsResource(instanceId: string, client: InternalApiCli
         list(params?: ListPayoutsInput): Promise<BlindpayApiResponse<ListPayoutsResponse>> {
             const queryParams = params ? `?${new URLSearchParams(params)}` : "";
             return client.get(`/instances/${instanceId}/payouts${queryParams}`);
-        },
-        export(params?: ExportPayoutsInput): Promise<BlindpayApiResponse<ExportPayoutsResponse>> {
-            const queryParams = params ? `?${new URLSearchParams(params)}` : "";
-            return client.get(`/instances/${instanceId}/export/payouts${queryParams}`);
         },
         get(payoutId: GetPayoutInput): Promise<BlindpayApiResponse<GetPayoutResponse>> {
             return client.get(`/instances/${instanceId}/payouts/${payoutId}`);
@@ -224,11 +207,6 @@ export function createPayoutsResource(instanceId: string, client: InternalApiCli
             ...data
         }: CreateEvmPayoutInput): Promise<BlindpayApiResponse<CreateEvmPayoutResponse>> {
             return client.post(`/instances/${instanceId}/payouts/evm`, data);
-        },
-        authorizeSolana({
-            ...data
-        }: AuthorizeSolanaInput): Promise<BlindpayApiResponse<AuthorizeSolanaResponse>> {
-            return client.post(`/instances/${instanceId}/payouts/solana/authorize`, data);
         },
         createSolana({
             ...data

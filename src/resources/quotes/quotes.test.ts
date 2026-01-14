@@ -72,7 +72,7 @@ describe("Quotes", () => {
 
             const { data, error } = await blindpay.quotes.getFxRate({
                 currency_type: "sender",
-                from: "USD",
+                from: "USDC",
                 to: "BRL",
                 request_amount: 1000,
             });

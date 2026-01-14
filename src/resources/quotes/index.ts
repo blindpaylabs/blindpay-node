@@ -11,15 +11,15 @@ import type { InternalApiClient } from "../../internal/api-client";
 export type CreateQuoteInput = {
     bank_account_id: string;
     currency_type: CurrencyType;
-    network?: Network | null;
+    cover_fees: boolean;
     request_amount: number;
+    network: Network;
     token?: StablecoinToken | null;
-    cover_fees: boolean | null;
     description?: string | null;
-    partner_fee_id: string | null;
+    partner_fee_id?: string | null;
     transaction_document_file: string | null;
-    transaction_document_id: string | null;
-    transaction_document_type: TransactionDocumentType;
+    transaction_document_id?: string | null;
+    transaction_document_type?: TransactionDocumentType | null;
 };
 export type CreateQuoteResponse = {
     id: string;
@@ -28,27 +28,27 @@ export type CreateQuoteResponse = {
     blindpay_quotation: number;
     receiver_amount: number;
     sender_amount: number;
-    partner_fee_amount: number;
-    flat_fee: number;
-    contract: {
+    partner_fee_amount?: number | null;
+    flat_fee?: number | null;
+    contract?: {
         abi: Record<string, unknown>[];
         address: string;
-        functionName: string;
+        functionName: "approve";
         blindpayContractAddress: string;
         amount: string;
         network: {
             name: string;
             chainId: number;
         };
-    };
-    receiver_local_amount: number;
-    description: string;
+    } | null;
+    receiver_local_amount?: number | null;
+    description?: string | null;
 };
 
 export type GetFxRateInput = {
     currency_type: CurrencyType;
-    from: Currency;
-    to: Currency;
+    from: StablecoinToken;
+    to: Extract<Currency, "BRL" | "USD" | "MXN" | "COP" | "ARS">;
     request_amount: number;
 };
 
@@ -56,7 +56,7 @@ export type GetFxRateResponse = {
     commercial_quotation: number;
     blindpay_quotation: number;
     result_amount: number;
-    instance_flat_fee: number;
+    instance_flat_fee?: number | null;
     instance_percentage_fee: number;
 };
 
