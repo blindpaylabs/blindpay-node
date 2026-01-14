@@ -16,7 +16,7 @@ export type BlindpaySuccessResponse<T> = {
 
 export type CurrencyType = "sender" | "receiver";
 
-export type Network = "base" | "sepolia" | "arbitrum_sepolia" | "base_sepolia" | "arbitrum" | "polygon" | "polygon_amoy" | "ethereum" | "stellar" | "stellar_testnet" | "tron"
+export type Network = "base" | "sepolia" | "arbitrum_sepolia" | "base_sepolia" | "arbitrum" | "polygon" | "polygon_amoy" | "ethereum" | "stellar" | "stellar_testnet" | "tron" | "solana" | "solana_devnet";
 
 export type StablecoinToken = "USDC" | "USDT" | "USDB"  
 
@@ -302,17 +302,17 @@ export type AchCopDocument = "CC" | "CE" | "NIT" | "PASS" | "PEP";
 
 export type PayinTrackingTransaction = {
     step: TrackingStatus
-    status: 'failed' | 'completed' | null;
+    status?: 'failed' | 'completed' | null;
     external_id: string | null;
-    completed_at: string | null;
-    sender_name: string | null;
-    sender_tax_id: string | null;
-    sender_bank_code: string | null;
-    sender_account_number: string | null;
-    trace_number: string | null;
-    transaction_reference: string | null;
-    description: string | null;
-    pse_instruction: {
+    completed_at?: string | null;
+    sender_name?: string | null;
+    sender_tax_id?: string | null;
+    sender_bank_code?: string | null;
+    sender_account_number?: string | null;
+    trace_number?: string | null;
+    transaction_reference?: string | null;
+    description?: string | null;
+    pse_instruction?: {
       payment_link: string;
       fid: string;
       full_name: string;
@@ -320,32 +320,46 @@ export type PayinTrackingTransaction = {
       document_type: Extract<AchCopDocument, 'CC' | 'NIT'>;
       phone: string;
       email: string;
-      bank_code: string | null;
+      bank_code?: string | null;
     } | null
-    transfers_instruction: {
+    transfers_instruction?: {
       account: string;
       type: ArgentinaTransfers;
-      tax_id: string | null;
+      tax_id?: string | null;
     } | null
   };
   
-  export type PayinTrackingPayment = {
+export type PayinTrackingPayment = {
     step: TrackingStatus
     provider_name?: string | null
     completed_at?: string | null
   };
   
-  export type PayinTrackingComplete = {
+export type PayinTrackingComplete = {
     step: TrackingStatus
-    transaction_hash: string | null;
-    completed_at: string | null;
+    transaction_hash?: string | null;
+    completed_at?: string | null;
   };
   
-  export type PayinTrackingPartnerFee = {
+export type PayinTrackingPartnerFee = {
     step: TrackingStatus
     transaction_hash?: string | null
     completed_at?: string | null
   } 
+
+export type PayinPaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse"
+
+export type PayerRules = {
+    pix_allowed_tax_ids?: string[] | null;
+    transfers_allowed_tax_id?: string | null;
+    pse_allowed_tax_ids?: string[] | null;
+    pse_full_name?: string | null;
+    pse_document_type?: Extract<AchCopDocument, 'CC' | 'NIT'> | null;
+    pse_document_number?: string | null;
+    pse_email?: string | null;
+    pse_phone?: string | null;
+    pse_bank_code?: string | null;
+}
 
 export type TrackingStatus = 'processing' | 'on_hold' | 'completed';
 
@@ -358,7 +372,7 @@ export type PayoutTrackingTransaction = {
     completed_at: string | null
   };
   
-  export type PayoutTrackingPayment = {
+export type PayoutTrackingPayment = {
     step: TrackingStatus
     provider_name: string | null ;
     provider_transaction_id: string | null ;
@@ -373,7 +387,7 @@ export type PayoutTrackingTransaction = {
     completed_at: string | null ;
   };
   
-  export type PayoutTrackingLiquidity = {
+export type PayoutTrackingLiquidity = {
     step: TrackingStatus
     provider_transaction_id: string | null ;
     provider_status: 'deposited' | 'converted' | 'withdrawn' | null;
@@ -388,7 +402,7 @@ export type PayoutTrackingComplete = {
     completed_at: string | null;
   };
 
-  export type PayoutTrackingPartnerFee = {
+export type PayoutTrackingPartnerFee = {
     step: TrackingStatus
     transaction_hash: string | null;
     completed_at: string | null;
