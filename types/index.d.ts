@@ -22,7 +22,7 @@ export type StablecoinToken = "USDC" | "USDT" | "USDB"
 
 export type TransactionDocumentType = "invoice" | "purchase_order" | "delivery_slip" | "contract" | "customs_declaration" | "bill_of_lading" | "others";
 
-export type BankAccountType = "checking" | "savings";
+export type BankAccountType = "checking" | "saving";
 
 export type Currency = "USDC" | "USDT" | "USDB" | "BRL" | "USD" | "MXN" | "COP" | "ARS";
 
@@ -406,4 +406,5 @@ export type PayoutTrackingPartnerFee = {
     step: TrackingStatus
     transaction_hash: string | null;
     completed_at: string | null;
+  }
   }
