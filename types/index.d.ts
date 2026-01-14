@@ -347,9 +347,9 @@ export type PayinTrackingPartnerFee = {
     completed_at?: string | null
   } 
 
-  export type PayinPaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse"
+export type PayinPaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse"
 
-  export type PayerRules = {
+export type PayerRules = {
     pix_allowed_tax_ids?: string[] | null;
     transfers_allowed_tax_id?: string | null;
     pse_allowed_tax_ids?: string[] | null;
