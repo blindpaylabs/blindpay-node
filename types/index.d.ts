@@ -407,4 +407,3 @@ export type PayoutTrackingPartnerFee = {
     transaction_hash: string | null;
     completed_at: string | null;
   }
-  }
