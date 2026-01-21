@@ -1,6 +1,6 @@
 # BlindPay Node.js SDK
 
-The official Node.js SDK for [BlindPay](https://blindpay.com) - Global payments infrastructure made simple.
+The official Node.js SDK for [BlindPay](https://blindpay.com) - Stablecoin API for global payments.
 
 ## Installation
 
