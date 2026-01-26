@@ -62,6 +62,6 @@
     },
     "packageManager": "bun@1.2.18",
     "dependencies": {
-        "svix": "1.82.0"
+        "svix": "1.84.1"
     }
 }
