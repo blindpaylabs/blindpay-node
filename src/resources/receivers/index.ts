@@ -288,40 +288,61 @@ export type BusinessWithStandardKYB = {
     };
 };
 
-export type CreateReceiverInput = {
+export type CreateIndividualWithStandardKYCInput = {
     country: Country;
     email: string;
-    kyc_type: KycType;
-    type: AccountClass;
     account_purpose?: AccountPurpose | null;
     address_line_1?: string | null;
     address_line_2?: string | null;
-    alternate_name?: string | null;
-    business_description?: string | null;
-    business_industry?: BusinessIndustry | null;
-    business_type?: BusinessType | null;
     city?: string | null;
     date_of_birth?: string | null;
-    estimated_annual_revenue?: EstimatedAnnualRevenue | null;
     external_id?: string | null;
     first_name?: string | null;
-    formation_date?: string | null;
     id_doc_back_file?: string | null;
     id_doc_country?: Country | null;
     id_doc_front_file?: string | null;
     id_doc_type?: IdentificationDocument | null;
     image_url?: string | null;
-    incorporation_doc_file?: string | null;
     ip_address?: string | null;
     last_name?: string | null;
-    legal_name?: string | null;
-    owners?: Array<StrictOmit<Owner, "id">> | null;
     phone_number?: string | null;
     postal_code?: string | null;
     proof_of_address_doc_file?: string | null;
     proof_of_address_doc_type?: ProofOfAddressDocType | null;
-    proof_of_ownership_doc_file?: string | null;
-    publicly_traded?: boolean | null;
+    selfie_file?: string | null;
+    source_of_funds_doc_file?: string | null;
+    source_of_funds_doc_type?: SourceOfFundsDocType | null;
+    source_of_wealth?: SourceOfWealth | null;
+    state_province_region?: string | null;
+    tax_id?: string | null;
+    tos_id?: string | null;
+};
+
+export type CreateIndividualWithStandardKYCResponse = {
+    id: string;
+};
+
+export type CreateIndividualWithEnhancedKYCInput = {
+    country: Country;
+    email: string;
+    account_purpose?: AccountPurpose | null;
+    address_line_1?: string | null;
+    address_line_2?: string | null;
+    city?: string | null;
+    date_of_birth?: string | null;
+    external_id?: string | null;
+    first_name?: string | null;
+    id_doc_back_file?: string | null;
+    id_doc_country?: Country | null;
+    id_doc_front_file?: string | null;
+    id_doc_type?: IdentificationDocument | null;
+    image_url?: string | null;
+    ip_address?: string | null;
+    last_name?: string | null;
+    phone_number?: string | null;
+    postal_code?: string | null;
+    proof_of_address_doc_file?: string | null;
+    proof_of_address_doc_type?: ProofOfAddressDocType | null;
     purpose_of_transactions?: PurposeOfTransactions | null;
     purpose_of_transactions_explanation?: string | null;
     selfie_file?: string | null;
@@ -331,10 +352,47 @@ export type CreateReceiverInput = {
     state_province_region?: string | null;
     tax_id?: string | null;
     tos_id?: string | null;
+};
+
+export type CreateIndividualWithEnhancedKYCResponse = {
+    id: string;
+};
+
+export type CreateBusinessWithStandardKYBInput = {
+    country: Country;
+    email: string;
+    account_purpose?: AccountPurpose | null;
+    address_line_1?: string | null;
+    address_line_2?: string | null;
+    alternate_name?: string | null;
+    business_description?: string | null;
+    business_industry?: BusinessIndustry | null;
+    business_type?: BusinessType | null;
+    city?: string | null;
+    estimated_annual_revenue?: EstimatedAnnualRevenue | null;
+    external_id?: string | null;
+    formation_date?: string | null;
+    image_url?: string | null;
+    incorporation_doc_file?: string | null;
+    ip_address?: string | null;
+    legal_name?: string | null;
+    owners?: Array<StrictOmit<Owner, "id">> | null;
+    phone_number?: string | null;
+    postal_code?: string | null;
+    proof_of_address_doc_file?: string | null;
+    proof_of_address_doc_type?: ProofOfAddressDocType | null;
+    proof_of_ownership_doc_file?: string | null;
+    publicly_traded?: boolean | null;
+    source_of_funds_doc_file?: string | null;
+    source_of_funds_doc_type?: SourceOfFundsDocType | null;
+    source_of_wealth?: SourceOfWealth | null;
+    state_province_region?: string | null;
+    tax_id?: string | null;
+    tos_id?: string | null;
     website?: string | null;
 };
 
-export type CreateReceiverResponse = {
+export type CreateBusinessWithStandardKYBResponse = {
     id: string;
 };
 
@@ -454,8 +512,32 @@ export function createReceiversResource(instanceId: string, client: InternalApiC
         list(): Promise<BlindpayApiResponse<ListReceiversResponse>> {
             return client.get(`/instances/${instanceId}/receivers`);
         },
-        create(data: CreateReceiverInput): Promise<BlindpayApiResponse<CreateReceiverResponse>> {
-            return client.post(`/instances/${instanceId}/receivers`, data);
+        createIndividualWithStandardKYC(
+            data: CreateIndividualWithStandardKYCInput
+        ): Promise<BlindpayApiResponse<CreateIndividualWithStandardKYCResponse>> {
+            return client.post(`/instances/${instanceId}/receivers`, {
+                kyc_type: "standard",
+                type: "individual",
+                ...data,
+            });
+        },
+        createIndividualWithEnhancedKYC(
+            data: CreateIndividualWithEnhancedKYCInput
+        ): Promise<BlindpayApiResponse<CreateIndividualWithEnhancedKYCResponse>> {
+            return client.post(`/instances/${instanceId}/receivers`, {
+                kyc_type: "enhanced",
+                type: "individual",
+                ...data,
+            });
+        },
+        createBusinessWithStandardKYB(
+            data: CreateBusinessWithStandardKYBInput
+        ): Promise<BlindpayApiResponse<CreateBusinessWithStandardKYBResponse>> {
+            return client.post(`/instances/${instanceId}/receivers`, {
+                kyc_type: "standard",
+                type: "business",
+                ...data,
+            });
         },
         get(receiver_id: GetReceiverInput): Promise<BlindpayApiResponse<GetReceiverResponse>> {
             return client.get(`/instances/${instanceId}/receivers/${receiver_id}`);

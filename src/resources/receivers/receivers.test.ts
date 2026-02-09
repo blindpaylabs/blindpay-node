@@ -1,7 +1,9 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "../../client";
 import type {
-    CreateReceiverResponse,
+    CreateBusinessWithStandardKYBResponse,
+    CreateIndividualWithEnhancedKYCResponse,
+    CreateIndividualWithStandardKYCResponse,
     GetLimitIncreaseRequestsResponse,
     GetReceiverLimitsResponse,
     GetReceiverResponse,
@@ -183,7 +185,7 @@ describe("Receivers", () => {
 
     describe("Create receiver", () => {
         it("should create an individual receiver with standard KYC", async () => {
-            const mockedReceiver: CreateReceiverResponse = {
+            const mockedReceiver: CreateIndividualWithStandardKYCResponse = {
                 id: "re_Euw7HN4OdxPn",
             };
 
@@ -191,9 +193,7 @@ describe("Receivers", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.create({
-                type: "individual",
-                kyc_type: "standard",
+            const { data, error } = await blindpay.receivers.createIndividualWithStandardKYC({
                 email: "bernardo.simonassi@gmail.com",
                 country: "BR",
                 tax_id: "12345678900",
@@ -220,7 +220,7 @@ describe("Receivers", () => {
         });
 
         it("should create an individual receiver with enhanced KYC", async () => {
-            const mockedReceiver: CreateReceiverResponse = {
+            const mockedReceiver: CreateIndividualWithEnhancedKYCResponse = {
                 id: "re_YuaMcI2B8zbQ",
             };
 
@@ -228,9 +228,7 @@ describe("Receivers", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.create({
-                type: "individual",
-                kyc_type: "enhanced",
+            const { data, error } = await blindpay.receivers.createIndividualWithEnhancedKYC({
                 email: "bernardo.simonassi@gmail.com",
                 country: "BR",
                 tax_id: "12345678900",
@@ -263,7 +261,7 @@ describe("Receivers", () => {
         });
 
         it("should create a business receiver with standard KYB", async () => {
-            const mockedReceiver: CreateReceiverResponse = {
+            const mockedReceiver: CreateBusinessWithStandardKYBResponse = {
                 id: "re_IOxAUL24LG7P",
             };
 
@@ -271,9 +269,7 @@ describe("Receivers", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.create({
-                type: "business",
-                kyc_type: "standard",
+            const { data, error } = await blindpay.receivers.createBusinessWithStandardKYB({
                 email: "contato@empresa.com.br",
                 country: "BR",
                 tax_id: "20096178000195",
