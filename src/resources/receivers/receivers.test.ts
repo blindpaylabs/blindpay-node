@@ -1,9 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "../../client";
 import type {
-    CreateBusinessWithStandardKYBResponse,
-    CreateIndividualWithEnhancedKYCResponse,
-    CreateIndividualWithStandardKYCResponse,
+    CreateReceiverResponse,
     GetLimitIncreaseRequestsResponse,
     GetReceiverLimitsResponse,
     GetReceiverResponse,
@@ -151,6 +149,8 @@ describe("Receivers", () => {
                             id_doc_back_file: "https://example.com/image.png",
                             proof_of_address_doc_type: "UTILITY_BILL",
                             proof_of_address_doc_file: "https://example.com/image.png",
+                            ownership_percentage: 25,
+                            title: "CEO",
                             id: "ub_000000000000",
                         },
                     ],
@@ -183,7 +183,7 @@ describe("Receivers", () => {
 
     describe("Create receiver", () => {
         it("should create an individual receiver with standard KYC", async () => {
-            const mockedReceiver: CreateIndividualWithStandardKYCResponse = {
+            const mockedReceiver: CreateReceiverResponse = {
                 id: "re_Euw7HN4OdxPn",
             };
 
@@ -191,14 +191,16 @@ describe("Receivers", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.createIndividualWithStandardKYC({
+            const { data, error } = await blindpay.receivers.create({
+                type: "individual",
+                kyc_type: "standard",
                 email: "bernardo.simonassi@gmail.com",
+                country: "BR",
                 tax_id: "12345678900",
                 address_line_1: "Av. Paulista, 1000",
                 address_line_2: "Apto 101",
                 city: "São Paulo",
                 state_province_region: "SP",
-                country: "BR",
                 postal_code: "01310-100",
                 phone_number: "+5511987654321",
                 first_name: "Bernardo",
@@ -218,7 +220,7 @@ describe("Receivers", () => {
         });
 
         it("should create an individual receiver with enhanced KYC", async () => {
-            const mockedReceiver: CreateIndividualWithEnhancedKYCResponse = {
+            const mockedReceiver: CreateReceiverResponse = {
                 id: "re_YuaMcI2B8zbQ",
             };
 
@@ -226,14 +228,16 @@ describe("Receivers", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.createIndividualWithEnhancedKYC({
+            const { data, error } = await blindpay.receivers.create({
+                type: "individual",
+                kyc_type: "enhanced",
                 email: "bernardo.simonassi@gmail.com",
+                country: "BR",
                 tax_id: "12345678900",
                 address_line_1: "Av. Paulista, 1000",
                 address_line_2: "Apto 101",
                 city: "São Paulo",
                 state_province_region: "SP",
-                country: "BR",
                 postal_code: "01310-100",
                 first_name: "Bernardo",
                 last_name: "Simonassi",
@@ -245,12 +249,12 @@ describe("Receivers", () => {
                 id_doc_back_file: "https://example.com/image.png",
                 proof_of_address_doc_type: "UTILITY_BILL",
                 proof_of_address_doc_file: "https://example.com/image.png",
-                individual_holding_doc_front_file: "https://example.com/image.png",
                 purpose_of_transactions: "personal_or_living_expenses",
                 source_of_funds_doc_type: "savings",
                 purpose_of_transactions_explanation:
                     "I am receiving salary payments from my employer",
                 source_of_funds_doc_file: "https://example.com/image.png",
+                selfie_file: "https://example.com/image.png",
                 tos_id: "to_3ZZhllJkvo5Z",
             });
 
@@ -259,7 +263,7 @@ describe("Receivers", () => {
         });
 
         it("should create a business receiver with standard KYB", async () => {
-            const mockedReceiver: CreateBusinessWithStandardKYBResponse = {
+            const mockedReceiver: CreateReceiverResponse = {
                 id: "re_IOxAUL24LG7P",
             };
 
@@ -267,14 +271,16 @@ describe("Receivers", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.createBusinessWithStandardKYB({
+            const { data, error } = await blindpay.receivers.create({
+                type: "business",
+                kyc_type: "standard",
                 email: "contato@empresa.com.br",
+                country: "BR",
                 tax_id: "20096178000195",
                 address_line_1: "Av. Brigadeiro Faria Lima, 400",
                 address_line_2: "Sala 1201",
                 city: "São Paulo",
                 state_province_region: "SP",
-                country: "BR",
                 postal_code: "04538-132",
                 legal_name: "Empresa Exemplo Ltda",
                 alternate_name: "Exemplo",
@@ -285,6 +291,13 @@ describe("Receivers", () => {
                 proof_of_ownership_doc_file: "https://example.com/image.png",
                 tos_id: "to_nppX66ntvtHs",
                 website: "https://site.com/",
+                business_type: "llc",
+                business_description: "Software development company",
+                business_industry: "541511",
+                estimated_annual_revenue: "1000000_9999999",
+                source_of_wealth: "affiliate_or_royalty_income",
+                publicly_traded: false,
+                account_purpose: "treasury_management",
                 owners: [
                     {
                         role: "beneficial_owner",
@@ -304,6 +317,8 @@ describe("Receivers", () => {
                         id_doc_back_file: "https://example.com/image.png",
                         proof_of_address_doc_type: "UTILITY_BILL",
                         proof_of_address_doc_file: "https://example.com/image.png",
+                        ownership_percentage: 25,
+                        title: "CEO",
                     },
                 ],
             });
@@ -426,13 +441,16 @@ describe("Receivers", () => {
                         id_doc_type: "PASSPORT",
                         id_doc_front_file: "https://example.com/image.png",
                         id_doc_back_file: "https://example.com/image.png",
+                        proof_of_address_doc_type: "UTILITY_BILL",
+                        proof_of_address_doc_file: "https://example.com/image.png",
+                        ownership_percentage: 25,
+                        title: "CEO",
                     },
                 ],
                 incorporation_doc_file: "https://example.com/image.png",
                 proof_of_ownership_doc_file: "https://example.com/image.png",
                 source_of_funds_doc_type: "savings",
                 source_of_funds_doc_file: "https://example.com/image.png",
-                individual_holding_doc_front_file: "https://example.com/image.png",
                 purpose_of_transactions: "personal_or_living_expenses",
                 purpose_of_transactions_explanation:
                     "I am receiving salary payments from my employer",

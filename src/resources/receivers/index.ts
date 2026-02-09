@@ -21,6 +21,90 @@ export type PurposeOfTransactions =
     | "receive_salary"
     | "other";
 
+export type AccountPurpose =
+    | "charitable_donations"
+    | "ecommerce_retail_payments"
+    | "investment_purposes"
+    | "business_expenses"
+    | "payments_to_friends_or_family_abroad"
+    | "personal_or_living_expenses"
+    | "protect_wealth"
+    | "purchase_goods_and_services"
+    | "receive_payments_for_goods_and_services"
+    | "tax_optimization"
+    | "third_party_money_transmission"
+    | "other"
+    | "payroll"
+    | "treasury_management";
+
+export type BusinessType =
+    | "corporation"
+    | "llc"
+    | "partnership"
+    | "sole_proprietorship"
+    | "trust"
+    | "non_profit";
+
+export type BusinessIndustry =
+    | "541511"
+    | "541512"
+    | "541519"
+    | "518210"
+    | "511210"
+    | "541611"
+    | "541618"
+    | "541330"
+    | "541990"
+    | "522110"
+    | "523110"
+    | "523920"
+    | "423430"
+    | "423690"
+    | "423110"
+    | "423830"
+    | "423840"
+    | "423510"
+    | "424210"
+    | "424690"
+    | "424990"
+    | "454110"
+    | "334111"
+    | "334118"
+    | "325412"
+    | "339112"
+    | "336111"
+    | "336390"
+    | "551112"
+    | "561499"
+    | "488510"
+    | "484121"
+    | "493110"
+    | "424410"
+    | "424480"
+    | "315990"
+    | "313110"
+    | "213112"
+    | "517110"
+    | "541214";
+
+export type EstimatedAnnualRevenue =
+    | "0_99999"
+    | "100000_999999"
+    | "1000000_9999999"
+    | "10000000_49999999"
+    | "50000000_249999999"
+    | "2500000000_plus";
+
+export type SourceOfWealth =
+    | "business_dividends_or_profits"
+    | "investments"
+    | "asset_sales"
+    | "client_investor_contributions"
+    | "gambling"
+    | "charitable_contributions"
+    | "inheritance"
+    | "affiliate_or_royalty_income";
+
 export type SourceOfFundsDocType =
     | "business_income"
     | "gambling_proceeds"
@@ -60,7 +144,9 @@ export type Owner = {
     id_doc_front_file: string;
     id_doc_back_file: string | null;
     proof_of_address_doc_type: ProofOfAddressDocType;
-    proof_of_address_doc_file: string;
+    proof_of_address_doc_file: string | null;
+    ownership_percentage: number | null;
+    title: string | null;
 };
 
 export type IndividualWithStandardKYC = {
@@ -202,88 +288,53 @@ export type BusinessWithStandardKYB = {
     };
 };
 
-export type CreateIndividualWithStandardKYCInput = {
-    external_id?: string;
-    address_line_1: string;
-    address_line_2?: string;
-    city: string;
-    country: Country;
-    date_of_birth: string;
-    email: string;
-    first_name: string;
-    phone_number: string | null;
-    id_doc_country: Country;
-    id_doc_front_file: string;
-    id_doc_type: IdentificationDocument;
-    id_doc_back_file: string | null;
-    last_name: string;
-    postal_code: string;
-    proof_of_address_doc_file: string;
-    proof_of_address_doc_type: ProofOfAddressDocType;
-    state_province_region: string;
-    tax_id: string;
-    tos_id: string;
-};
-
-export type CreateIndividualWithStandardKYCResponse = {
-    id: string;
-};
-
-export type CreateIndividualWithEnhancedKYCInput = {
-    external_id?: string;
-    address_line_1: string;
-    address_line_2?: string;
-    city: string;
-    country: Country;
-    date_of_birth: string;
-    email: string;
-    first_name: string;
-    id_doc_country: Country;
-    id_doc_front_file: string;
-    id_doc_type: IdentificationDocument;
-    id_doc_back_file: string | null;
-    individual_holding_doc_front_file: string;
-    last_name: string;
-    postal_code: string;
-    phone_number: string | null;
-    proof_of_address_doc_file: string;
-    proof_of_address_doc_type: ProofOfAddressDocType;
-    purpose_of_transactions: PurposeOfTransactions;
-    source_of_funds_doc_file: string;
-    source_of_funds_doc_type: SourceOfFundsDocType;
-    purpose_of_transactions_explanation: string | null;
-    state_province_region: string;
-    tax_id: string;
-    tos_id: string;
-};
-
-export type CreateIndividualWithEnhancedKYCResponse = {
-    id: string;
-};
-
-export type CreateBusinessWithStandardKYBInput = {
-    external_id?: string;
-    address_line_1: string;
-    address_line_2?: string;
-    alternate_name: string;
-    city: string;
+export type CreateReceiverInput = {
     country: Country;
     email: string;
-    formation_date: string;
-    incorporation_doc_file: string;
-    legal_name: string;
-    owners: Array<StrictOmit<Owner, "id">>;
-    postal_code: string;
-    proof_of_address_doc_file: string;
-    proof_of_address_doc_type: ProofOfAddressDocType;
-    proof_of_ownership_doc_file: string;
-    state_province_region: string;
-    tax_id: string;
-    tos_id: string;
-    website: string | null;
+    kyc_type: KycType;
+    type: AccountClass;
+    account_purpose?: AccountPurpose | null;
+    address_line_1?: string | null;
+    address_line_2?: string | null;
+    alternate_name?: string | null;
+    business_description?: string | null;
+    business_industry?: BusinessIndustry | null;
+    business_type?: BusinessType | null;
+    city?: string | null;
+    date_of_birth?: string | null;
+    estimated_annual_revenue?: EstimatedAnnualRevenue | null;
+    external_id?: string | null;
+    first_name?: string | null;
+    formation_date?: string | null;
+    id_doc_back_file?: string | null;
+    id_doc_country?: Country | null;
+    id_doc_front_file?: string | null;
+    id_doc_type?: IdentificationDocument | null;
+    image_url?: string | null;
+    incorporation_doc_file?: string | null;
+    ip_address?: string | null;
+    last_name?: string | null;
+    legal_name?: string | null;
+    owners?: Array<StrictOmit<Owner, "id">> | null;
+    phone_number?: string | null;
+    postal_code?: string | null;
+    proof_of_address_doc_file?: string | null;
+    proof_of_address_doc_type?: ProofOfAddressDocType | null;
+    proof_of_ownership_doc_file?: string | null;
+    publicly_traded?: boolean | null;
+    purpose_of_transactions?: PurposeOfTransactions | null;
+    purpose_of_transactions_explanation?: string | null;
+    selfie_file?: string | null;
+    source_of_funds_doc_file?: string | null;
+    source_of_funds_doc_type?: SourceOfFundsDocType | null;
+    source_of_wealth?: SourceOfWealth | null;
+    state_province_region?: string | null;
+    tax_id?: string | null;
+    tos_id?: string | null;
+    website?: string | null;
 };
 
-export type CreateBusinessWithStandardKYBResponse = {
+export type CreateReceiverResponse = {
     id: string;
 };
 
@@ -300,59 +351,47 @@ export type GetReceiverResponse =
 
 export type UpdateReceiverInput = {
     receiver_id: string;
-    email?: string;
-    tax_id?: string;
+    account_purpose?: AccountPurpose | null;
     address_line_1?: string;
     address_line_2?: string;
-    city?: string;
-    state_province_region?: string;
-    country?: Country;
-    postal_code?: string;
-    ip_address?: string;
-    image_url?: string;
-    phone_number?: string;
-    proof_of_address_doc_type?: ProofOfAddressDocType;
-    proof_of_address_doc_file?: string;
-    first_name?: string;
-    last_name?: string;
-    date_of_birth?: string;
-    id_doc_country?: Country;
-    id_doc_type?: IdentificationDocument;
-    id_doc_front_file?: string;
-    id_doc_back_file?: string;
-    legal_name?: string;
     alternate_name?: string;
+    business_description?: string;
+    business_industry?: BusinessIndustry | null;
+    business_type?: BusinessType | null;
+    city?: string;
+    country?: Country;
+    date_of_birth?: string;
+    email?: string;
+    estimated_annual_revenue?: EstimatedAnnualRevenue | null;
+    external_id?: string;
+    first_name?: string;
     formation_date?: string;
-    website?: string;
-    owners?: Array<
-        Pick<
-            Owner,
-            | "first_name"
-            | "last_name"
-            | "role"
-            | "date_of_birth"
-            | "tax_id"
-            | "address_line_1"
-            | "address_line_2"
-            | "city"
-            | "state_province_region"
-            | "country"
-            | "postal_code"
-            | "id_doc_country"
-            | "id_doc_type"
-            | "id_doc_front_file"
-            | "id_doc_back_file"
-        >
-    >;
+    id_doc_back_file?: string;
+    id_doc_country?: Country;
+    id_doc_front_file?: string;
+    id_doc_type?: IdentificationDocument;
+    image_url?: string;
     incorporation_doc_file?: string;
+    ip_address?: string;
+    last_name?: string;
+    legal_name?: string;
+    owners?: Array<StrictOmit<Owner, "id">>;
+    phone_number?: string;
+    postal_code?: string;
+    proof_of_address_doc_file?: string;
+    proof_of_address_doc_type?: ProofOfAddressDocType;
     proof_of_ownership_doc_file?: string;
-    source_of_funds_doc_type?: SourceOfFundsDocType;
-    source_of_funds_doc_file?: string;
-    individual_holding_doc_front_file?: string;
+    publicly_traded?: boolean | null;
     purpose_of_transactions?: PurposeOfTransactions;
     purpose_of_transactions_explanation?: string;
-    external_id?: string;
+    selfie_file?: string;
+    source_of_funds_doc_file?: string;
+    source_of_funds_doc_type?: SourceOfFundsDocType;
+    source_of_wealth?: SourceOfWealth | null;
+    state_province_region?: string;
+    tax_id?: string;
     tos_id?: string;
+    website?: string;
 };
 
 export type DeleteReceiverInput = string;
@@ -415,32 +454,8 @@ export function createReceiversResource(instanceId: string, client: InternalApiC
         list(): Promise<BlindpayApiResponse<ListReceiversResponse>> {
             return client.get(`/instances/${instanceId}/receivers`);
         },
-        createIndividualWithStandardKYC(
-            data: CreateIndividualWithStandardKYCInput
-        ): Promise<BlindpayApiResponse<CreateIndividualWithStandardKYCResponse>> {
-            return client.post(`/instances/${instanceId}/receivers`, {
-                kyc_type: "standard",
-                type: "individual",
-                ...data,
-            });
-        },
-        createIndividualWithEnhancedKYC(
-            data: CreateIndividualWithEnhancedKYCInput
-        ): Promise<BlindpayApiResponse<CreateIndividualWithEnhancedKYCResponse>> {
-            return client.post(`/instances/${instanceId}/receivers`, {
-                kyc_type: "enhanced",
-                type: "individual",
-                ...data,
-            });
-        },
-        createBusinessWithStandardKYB(
-            data: CreateBusinessWithStandardKYBInput
-        ): Promise<BlindpayApiResponse<CreateBusinessWithStandardKYBResponse>> {
-            return client.post(`/instances/${instanceId}/receivers`, {
-                kyc_type: "standard",
-                type: "business",
-                ...data,
-            });
+        create(data: CreateReceiverInput): Promise<BlindpayApiResponse<CreateReceiverResponse>> {
+            return client.post(`/instances/${instanceId}/receivers`, data);
         },
         get(receiver_id: GetReceiverInput): Promise<BlindpayApiResponse<GetReceiverResponse>> {
             return client.get(`/instances/${instanceId}/receivers/${receiver_id}`);
