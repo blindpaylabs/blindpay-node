@@ -1,7 +1,7 @@
 import type { BlindpayApiResponse, Network, StablecoinToken } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
-export type BankingPartner = "jpmorgan" | "citi";
+export type BankingPartner = "jpmorgan" | "citi" | "hsbc";
 
 export type VirtualAccount = {
     id: string;
@@ -47,6 +47,7 @@ export type CreateVirtualAccountInput = {
     banking_partner: BankingPartner;
     token: StablecoinToken;
     blockchain_wallet_id: string;
+    signed_agreement_id?: string | null;
 };
 
 export type CreateVirtualAccountResponse = VirtualAccount;
