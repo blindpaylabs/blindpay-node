@@ -11,7 +11,7 @@
         "payment-processing"
     ],
     "homepage": "https://github.com/blindpaylabs/blindpay-node",
-    "author": "Blindpay <gabriel@blindpay.com> (https://blindpay.com/)",
+    "author": "Blindpay <alves@blindpay.com> (https://blindpay.com/)",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/blindpaylabs/blindpay-node.git"

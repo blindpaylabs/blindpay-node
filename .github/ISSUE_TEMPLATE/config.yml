@@ -4,5 +4,5 @@ contact_links:
     url: https://api.blindpay.com/reference
     about: Check our comprehensive API documentation and guides
   - name: Security issues
-    url: mailto:gabriel@blindpay.com
+    url: mailto:alves@blindpay.com
     about: Please report security vulnerabilities privately via email
