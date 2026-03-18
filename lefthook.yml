@@ -2,7 +2,7 @@ pre-push:
   parallel: false
   jobs:
     - name: lint-fix
-      run: bunx biome check --write src/
+      run: bun run lint:fix
       stage_fixed: true
     - name: type-check
       run: bun run check-types
