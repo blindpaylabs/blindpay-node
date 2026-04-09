@@ -7,6 +7,7 @@ import type {
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { StrictOmit } from "../../internal/helpers/strict-omit";
+import { buildQueryString } from "../../internal/query-string";
 
 export type ProofOfAddressDocType =
     | "UTILITY_BILL"
@@ -526,13 +527,7 @@ export type RequestLimitIncreaseResponse = {
 export function createReceiversResource(instanceId: string, client: InternalApiClient) {
     return {
         list(params?: ListReceiversInput): Promise<BlindpayApiResponse<ListReceiversResponse>> {
-            const filtered = params
-                ? Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined))
-                : {};
-            const queryParams = Object.keys(filtered).length
-                ? `?${new URLSearchParams(filtered)}`
-                : "";
-            return client.get(`/instances/${instanceId}/receivers${queryParams}`);
+            return client.get(`/instances/${instanceId}/receivers${buildQueryString(params ?? {})}`);
         },
         createIndividualWithStandardKYC(
             data: CreateIndividualWithStandardKYCInput

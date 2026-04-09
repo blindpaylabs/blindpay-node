@@ -8,6 +8,7 @@ import type {
     TransactionStatus,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { buildQueryString } from "../../internal/query-string";
 
 export type TransferTrackingStep = {
     step: TrackingStatus;
@@ -121,13 +122,7 @@ export function createTransfersResource(instanceId: string, client: InternalApiC
         list(
             params?: ListTransfersInput
         ): Promise<BlindpayApiResponse<ListTransfersResponse>> {
-            const filtered = params
-                ? Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined))
-                : {};
-            const queryParams = Object.keys(filtered).length
-                ? `?${new URLSearchParams(filtered)}`
-                : "";
-            return client.get(`/instances/${instanceId}/transfers${queryParams}`);
+            return client.get(`/instances/${instanceId}/transfers${buildQueryString(params ?? {})}`);
         },
         get(
             transferId: GetTransferInput

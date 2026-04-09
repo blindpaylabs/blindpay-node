@@ -16,6 +16,7 @@ import type {
     TransactionStatus,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { buildQueryString } from "../../internal/query-string";
 
 export type BlindpayBankDetails = {
     routing_number: string;
@@ -132,8 +133,7 @@ export type CreateEvmPayinResponse = Pick<
 export function createPayinsResource(instanceId: string, client: InternalApiClient) {
     return {
         list(params?: ListPayinsInput): Promise<BlindpayApiResponse<ListPayinsResponse>> {
-            const queryParams = params ? `?${new URLSearchParams(params)}` : "";
-            return client.get(`/instances/${instanceId}/payins${queryParams}`);
+            return client.get(`/instances/${instanceId}/payins${buildQueryString(params ?? {})}`);
         },
         get(payinId: GetPayinInput): Promise<BlindpayApiResponse<GetPayinResponse>> {
             return client.get(`/instances/${instanceId}/payins/${payinId}`);
