@@ -8,8 +8,8 @@ import type {
     Rail,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
-import type { BusinessIndustry } from "../receivers";
 import type { SpeiProtocol } from "../payouts";
+import type { BusinessIndustry } from "../receivers";
 
 export type RecipientRelationship =
     | "first_party"

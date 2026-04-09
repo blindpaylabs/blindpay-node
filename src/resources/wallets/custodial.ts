@@ -58,17 +58,13 @@ export function createCustodialWalletsResource(instanceId: string, client: Inter
         list(
             receiver_id: ListCustodialWalletsInput
         ): Promise<BlindpayApiResponse<ListCustodialWalletsResponse>> {
-            return client.get(
-                `/instances/${instanceId}/receivers/${receiver_id}/wallets`
-            );
+            return client.get(`/instances/${instanceId}/receivers/${receiver_id}/wallets`);
         },
         get({
             receiver_id,
             id,
         }: GetCustodialWalletInput): Promise<BlindpayApiResponse<GetCustodialWalletResponse>> {
-            return client.get(
-                `/instances/${instanceId}/receivers/${receiver_id}/wallets/${id}`
-            );
+            return client.get(`/instances/${instanceId}/receivers/${receiver_id}/wallets/${id}`);
         },
         create({
             receiver_id,
@@ -76,10 +72,7 @@ export function createCustodialWalletsResource(instanceId: string, client: Inter
         }: CreateCustodialWalletInput): Promise<
             BlindpayApiResponse<CreateCustodialWalletResponse>
         > {
-            return client.post(
-                `/instances/${instanceId}/receivers/${receiver_id}/wallets`,
-                data
-            );
+            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/wallets`, data);
         },
         getBalance({
             receiver_id,
@@ -95,9 +88,7 @@ export function createCustodialWalletsResource(instanceId: string, client: Inter
             receiver_id,
             id,
         }: DeleteCustodialWalletInput): Promise<BlindpayApiResponse<{ success: boolean }>> {
-            return client.delete(
-                `/instances/${instanceId}/receivers/${receiver_id}/wallets/${id}`
-            );
+            return client.delete(`/instances/${instanceId}/receivers/${receiver_id}/wallets/${id}`);
         },
     };
 }

@@ -231,10 +231,7 @@ export function createPayoutsResource(instanceId: string, client: InternalApiCli
         }: SubmitPayoutDocumentsInput): Promise<
             BlindpayApiResponse<SubmitPayoutDocumentsResponse>
         > {
-            return client.post(
-                `/instances/${instanceId}/payouts/${payout_id}/documents`,
-                data
-            );
+            return client.post(`/instances/${instanceId}/payouts/${payout_id}/documents`, data);
         },
     };
 }

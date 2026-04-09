@@ -1,6 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "../../client";
-import type { GetBankDetailsResponse, GetNaicsCodesResponse, GetRailsResponse, GetSwiftCodeBankDetailsResponse } from ".";
+import type {
+    GetBankDetailsResponse,
+    GetNaicsCodesResponse,
+    GetRailsResponse,
+    GetSwiftCodeBankDetailsResponse,
+} from ".";
 
 describe("Available", () => {
     afterEach(() => fetchMock.resetMocks());

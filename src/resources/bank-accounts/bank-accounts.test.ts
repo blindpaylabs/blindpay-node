@@ -467,7 +467,9 @@ describe("Bank accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.bankAccounts.list({ receiver_id: "re_000000000000" });
+            const { data, error } = await blindpay.receivers.bankAccounts.list({
+                receiver_id: "re_000000000000",
+            });
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedBankAccounts);
