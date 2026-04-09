@@ -8,6 +8,7 @@ import type {
     GetPayoutResponse,
     GetPayoutTrackResponse,
     ListPayoutsResponse,
+    SubmitPayoutDocumentsResponse,
 } from ".";
 
 describe("Payouts", () => {
@@ -561,6 +562,29 @@ describe("Payouts", () => {
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedSolanaPayout);
+        });
+    });
+
+    describe("Submit payout documents", () => {
+        it("should submit payout documents", async () => {
+            const mockedResponse: SubmitPayoutDocumentsResponse = {
+                id: "pd_000000000000",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.payouts.submitDocuments({
+                payout_id: "pa_000000000000",
+                transaction_document_type: "invoice",
+                transaction_document_id: "INV-2025-001",
+                transaction_document_file: "https://storage.blindpay.com/uploads/invoice.pdf",
+                description: "Invoice for services",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedResponse);
         });
     });
 });

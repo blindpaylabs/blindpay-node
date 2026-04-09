@@ -100,11 +100,23 @@ export type CreatePayoutInput = {
     receiver_id: string;
     bank_account_id: string;
     amount: number;
-    currency: string;
+    currency: Currency;
     description?: string | null;
     reference?: string | null;
     network?: Network | null;
     token?: StablecoinToken | null;
+};
+
+export type SubmitPayoutDocumentsInput = {
+    payout_id: string;
+    transaction_document_type: TransactionDocumentType;
+    transaction_document_id: string;
+    transaction_document_file: string;
+    description?: string;
+};
+
+export type SubmitPayoutDocumentsResponse = {
+    id: string;
 };
 
 export type GetPayoutInput = string;
@@ -212,6 +224,17 @@ export function createPayoutsResource(instanceId: string, client: InternalApiCli
             ...data
         }: CreateSolanaPayoutInput): Promise<BlindpayApiResponse<CreateSolanaPayoutResponse>> {
             return client.post(`/instances/${instanceId}/payouts/solana`, data);
+        },
+        submitDocuments({
+            payout_id,
+            ...data
+        }: SubmitPayoutDocumentsInput): Promise<
+            BlindpayApiResponse<SubmitPayoutDocumentsResponse>
+        > {
+            return client.post(
+                `/instances/${instanceId}/payouts/${payout_id}/documents`,
+                data
+            );
         },
     };
 }

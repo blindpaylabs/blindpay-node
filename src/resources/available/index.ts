@@ -69,6 +69,11 @@ export type GetRailsResponse = Array<{
     country: string;
 }>;
 
+export type GetNaicsCodesResponse = Array<{
+    label: string;
+    value: string;
+}>;
+
 export type GetSwiftCodeBankDetailsInput = string;
 
 export type GetSwiftCodeBankDetailsResponse = Array<{
@@ -89,6 +94,9 @@ export function createAvailableResource(client: InternalApiClient) {
         },
         getRails(): Promise<BlindpayApiResponse<GetRailsResponse>> {
             return client.get("/available/rails");
+        },
+        getNaicsCodes(): Promise<BlindpayApiResponse<GetNaicsCodesResponse>> {
+            return client.get("/available/naics");
         },
         getSwiftCodeBankDetails(
             swift: GetSwiftCodeBankDetailsInput

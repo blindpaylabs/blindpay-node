@@ -6,6 +6,7 @@ import type {
     CreateColombiaAchResponse,
     CreateInternationalSwiftResponse,
     CreatePixResponse,
+    CreatePixSafeResponse,
     CreateRtpResponse,
     CreateSpeiResponse,
     CreateWireResponse,
@@ -153,6 +154,7 @@ describe("Bank accounts", () => {
                 account_number: "1001001234",
                 account_type: "checking",
                 account_class: "individual",
+                recipient_relationship: "first_party",
                 address_line_1: null,
                 address_line_2: null,
                 city: null,
@@ -181,6 +183,12 @@ describe("Bank accounts", () => {
                 account_type: "checking",
                 beneficiary_name: "Individual full name or business name",
                 routing_number: "012345678",
+                recipient_relationship: "first_party",
+                address_line_1: "123 Main St",
+                city: "New York",
+                state_province_region: "NY",
+                country: "US",
+                postal_code: "10001",
             });
 
             expect(error).toBeNull();
@@ -197,6 +205,8 @@ describe("Bank accounts", () => {
                 beneficiary_name: "Individual full name or business name",
                 routing_number: "012345678",
                 account_number: "1001001234",
+                account_class: "individual",
+                recipient_relationship: "first_party",
                 address_line_1: "Address line 1",
                 address_line_2: "Address line 2",
                 city: "City",
@@ -213,9 +223,11 @@ describe("Bank accounts", () => {
             const { data, error } = await blindpay.receivers.bankAccounts.createWire({
                 receiver_id: "re_000000000000",
                 name: "Wire Account",
+                account_class: "individual",
                 account_number: "1001001234",
                 beneficiary_name: "Individual full name or business name",
                 routing_number: "012345678",
+                recipient_relationship: "first_party",
                 address_line_1: "Address line 1",
                 address_line_2: "Address line 2",
                 city: "City",
@@ -236,6 +248,8 @@ describe("Bank accounts", () => {
                 type: "international_swift",
                 name: "International Swift Account",
                 beneficiary_name: null,
+                account_class: "individual",
+                recipient_relationship: "first_party",
                 address_line_1: null,
                 address_line_2: null,
                 city: null,
@@ -264,6 +278,7 @@ describe("Bank accounts", () => {
                 swift_intermediary_bank_account_number_iban: null,
                 swift_intermediary_bank_name: null,
                 swift_intermediary_bank_country: null,
+                swift_payment_code: null,
                 created_at: "2021-01-01T00:00:00Z",
             };
 
@@ -274,6 +289,8 @@ describe("Bank accounts", () => {
             const { data, error } = await blindpay.receivers.bankAccounts.createInternationalSwift({
                 receiver_id: "re_000000000000",
                 name: "International Swift Account",
+                account_class: "individual",
+                recipient_relationship: "first_party",
                 swift_account_holder_name: "John Doe",
                 swift_account_number_iban: "123456789",
                 swift_bank_address_line_1:
@@ -310,6 +327,8 @@ describe("Bank accounts", () => {
                 beneficiary_name: "John Doe",
                 routing_number: "121000358",
                 account_number: "325203027578",
+                account_class: "individual",
+                recipient_relationship: "first_party",
                 address_line_1: "Street of the fools",
                 address_line_2: null,
                 city: "Fools City",
@@ -326,9 +345,11 @@ describe("Bank accounts", () => {
             const { data, error } = await blindpay.receivers.bankAccounts.createRtp({
                 receiver_id: "re_000000000000",
                 name: "John Doe RTP",
+                account_class: "individual",
                 beneficiary_name: "John Doe",
                 routing_number: "121000358",
                 account_number: "325203027578",
+                recipient_relationship: "first_party",
                 address_line_1: "Street of the fools",
                 city: "Fools City",
                 state_province_region: "FL",
@@ -446,10 +467,45 @@ describe("Bank accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.bankAccounts.list("re_000000000000");
+            const { data, error } = await blindpay.receivers.bankAccounts.list({ receiver_id: "re_000000000000" });
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedBankAccounts);
+        });
+    });
+
+    describe("Create pix safe bank account", () => {
+        it("should create a pix safe bank account", async () => {
+            const mockedPixSafeAccount: CreatePixSafeResponse = {
+                id: "ba_000000000000",
+                type: "pix_safe",
+                name: "PIX Safe Account",
+                beneficiary_name: "Maria Silva",
+                account_number: "123456789",
+                account_type: "checking",
+                pix_safe_bank_code: "001",
+                pix_safe_branch_code: "0001",
+                pix_safe_cpf_cnpj: "12345678901",
+                created_at: "2021-01-01T00:00:00Z",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedPixSafeAccount), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.receivers.bankAccounts.createPixSafe({
+                receiver_id: "re_000000000000",
+                name: "PIX Safe Account",
+                beneficiary_name: "Maria Silva",
+                account_number: "123456789",
+                account_type: "checking",
+                pix_safe_bank_code: "001",
+                pix_safe_branch_code: "0001",
+                pix_safe_cpf_cnpj: "12345678901",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedPixSafeAccount);
         });
     });
 
