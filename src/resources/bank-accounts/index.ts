@@ -8,7 +8,6 @@ import type {
     Rail,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
-import { buildQueryString } from "../../internal/query-string";
 import type { BusinessIndustry } from "../receivers";
 import type { SpeiProtocol } from "../payouts";
 
@@ -423,8 +422,11 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             receiver_id,
             ...params
         }: ListBankAccountsInput): Promise<BlindpayApiResponse<ListBankAccountsResponse>> {
+            const queryParams = Object.keys(params).length
+                ? `?${new URLSearchParams(params as Record<string, string>)}`
+                : "";
             return client.get(
-                `/instances/${instanceId}/receivers/${receiver_id}/bank-accounts${buildQueryString(params)}`
+                `/instances/${instanceId}/receivers/${receiver_id}/bank-accounts${queryParams}`
             );
         },
         get({
