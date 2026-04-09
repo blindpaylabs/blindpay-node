@@ -526,7 +526,12 @@ export type RequestLimitIncreaseResponse = {
 export function createReceiversResource(instanceId: string, client: InternalApiClient) {
     return {
         list(params?: ListReceiversInput): Promise<BlindpayApiResponse<ListReceiversResponse>> {
-            const queryParams = params ? `?${new URLSearchParams(params as Record<string, string>)}` : "";
+            const filtered = params
+                ? Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined))
+                : {};
+            const queryParams = Object.keys(filtered).length
+                ? `?${new URLSearchParams(filtered)}`
+                : "";
             return client.get(`/instances/${instanceId}/receivers${queryParams}`);
         },
         createIndividualWithStandardKYC(

@@ -422,8 +422,11 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             receiver_id,
             ...params
         }: ListBankAccountsInput): Promise<BlindpayApiResponse<ListBankAccountsResponse>> {
-            const queryParams = Object.keys(params).length
-                ? `?${new URLSearchParams(params as Record<string, string>)}`
+            const filtered = Object.fromEntries(
+                Object.entries(params).filter(([, v]) => v !== undefined)
+            );
+            const queryParams = Object.keys(filtered).length
+                ? `?${new URLSearchParams(filtered)}`
                 : "";
             return client.get(
                 `/instances/${instanceId}/receivers/${receiver_id}/bank-accounts${queryParams}`
