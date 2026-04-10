@@ -14,7 +14,16 @@ export type WebhookEvents =
     | "payin.update"
     | "payin.complete"
     | "payin.partnerFee"
-    | "tos.accept";
+    | "tos.accept"
+    | "limitIncrease.new"
+    | "limitIncrease.update"
+    | "virtualAccount.new"
+    | "virtualAccount.complete"
+    | "transfer.new"
+    | "transfer.update"
+    | "transfer.complete"
+    | "wallet.new"
+    | "wallet.inbound";
 
 export type CreateWebhookEndpointInput = {
     url: string;

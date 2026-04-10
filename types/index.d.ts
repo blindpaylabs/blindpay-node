@@ -26,7 +26,7 @@ export type BankAccountType = "checking" | "saving";
 
 export type Currency = "USDC" | "USDT" | "USDB" | "BRL" | "USD" | "MXN" | "COP" | "ARS";
 
-export type Rail = "wire" | "ach" | "pix" | "spei_bitso" | "transfers_bitso" | "ach_cop_bitso" | "international_swift" | "rtp";
+export type Rail = "wire" | "ach" | "pix" | "pix_safe" | "spei_bitso" | "transfers_bitso" | "ach_cop_bitso" | "international_swift" | "rtp";
     
 export type AccountClass = "individual" | "business";
     
@@ -284,8 +284,8 @@ export type Country =
         | "AX";
 
 export type PaginationParams = {
-    limit?: '10' | '50' | '100' | '200' | '1000';
-    offset?: '0' | '10' | '50' | '100' | '200' | '1000';
+    limit?: '10' | '50' | '100' | '200' | '500' | '1000';
+    offset?: '0' | '10' | '50' | '100' | '200' | '500' | '1000';
     starting_after?: string;
     ending_before?: string;
 }
@@ -347,7 +347,7 @@ export type PayinTrackingPartnerFee = {
     completed_at?: string | null
   } 
 
-export type PayinPaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse"
+export type PayinPaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse" | "international_swift"
 
 export type PayerRules = {
     pix_allowed_tax_ids?: string[] | null;
@@ -361,7 +361,7 @@ export type PayerRules = {
     pse_bank_code?: string | null;
 }
 
-export type TrackingStatus = 'processing' | 'on_hold' | 'completed';
+export type TrackingStatus = 'processing' | 'on_hold' | 'completed' | 'pending_review';
 
 export type EstimatedTimeOfArrival = '5_min' | '30_min' | '2_hours' | '1_business_day' | '2_business_days' | '5_business_days';
 

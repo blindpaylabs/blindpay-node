@@ -6,6 +6,7 @@ import { BlindPayError } from "./internal/blindpay-error";
 import { createApiKeysResource } from "./resources/api-keys";
 import { createAvailableResource } from "./resources/available";
 import { createBankAccountsResource } from "./resources/bank-accounts";
+import { createFeesResource } from "./resources/fees";
 import { createInstancesResource } from "./resources/instances";
 import { createPartnerFeesResource } from "./resources/partner-fees";
 import { createPayinsResource } from "./resources/payins";
@@ -14,8 +15,11 @@ import { createPayoutsResource } from "./resources/payouts";
 import { createQuotesResource } from "./resources/quotes";
 import { createReceiversResource } from "./resources/receivers";
 import { createTermsOfServiceResource } from "./resources/terms-of-service";
+import { createTransfersResource } from "./resources/transfers";
+import { createUploadResource } from "./resources/upload";
 import { createVirtualAccountsResource } from "./resources/virtual-accounts";
 import { createBlockchainWalletsResource } from "./resources/wallets/blockchain";
+import { createCustodialWalletsResource } from "./resources/wallets/custodial";
 import { createOfframpWalletsResource } from "./resources/wallets/offramp";
 import { createWebhookEndpointsResource } from "./resources/webhooks";
 
@@ -35,6 +39,9 @@ export class BlindPay {
     };
     readonly quotes: ReturnType<typeof createQuotesResource>;
     readonly payouts: ReturnType<typeof createPayoutsResource>;
+    readonly transfers: ReturnType<typeof createTransfersResource>;
+    readonly fees: ReturnType<typeof createFeesResource>;
+    readonly upload: ReturnType<typeof createUploadResource>;
     readonly virtualAccounts: ReturnType<typeof createVirtualAccountsResource>;
     readonly receivers: ReturnType<typeof createReceiversResource> & {
         bankAccounts: ReturnType<typeof createBankAccountsResource>;
@@ -47,6 +54,7 @@ export class BlindPay {
     readonly wallets: {
         blockchain: ReturnType<typeof createBlockchainWalletsResource>;
         offramp: ReturnType<typeof createOfframpWalletsResource>;
+        custodial: ReturnType<typeof createCustodialWalletsResource>;
     };
 
     constructor({
@@ -105,6 +113,12 @@ export class BlindPay {
 
         this.payouts = createPayoutsResource(this.instanceId, this.api);
 
+        this.transfers = createTransfersResource(this.instanceId, this.api);
+
+        this.fees = createFeesResource(this.instanceId, this.api);
+
+        this.upload = createUploadResource(this.baseUrl, this.headers);
+
         this.receivers = {
             ...createReceiversResource(this.instanceId, this.api),
             bankAccounts: createBankAccountsResource(this.instanceId, this.api),
@@ -115,6 +129,7 @@ export class BlindPay {
         this.wallets = {
             blockchain: createBlockchainWalletsResource(this.instanceId, this.api),
             offramp: createOfframpWalletsResource(this.instanceId, this.api),
+            custodial: createCustodialWalletsResource(this.instanceId, this.api),
         };
     }
 

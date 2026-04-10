@@ -9,7 +9,28 @@ import type {
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { SpeiProtocol } from "../payouts";
-export type ListBankAccountsInput = string;
+import type { BusinessIndustry } from "../receivers";
+
+export type RecipientRelationship =
+    | "first_party"
+    | "employee"
+    | "independent_contractor"
+    | "vendor_or_supplier"
+    | "subsidiary_or_affiliate"
+    | "merchant_or_partner"
+    | "customer"
+    | "landlord"
+    | "family"
+    | "other";
+
+export type ListBankAccountsInput = {
+    receiver_id: string;
+    status?: string;
+    type?: Rail;
+    name?: string;
+    bank_account_id?: string;
+    country?: Country;
+};
 
 export type ListBankAccountsResponse = {
     data: Array<{
@@ -60,6 +81,9 @@ export type ListBankAccountsResponse = {
         swift_intermediary_bank_account_number_iban?: string;
         swift_intermediary_bank_name?: string;
         swift_intermediary_bank_country?: Country;
+        pix_safe_bank_code?: string;
+        pix_safe_branch_code?: string;
+        pix_safe_cpf_cnpj?: string;
         tron_wallet_hash?: string;
         offramp_wallets?: Array<{
             address: string;
@@ -107,6 +131,30 @@ export type CreatePixResponse = {
     type: "pix";
     name: string;
     pix_key: string;
+    created_at: string;
+};
+
+export type CreatePixSafeInput = {
+    receiver_id: string;
+    name: string;
+    beneficiary_name: string;
+    account_number: string;
+    account_type: BankAccountType;
+    pix_safe_bank_code: string;
+    pix_safe_branch_code: string;
+    pix_safe_cpf_cnpj: string;
+};
+
+export type CreatePixSafeResponse = {
+    id: string;
+    type: "pix_safe";
+    name: string;
+    beneficiary_name: string;
+    account_number: string;
+    account_type: BankAccountType;
+    pix_safe_bank_code: string;
+    pix_safe_branch_code: string;
+    pix_safe_cpf_cnpj: string;
     created_at: string;
 };
 
@@ -184,6 +232,17 @@ export type CreateAchInput = {
     account_type: BankAccountType;
     beneficiary_name: string;
     routing_number: string;
+    recipient_relationship: RecipientRelationship;
+    address_line_1: string;
+    city: string;
+    state_province_region: string;
+    country: Country;
+    postal_code: string;
+    address_line_2?: string;
+    business_industry?: BusinessIndustry;
+    phone_number?: string;
+    tax_id?: string;
+    date_of_birth?: string;
 };
 
 export type CreateAchResponse = {
@@ -195,6 +254,7 @@ export type CreateAchResponse = {
     account_number: string;
     account_type: BankAccountType;
     account_class: AccountClass;
+    recipient_relationship: RecipientRelationship;
     address_line_1: string | null;
     address_line_2: string | null;
     city: string | null;
@@ -214,15 +274,21 @@ export type CreateAchResponse = {
 export type CreateWireInput = {
     receiver_id: string;
     name: string;
+    account_class: AccountClass;
     account_number: string;
     beneficiary_name: string;
     routing_number: string;
+    recipient_relationship: RecipientRelationship;
     address_line_1: string;
     address_line_2?: string;
     city: string;
     state_province_region: string;
     country: Country;
     postal_code: string;
+    business_industry?: BusinessIndustry;
+    phone_number?: string;
+    tax_id?: string;
+    date_of_birth?: string;
 };
 
 export type CreateWireResponse = {
@@ -232,8 +298,10 @@ export type CreateWireResponse = {
     beneficiary_name: string;
     routing_number: string;
     account_number: string;
+    account_class: AccountClass;
+    recipient_relationship: RecipientRelationship;
     address_line_1: string;
-    address_line_2: string;
+    address_line_2: string | null;
     city: string;
     state_province_region: string;
     country: Country;
@@ -244,6 +312,8 @@ export type CreateWireResponse = {
 export type CreateInternationalSwiftInput = {
     receiver_id: string;
     name: string;
+    account_class: AccountClass;
+    recipient_relationship: RecipientRelationship;
     swift_account_holder_name: string;
     swift_account_number_iban: string;
     swift_bank_address_line_1: string;
@@ -260,10 +330,15 @@ export type CreateInternationalSwiftInput = {
     swift_beneficiary_postal_code: string;
     swift_beneficiary_state_province_region: string;
     swift_code_bic: string;
-    swift_intermediary_bank_account_number_iban: string | null;
-    swift_intermediary_bank_country: Country | null;
-    swift_intermediary_bank_name: string | null;
-    swift_intermediary_bank_swift_code_bic: string | null;
+    swift_intermediary_bank_account_number_iban?: string | null;
+    swift_intermediary_bank_country?: Country | null;
+    swift_intermediary_bank_name?: string | null;
+    swift_intermediary_bank_swift_code_bic?: string | null;
+    swift_payment_code?: string;
+    business_industry?: BusinessIndustry;
+    phone_number?: string;
+    tax_id?: string;
+    date_of_birth?: string;
 };
 
 export type CreateInternationalSwiftResponse = {
@@ -271,6 +346,8 @@ export type CreateInternationalSwiftResponse = {
     type: "international_swift";
     name: string;
     beneficiary_name: string | null;
+    account_class: AccountClass;
+    recipient_relationship: RecipientRelationship;
     address_line_1: string | null;
     address_line_2: string | null;
     city: string | null;
@@ -297,21 +374,28 @@ export type CreateInternationalSwiftResponse = {
     swift_intermediary_bank_account_number_iban: string | null;
     swift_intermediary_bank_name: string | null;
     swift_intermediary_bank_country: Country | null;
+    swift_payment_code: string | null;
     created_at: string;
 };
 
 export type CreateRtpInput = {
     receiver_id: string;
     name: string;
+    account_class: AccountClass;
     beneficiary_name: string;
     routing_number: string;
     account_number: string;
+    recipient_relationship: RecipientRelationship;
     address_line_1: string;
     address_line_2?: string;
     city: string;
     state_province_region: string;
     country: Country;
     postal_code: string;
+    business_industry?: BusinessIndustry;
+    phone_number?: string;
+    tax_id?: string;
+    date_of_birth?: string;
 };
 
 export type CreateRtpResponse = {
@@ -321,6 +405,8 @@ export type CreateRtpResponse = {
     beneficiary_name: string;
     routing_number: string;
     account_number: string;
+    account_class: AccountClass;
+    recipient_relationship: RecipientRelationship;
     address_line_1: string;
     address_line_2: string | null;
     city: string;
@@ -332,10 +418,16 @@ export type CreateRtpResponse = {
 
 export function createBankAccountsResource(instanceId: string, client: InternalApiClient) {
     return {
-        list(
-            receiver_id: ListBankAccountsInput
-        ): Promise<BlindpayApiResponse<ListBankAccountsResponse>> {
-            return client.get(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`);
+        list({
+            receiver_id,
+            ...params
+        }: ListBankAccountsInput): Promise<BlindpayApiResponse<ListBankAccountsResponse>> {
+            const queryParams = Object.keys(params).length
+                ? `?${new URLSearchParams(params as Record<string, string>)}`
+                : "";
+            return client.get(
+                `/instances/${instanceId}/receivers/${receiver_id}/bank-accounts${queryParams}`
+            );
         },
         get({
             receiver_id,
@@ -356,6 +448,15 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
         }: CreatePixInput): Promise<BlindpayApiResponse<CreatePixResponse>> {
             return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
                 type: "pix",
+                ...data,
+            });
+        },
+        createPixSafe({
+            receiver_id,
+            ...data
+        }: CreatePixSafeInput): Promise<BlindpayApiResponse<CreatePixSafeResponse>> {
+            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+                type: "pix_safe",
                 ...data,
             });
         },

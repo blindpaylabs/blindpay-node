@@ -1,4 +1,10 @@
-import type { AccountClass, BlindpayApiResponse, Country } from "../../../types";
+import type {
+    AccountClass,
+    BlindpayApiResponse,
+    Country,
+    PaginationMetadata,
+    PaginationParams,
+} from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { StrictOmit } from "../../internal/helpers/strict-omit";
 
@@ -396,9 +402,19 @@ export type CreateBusinessWithStandardKYBResponse = {
     id: string;
 };
 
-export type ListReceiversResponse = Array<
-    IndividualWithStandardKYC | IndividualWithEnhancedKYC | BusinessWithStandardKYB
->;
+export type ListReceiversInput = PaginationParams & {
+    full_name?: string;
+    receiver_name?: string;
+    status?: string;
+    receiver_id?: string;
+    bank_account_id?: string;
+    country?: Country;
+};
+
+export type ListReceiversResponse = {
+    data: Array<IndividualWithStandardKYC | IndividualWithEnhancedKYC | BusinessWithStandardKYB>;
+    pagination: PaginationMetadata;
+};
 
 export type GetReceiverInput = string;
 
@@ -509,8 +525,9 @@ export type RequestLimitIncreaseResponse = {
 
 export function createReceiversResource(instanceId: string, client: InternalApiClient) {
     return {
-        list(): Promise<BlindpayApiResponse<ListReceiversResponse>> {
-            return client.get(`/instances/${instanceId}/receivers`);
+        list(params?: ListReceiversInput): Promise<BlindpayApiResponse<ListReceiversResponse>> {
+            const queryParams = params ? `?${new URLSearchParams(params)}` : "";
+            return client.get(`/instances/${instanceId}/receivers${queryParams}`);
         },
         createIndividualWithStandardKYC(
             data: CreateIndividualWithStandardKYCInput
@@ -543,7 +560,7 @@ export function createReceiversResource(instanceId: string, client: InternalApiC
             return client.get(`/instances/${instanceId}/receivers/${receiver_id}`);
         },
         update({ receiver_id, ...data }: UpdateReceiverInput): Promise<BlindpayApiResponse<void>> {
-            return client.patch(`/instances/${instanceId}/receivers/${receiver_id}`, data);
+            return client.put(`/instances/${instanceId}/receivers/${receiver_id}`, data);
         },
         delete(receiver_id: DeleteReceiverInput): Promise<BlindpayApiResponse<void>> {
             return client.delete(`/instances/${instanceId}/receivers/${receiver_id}`);

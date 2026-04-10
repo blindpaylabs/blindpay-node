@@ -1,6 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "../../client";
-import type { GetBankDetailsResponse, GetRailsResponse, GetSwiftCodeBankDetailsResponse } from ".";
+import type {
+    GetBankDetailsResponse,
+    GetNaicsCodesResponse,
+    GetRailsResponse,
+    GetSwiftCodeBankDetailsResponse,
+} from ".";
 
 describe("Available", () => {
     afterEach(() => fetchMock.resetMocks());
@@ -92,6 +97,34 @@ describe("Available", () => {
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedRails);
+        });
+    });
+
+    describe("Get NAICS codes", () => {
+        it("should get available NAICS codes", async () => {
+            const mockedNaicsCodes: GetNaicsCodesResponse = [
+                {
+                    label: "Software Publishers",
+                    value: "511210",
+                },
+                {
+                    label: "Computer Systems Design Services",
+                    value: "541512",
+                },
+                {
+                    label: "Data Processing, Hosting, and Related Services",
+                    value: "518210",
+                },
+            ];
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedNaicsCodes), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.available.getNaicsCodes();
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedNaicsCodes);
         });
     });
 
