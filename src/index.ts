@@ -17,3 +17,4 @@ export * from "./resources/wallets/blockchain";
 export * from "./resources/wallets/custodial";
 export * from "./resources/wallets/offramp";
 export * from "./resources/webhooks";
+export * from './resources/customers'
