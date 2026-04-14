@@ -85,9 +85,7 @@ jobs:
           echo "has_changes=true" >> $GITHUB_OUTPUT
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -m "feat: sync SDK with API changes
-
-          Source: ${{ github.event.client_payload.source_sha }}"
+          git commit -m "feat: sync SDK with API changes"
           git push --force-with-lease origin api-sync
 
       - name: Create or update PR
@@ -99,14 +97,11 @@ jobs:
 
           if [ -n "$EXISTING_PR" ]; then
             echo "Updating existing PR #$EXISTING_PR"
-            gh pr comment "$EXISTING_PR" --body "Updated with latest API changes from blindpay-v2@\`${{ github.event.client_payload.source_sha }}\`"
+            gh pr comment "$EXISTING_PR" --body "Updated with latest API changes."
           else
             gh pr create \
               --title "feat: sync SDK with API changes" \
-              --body "Automated SDK update from API changes in blindpay-v2.
-
-          Source commit: blindpaylabs/blindpay-v2@\`${{ github.event.client_payload.source_sha }}\`
-          Workflow run: ${{ github.event.client_payload.diff_url }}" \
+              --body "Automated SDK update from API changes." \
               --base main \
               --head api-sync \
               --label api-sync
