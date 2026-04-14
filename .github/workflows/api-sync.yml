@@ -15,21 +15,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download OpenAPI spec and diff from source
-        env:
-          GH_TOKEN: ${{ secrets.SDK_SYNC_PAT }}
+      - name: Download OpenAPI spec
         run: |
-          # Download the diff payload and openapi.json from the triggering workflow
-          RUN_URL="${{ github.event.client_payload.diff_url }}"
-          RUN_ID=$(echo "$RUN_URL" | grep -oP '\d+$')
+          mkdir -p /tmp/api-sync
+          curl -sSfL "${{ github.event.client_payload.openapi_url }}" -o /tmp/api-sync/openapi.json
 
-          gh run download "$RUN_ID" \
-            --repo blindpaylabs/blindpay-v2 \
-            --name sdk-diff-payload \
-            --dir /tmp/api-sync
-
-          echo "Downloaded diff payload:"
-          cat /tmp/api-sync/sdk-diff-payload.json | head -100
+          echo "Changed paths: ${{ toJson(github.event.client_payload.changed_paths) }}"
+          echo '${{ toJson(github.event.client_payload.changed_paths) }}' > /tmp/api-sync/changed_paths.json
 
       - name: Check for existing api-sync PR
         id: check-pr
@@ -63,7 +55,7 @@ jobs:
           prompt: |
             You are updating this SDK to match API changes. Read CLAUDE.md for codebase standards.
 
-            The OpenAPI diff is at /tmp/api-sync/sdk-diff-payload.json
+            The changed API paths are listed in /tmp/api-sync/changed_paths.json
             The full current OpenAPI spec is at /tmp/api-sync/openapi.json
 
             Instructions:
