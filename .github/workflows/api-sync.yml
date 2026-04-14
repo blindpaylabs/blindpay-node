@@ -70,7 +70,7 @@ jobs:
             7. If modifying types: update the type definitions to match new schemas.
             8. If removing a resource: delete files, remove registrations.
             9. Bump the version following CLAUDE.md versioning rules and semver.
-            10. Run lint and type checking. Fix any errors.
+            10. As a final step, run the project's full lint and type check commands (check CLAUDE.md for the exact commands). If ANY errors exist in files you created or modified, fix them. Repeat until all checks pass cleanly. Do not finish until zero errors.
             11. Do NOT create commits — just modify the files.
 
       - name: Commit and push
