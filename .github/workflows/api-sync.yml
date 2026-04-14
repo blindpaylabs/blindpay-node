@@ -1,0 +1,114 @@
+name: API Sync
+
+on:
+  repository_dispatch:
+    types: [api-sync]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    name: Sync SDK with API changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download OpenAPI spec and diff from source
+        env:
+          GH_TOKEN: ${{ secrets.SDK_SYNC_PAT }}
+        run: |
+          # Download the diff payload and openapi.json from the triggering workflow
+          RUN_URL="${{ github.event.client_payload.diff_url }}"
+          RUN_ID=$(echo "$RUN_URL" | grep -oP '\d+$')
+
+          gh run download "$RUN_ID" \
+            --repo blindpaylabs/blindpay-v2 \
+            --name sdk-diff-payload \
+            --dir /tmp/api-sync
+
+          echo "Downloaded diff payload:"
+          cat /tmp/api-sync/sdk-diff-payload.json | head -100
+
+      - name: Check for existing api-sync PR
+        id: check-pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr list --head api-sync --json number --jq '.[0].number // empty')
+          if [ -n "$PR_NUMBER" ]; then
+            echo "existing_pr=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "Found existing api-sync PR: #$PR_NUMBER"
+          else
+            echo "existing_pr=" >> $GITHUB_OUTPUT
+            echo "No existing api-sync PR found"
+          fi
+
+      - name: Create or checkout api-sync branch
+        run: |
+          git fetch origin api-sync 2>/dev/null || true
+          if git rev-parse --verify origin/api-sync >/dev/null 2>&1; then
+            git checkout api-sync
+            git reset --hard origin/main
+          else
+            git checkout -b api-sync
+          fi
+
+      - name: Apply changes with Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          model: sonnet
+          prompt: |
+            You are updating this SDK to match API changes. Read CLAUDE.md for codebase standards.
+
+            The OpenAPI diff is at /tmp/api-sync/sdk-diff-payload.json
+            The full current OpenAPI spec is at /tmp/api-sync/openapi.json
+
+            Instructions:
+            1. Read CLAUDE.md thoroughly — it contains all patterns and conventions for this SDK.
+            2. Read the diff payload to understand what changed (new paths, modified schemas, removed paths).
+            3. Only process paths where x-sdk is true in the OpenAPI spec.
+            4. Apply the changes following CLAUDE.md patterns exactly.
+            5. If adding a new resource: create the resource file, register in client, add exports.
+            6. If modifying types: update the type definitions to match new schemas.
+            7. If removing a resource: delete files, remove registrations.
+            8. Bump the version following CLAUDE.md versioning rules and semver.
+            9. Run lint and type checking. Fix any errors.
+            10. Do NOT create commits — just modify the files.
+
+      - name: Commit and push
+        run: |
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "feat: sync SDK with API changes
+
+          Source: ${{ github.event.client_payload.source_sha }}"
+          git push --force-with-lease origin api-sync
+
+      - name: Create or update PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING_PR="${{ steps.check-pr.outputs.existing_pr }}"
+
+          if [ -n "$EXISTING_PR" ]; then
+            echo "Updating existing PR #$EXISTING_PR"
+            gh pr comment "$EXISTING_PR" --body "Updated with latest API changes from blindpay-v2@\`${{ github.event.client_payload.source_sha }}\`"
+          else
+            gh pr create \
+              --title "feat: sync SDK with API changes" \
+              --body "Automated SDK update from API changes in blindpay-v2.
+
+          Source commit: blindpaylabs/blindpay-v2@\`${{ github.event.client_payload.source_sha }}\`
+          Workflow run: ${{ github.event.client_payload.diff_url }}" \
+              --base main \
+              --head api-sync \
+              --label api-sync
+          fi
