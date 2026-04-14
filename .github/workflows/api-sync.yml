@@ -15,16 +15,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download OpenAPI spec
-        env:
-          GH_TOKEN: ${{ secrets.SDK_SYNC_PAT }}
+      - name: Fetch API sync data
         run: |
           mkdir -p /tmp/api-sync
-          gh api repos/blindpaylabs/blindpay-v2/contents/apps/api/openapi.json?ref=${{ github.event.client_payload.source_sha }} \
-            -H "Accept: application/vnd.github.raw+json" > /tmp/api-sync/openapi.json
-
-          echo "Changed paths: ${{ toJson(github.event.client_payload.changed_paths) }}"
-          echo '${{ toJson(github.event.client_payload.changed_paths) }}' > /tmp/api-sync/changed_paths.json
+          git fetch origin api-sync-data
+          git show origin/api-sync-data:.api-sync/openapi.json > /tmp/api-sync/openapi.json
+          git show origin/api-sync-data:.api-sync/changed_paths.json > /tmp/api-sync/changed_paths.json
+          echo "Changed paths:"
+          cat /tmp/api-sync/changed_paths.json
 
       - name: Check for existing api-sync PR
         id: check-pr
