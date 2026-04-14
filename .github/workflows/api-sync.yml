@@ -76,7 +76,9 @@ jobs:
         id: commit
         run: |
           git remote set-url origin "https://x-access-token:${{ secrets.SDK_SYNC_PAT }}@github.com/${{ github.repository }}.git"
+          git checkout -- .github/workflows/ 2>/dev/null || true
           git add -A
+          git reset HEAD .github/workflows/ 2>/dev/null || true
           if git diff --staged --quiet; then
             echo "No changes to commit"
             echo "has_changes=false" >> $GITHUB_OUTPUT
