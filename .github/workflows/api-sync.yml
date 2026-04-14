@@ -57,20 +57,21 @@ jobs:
           prompt: |
             You are updating this SDK to match API changes. Read CLAUDE.md for codebase standards.
 
-            The changed API paths are listed in /tmp/api-sync/changed_paths.json
+            The changed API paths are listed in /tmp/api-sync/changed_paths.json — these indicate which resource(s) changed.
             The full current OpenAPI spec is at /tmp/api-sync/openapi.json
 
             Instructions:
             1. Read CLAUDE.md thoroughly — it contains all patterns and conventions for this SDK.
-            2. Read the diff payload to understand what changed (new paths, modified schemas, removed paths).
-            3. Only process paths where x-sdk is true in the OpenAPI spec.
-            4. Apply the changes following CLAUDE.md patterns exactly.
-            5. If adding a new resource: create the resource file, register in client, add exports.
-            6. If modifying types: update the type definitions to match new schemas.
-            7. If removing a resource: delete files, remove registrations.
-            8. Bump the version following CLAUDE.md versioning rules and semver.
-            9. Run lint and type checking. Fix any errors.
-            10. Do NOT create commits — just modify the files.
+            2. Read the changed paths to identify which resource(s) were affected.
+            3. For each affected resource, find ALL related paths in the OpenAPI spec (e.g. if /sandbox changed, also include /sandbox/{id}). Implement every endpoint for the resource, not just the literally changed path.
+            4. Only process paths where x-sdk is true in the OpenAPI spec.
+            5. Apply the changes following CLAUDE.md patterns exactly.
+            6. If adding a new resource: create the resource file with ALL endpoints (list, get, create, update, delete, etc.), register in client, add exports.
+            7. If modifying types: update the type definitions to match new schemas.
+            8. If removing a resource: delete files, remove registrations.
+            9. Bump the version following CLAUDE.md versioning rules and semver.
+            10. Run lint and type checking. Fix any errors.
+            11. Do NOT create commits — just modify the files.
 
       - name: Commit and push
         id: commit
