@@ -53,7 +53,6 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          model: sonnet
           prompt: |
             You are updating this SDK to match API changes. Read CLAUDE.md for codebase standards.
 
