@@ -75,7 +75,7 @@ jobs:
       - name: Commit and push
         id: commit
         run: |
-          git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git remote set-url origin "https://x-access-token:${{ secrets.SDK_SYNC_PAT }}@github.com/${{ github.repository }}.git"
           git add -A
           if git diff --staged --quiet; then
             echo "No changes to commit"
@@ -91,7 +91,7 @@ jobs:
       - name: Create or update PR
         if: steps.commit.outputs.has_changes == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.SDK_SYNC_PAT }}
         run: |
           EXISTING_PR="${{ steps.check-pr.outputs.existing_pr }}"
 
