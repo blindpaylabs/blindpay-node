@@ -57,21 +57,19 @@ jobs:
           prompt: |
             You are updating this SDK to match API changes. Read CLAUDE.md for this SDK's conventions.
 
-            The detailed changelog of API changes is at /tmp/api-sync/changelog.md
-            The full OpenAPI spec is at /tmp/api-sync/openapi.json (use for reference only)
+            The changelog is at /tmp/api-sync/changelog.md — it contains ALL the information you need.
+            Do NOT read openapi.json. The changelog is self-contained.
 
             INSTRUCTIONS:
             1. Read CLAUDE.md thoroughly for this SDK's patterns and conventions.
-            2. Read /tmp/api-sync/changelog.md — it lists EXACTLY what changed in the API.
-            3. Implement EVERY change listed in the changelog:
-               - ADDED field → add the field to the appropriate type/struct, following existing patterns
-               - REMOVED field → remove it
-               - ADDED enum values → add them to the existing enum type
-               - New endpoint → create the method following existing resource patterns
-               - Removed endpoint → remove the method
-            4. Do not skip any change. Do not add anything not in the changelog.
+            2. Read /tmp/api-sync/changelog.md — it lists every enum type with every value, every field to add, and every change to make.
+            3. Implement ALL changes. Go through the changelog section by section:
+               - Section 1 (Enum Types): For each enum listed, check if the SDK has it. If missing, create it. If it exists, add any missing values. The changelog lists ALL values — add the ones that don't exist yet.
+               - Section 2 (Receiver Fields): Add each listed field to the receiver input/output types.
+               - Section 3 (Version): Minor bump.
+            4. Do not skip ANY enum or field. Every item in the changelog must be addressed.
             5. Follow CLAUDE.md patterns exactly for naming, typing, and file organization.
-            6. MINOR version bump only. NEVER bump major version.
+            6. MINOR version bump only.
             7. Run lint and type check commands (see CLAUDE.md). Fix any errors until clean.
             8. Do NOT create commits — just modify the files.
 
