@@ -21,7 +21,6 @@ jobs:
           mkdir -p /tmp/api-sync
           git fetch origin api-sync-data
           git show origin/api-sync-data:.api-sync/changelog.md > /tmp/api-sync/changelog.md
-          git show origin/api-sync-data:.api-sync/openapi.json > /tmp/api-sync/openapi.json
           echo "=== Changelog ==="
           cat /tmp/api-sync/changelog.md
 
