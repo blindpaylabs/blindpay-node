@@ -24,7 +24,6 @@ export type ProofOfAddressDocType =
     | "TAX_DOCUMENT"
     | "GOVERNMENT_CORRESPONDENCE";
 
-
 export type IdentificationDocument = "PASSPORT" | "ID_CARD" | "DRIVERS";
 
 export type ReceiverKycStatus =

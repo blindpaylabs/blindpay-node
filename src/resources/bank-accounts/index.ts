@@ -4,12 +4,12 @@ import type {
     ArgentinaTransfers,
     BankAccountType,
     BlindpayApiResponse,
+    BusinessIndustry,
     Country,
     Rail,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { SpeiProtocol } from "../payouts";
-import type { BusinessIndustry } from "../receivers";
 
 export type RecipientRelationship =
     | "first_party"
