@@ -91,6 +91,13 @@ export type ListBankAccountsResponse = {
             network: "tron";
             external_id: string;
         }>;
+        business_industry?: string | null;
+        phone_number?: string | null;
+        tax_id?: string | null;
+        date_of_birth?: string | null;
+        status?: string | null;
+        recipient_relationship?: RecipientRelationship | null;
+        swift_payment_code?: string | null;
         created_at: string;
     }>;
 };

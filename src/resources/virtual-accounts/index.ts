@@ -1,7 +1,9 @@
 import type { BlindpayApiResponse, Network, StablecoinToken } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
-export type BankingPartner = "jpmorgan" | "citi" | "hsbc";
+export type BankingPartner = "jpmorgan" | "citi" | "hsbc" | "cfsb";
+
+export type SoleProprietorDocType = "master_service_agreement" | "salary_slip" | "bank_statement";
 
 export type VirtualAccount = {
     id: string;
@@ -21,6 +23,7 @@ export type VirtualAccount = {
             account_number: string;
         };
         swift_bic_code: string;
+        swift_account_number?: string | null;
         account_type: string;
         beneficiary: {
             name: string;
@@ -32,6 +35,11 @@ export type VirtualAccount = {
             address_line_1: string;
             address_line_2: string;
         };
+        swift_receiving_bank?: {
+            name: string | null;
+            address_line_1: string | null;
+            address_line_2: string | null;
+        } | null;
     };
     token: StablecoinToken;
     blockchain_wallet_id: string;
@@ -48,6 +56,8 @@ export type CreateVirtualAccountInput = {
     token: StablecoinToken;
     blockchain_wallet_id: string;
     signed_agreement_id?: string | null;
+    sole_proprietor_doc_type?: SoleProprietorDocType | null;
+    sole_proprietor_doc_file?: string | null;
 };
 
 export type CreateVirtualAccountResponse = VirtualAccount;
