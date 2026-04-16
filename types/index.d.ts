@@ -581,16 +581,16 @@ export type PurposeOfTransactions =
 
 export type SourceOfFundsDocType =
     | "business_income"
+    | "esops"
     | "gambling_proceeds"
     | "gifts"
     | "government_benefits"
     | "inheritance"
-    | "investment_income"
-    | "legal_settlements"
-    | "loan_proceeds"
-    | "pension_or_retirement"
-    | "property_sale"
-    | "salary_wages"
+    | "investment_loans"
+    | "investment_proceeds"
+    | "pension_retirement"
+    | "salary"
+    | "sale_of_assets_real_estate"
     | "savings"
     | "someone_else_funds";
 
