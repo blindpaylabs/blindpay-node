@@ -52,7 +52,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          claude_args: '--model claude-opus-4-20250514 --allowedTools "Bash(*),Read,Edit,Write,Glob,Grep"'
+          claude_args: '--model claude-sonnet-4-20250514 --allowedTools "Bash(*),Read,Edit,Write,Glob,Grep"'
           prompt: |
             You are updating this SDK to match API changes. Read CLAUDE.md for this SDK's conventions.
 
