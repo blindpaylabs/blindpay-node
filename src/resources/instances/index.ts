@@ -24,6 +24,7 @@ export type GetInstanceMembersResponse = Array<{
 export type UpdateInstanceInput = {
     name: string;
     receiver_invite_redirect_urL?: string;
+    require_passkey?: boolean;
 };
 
 export type DeleteInstanceMemberInput = string;

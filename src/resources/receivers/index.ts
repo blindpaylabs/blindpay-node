@@ -1,9 +1,18 @@
 import type {
     AccountClass,
+    AccountPurpose,
     BlindpayApiResponse,
+    BusinessIndustry,
+    BusinessType,
     Country,
+    EstimatedAnnualRevenue,
     PaginationMetadata,
     PaginationParams,
+    PurposeOfTransactions,
+    RecipientRelationship,
+    SoleProprietorDocType,
+    SourceOfFundsDocType,
+    SourceOfWealth,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { StrictOmit } from "../../internal/helpers/strict-omit";
@@ -14,224 +23,6 @@ export type ProofOfAddressDocType =
     | "RENTAL_AGREEMENT"
     | "TAX_DOCUMENT"
     | "GOVERNMENT_CORRESPONDENCE";
-
-export type PurposeOfTransactions =
-    | "business_transactions"
-    | "charitable_donations"
-    | "investment_purposes"
-    | "payments_to_friends_or_family_abroad"
-    | "personal_or_living_expenses"
-    | "protect_wealth"
-    | "purchase_good_and_services"
-    | "receive_payment_for_freelancing"
-    | "receive_salary"
-    | "other";
-
-export type AccountPurpose =
-    | "charitable_donations"
-    | "ecommerce_retail_payments"
-    | "investment_purposes"
-    | "business_expenses"
-    | "payments_to_friends_or_family_abroad"
-    | "personal_or_living_expenses"
-    | "protect_wealth"
-    | "purchase_goods_and_services"
-    | "receive_payments_for_goods_and_services"
-    | "tax_optimization"
-    | "third_party_money_transmission"
-    | "other"
-    | "payroll"
-    | "treasury_management";
-
-export type BusinessType =
-    | "corporation"
-    | "llc"
-    | "partnership"
-    | "sole_proprietorship"
-    | "trust"
-    | "non_profit";
-
-export type BusinessIndustry =
-    | "111998"
-    | "112120"
-    | "113310"
-    | "115114"
-    | "211120"
-    | "212114"
-    | "213112"
-    | "221310"
-    | "236115"
-    | "236220"
-    | "237310"
-    | "238210"
-    | "311421"
-    | "312130"
-    | "313110"
-    | "315990"
-    | "322220"
-    | "325412"
-    | "334111"
-    | "334118"
-    | "334210"
-    | "336110"
-    | "336111"
-    | "336390"
-    | "337121"
-    | "339112"
-    | "339910"
-    | "339920"
-    | "339930"
-    | "423110"
-    | "423430"
-    | "423510"
-    | "423690"
-    | "423830"
-    | "423840"
-    | "423940"
-    | "424210"
-    | "424410"
-    | "424480"
-    | "424690"
-    | "424990"
-    | "444110"
-    | "445110"
-    | "445320"
-    | "449210"
-    | "454110"
-    | "455110"
-    | "455219"
-    | "456110"
-    | "457110"
-    | "458110"
-    | "458210"
-    | "458310"
-    | "459120"
-    | "459210"
-    | "481111"
-    | "483111"
-    | "484121"
-    | "485210"
-    | "488510"
-    | "493110"
-    | "511210"
-    | "512250"
-    | "513130"
-    | "516120"
-    | "517110"
-    | "517111"
-    | "517112"
-    | "517410"
-    | "518210"
-    | "519130"
-    | "522110"
-    | "522210"
-    | "522320"
-    | "523110"
-    | "523150"
-    | "523920"
-    | "523940"
-    | "523999"
-    | "524113"
-    | "531110"
-    | "531120"
-    | "531130"
-    | "531190"
-    | "531210"
-    | "531311"
-    | "531312"
-    | "531320"
-    | "531390"
-    | "532111"
-    | "541110"
-    | "541211"
-    | "541214"
-    | "541330"
-    | "541430"
-    | "541511"
-    | "541512"
-    | "541519"
-    | "541611"
-    | "541618"
-    | "541715"
-    | "541810"
-    | "541922"
-    | "541930"
-    | "541940"
-    | "541990"
-    | "551112"
-    | "561311"
-    | "561422"
-    | "561499"
-    | "561510"
-    | "561612"
-    | "561730"
-    | "561740"
-    | "562111"
-    | "562920"
-    | "611110"
-    | "611310"
-    | "611410"
-    | "611710"
-    | "621111"
-    | "621210"
-    | "621399"
-    | "621511"
-    | "621910"
-    | "622110"
-    | "623110"
-    | "623220"
-    | "624410"
-    | "711110"
-    | "711211"
-    | "711410"
-    | "711510"
-    | "712110"
-    | "713110"
-    | "713210"
-    | "721110"
-    | "722511"
-    | "722513"
-    | "811111"
-    | "811210"
-    | "812111"
-    | "812112"
-    | "812199"
-    | "813110"
-    | "813211"
-    | "813219";
-
-export type EstimatedAnnualRevenue =
-    | "0_99999"
-    | "100000_999999"
-    | "1000000_9999999"
-    | "10000000_49999999"
-    | "50000000_249999999"
-    | "2500000000_plus";
-
-export type SourceOfWealth =
-    | "business_dividends_or_profits"
-    | "investments"
-    | "asset_sales"
-    | "client_investor_contributions"
-    | "gambling"
-    | "charitable_contributions"
-    | "inheritance"
-    | "affiliate_or_royalty_income";
-
-export type SourceOfFundsDocType =
-    | "business_income"
-    | "gambling_proceeds"
-    | "gifts"
-    | "government_benefits"
-    | "inheritance"
-    | "investment_loans"
-    | "pension_retirement"
-    | "salary"
-    | "sale_of_assets_real_estate"
-    | "savings"
-    | "esops"
-    | "investment_proceeds"
-    | "someone_else_funds";
 
 export type IdentificationDocument = "PASSPORT" | "ID_CARD" | "DRIVERS";
 
@@ -348,6 +139,8 @@ export type IndividualWithStandardKYC = {
     business_industry?: BusinessIndustry | null;
     estimated_annual_revenue?: EstimatedAnnualRevenue | null;
     source_of_wealth?: SourceOfWealth | null;
+    recipient_relationship?: RecipientRelationship | null;
+    sole_proprietor_doc_type?: SoleProprietorDocType | null;
     publicly_traded?: boolean | null;
 };
 
@@ -411,6 +204,8 @@ export type IndividualWithEnhancedKYC = {
     business_industry?: BusinessIndustry | null;
     estimated_annual_revenue?: EstimatedAnnualRevenue | null;
     source_of_wealth?: SourceOfWealth | null;
+    recipient_relationship?: RecipientRelationship | null;
+    sole_proprietor_doc_type?: SoleProprietorDocType | null;
     publicly_traded?: boolean | null;
 };
 
@@ -471,6 +266,8 @@ export type BusinessWithStandardKYB = {
     business_industry?: BusinessIndustry | null;
     estimated_annual_revenue?: EstimatedAnnualRevenue | null;
     source_of_wealth?: SourceOfWealth | null;
+    recipient_relationship?: RecipientRelationship | null;
+    sole_proprietor_doc_type?: SoleProprietorDocType | null;
 };
 
 export type CreateIndividualWithStandardKYCInput = {
@@ -503,6 +300,8 @@ export type CreateIndividualWithStandardKYCInput = {
     tos_id?: string | null;
     account_purpose_other?: string | null;
     occupation?: string | null;
+    recipient_relationship?: RecipientRelationship | null;
+    sole_proprietor_doc_type?: SoleProprietorDocType | null;
 };
 
 export type CreateIndividualWithStandardKYCResponse = {
@@ -541,6 +340,8 @@ export type CreateIndividualWithEnhancedKYCInput = {
     tos_id?: string | null;
     account_purpose_other?: string | null;
     occupation?: string | null;
+    recipient_relationship?: RecipientRelationship | null;
+    sole_proprietor_doc_type?: SoleProprietorDocType | null;
 };
 
 export type CreateIndividualWithEnhancedKYCResponse = {
@@ -581,6 +382,8 @@ export type CreateBusinessWithStandardKYBInput = {
     website?: string | null;
     account_purpose_other?: string | null;
     occupation?: string | null;
+    recipient_relationship?: RecipientRelationship | null;
+    sole_proprietor_doc_type?: SoleProprietorDocType | null;
 };
 
 export type CreateBusinessWithStandardKYBResponse = {
@@ -653,6 +456,8 @@ export type UpdateReceiverInput = {
     website?: string;
     account_purpose_other?: string | null;
     occupation?: string | null;
+    recipient_relationship?: RecipientRelationship | null;
+    sole_proprietor_doc_type?: SoleProprietorDocType | null;
 };
 
 export type DeleteReceiverInput = string;
