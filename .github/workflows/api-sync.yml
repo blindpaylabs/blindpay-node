@@ -20,77 +20,10 @@ jobs:
         run: |
           mkdir -p /tmp/api-sync
           git fetch origin api-sync-data
+          git show origin/api-sync-data:.api-sync/changelog.md > /tmp/api-sync/changelog.md
           git show origin/api-sync-data:.api-sync/openapi.json > /tmp/api-sync/openapi.json
-          git show origin/api-sync-data:.api-sync/changed_paths.json > /tmp/api-sync/changed_paths.json
-          echo "Changed paths:"
-          cat /tmp/api-sync/changed_paths.json
-
-      - name: Extract relevant spec section
-        run: |
-          python3 << 'SCRIPT'
-          import json, re
-
-          with open('/tmp/api-sync/changed_paths.json') as f:
-              changed = json.load(f)
-
-          with open('/tmp/api-sync/openapi.json') as f:
-              spec = json.load(f)
-
-          # Identify affected resources from changed paths
-          resources = set()
-          for path in changed:
-              parts = path.strip('/').split('/')
-              # Find the resource name after instances/{id}/ or at top level
-              for i, part in enumerate(parts):
-                  if part in ('instances', '{instance_id}', '{id}', 'v1', 'e'):
-                      continue
-                  if '{' in part:
-                      continue
-                  resources.add(part)
-
-          # Collect all paths that belong to affected resources
-          relevant_paths = {}
-          for path, methods in spec.get('paths', {}).items():
-              for resource in resources:
-                  if resource in path:
-                      relevant_paths[path] = methods
-                      break
-
-          # Collect all $ref schemas referenced by relevant paths
-          def collect_refs(obj, refs):
-              if isinstance(obj, dict):
-                  if '$ref' in obj:
-                      ref = obj['$ref'].split('/')[-1]
-                      if ref not in refs:
-                          refs.add(ref)
-                          # Recursively collect refs from the schema itself
-                          schema = spec.get('components', {}).get('schemas', {}).get(ref, {})
-                          collect_refs(schema, refs)
-                  for v in obj.values():
-                      collect_refs(v, refs)
-              elif isinstance(obj, list):
-                  for item in obj:
-                      collect_refs(item, refs)
-
-          refs = set()
-          collect_refs(relevant_paths, refs)
-
-          relevant_schemas = {}
-          for name in refs:
-              if name in spec.get('components', {}).get('schemas', {}):
-                  relevant_schemas[name] = spec['components']['schemas'][name]
-
-          mini_spec = {
-              'openapi': spec.get('openapi'),
-              'paths': relevant_paths,
-              'components': {'schemas': relevant_schemas}
-          }
-
-          with open('/tmp/api-sync/relevant_spec.json', 'w') as f:
-              json.dump(mini_spec, f, indent=2)
-
-          print(f"Extracted {len(relevant_paths)} paths and {len(relevant_schemas)} schemas for resources: {resources}")
-          SCRIPT
+          echo "=== Changelog ==="
+          cat /tmp/api-sync/changelog.md
 
       - name: Check for existing api-sync PR
         id: check-pr
@@ -122,66 +55,25 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: '--model claude-opus-4-20250514 --allowedTools "Bash(*),Read,Edit,Write,Glob,Grep"'
           prompt: |
-            You are updating this SDK to match API changes. Your changes must be ADDITIVE ONLY.
+            You are updating this SDK to match API changes. Read CLAUDE.md for this SDK's conventions.
 
-            CRITICAL RULES:
-            - NEVER remove or rename existing methods, functions, classes, or types
-            - NEVER replace specialized methods with generic ones (e.g. don't replace createIndividualWithStandardKYC with a generic create)
-            - NEVER change existing field types (e.g. typed enum to string, required to optional)
-            - NEVER bump the major version number
-            - If a method already handles an endpoint, only update its input/output types with new fields
+            The detailed changelog of API changes is at /tmp/api-sync/changelog.md
+            The full OpenAPI spec is at /tmp/api-sync/openapi.json (use for reference only)
 
-            Before making any changes:
-            1. Read CLAUDE.md thoroughly for this SDK's conventions.
-            2. Read /tmp/api-sync/changed_paths.json to identify affected resource(s).
-            3. Read the EXISTING resource file(s) in full — understand what already exists.
-            4. Read the relevant spec at /tmp/api-sync/relevant_spec.json (filtered to affected resources only).
-            5. Identify the GAP: what the spec has that the SDK is missing.
-
-            Changes to make:
-            - ADD new enum types with ALL values from the spec, using the SDK's typed enum pattern (see CLAUDE.md). Include EVERY value — do not omit any.
-            - ADD new optional fields to existing input/output types.
-            - ADD new methods for new endpoints (don't touch existing methods).
-            - ADD new resource files for entirely new resources, register in client, add exports.
-            - MINOR version bump only (e.g. 1.4.0 → 1.5.0).
-
-            Enum typing rules (NEVER use plain string for enum fields):
-            - Go: type XEnum string + const block with all values
-            - Swift: public enum X: String, Codable, Sendable with all cases
-            - PHP: enum X: string with all cases
-            - Python: X = Literal["value1", "value2", ...]
-            - Node: type X = "value1" | "value2" | ...
-
-            Final step: Run this SDK's lint and type check commands (see CLAUDE.md). Fix any errors. Repeat until zero errors. Do NOT create commits.
-
-      - name: Validate no methods removed
-        id: validate
-        run: |
-          ISSUES=""
-
-          # Check for removed method/function definitions
-          REMOVED=$(git diff main -- '*.ts' '*.go' '*.swift' '*.php' '*.py' | grep '^-' | grep -v '^---' | grep -E '(export )?(async )?(function |func |def |public func |public function |class |type |enum )' | head -20)
-          if [ -n "$REMOVED" ]; then
-            echo "WARNING: Possible method/type removals detected:"
-            echo "$REMOVED"
-            ISSUES="$ISSUES\nRemoved definitions detected"
-          fi
-
-          # Check for major version bump
-          MAJOR_BUMP=$(git diff main -- '*package.json' '*pyproject.toml' '*.go' '*.php' '*.swift' | grep '^+' | grep -iE 'version.*["\x27]?[2-9]+\.0\.0' | head -5)
-          if [ -n "$MAJOR_BUMP" ]; then
-            echo "ERROR: Major version bump detected:"
-            echo "$MAJOR_BUMP"
-            ISSUES="$ISSUES\nMajor version bump"
-          fi
-
-          if [ -n "$ISSUES" ]; then
-            echo "has_issues=true" >> $GITHUB_OUTPUT
-            echo "Validation issues found — review carefully before merging"
-          else
-            echo "has_issues=false" >> $GITHUB_OUTPUT
-            echo "Validation passed"
-          fi
+            INSTRUCTIONS:
+            1. Read CLAUDE.md thoroughly for this SDK's patterns and conventions.
+            2. Read /tmp/api-sync/changelog.md — it lists EXACTLY what changed in the API.
+            3. Implement EVERY change listed in the changelog:
+               - ADDED field → add the field to the appropriate type/struct, following existing patterns
+               - REMOVED field → remove it
+               - ADDED enum values → add them to the existing enum type
+               - New endpoint → create the method following existing resource patterns
+               - Removed endpoint → remove the method
+            4. Do not skip any change. Do not add anything not in the changelog.
+            5. Follow CLAUDE.md patterns exactly for naming, typing, and file organization.
+            6. MINOR version bump only. NEVER bump major version.
+            7. Run lint and type check commands (see CLAUDE.md). Fix any errors until clean.
+            8. Do NOT create commits — just modify the files.
 
       - name: Commit and push
         id: commit
@@ -207,7 +99,7 @@ jobs:
           GH_TOKEN: ${{ secrets.SDK_SYNC_PAT }}
         run: |
           EXISTING_PR="${{ steps.check-pr.outputs.existing_pr }}"
-          VALIDATION="${{ steps.validate.outputs.has_issues }}"
+
           if [ -n "$EXISTING_PR" ]; then
             echo "Updating existing PR #$EXISTING_PR"
             gh pr comment "$EXISTING_PR" --body "Updated with latest API changes."
