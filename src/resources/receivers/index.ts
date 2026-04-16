@@ -52,46 +52,153 @@ export type BusinessType =
     | "non_profit";
 
 export type BusinessIndustry =
+    | "111998"
+    | "112120"
+    | "113310"
+    | "115114"
+    | "211120"
+    | "212114"
+    | "213112"
+    | "221310"
+    | "236115"
+    | "236220"
+    | "237310"
+    | "238210"
+    | "311421"
+    | "312130"
+    | "313110"
+    | "315990"
+    | "322220"
+    | "325412"
+    | "334111"
+    | "334118"
+    | "334210"
+    | "336110"
+    | "336111"
+    | "336390"
+    | "337121"
+    | "339112"
+    | "339910"
+    | "339920"
+    | "339930"
+    | "423110"
+    | "423430"
+    | "423510"
+    | "423690"
+    | "423830"
+    | "423840"
+    | "423940"
+    | "424210"
+    | "424410"
+    | "424480"
+    | "424690"
+    | "424990"
+    | "444110"
+    | "445110"
+    | "445320"
+    | "449210"
+    | "454110"
+    | "455110"
+    | "455219"
+    | "456110"
+    | "457110"
+    | "458110"
+    | "458210"
+    | "458310"
+    | "459120"
+    | "459210"
+    | "481111"
+    | "483111"
+    | "484121"
+    | "485210"
+    | "488510"
+    | "493110"
+    | "511210"
+    | "512250"
+    | "513130"
+    | "516120"
+    | "517110"
+    | "517111"
+    | "517112"
+    | "517410"
+    | "518210"
+    | "519130"
+    | "522110"
+    | "522210"
+    | "522320"
+    | "523110"
+    | "523150"
+    | "523920"
+    | "523940"
+    | "523999"
+    | "524113"
+    | "531110"
+    | "531120"
+    | "531130"
+    | "531190"
+    | "531210"
+    | "531311"
+    | "531312"
+    | "531320"
+    | "531390"
+    | "532111"
+    | "541110"
+    | "541211"
+    | "541214"
+    | "541330"
+    | "541430"
     | "541511"
     | "541512"
     | "541519"
-    | "518210"
-    | "511210"
     | "541611"
     | "541618"
-    | "541330"
+    | "541715"
+    | "541810"
+    | "541922"
+    | "541930"
+    | "541940"
     | "541990"
-    | "522110"
-    | "523110"
-    | "523920"
-    | "423430"
-    | "423690"
-    | "423110"
-    | "423830"
-    | "423840"
-    | "423510"
-    | "424210"
-    | "424690"
-    | "424990"
-    | "454110"
-    | "334111"
-    | "334118"
-    | "325412"
-    | "339112"
-    | "336111"
-    | "336390"
     | "551112"
+    | "561311"
+    | "561422"
     | "561499"
-    | "488510"
-    | "484121"
-    | "493110"
-    | "424410"
-    | "424480"
-    | "315990"
-    | "313110"
-    | "213112"
-    | "517110"
-    | "541214";
+    | "561510"
+    | "561612"
+    | "561730"
+    | "561740"
+    | "562111"
+    | "562920"
+    | "611110"
+    | "611310"
+    | "611410"
+    | "611710"
+    | "621111"
+    | "621210"
+    | "621399"
+    | "621511"
+    | "621910"
+    | "622110"
+    | "623110"
+    | "623220"
+    | "624410"
+    | "711110"
+    | "711211"
+    | "711410"
+    | "711510"
+    | "712110"
+    | "713110"
+    | "713210"
+    | "721110"
+    | "722511"
+    | "722513"
+    | "811111"
+    | "811210"
+    | "812111"
+    | "812112"
+    | "812199"
+    | "813110"
+    | "813211"
+    | "813219";
 
 export type EstimatedAnnualRevenue =
     | "0_99999"
@@ -128,6 +235,32 @@ export type SourceOfFundsDocType =
 
 export type IdentificationDocument = "PASSPORT" | "ID_CARD" | "DRIVERS";
 
+export type ReceiverKycStatus =
+    | "verifying"
+    | "approved"
+    | "rejected"
+    | "deprecated"
+    | "pending_review";
+
+export type AmlStatus = "clear" | "hit" | "error";
+
+export type AmlHits = {
+    has_sanction_match: boolean;
+    has_pep_match: boolean;
+    has_watchlist_match: boolean;
+    has_crimelist_match: boolean;
+    has_adversemedia_match: boolean;
+};
+
+export type FraudWarning = {
+    id: string | null;
+    name: string | null;
+    operation: string | null;
+    score: number | null;
+};
+
+export type OwnerTaxType = "SSN" | "ITIN";
+
 export type KycType = "light" | "standard" | "enhanced";
 
 export type OwnerRole = "beneficial_controlling" | "beneficial_owner" | "controlling_person";
@@ -153,6 +286,9 @@ export type Owner = {
     proof_of_address_doc_file: string | null;
     ownership_percentage: number | null;
     title: string | null;
+    tax_type?: OwnerTaxType | null;
+    instance_id?: string;
+    receiver_id?: string;
 };
 
 export type IndividualWithStandardKYC = {
@@ -197,6 +333,22 @@ export type IndividualWithStandardKYC = {
         daily: number;
         monthly: number;
     };
+    fraud_warnings?: FraudWarning[] | null;
+    aml_status?: AmlStatus | null;
+    aml_hits?: AmlHits | null;
+    account_purpose?: AccountPurpose | null;
+    account_purpose_other?: string | null;
+    occupation?: string | null;
+    external_id?: string | null;
+    is_fbo?: boolean | null;
+    selfie_file?: string | null;
+    source_of_funds_doc_type?: SourceOfFundsDocType | null;
+    source_of_funds_doc_file?: string | null;
+    business_description?: string | null;
+    business_industry?: BusinessIndustry | null;
+    estimated_annual_revenue?: EstimatedAnnualRevenue | null;
+    source_of_wealth?: SourceOfWealth | null;
+    publicly_traded?: boolean | null;
 };
 
 export type IndividualWithEnhancedKYC = {
@@ -246,6 +398,20 @@ export type IndividualWithEnhancedKYC = {
         daily: number;
         monthly: number;
     };
+    fraud_warnings?: FraudWarning[] | null;
+    aml_status?: AmlStatus | null;
+    aml_hits?: AmlHits | null;
+    account_purpose?: AccountPurpose | null;
+    account_purpose_other?: string | null;
+    occupation?: string | null;
+    external_id?: string | null;
+    is_fbo?: boolean | null;
+    selfie_file?: string | null;
+    business_description?: string | null;
+    business_industry?: BusinessIndustry | null;
+    estimated_annual_revenue?: EstimatedAnnualRevenue | null;
+    source_of_wealth?: SourceOfWealth | null;
+    publicly_traded?: boolean | null;
 };
 
 export type BusinessWithStandardKYB = {
@@ -292,6 +458,19 @@ export type BusinessWithStandardKYB = {
         daily: number;
         monthly: number;
     };
+    fraud_warnings?: FraudWarning[] | null;
+    aml_status?: AmlStatus | null;
+    aml_hits?: AmlHits | null;
+    account_purpose?: AccountPurpose | null;
+    account_purpose_other?: string | null;
+    occupation?: string | null;
+    selfie_file?: string | null;
+    source_of_funds_doc_type?: SourceOfFundsDocType | null;
+    source_of_funds_doc_file?: string | null;
+    business_description?: string | null;
+    business_industry?: BusinessIndustry | null;
+    estimated_annual_revenue?: EstimatedAnnualRevenue | null;
+    source_of_wealth?: SourceOfWealth | null;
 };
 
 export type CreateIndividualWithStandardKYCInput = {
@@ -322,6 +501,8 @@ export type CreateIndividualWithStandardKYCInput = {
     state_province_region?: string | null;
     tax_id?: string | null;
     tos_id?: string | null;
+    account_purpose_other?: string | null;
+    occupation?: string | null;
 };
 
 export type CreateIndividualWithStandardKYCResponse = {
@@ -358,6 +539,8 @@ export type CreateIndividualWithEnhancedKYCInput = {
     state_province_region?: string | null;
     tax_id?: string | null;
     tos_id?: string | null;
+    account_purpose_other?: string | null;
+    occupation?: string | null;
 };
 
 export type CreateIndividualWithEnhancedKYCResponse = {
@@ -396,6 +579,8 @@ export type CreateBusinessWithStandardKYBInput = {
     tax_id?: string | null;
     tos_id?: string | null;
     website?: string | null;
+    account_purpose_other?: string | null;
+    occupation?: string | null;
 };
 
 export type CreateBusinessWithStandardKYBResponse = {
@@ -466,6 +651,8 @@ export type UpdateReceiverInput = {
     tax_id?: string;
     tos_id?: string;
     website?: string;
+    account_purpose_other?: string | null;
+    occupation?: string | null;
 };
 
 export type DeleteReceiverInput = string;
@@ -508,6 +695,9 @@ export type GetLimitIncreaseRequestsResponse = Array<{
     supporting_document_type: LimitIncreaseRequestSupportingDocumentType;
     created_at: string;
     updated_at: string;
+    approved_per_transaction?: number | null;
+    approved_daily?: number | null;
+    approved_monthly?: number | null;
 }>;
 
 export type RequestLimitIncreaseInput = {

@@ -1,16 +1,19 @@
 import type { BlindpayApiResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
+export type OfframpWalletNetwork = "tron" | "solana";
+
 export type OfframpWallet = {
     id: string;
     external_id: string;
     instance_id: string;
     receiver_id: string;
     bank_account_id: string;
-    network: "tron";
+    network: OfframpWalletNetwork;
     address: string;
     created_at: string;
     updated_at: string;
+    circle_wallet_id?: string | null;
 };
 
 export type ListOfframpWalletsInput = {
@@ -23,14 +26,15 @@ export type ListOfframpWalletsResponse = OfframpWallet[];
 export type CreateOfframpWalletInput = {
     receiver_id: string;
     bank_account_id: string;
-    external_id: string;
-    network: "tron";
+    external_id?: string | null;
+    network: OfframpWalletNetwork;
 };
 
 export type CreateOfframpWalletResponse = {
     id: string;
-    external_id: string;
-    network: "tron";
+    external_id?: string | null;
+    circle_wallet_id?: string | null;
+    network: OfframpWalletNetwork;
     address: string;
 };
 

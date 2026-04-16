@@ -332,6 +332,75 @@ describe("Receivers", () => {
     });
 
     describe("Get receiver", () => {
+        it("should get a receiver with new fields", async () => {
+            const mockedReceiver: GetReceiverResponse = {
+                id: "re_YuaMcI2B8zbQ",
+                is_tos_accepted: true,
+                type: "individual",
+                kyc_type: "standard",
+                kyc_status: "approved",
+                kyc_warnings: null,
+                email: "john@example.com",
+                tax_id: "12345678900",
+                address_line_1: "123 Main St",
+                city: "New York",
+                state_province_region: "NY",
+                country: "US",
+                postal_code: "10001",
+                ip_address: null,
+                image_url: null,
+                phone_number: "+15555555555",
+                proof_of_address_doc_type: "UTILITY_BILL",
+                proof_of_address_doc_file: "https://example.com/image.png",
+                first_name: "John",
+                last_name: "Doe",
+                date_of_birth: "1990-01-01T00:00:00.000Z",
+                id_doc_country: "US",
+                id_doc_type: "PASSPORT",
+                id_doc_front_file: "https://example.com/image.png",
+                id_doc_back_file: "https://example.com/image.png",
+                aiprise_validation_key: "",
+                instance_id: "in_000000000000",
+                tos_id: null,
+                created_at: "2021-01-01T00:00:00.000Z",
+                updated_at: "2021-01-01T00:00:00.000Z",
+                limit: {
+                    per_transaction: 100000,
+                    daily: 200000,
+                    monthly: 1000000,
+                },
+                fraud_warnings: [
+                    {
+                        id: "UC114",
+                        name: "User never used a Datacenter proxy",
+                        operation: "+",
+                        score: 10,
+                    },
+                ],
+                aml_status: "clear",
+                aml_hits: {
+                    has_sanction_match: false,
+                    has_pep_match: false,
+                    has_watchlist_match: false,
+                    has_crimelist_match: false,
+                    has_adversemedia_match: false,
+                },
+                account_purpose_other: null,
+                occupation: "Software Engineer",
+                external_id: "ext_123",
+                is_fbo: false,
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedReceiver), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.receivers.get("re_YuaMcI2B8zbQ");
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedReceiver);
+        });
+
         it("should get a receiver", async () => {
             const mockedReceiver: GetReceiverResponse = {
                 id: "re_YuaMcI2B8zbQ",
@@ -529,6 +598,38 @@ describe("Receivers", () => {
                     supporting_document_type: "individual_proof_of_income",
                     created_at: "2024-12-10T14:20:00.000Z",
                     updated_at: "2024-12-12T09:45:00.000Z",
+                },
+            ];
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedLimitIncreaseRequests), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } =
+                await blindpay.receivers.getLimitIncreaseRequests("re_YuaMcI2B8zbQ");
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedLimitIncreaseRequests);
+        });
+    });
+
+    describe("Get limit increase requests with approved fields", () => {
+        it("should get limit increase requests with approved amounts", async () => {
+            const mockedLimitIncreaseRequests: GetLimitIncreaseRequestsResponse = [
+                {
+                    id: "rl_000000000000",
+                    receiver_id: "re_YuaMcI2B8zbQ",
+                    status: "approved",
+                    daily: 50000,
+                    monthly: 250000,
+                    per_transaction: 25000,
+                    supporting_document_file: "https://example.com/bank-statement.pdf",
+                    supporting_document_type: "individual_bank_statement",
+                    created_at: "2025-01-15T10:30:00.000Z",
+                    updated_at: "2025-01-15T10:30:00.000Z",
+                    approved_per_transaction: 20000,
+                    approved_daily: 40000,
+                    approved_monthly: 200000,
                 },
             ];
 

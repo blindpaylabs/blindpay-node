@@ -61,6 +61,30 @@ describe("Offramp wallets", () => {
         });
     });
 
+    describe("Create solana offramp wallet", () => {
+        it("should create a solana offramp wallet", async () => {
+            const mockedOfframpWallet = {
+                id: "ow_000000000001",
+                network: "solana",
+                address: "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU",
+                circle_wallet_id: "01234567-abcd-efgh-ijkl-012345678901",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedOfframpWallet), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.wallets.offramp.create({
+                network: "solana",
+                receiver_id: "re_000000000000",
+                bank_account_id: "ba_000000000000",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedOfframpWallet);
+        });
+    });
+
     describe("Get offramp wallet", () => {
         it("should get an offramp wallet", async () => {
             const mockedOfframpWallet = {
