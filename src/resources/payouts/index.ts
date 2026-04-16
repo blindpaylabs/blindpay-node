@@ -85,6 +85,8 @@ export type Payout = {
     transfers_account?: string;
     transfers_type: "CVU" | "CBU" | "ALIAS";
     has_virtual_account: boolean;
+    billing_fee_amount?: string | null;
+    jpm_track_data?: Record<string, unknown> | string | null;
 };
 
 export type ListPayoutsInput = PaginationParams & {

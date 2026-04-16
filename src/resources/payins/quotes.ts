@@ -18,6 +18,7 @@ export type CreatePayinQuoteInput = {
     cover_fees: boolean;
     partner_fee_id: string | null;
     payer_rules?: PayerRules | null;
+    wallet_id?: string;
 };
 
 export type CreatePayinQuoteResponse = {
