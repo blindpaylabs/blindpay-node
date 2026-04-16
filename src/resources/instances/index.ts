@@ -23,7 +23,8 @@ export type GetInstanceMembersResponse = Array<{
 
 export type UpdateInstanceInput = {
     name: string;
-    receiver_invite_redirect_urL?: string;
+    receiver_invite_redirect_url?: string;
+    email_notifications?: boolean;
     require_passkey?: boolean;
 };
 
