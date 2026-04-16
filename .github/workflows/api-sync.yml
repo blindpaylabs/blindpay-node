@@ -25,6 +25,73 @@ jobs:
           echo "Changed paths:"
           cat /tmp/api-sync/changed_paths.json
 
+      - name: Extract relevant spec section
+        run: |
+          python3 << 'SCRIPT'
+          import json, re
+
+          with open('/tmp/api-sync/changed_paths.json') as f:
+              changed = json.load(f)
+
+          with open('/tmp/api-sync/openapi.json') as f:
+              spec = json.load(f)
+
+          # Identify affected resources from changed paths
+          resources = set()
+          for path in changed:
+              parts = path.strip('/').split('/')
+              # Find the resource name after instances/{id}/ or at top level
+              for i, part in enumerate(parts):
+                  if part in ('instances', '{instance_id}', '{id}', 'v1', 'e'):
+                      continue
+                  if '{' in part:
+                      continue
+                  resources.add(part)
+
+          # Collect all paths that belong to affected resources
+          relevant_paths = {}
+          for path, methods in spec.get('paths', {}).items():
+              for resource in resources:
+                  if resource in path:
+                      relevant_paths[path] = methods
+                      break
+
+          # Collect all $ref schemas referenced by relevant paths
+          def collect_refs(obj, refs):
+              if isinstance(obj, dict):
+                  if '$ref' in obj:
+                      ref = obj['$ref'].split('/')[-1]
+                      if ref not in refs:
+                          refs.add(ref)
+                          # Recursively collect refs from the schema itself
+                          schema = spec.get('components', {}).get('schemas', {}).get(ref, {})
+                          collect_refs(schema, refs)
+                  for v in obj.values():
+                      collect_refs(v, refs)
+              elif isinstance(obj, list):
+                  for item in obj:
+                      collect_refs(item, refs)
+
+          refs = set()
+          collect_refs(relevant_paths, refs)
+
+          relevant_schemas = {}
+          for name in refs:
+              if name in spec.get('components', {}).get('schemas', {}):
+                  relevant_schemas[name] = spec['components']['schemas'][name]
+
+          mini_spec = {
+              'openapi': spec.get('openapi'),
+              'paths': relevant_paths,
+              'components': {'schemas': relevant_schemas}
+          }
+
+          with open('/tmp/api-sync/relevant_spec.json', 'w') as f:
+              json.dump(mini_spec, f, indent=2)
+
+          print(f"Extracted {len(relevant_paths)} paths and {len(relevant_schemas)} schemas for resources: {resources}")
+          SCRIPT
+
       - name: Check for existing api-sync PR
         id: check-pr
         env:
@@ -53,25 +120,68 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          claude_args: '--allowedTools "Bash(*),Read,Edit,Write,Glob,Grep"'
+          claude_args: '--model claude-opus-4-20250514 --allowedTools "Bash(*),Read,Edit,Write,Glob,Grep"'
           prompt: |
-            You are updating this SDK to match API changes. Read CLAUDE.md for codebase standards.
+            You are updating this SDK to match API changes. Your changes must be ADDITIVE ONLY.
 
-            The changed API paths are listed in /tmp/api-sync/changed_paths.json — these indicate which resource(s) changed.
-            The full current OpenAPI spec is at /tmp/api-sync/openapi.json
+            CRITICAL RULES:
+            - NEVER remove or rename existing methods, functions, classes, or types
+            - NEVER replace specialized methods with generic ones (e.g. don't replace createIndividualWithStandardKYC with a generic create)
+            - NEVER change existing field types (e.g. typed enum to string, required to optional)
+            - NEVER bump the major version number
+            - If a method already handles an endpoint, only update its input/output types with new fields
 
-            Instructions:
-            1. Read CLAUDE.md thoroughly — it contains all patterns and conventions for this SDK.
-            2. Read the changed paths to identify which resource(s) were affected.
-            3. For each affected resource, find ALL related paths in the OpenAPI spec (e.g. if /sandbox changed, also include /sandbox/{id}). Implement every endpoint for the resource, not just the literally changed path.
-            4. Only process paths where x-sdk is true in the OpenAPI spec.
-            5. Apply the changes following CLAUDE.md patterns exactly.
-            6. If adding a new resource: create the resource file with ALL endpoints (list, get, create, update, delete, etc.), register in client, add exports.
-            7. If modifying types: update the type definitions to match new schemas.
-            8. If removing a resource: delete files, remove registrations.
-            9. Bump the version following CLAUDE.md versioning rules and semver.
-            10. As a final step, run the project's full lint and type check commands (check CLAUDE.md for the exact commands). If ANY errors exist in files you created or modified, fix them. Repeat until all checks pass cleanly. Do not finish until zero errors.
-            11. Do NOT create commits — just modify the files.
+            Before making any changes:
+            1. Read CLAUDE.md thoroughly for this SDK's conventions.
+            2. Read /tmp/api-sync/changed_paths.json to identify affected resource(s).
+            3. Read the EXISTING resource file(s) in full — understand what already exists.
+            4. Read the relevant spec at /tmp/api-sync/relevant_spec.json (filtered to affected resources only).
+            5. Identify the GAP: what the spec has that the SDK is missing.
+
+            Changes to make:
+            - ADD new enum types with ALL values from the spec, using the SDK's typed enum pattern (see CLAUDE.md). Include EVERY value — do not omit any.
+            - ADD new optional fields to existing input/output types.
+            - ADD new methods for new endpoints (don't touch existing methods).
+            - ADD new resource files for entirely new resources, register in client, add exports.
+            - MINOR version bump only (e.g. 1.4.0 → 1.5.0).
+
+            Enum typing rules (NEVER use plain string for enum fields):
+            - Go: type XEnum string + const block with all values
+            - Swift: public enum X: String, Codable, Sendable with all cases
+            - PHP: enum X: string with all cases
+            - Python: X = Literal["value1", "value2", ...]
+            - Node: type X = "value1" | "value2" | ...
+
+            Final step: Run this SDK's lint and type check commands (see CLAUDE.md). Fix any errors. Repeat until zero errors. Do NOT create commits.
+
+      - name: Validate no methods removed
+        id: validate
+        run: |
+          ISSUES=""
+
+          # Check for removed method/function definitions
+          REMOVED=$(git diff main -- '*.ts' '*.go' '*.swift' '*.php' '*.py' | grep '^-' | grep -v '^---' | grep -E '(export )?(async )?(function |func |def |public func |public function |class |type |enum )' | head -20)
+          if [ -n "$REMOVED" ]; then
+            echo "WARNING: Possible method/type removals detected:"
+            echo "$REMOVED"
+            ISSUES="$ISSUES\nRemoved definitions detected"
+          fi
+
+          # Check for major version bump
+          MAJOR_BUMP=$(git diff main -- '*package.json' '*pyproject.toml' '*.go' '*.php' '*.swift' | grep '^+' | grep -iE 'version.*["\x27]?[2-9]+\.0\.0' | head -5)
+          if [ -n "$MAJOR_BUMP" ]; then
+            echo "ERROR: Major version bump detected:"
+            echo "$MAJOR_BUMP"
+            ISSUES="$ISSUES\nMajor version bump"
+          fi
+
+          if [ -n "$ISSUES" ]; then
+            echo "has_issues=true" >> $GITHUB_OUTPUT
+            echo "Validation issues found — review carefully before merging"
+          else
+            echo "has_issues=false" >> $GITHUB_OUTPUT
+            echo "Validation passed"
+          fi
 
       - name: Commit and push
         id: commit
@@ -97,6 +207,11 @@ jobs:
           GH_TOKEN: ${{ secrets.SDK_SYNC_PAT }}
         run: |
           EXISTING_PR="${{ steps.check-pr.outputs.existing_pr }}"
+          VALIDATION="${{ steps.validate.outputs.has_issues }}"
+          LABEL="api-sync"
+          if [ "$VALIDATION" = "true" ]; then
+            LABEL="api-sync,needs-review"
+          fi
 
           if [ -n "$EXISTING_PR" ]; then
             echo "Updating existing PR #$EXISTING_PR"
@@ -107,5 +222,5 @@ jobs:
               --body "Automated SDK update from API changes." \
               --base main \
               --head api-sync \
-              --label api-sync
+              --label "$LABEL"
           fi
