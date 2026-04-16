@@ -208,11 +208,6 @@ jobs:
         run: |
           EXISTING_PR="${{ steps.check-pr.outputs.existing_pr }}"
           VALIDATION="${{ steps.validate.outputs.has_issues }}"
-          LABEL="api-sync"
-          if [ "$VALIDATION" = "true" ]; then
-            LABEL="api-sync,needs-review"
-          fi
-
           if [ -n "$EXISTING_PR" ]; then
             echo "Updating existing PR #$EXISTING_PR"
             gh pr comment "$EXISTING_PR" --body "Updated with latest API changes."
@@ -222,5 +217,5 @@ jobs:
               --body "Automated SDK update from API changes." \
               --base main \
               --head api-sync \
-              --label "$LABEL"
+              --label api-sync
           fi
