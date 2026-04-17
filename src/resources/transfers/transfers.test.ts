@@ -44,6 +44,9 @@ const mockTransfer: Transfer = {
     receiver_token: "USDC",
     receiver_wallet_address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
     partner_fee_amount: null,
+    receiver_id: "re_000000000000",
+    address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+    network: "polygon",
 };
 
 describe("Transfers", () => {

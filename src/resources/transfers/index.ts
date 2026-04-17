@@ -48,6 +48,9 @@ export type Transfer = {
     receiver_token: StablecoinToken;
     receiver_wallet_address: string;
     partner_fee_amount: number | null;
+    receiver_id: string;
+    address: string;
+    network: Network;
 };
 
 export type CreateTransferQuoteInput = {
@@ -57,16 +60,16 @@ export type CreateTransferQuoteInput = {
     receiver_token: StablecoinToken;
     receiver_network: Network;
     request_amount: number;
-    cover_fees: boolean;
+    cover_fees?: boolean | null;
     amount_reference: "sender" | "receiver";
     partner_fee_id?: string | null;
 };
 
 export type CreateTransferQuoteResponse = {
     id: string;
-    expires_at: number;
-    commercial_quotation: number;
-    blindpay_quotation: number;
+    expires_at: number | null;
+    commercial_quotation: number | null;
+    blindpay_quotation: number | null;
     receiver_amount: number;
     sender_amount: number;
     partner_fee_amount: number | null;
