@@ -53,7 +53,7 @@ export function createInstancesResource(instanceId: string, client: InternalApiC
             memberId,
             role,
         }: UpdateInstanceMemberRoleInput): Promise<BlindpayApiResponse<void>> {
-            return client.put(`/instances/${instanceId}/members/${memberId}`, { role });
+            return client.put(`/instances/${instanceId}/members/${memberId}`, { user_role: role });
         },
     };
 }
