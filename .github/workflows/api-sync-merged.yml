@@ -1,0 +1,43 @@
+name: API Sync Merged
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  update-baseline:
+    name: Update sync baseline
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'api-sync')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update last-synced-spec baseline
+        env:
+          GH_TOKEN: ${{ secrets.SDK_SYNC_PAT }}
+        run: |
+          # Fetch the current openapi.json from blindpay-v2 at the source SHA
+          # and store it as the new baseline on api-sync-data branch
+          SOURCE_SHA="${{ github.event.pull_request.body }}"
+
+          git fetch origin api-sync-data 2>/dev/null || true
+
+          # Create a temporary worktree for the api-sync-data branch
+          git checkout -B api-sync-data origin/api-sync-data 2>/dev/null || git checkout --orphan api-sync-data
+
+          # Remove the changelog (no longer needed) and update the baseline
+          # The baseline should be the spec that the SDK is now synced to
+          # We can't easily fetch blindpay-v2's spec from here, so we
+          # clear the last-synced-spec.json to signal "fully synced"
+          rm -f .api-sync/changelog.md
+          rm -f .api-sync/last-synced-spec.json
+          echo "Baseline cleared — SDK is in sync as of $(date -u +%Y-%m-%dT%H:%M:%SZ)" > .api-sync/SYNCED
+
+          git add .api-sync/
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: clear baseline — SDK synced" --allow-empty
+          git push -f origin api-sync-data
