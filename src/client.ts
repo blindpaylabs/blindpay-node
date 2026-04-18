@@ -14,6 +14,7 @@ import { createPayinQuotesResource } from "./resources/payins/quotes";
 import { createPayoutsResource } from "./resources/payouts";
 import { createQuotesResource } from "./resources/quotes";
 import { createReceiversResource } from "./resources/receivers";
+import { createTermsOfServiceResource } from "./resources/terms-of-service";
 import { createTransfersResource } from "./resources/transfers";
 import { createUploadResource } from "./resources/upload";
 import { createVirtualAccountsResource } from "./resources/virtual-accounts";
@@ -48,6 +49,7 @@ export class BlindPay {
     readonly instances: ReturnType<typeof createInstancesResource> & {
         apiKeys: ReturnType<typeof createApiKeysResource>;
         webhookEndpoints: ReturnType<typeof createWebhookEndpointsResource>;
+        tos: ReturnType<typeof createTermsOfServiceResource>;
     };
     readonly wallets: {
         blockchain: ReturnType<typeof createBlockchainWalletsResource>;
@@ -97,6 +99,7 @@ export class BlindPay {
             ...createInstancesResource(this.instanceId, this.api),
             apiKeys: createApiKeysResource(this.instanceId, this.api),
             webhookEndpoints: createWebhookEndpointsResource(this.instanceId, this.api),
+            tos: createTermsOfServiceResource(this.instanceId, this.api),
         };
 
         this.partnerFees = createPartnerFeesResource(this.instanceId, this.api);
