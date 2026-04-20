@@ -19,10 +19,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.SDK_SYNC_PAT }}
         run: |
-          # Fetch the current openapi.json from blindpay-v2 at the source SHA
-          # and store it as the new baseline on api-sync-data branch
-          SOURCE_SHA="${{ github.event.pull_request.body }}"
-
           git fetch origin api-sync-data 2>/dev/null || true
 
           # Create a temporary worktree for the api-sync-data branch
