@@ -50,7 +50,7 @@ export type Payout = {
     blindpay_quotation: number;
     total_fee_amount: number;
     receiver_local_amount: number;
-    currency: Exclude<Currency, "USDB">;
+    currency: Exclude<Currency, "USDB" | "USDC" | "USDT">;
     transaction_document_file: string;
     transaction_document_type: TransactionDocumentType;
     transaction_document_id: string;
