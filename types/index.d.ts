@@ -24,7 +24,7 @@ export type TransactionDocumentType = "invoice" | "purchase_order" | "delivery_s
 
 export type BankAccountType = "checking" | "saving";
 
-export type Currency = "USDC" | "USDT" | "USDB" | "BRL" | "USD" | "MXN" | "COP" | "ARS";
+export type Currency = "USDB" | "BRL" | "USD" | "MXN" | "COP" | "ARS";
 
 export type Rail = "wire" | "ach" | "pix" | "pix_safe" | "spei_bitso" | "transfers_bitso" | "ach_cop_bitso" | "international_swift" | "rtp";
     
