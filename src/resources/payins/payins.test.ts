@@ -111,6 +111,11 @@ describe("Payins", () => {
                                 address_line_1: "8 The Green, #19364",
                                 address_line_2: "Dover, DE 19901",
                             },
+                            receiving_bank: {
+                                name: "CFSB",
+                                address_line_1: "1 Letterman Drive, Building A, Suite A4-700",
+                                address_line_2: "San Francisco, CA 94129",
+                            },
                         },
                     },
                 ],
@@ -229,6 +234,11 @@ describe("Payins", () => {
                         address_line_1: "8 The Green, #19364",
                         address_line_2: "Dover, DE 19901",
                     },
+                    receiving_bank: {
+                        name: "CFSB",
+                        address_line_1: "1 Letterman Drive, Building A, Suite A4-700",
+                        address_line_2: "San Francisco, CA 94129",
+                    },
                 },
             };
 
@@ -340,6 +350,11 @@ describe("Payins", () => {
                         address_line_1: "8 The Green, #19364",
                         address_line_2: "Dover, DE 19901",
                     },
+                    receiving_bank: {
+                        name: "CFSB",
+                        address_line_1: "1 Letterman Drive, Building A, Suite A4-700",
+                        address_line_2: "San Francisco, CA 94129",
+                    },
                 },
             };
 
@@ -427,6 +442,11 @@ describe("Payins", () => {
                         name: "BlindPay, Inc.",
                         address_line_1: "8 The Green, #19364",
                         address_line_2: "Dover, DE 19901",
+                    },
+                    receiving_bank: {
+                        name: "CFSB",
+                        address_line_1: "1 Letterman Drive, Building A, Suite A4-700",
+                        address_line_2: "San Francisco, CA 94129",
                     },
                 },
                 receiver_id: "re_000000000000",

@@ -39,6 +39,17 @@ export type BlindpayBankDetails = {
         address_line_1: string;
         address_line_2: string;
     };
+    receiving_bank: {
+        name: string;
+        address_line_1: string;
+        address_line_2: string;
+    };
+    swift_account_number?: string | null;
+    swift_receiving_bank?: {
+        name: string | null;
+        address_line_1: string | null;
+        address_line_2: string | null;
+    } | null;
 };
 
 export type Payin = {
