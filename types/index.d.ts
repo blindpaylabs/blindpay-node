@@ -18,13 +18,13 @@ export type CurrencyType = "sender" | "receiver";
 
 export type Network = "base" | "sepolia" | "arbitrum_sepolia" | "base_sepolia" | "arbitrum" | "polygon" | "polygon_amoy" | "ethereum" | "stellar" | "stellar_testnet" | "tron" | "solana" | "solana_devnet";
 
-export type StablecoinToken = "USDB"  
+export type StablecoinToken = "USDC" | "USDT" | "USDB";
 
 export type TransactionDocumentType = "invoice" | "purchase_order" | "delivery_slip" | "contract" | "customs_declaration" | "bill_of_lading" | "others";
 
 export type BankAccountType = "checking" | "saving";
 
-export type Currency = "USDB" | "BRL" | "USD" | "MXN" | "COP" | "ARS";
+export type Currency = "USDC" | "USDT" | "USDB" | "BRL" | "USD" | "MXN" | "COP" | "ARS";
 
 export type Rail = "wire" | "ach" | "pix" | "pix_safe" | "spei_bitso" | "transfers_bitso" | "ach_cop_bitso" | "international_swift" | "rtp";
     

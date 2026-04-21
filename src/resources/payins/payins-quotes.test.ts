@@ -30,7 +30,7 @@ describe("Payin quotes", () => {
                 cover_fees: true,
                 request_amount: 1000,
                 payment_method: "pix",
-                token: "USDB",
+                token: "USDC",
                 partner_fee_id: "pf_000000000000",
                 payer_rules: {
                     pix_allowed_tax_ids: ["149.476.037-68"],
@@ -58,8 +58,8 @@ describe("Payin quotes", () => {
 
             const { data, error } = await blindpay.payins.quotes.getFxRate({
                 currency_type: "sender",
-                from: "USDB",
-                to: "BRL",
+                from: "BRL",
+                to: "USDC",
                 request_amount: 1000,
             });
 
