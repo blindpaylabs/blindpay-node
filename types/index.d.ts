@@ -18,7 +18,7 @@ export type CurrencyType = "sender" | "receiver";
 
 export type Network = "base" | "sepolia" | "arbitrum_sepolia" | "base_sepolia" | "arbitrum" | "polygon" | "polygon_amoy" | "ethereum" | "stellar" | "stellar_testnet" | "tron" | "solana" | "solana_devnet";
 
-export type StablecoinToken = "USDC" | "USDT" | "USDB"  
+export type StablecoinToken = "USDC" | "USDT" | "USDB";
 
 export type TransactionDocumentType = "invoice" | "purchase_order" | "delivery_slip" | "contract" | "customs_declaration" | "bill_of_lading" | "others";
 
@@ -347,7 +347,7 @@ export type PayinTrackingPartnerFee = {
     completed_at?: string | null
   } 
 
-export type PayinPaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse" | "international_swift"
+export type PayinPaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse" | "international_swift" | "rtp"
 
 export type BusinessIndustry =
     | "111998"
@@ -594,7 +594,7 @@ export type SourceOfFundsDocType =
     | "savings"
     | "someone_else_funds";
 
-export type PaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse" | "international_swift";
+export type PaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse" | "international_swift" | "rtp";
 
 export type PayerRules = {
     pix_allowed_tax_ids?: string[] | null;

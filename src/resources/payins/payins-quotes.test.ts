@@ -58,8 +58,8 @@ describe("Payin quotes", () => {
 
             const { data, error } = await blindpay.payins.quotes.getFxRate({
                 currency_type: "sender",
-                from: "USD",
-                to: "BRL",
+                from: "BRL",
+                to: "USDC",
                 request_amount: 1000,
             });
 
