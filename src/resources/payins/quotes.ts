@@ -35,7 +35,7 @@ export type CreatePayinQuoteResponse = {
 
 export type GetPayinFxRateInput = {
     currency_type: CurrencyType;
-    from: Extract<Currency, "USDC" | "USDT" | "USDB">;
+    from: Extract<Currency, "USDB">;
     to: Extract<Currency, "BRL" | "USD" | "MXN" | "COP" | "ARS">;
     request_amount: number;
 };

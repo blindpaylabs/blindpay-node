@@ -77,23 +77,11 @@ describe("Custodial Wallets", () => {
     describe("Get custodial wallet balance", () => {
         it("should get wallet balance", async () => {
             const mockedBalance: GetCustodialWalletBalanceResponse = {
-                USDC: {
-                    address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
-                    id: "tok_000000000001",
-                    symbol: "USDC",
-                    amount: 10000,
-                },
-                USDT: {
-                    address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
-                    id: "tok_000000000002",
-                    symbol: "USDT",
-                    amount: 5000,
-                },
                 USDB: {
                     address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
                     id: "tok_000000000003",
                     symbol: "USDB",
-                    amount: 0,
+                    amount: 10000,
                 },
             };
 
