@@ -114,7 +114,7 @@ describe("Receivers", () => {
                         kyc_type: "standard",
                         is_tos_accepted: true,
                         is_fbo: false,
-                        kyc_status: "pending",
+                        kyc_status: "pending_review",
                         kyc_warnings: null,
                         email: "business@example.com",
                         tax_id: "20096178000195",

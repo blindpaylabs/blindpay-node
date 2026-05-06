@@ -76,6 +76,7 @@ export type Payin = {
     sender_amount: number;
     receiver_amount: number;
     token: StablecoinToken;
+    partner_fee_id?: string | null;
     partner_fee_amount?: number | null;
     total_fee_amount?: number | null;
     commercial_quotation: number;

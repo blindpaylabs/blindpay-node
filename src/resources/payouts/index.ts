@@ -45,12 +45,13 @@ export type Payout = {
     description: string;
     sender_amount: number;
     receiver_amount: number;
+    partner_fee_id?: string | null;
     partner_fee_amount: number;
     commercial_quotation: number;
     blindpay_quotation: number;
     total_fee_amount: number;
     receiver_local_amount: number;
-    currency: Exclude<Currency, "USDB" | "USDC" | "USDT">;
+    currency: Exclude<Currency, "USDB">;
     transaction_document_file: string;
     transaction_document_type: TransactionDocumentType;
     transaction_document_id: string;
@@ -86,7 +87,10 @@ export type Payout = {
     transfers_type: "CVU" | "CBU" | "ALIAS";
     has_virtual_account: boolean;
     billing_fee_amount?: string | null;
-    jpm_track_data?: Record<string, unknown> | string | null;
+    jmp_track_data?: Record<string, unknown> | string | null;
+    ted_bank_code?: string | null;
+    ted_branch_code?: string | null;
+    ted_cpf_cnpj?: string | null;
 };
 
 export type ListPayoutsInput = PaginationParams & {

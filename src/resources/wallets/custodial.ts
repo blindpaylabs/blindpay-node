@@ -43,8 +43,6 @@ export type GetCustodialWalletBalanceInput = {
 };
 
 export type GetCustodialWalletBalanceResponse = {
-    USDC: WalletTokenBalance;
-    USDT: WalletTokenBalance;
     USDB: WalletTokenBalance;
 };
 
