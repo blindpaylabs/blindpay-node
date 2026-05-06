@@ -27,6 +27,7 @@ export type GetFeesResponse = {
     arbitrum: FeeOptions;
     stellar: FeeOptions;
     solana: FeeOptions;
+    ted: FeeOptions;
     created_at: string;
     updated_at: string;
 };

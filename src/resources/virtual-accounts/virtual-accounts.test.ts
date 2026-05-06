@@ -44,7 +44,7 @@ describe("Virtual accounts", () => {
                             address_line_2: "New York, NY, 10017-2070",
                         },
                     },
-                    token: "USDC",
+                    token: "USDB",
                     blockchain_wallet_id: "bw_000000000000",
                     blockchain_wallet: {
                         network: "base",
@@ -81,7 +81,7 @@ describe("Virtual accounts", () => {
                             address_line_2: "New York, NY, 10017-2070",
                         },
                     },
-                    token: "USDC",
+                    token: "USDB",
                     blockchain_wallet_id: "bw_000000000000",
                     blockchain_wallet: null,
                 },
@@ -130,7 +130,7 @@ describe("Virtual accounts", () => {
                         address_line_2: "New York, NY, 10017-2070",
                     },
                 },
-                token: "USDC",
+                token: "USDB",
                 blockchain_wallet_id: "bw_000000000000",
                 blockchain_wallet: {
                     network: "base",
@@ -184,7 +184,7 @@ describe("Virtual accounts", () => {
                         address_line_2: "New York, NY, 10017-2070",
                     },
                 },
-                token: "USDC",
+                token: "USDB",
                 blockchain_wallet_id: "bw_000000000000",
                 blockchain_wallet: {
                     network: "base",
@@ -200,7 +200,7 @@ describe("Virtual accounts", () => {
                 receiver_id: "re_000000000000",
                 banking_partner: "jpmorgan",
                 blockchain_wallet_id: "bw_000000000000",
-                token: "USDC",
+                token: "USDB",
                 signed_agreement_id: "123e4567-e89b-12d3-a456-426614174000",
             });
 
@@ -247,7 +247,7 @@ describe("Virtual accounts", () => {
                         address_line_2: null,
                     },
                 },
-                token: "USDC",
+                token: "USDB",
                 blockchain_wallet_id: "bw_000000000000",
                 blockchain_wallet: {
                     network: "base",
@@ -263,7 +263,7 @@ describe("Virtual accounts", () => {
                 receiver_id: "re_000000000000",
                 banking_partner: "cfsb",
                 blockchain_wallet_id: "bw_000000000000",
-                token: "USDC",
+                token: "USDB",
                 sole_proprietor_doc_type: "master_service_agreement",
                 sole_proprietor_doc_file: "https://example.com/document.pdf",
             });
@@ -283,7 +283,7 @@ describe("Virtual accounts", () => {
                 receiver_id: "re_000000000000",
                 id: "va_000000000000",
                 blockchain_wallet_id: "bw_000000000001",
-                token: "USDT",
+                token: "USDB",
             });
 
             expect(error).toBeNull();

@@ -42,7 +42,7 @@ describe("Quotes", () => {
                 currency_type: "sender",
                 network: "sepolia",
                 request_amount: 1000,
-                token: "USDC",
+                token: "USDB",
                 cover_fees: true,
                 description: "Memo code or description, only works with USD and BRL",
                 partner_fee_id: "pf_000000000000",
@@ -72,7 +72,7 @@ describe("Quotes", () => {
 
             const { data, error } = await blindpay.quotes.getFxRate({
                 currency_type: "sender",
-                from: "USDC",
+                from: "USDB",
                 to: "BRL",
                 request_amount: 1000,
             });

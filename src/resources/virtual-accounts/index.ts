@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse, Network, StablecoinToken } from "../../../types";
+import type { BlindpayApiResponse, KycStatus, Network, StablecoinToken } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type BankingPartner = "jpmorgan" | "citi" | "hsbc" | "cfsb";
@@ -8,7 +8,7 @@ export type SoleProprietorDocType = "master_service_agreement" | "salary_slip" |
 export type VirtualAccount = {
     id: string;
     banking_partner: BankingPartner;
-    kyc_status: string;
+    kyc_status: KycStatus;
     us: {
         ach: {
             routing_number: string;
