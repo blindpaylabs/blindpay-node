@@ -51,7 +51,7 @@ export type Payout = {
     blindpay_quotation: number;
     total_fee_amount: number;
     receiver_local_amount: number;
-    currency: Exclude<Currency, "USDB">;
+    currency: Exclude<Currency, "USDB" | "USDC" | "USDT">;
     transaction_document_file: string;
     transaction_document_type: TransactionDocumentType;
     transaction_document_id: string;
@@ -87,7 +87,7 @@ export type Payout = {
     transfers_type: "CVU" | "CBU" | "ALIAS";
     has_virtual_account: boolean;
     billing_fee_amount?: string | null;
-    jmp_track_data?: Record<string, unknown> | string | null;
+    jpm_track_data?: Record<string, unknown> | string | null;
     ted_bank_code?: string | null;
     ted_branch_code?: string | null;
     ted_cpf_cnpj?: string | null;

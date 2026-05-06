@@ -24,7 +24,7 @@ export type TransactionDocumentType = "invoice" | "purchase_order" | "delivery_s
 
 export type BankAccountType = "checking" | "saving";
 
-export type Currency = "USDB" | "BRL" | "USD" | "MXN" | "COP" | "ARS";
+export type Currency = "USDC" | "USDT" | "USDB" | "BRL" | "USD" | "MXN" | "COP" | "ARS";
 
 export type Rail = "wire" | "ach" | "pix" | "pix_safe" | "spei_bitso" | "transfers_bitso" | "ach_cop_bitso" | "international_swift" | "rtp" | "ted";
     
@@ -655,14 +655,4 @@ export type PayoutTrackingPartnerFee = {
     completed_at: string | null;
   }
 
-export type ActorType = "api_key" | "user";
-
-export type Decision = "approved" | "rejected";
-
 export type KycStatus = "awaiting_contract" | "compliance_request" | "verifying" | "approved" | "rejected" | "deprecated" | "pending_review";
-
-export type Operation = "create" | "delete" | "update";
-
-export type ReceiverType = "business" | "individual";
-
-export type SwiftPaymentCode = string;
