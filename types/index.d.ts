@@ -26,7 +26,7 @@ export type BankAccountType = "checking" | "saving";
 
 export type Currency = "USDC" | "USDT" | "USDB" | "BRL" | "USD" | "MXN" | "COP" | "ARS";
 
-export type Rail = "wire" | "ach" | "pix" | "pix_safe" | "spei_bitso" | "transfers_bitso" | "ach_cop_bitso" | "international_swift" | "rtp";
+export type Rail = "wire" | "ach" | "pix" | "pix_safe" | "spei_bitso" | "transfers_bitso" | "ach_cop_bitso" | "international_swift" | "rtp" | "ted";
     
 export type AccountClass = "individual" | "business";
     
@@ -347,7 +347,7 @@ export type PayinTrackingPartnerFee = {
     completed_at?: string | null
   } 
 
-export type PayinPaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse" | "international_swift" | "rtp"
+export type PayinPaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse" | "international_swift" | "rtp" | "ted"
 
 export type BusinessIndustry =
     | "111998"
@@ -594,7 +594,7 @@ export type SourceOfFundsDocType =
     | "savings"
     | "someone_else_funds";
 
-export type PaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse" | "international_swift" | "rtp";
+export type PaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse" | "international_swift" | "rtp" | "ted";
 
 export type PayerRules = {
     pix_allowed_tax_ids?: string[] | null;
@@ -654,3 +654,5 @@ export type PayoutTrackingPartnerFee = {
     transaction_hash: string | null;
     completed_at: string | null;
   }
+
+export type KycStatus = "awaiting_contract" | "compliance_request" | "verifying" | "approved" | "rejected" | "deprecated" | "pending_review";

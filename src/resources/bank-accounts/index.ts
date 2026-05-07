@@ -98,6 +98,9 @@ export type ListBankAccountsResponse = {
         status?: string | null;
         recipient_relationship?: RecipientRelationship | null;
         swift_payment_code?: string | null;
+        ted_bank_code?: string | null;
+        ted_branch_code?: string | null;
+        ted_cpf_cnpj?: string | null;
         created_at: string;
     }>;
 };
@@ -423,6 +426,26 @@ export type CreateRtpResponse = {
     created_at: string;
 };
 
+export type CreateTedInput = {
+    receiver_id: string;
+    name: string;
+    beneficiary_name: string;
+    ted_bank_code: string;
+    ted_branch_code: string;
+    ted_cpf_cnpj: string;
+};
+
+export type CreateTedResponse = {
+    id: string;
+    type: "ted";
+    name: string;
+    beneficiary_name: string;
+    ted_bank_code: string;
+    ted_branch_code: string;
+    ted_cpf_cnpj: string;
+    created_at: string;
+};
+
 export function createBankAccountsResource(instanceId: string, client: InternalApiClient) {
     return {
         list({
@@ -531,6 +554,15 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
         }: CreateRtpInput): Promise<BlindpayApiResponse<CreateRtpResponse>> {
             return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
                 type: "rtp",
+                ...data,
+            });
+        },
+        createTed({
+            receiver_id,
+            ...data
+        }: CreateTedInput): Promise<BlindpayApiResponse<CreateTedResponse>> {
+            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+                type: "ted",
                 ...data,
             });
         },

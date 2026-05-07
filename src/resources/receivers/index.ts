@@ -6,6 +6,7 @@ import type {
     BusinessType,
     Country,
     EstimatedAnnualRevenue,
+    KycStatus,
     PaginationMetadata,
     PaginationParams,
     PurposeOfTransactions,
@@ -25,13 +26,6 @@ export type ProofOfAddressDocType =
     | "GOVERNMENT_CORRESPONDENCE";
 
 export type IdentificationDocument = "PASSPORT" | "ID_CARD" | "DRIVERS";
-
-export type ReceiverKycStatus =
-    | "verifying"
-    | "approved"
-    | "rejected"
-    | "deprecated"
-    | "pending_review";
 
 export type AmlStatus = "clear" | "hit" | "error";
 
@@ -87,7 +81,7 @@ export type IndividualWithStandardKYC = {
     is_tos_accepted: boolean;
     type: Extract<AccountClass, "individual">;
     kyc_type: Extract<KycType, "standard">;
-    kyc_status: string;
+    kyc_status: KycStatus;
     kyc_warnings: Array<{
         code: string | null;
         message: string | null;
@@ -149,7 +143,7 @@ export type IndividualWithEnhancedKYC = {
     is_tos_accepted: boolean;
     type: Extract<AccountClass, "individual">;
     kyc_type: Extract<KycType, "enhanced">;
-    kyc_status: string;
+    kyc_status: KycStatus;
     kyc_warnings: Array<{
         code: string | null;
         message: string | null;
@@ -215,7 +209,7 @@ export type BusinessWithStandardKYB = {
     is_fbo: boolean;
     type: Extract<AccountClass, "business">;
     kyc_type: Extract<KycType, "standard">;
-    kyc_status: string;
+    kyc_status: KycStatus;
     kyc_warnings: Array<{
         code: string | null;
         message: string | null;

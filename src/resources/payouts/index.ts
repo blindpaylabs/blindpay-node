@@ -45,6 +45,7 @@ export type Payout = {
     description: string;
     sender_amount: number;
     receiver_amount: number;
+    partner_fee_id?: string | null;
     partner_fee_amount: number;
     commercial_quotation: number;
     blindpay_quotation: number;
@@ -87,6 +88,9 @@ export type Payout = {
     has_virtual_account: boolean;
     billing_fee_amount?: string | null;
     jpm_track_data?: Record<string, unknown> | string | null;
+    ted_bank_code?: string | null;
+    ted_branch_code?: string | null;
+    ted_cpf_cnpj?: string | null;
 };
 
 export type ListPayoutsInput = PaginationParams & {
