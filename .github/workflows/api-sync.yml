@@ -69,7 +69,14 @@ jobs:
             4. Do not skip ANY enum or field. Every item in the changelog must be addressed.
             5. Follow CLAUDE.md patterns exactly for naming, typing, and file organization.
             6. MINOR version bump only.
-            7. Run lint and type check commands (see CLAUDE.md). Fix any errors until clean.
+            7. Run, in this order:
+                 bun run lint:fix          # auto-fix formatter issues (trailing newlines, etc.)
+                 bun run check-types       # type-check
+                 bun run lint:check        # validate (must report 0 errors)
+                 bun run test              # run the test suite
+               Fix any errors until all four are clean. Running only
+               `lint:check` will surface formatter diffs as failures —
+               always run `lint:fix` first.
             8. Do NOT create commits — just modify the files.
 
       - name: Commit and push

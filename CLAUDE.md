@@ -790,4 +790,9 @@ This is the consistent pattern used throughout the codebase.
 6. If new resource: register in `client.ts`, re-export from `index.ts`.
 7. Add tests.
 8. Add a changeset.
-9. Run `bun run check-types && bun run lint:check && bun run test`.
+9. Run `bun run lint:fix && bun run check-types && bun run lint:check && bun run test`.
+   Always run `lint:fix` first so Biome auto-applies formatter changes
+   (trailing newlines, quote style, etc.); then `lint:check` validates
+   that nothing remains. Running only `lint:check` reports formatter
+   diffs as errors instead of fixing them — those are exactly the
+   issues api-sync runs were leaving behind.
