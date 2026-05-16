@@ -110,7 +110,61 @@ Examples: `createPayinsResource`, `createPartnerFeesResource`, `createBlockchain
 - Linter: Biome recommended rules. No unused variables (error). `import type` required (error). No explicit `any` (warn).
 - TypeScript: `verbatimModuleSyntax: true` (must use `import type` for type-only imports). `strict: true`.
 
+## Decide: new resource, or method on an existing one?
+
+Before adding files, decide whether a new endpoint deserves its own
+resource directory + factory function, or whether it belongs as a
+method on an existing factory. Default to the second — methods on an
+existing factory are the right choice for most new endpoints.
+
+**Look at sibling endpoints first.** Find the other endpoints whose
+URL path shares a prefix with the new one (e.g., `POST
+/receivers/{id}/rfi` is a sibling of `GET /receivers/{id}/limit-increase`,
+which is already modeled as `receivers.getLimitIncreaseRequests(id)`,
+not `receivers.limitIncrease.list()`). Match how the siblings are
+modeled.
+
+**Heuristics:**
+
+- 1–3 endpoints under an existing parent path → add as direct methods
+  on the parent's factory. Naming pattern is `<verb><Subresource>` on
+  the parent — e.g., `receivers.getRfi(receiverId)` and
+  `receivers.submitRfi({ receiver_id, ...data })`. **Do not** create a
+  new `createRfiResource` factory or a new `receivers/rfi.ts` file.
+- 4+ endpoints with a distinct ID space, or a clearly separate
+  conceptual resource (`bank-accounts`, `blockchain-wallets`,
+  `virtual-accounts`) → its own directory with its own factory,
+  wired under the parent (e.g., `blindpay.receivers.bankAccounts.*`).
+  Confirm there is precedent in the existing codebase before doing
+  this.
+- Never put a child of an existing resource at the **top level** of
+  `src/resources/` (e.g., `src/resources/rfi/`). If it's nested in the
+  API URL, it's nested in the SDK.
+
+### Worked example: RFI
+
+`GET /receivers/{id}/rfi` and `POST /receivers/{id}/rfi` are two
+endpoints nested under `receivers`. They should be added as methods
+on `createReceiversResource` in `src/resources/receivers/index.ts`,
+right next to `getLimits`, `getLimitIncreaseRequests`, and
+`requestLimitIncrease`:
+
+```ts
+getRfi(receiver_id: GetRfiInput): Promise<BlindpayApiResponse<GetRfiResponse>> {
+    return client.get(`/instances/${instanceId}/receivers/${receiver_id}/rfi`);
+},
+submitRfi({ receiver_id, ...data }: SubmitRfiInput): Promise<BlindpayApiResponse<SubmitRfiResponse>> {
+    return client.post(`/instances/${instanceId}/receivers/${receiver_id}/rfi`, data);
+},
+```
+
+NOT a new `createRfiResource` factory in a separate file.
+
 ## How to: Add a New Resource
+
+(This section applies only when the heuristics above say the endpoint
+is a genuinely new top-level resource — not just a 1–3-endpoint
+extension of an existing one.)
 
 ### Step 1: Create the resource file
 

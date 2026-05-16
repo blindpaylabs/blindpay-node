@@ -62,14 +62,33 @@ jobs:
             INSTRUCTIONS:
             1. Read CLAUDE.md thoroughly for this SDK's patterns and conventions.
             2. Read /tmp/api-sync/changelog.md — it lists every enum type with every value, every field to add, and every change to make.
-            3. Implement ALL changes. Go through the changelog section by section:
+            3. Before implementing any new endpoint, decide where it
+               lives. Read the "Decide: new resource, or method on an
+               existing one?" section in CLAUDE.md. For each new
+               endpoint:
+                 a. Find sibling endpoints — other endpoints whose URL
+                    path shares a prefix (e.g. POST /receivers/{id}/rfi
+                    is a sibling of /receivers/{id}/limit-increase).
+                 b. Match how those siblings are modeled. If they are
+                    direct methods on an existing factory (e.g.
+                    receivers.getLimitIncreaseRequests), add the new
+                    endpoint as a method on the SAME factory.
+                 c. Do NOT create a new createXResource factory or a
+                    new file under receivers/x.ts for 1–3 child
+                    endpoints. Do NOT put a child of an existing
+                    resource at the top level of src/resources/.
+                 d. After adding a required field to an existing type,
+                    grep the repo for fixtures/constructors of that
+                    type and add the field to each (use null if no
+                    natural default). check-types will fail otherwise.
+            4. Implement ALL changes. Go through the changelog section by section:
                - Section 1 (Enum Types): For each enum listed, check if the SDK has it. If missing, create it. If it exists, add any missing values. The changelog lists ALL values — add the ones that don't exist yet.
                - Section 2 (Receiver Fields): Add each listed field to the receiver input/output types.
                - Section 3 (Version): Minor bump.
-            4. Do not skip ANY enum or field. Every item in the changelog must be addressed.
-            5. Follow CLAUDE.md patterns exactly for naming, typing, and file organization.
-            6. MINOR version bump only.
-            7. Run, in this order:
+            5. Do not skip ANY enum or field. Every item in the changelog must be addressed.
+            6. Follow CLAUDE.md patterns exactly for naming, typing, and file organization.
+            7. MINOR version bump only.
+            8. Run, in this order:
                  bun run lint:fix          # auto-fix formatter issues (trailing newlines, etc.)
                  bun run check-types       # type-check
                  bun run lint:check        # validate (must report 0 errors)
@@ -77,7 +96,7 @@ jobs:
                Fix any errors until all four are clean. Running only
                `lint:check` will surface formatter diffs as failures —
                always run `lint:fix` first.
-            8. Do NOT create commits — just modify the files.
+            9. Do NOT create commits — just modify the files.
 
       - name: Commit and push
         id: commit
