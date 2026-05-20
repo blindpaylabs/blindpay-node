@@ -24,9 +24,9 @@ export type TransactionDocumentType = "invoice" | "purchase_order" | "delivery_s
 
 export type BankAccountType = "checking" | "saving";
 
-export type Currency = "USDC" | "USDT" | "USDB" | "BRL" | "USD" | "MXN" | "COP" | "ARS";
+export type Currency = "USDC" | "USDT" | "USDB" | "BRL" | "USD" | "MXN" | "COP" | "ARS" | "EUR";
 
-export type Rail = "wire" | "ach" | "pix" | "pix_safe" | "spei_bitso" | "transfers_bitso" | "ach_cop_bitso" | "international_swift" | "rtp" | "ted";
+export type Rail = "wire" | "ach" | "pix" | "pix_safe" | "spei_bitso" | "transfers_bitso" | "ach_cop_bitso" | "international_swift" | "rtp" | "ted" | "sepa";
     
 export type AccountClass = "individual" | "business";
     
@@ -386,6 +386,7 @@ export type BusinessIndustry =
     | "423830"
     | "423840"
     | "423940"
+    | "446120"
     | "424210"
     | "424410"
     | "424480"
@@ -654,5 +655,22 @@ export type PayoutTrackingPartnerFee = {
     transaction_hash: string | null;
     completed_at: string | null;
   }
+
+export type Decision = "approved" | "rejected";
+
+export type ManualExecutionStatus = "concluded" | "pending";
+
+export type ReceiverType = "business" | "individual";
+
+export type SwiftPaymentCode = "hk_swift_charitabledonation" | "hk_swift_goods" | "hk_swift_personal" | "hk_swift_services";
+
+export type RfiSection = {
+    id: string;
+    title: string;
+    description?: string | null;
+    required: boolean;
+    type: string;
+    options?: string[] | null;
+};
 
 export type KycStatus = "awaiting_contract" | "compliance_request" | "verifying" | "approved" | "rejected" | "deprecated" | "pending_review";

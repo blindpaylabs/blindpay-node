@@ -48,7 +48,7 @@ export type CreateQuoteResponse = {
 export type GetFxRateInput = {
     currency_type: CurrencyType;
     from: StablecoinToken;
-    to: Extract<Currency, "BRL" | "USD" | "MXN" | "COP" | "ARS">;
+    to: Extract<Currency, "BRL" | "USD" | "MXN" | "COP" | "ARS" | "EUR">;
     request_amount: number;
 };
 

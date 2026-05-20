@@ -3,6 +3,7 @@ import type {
     AchCopDocument,
     BlindpayApiResponse,
     Currency,
+    ManualExecutionStatus,
     Network,
     PaginationMetadata,
     PaginationParams,
@@ -81,7 +82,7 @@ export type Payin = {
     total_fee_amount?: number | null;
     commercial_quotation: number;
     blindpay_quotation: number;
-    currency: Extract<Currency, "BRL" | "USD" | "MXN" | "COP" | "ARS">;
+    currency: Extract<Currency, "BRL" | "USD" | "MXN" | "COP" | "ARS" | "EUR">;
     billing_fee?: number | null;
     billing_fee_amount?: string | null;
     is_otc?: boolean | null;
@@ -94,6 +95,9 @@ export type Payin = {
     pse_full_name?: string | null;
     pse_tax_id?: string | null;
     pse_document_type?: Extract<AchCopDocument, "CC" | "NIT"> | null;
+    manual_concluded_at?: unknown;
+    manual_concluded_by?: string | null;
+    manual_execution_status?: ManualExecutionStatus | null;
 };
 
 export type ListPayinsInput = PaginationParams & {

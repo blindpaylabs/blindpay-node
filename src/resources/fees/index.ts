@@ -28,6 +28,7 @@ export type GetFeesResponse = {
     stellar: FeeOptions;
     solana: FeeOptions;
     ted: FeeOptions;
+    sepa: FeeOptions;
     created_at: string;
     updated_at: string;
 };

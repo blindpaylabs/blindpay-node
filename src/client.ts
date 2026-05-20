@@ -14,6 +14,7 @@ import { createPayinQuotesResource } from "./resources/payins/quotes";
 import { createPayoutsResource } from "./resources/payouts";
 import { createQuotesResource } from "./resources/quotes";
 import { createReceiversResource } from "./resources/receivers";
+import { createRfiResource } from "./resources/receivers/rfi";
 import { createTermsOfServiceResource } from "./resources/terms-of-service";
 import { createTransfersResource } from "./resources/transfers";
 import { createUploadResource } from "./resources/upload";
@@ -45,6 +46,7 @@ export class BlindPay {
     readonly virtualAccounts: ReturnType<typeof createVirtualAccountsResource>;
     readonly receivers: ReturnType<typeof createReceiversResource> & {
         bankAccounts: ReturnType<typeof createBankAccountsResource>;
+        rfi: ReturnType<typeof createRfiResource>;
     };
     readonly instances: ReturnType<typeof createInstancesResource> & {
         apiKeys: ReturnType<typeof createApiKeysResource>;
@@ -122,6 +124,7 @@ export class BlindPay {
         this.receivers = {
             ...createReceiversResource(this.instanceId, this.api),
             bankAccounts: createBankAccountsResource(this.instanceId, this.api),
+            rfi: createRfiResource(this.instanceId, this.api),
         };
 
         this.virtualAccounts = createVirtualAccountsResource(this.instanceId, this.api);

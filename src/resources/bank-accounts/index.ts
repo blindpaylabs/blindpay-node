@@ -7,6 +7,7 @@ import type {
     BusinessIndustry,
     Country,
     Rail,
+    SwiftPaymentCode,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { SpeiProtocol } from "../payouts";
@@ -98,9 +99,18 @@ export type ListBankAccountsResponse = {
         status?: string | null;
         recipient_relationship?: RecipientRelationship | null;
         swift_payment_code?: string | null;
+        swift_ifsc_branch_code?: string | null;
         ted_bank_code?: string | null;
         ted_branch_code?: string | null;
         ted_cpf_cnpj?: string | null;
+        sepa_beneficiary_address_line_1?: string | null;
+        sepa_beneficiary_address_line_2?: string | null;
+        sepa_beneficiary_city?: string | null;
+        sepa_beneficiary_country?: Country | null;
+        sepa_beneficiary_legal_name?: string | null;
+        sepa_beneficiary_postal_code?: string | null;
+        sepa_beneficiary_state_province_region?: string | null;
+        sepa_iban?: string | null;
         created_at: string;
     }>;
 };
@@ -446,6 +456,50 @@ export type CreateTedResponse = {
     created_at: string;
 };
 
+export type CreateSepaInput = {
+    receiver_id: string;
+    name: string;
+    account_class: AccountClass;
+    recipient_relationship: RecipientRelationship;
+    sepa_beneficiary_legal_name: string;
+    sepa_iban: string;
+    sepa_beneficiary_address_line_1: string;
+    sepa_beneficiary_city: string;
+    sepa_beneficiary_country: Country;
+    sepa_beneficiary_postal_code: string;
+    sepa_beneficiary_state_province_region: string;
+    sepa_beneficiary_address_line_2?: string | null;
+    swift_ifsc_branch_code?: string | null;
+    swift_payment_code?: SwiftPaymentCode | null;
+    business_industry?: BusinessIndustry | null;
+    phone_number?: string | null;
+    tax_id?: string | null;
+    date_of_birth?: string | null;
+};
+
+export type CreateSepaResponse = {
+    id: string;
+    type: "sepa";
+    name: string;
+    account_class: AccountClass;
+    recipient_relationship: RecipientRelationship;
+    sepa_beneficiary_legal_name: string;
+    sepa_iban: string;
+    sepa_beneficiary_address_line_1: string;
+    sepa_beneficiary_address_line_2: string | null;
+    sepa_beneficiary_city: string;
+    sepa_beneficiary_country: Country;
+    sepa_beneficiary_postal_code: string;
+    sepa_beneficiary_state_province_region: string;
+    swift_ifsc_branch_code: string | null;
+    swift_payment_code: SwiftPaymentCode | null;
+    business_industry: BusinessIndustry | null;
+    phone_number: string | null;
+    tax_id: string | null;
+    date_of_birth: string | null;
+    created_at: string;
+};
+
 export function createBankAccountsResource(instanceId: string, client: InternalApiClient) {
     return {
         list({
@@ -563,6 +617,15 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
         }: CreateTedInput): Promise<BlindpayApiResponse<CreateTedResponse>> {
             return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
                 type: "ted",
+                ...data,
+            });
+        },
+        createSepa({
+            receiver_id,
+            ...data
+        }: CreateSepaInput): Promise<BlindpayApiResponse<CreateSepaResponse>> {
+            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+                type: "sepa",
                 ...data,
             });
         },

@@ -36,6 +36,7 @@ describe("Fees", () => {
                 stellar: mockFeeOptions,
                 solana: mockFeeOptions,
                 ted: mockFeeOptions,
+                sepa: mockFeeOptions,
                 created_at: "2025-01-01T00:00:00Z",
                 updated_at: "2025-01-01T00:00:00Z",
             };
