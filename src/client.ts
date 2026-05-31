@@ -146,7 +146,7 @@ export class BlindPay {
             });
 
             if (!response.ok) {
-                const error = await response.json();
+                const error = await this.parseJsonResponse<{ message?: string }>(response);
                 return {
                     data: null,
                     error: {
@@ -155,10 +155,10 @@ export class BlindPay {
                 };
             }
 
-            const data = await response.json();
+            const data = await this.parseJsonResponse<T>(response);
 
             return {
-                data,
+                data: data as T,
                 error: null,
             };
         } catch (error) {
@@ -186,6 +186,11 @@ export class BlindPay {
                 },
             };
         }
+    }
+
+    private async parseJsonResponse<T>(response: Response): Promise<T | null> {
+        const text = await response.text();
+        return text ? (JSON.parse(text) as T) : null;
     }
 
     private async get<T>(path: string): Promise<BlindpayApiResponse<T>> {
