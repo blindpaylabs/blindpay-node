@@ -46,9 +46,6 @@ describe("Quotes", () => {
                 cover_fees: true,
                 description: "Memo code or description, only works with USD and BRL",
                 partner_fee_id: "pf_000000000000",
-                transaction_document_file: null,
-                transaction_document_id: null,
-                transaction_document_type: "invoice",
             });
 
             expect(error).toBeNull();
