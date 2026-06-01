@@ -13,7 +13,7 @@ export type CreateQuoteInput = {
     cover_fees: boolean;
     request_amount: number;
     network: Network;
-    token?: StablecoinToken | null;
+    token: StablecoinToken;
     description?: string | null;
     partner_fee_id?: string | null;
 };
