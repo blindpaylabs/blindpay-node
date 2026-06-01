@@ -23,7 +23,8 @@ export type WebhookEvents =
     | "transfer.update"
     | "transfer.complete"
     | "wallet.new"
-    | "wallet.inbound";
+    | "wallet.inbound"
+    | "receiver.delete";
 
 export type CreateWebhookEndpointInput = {
     url: string;

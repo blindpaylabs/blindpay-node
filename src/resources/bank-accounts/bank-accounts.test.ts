@@ -511,6 +511,48 @@ describe("Bank accounts", () => {
         });
     });
 
+    describe("Create sepa bank account", () => {
+        it("should create a sepa bank account", async () => {
+            const mockedSepaAccount: CreateSepaResponse = {
+                id: "ba_000000000000",
+                type: "sepa",
+                name: "SEPA Account",
+                account_class: "individual",
+                recipient_relationship: null,
+                sepa_iban: "BE68539007547034",
+                sepa_beneficiary_bic: "GKCCBEBB",
+                sepa_beneficiary_legal_name: "John Doe",
+                sepa_beneficiary_address_line_1: "123 Main Street",
+                sepa_beneficiary_address_line_2: null,
+                sepa_beneficiary_city: "Brussels",
+                sepa_beneficiary_state_province_region: null,
+                sepa_beneficiary_postal_code: "1000",
+                sepa_beneficiary_country: "BE",
+                created_at: "2021-01-01T00:00:00Z",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedSepaAccount), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.receivers.bankAccounts.createSepa({
+                receiver_id: "re_000000000000",
+                name: "SEPA Account",
+                account_class: "individual",
+                sepa_iban: "BE68539007547034",
+                sepa_beneficiary_bic: "GKCCBEBB",
+                sepa_beneficiary_legal_name: "John Doe",
+                sepa_beneficiary_address_line_1: "123 Main Street",
+                sepa_beneficiary_city: "Brussels",
+                sepa_beneficiary_postal_code: "1000",
+                sepa_beneficiary_country: "BE",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedSepaAccount);
+        });
+    });
+
     describe("Delete bank account", () => {
         it("should delete a bank account", async () => {
             fetchMock.mockResponseOnce(JSON.stringify({ data: null }), {

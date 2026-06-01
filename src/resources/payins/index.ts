@@ -3,7 +3,6 @@ import type {
     AchCopDocument,
     BlindpayApiResponse,
     Currency,
-    ManualExecutionStatus,
     Network,
     PaginationMetadata,
     PaginationParams,
@@ -95,7 +94,6 @@ export type Payin = {
     pse_full_name?: string | null;
     pse_tax_id?: string | null;
     pse_document_type?: Extract<AchCopDocument, "CC" | "NIT"> | null;
-    manual_execution_status?: ManualExecutionStatus | null;
 };
 
 export type ListPayinsInput = PaginationParams & {
