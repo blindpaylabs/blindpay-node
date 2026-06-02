@@ -35,6 +35,14 @@ export type UpdateInstanceMemberRoleInput = {
     role: InstanceMemberRole;
 };
 
+export type MigrateInstanceOwnershipInput = {
+    user_id: string;
+};
+
+export type MigrateInstanceOwnershipResponse = {
+    success: boolean;
+};
+
 export function createInstancesResource(instanceId: string, client: InternalApiClient) {
     return {
         getMembers(): Promise<BlindpayApiResponse<GetInstanceMembersResponse>> {
@@ -54,6 +62,13 @@ export function createInstancesResource(instanceId: string, client: InternalApiC
             role,
         }: UpdateInstanceMemberRoleInput): Promise<BlindpayApiResponse<void>> {
             return client.put(`/instances/${instanceId}/members/${memberId}`, { user_role: role });
+        },
+        migrateOwnership({
+            ...data
+        }: MigrateInstanceOwnershipInput): Promise<
+            BlindpayApiResponse<MigrateInstanceOwnershipResponse>
+        > {
+            return client.post(`/instances/${instanceId}/ownership`, data);
         },
     };
 }

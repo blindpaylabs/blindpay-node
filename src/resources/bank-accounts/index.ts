@@ -85,6 +85,7 @@ export type ListBankAccountsResponse = {
         pix_safe_branch_code?: string;
         pix_safe_cpf_cnpj?: string;
         tron_wallet_hash?: string;
+        sepa_beneficiary_bic?: string | null;
         offramp_wallets?: Array<{
             address: string;
             id: string;
@@ -120,6 +121,7 @@ export type GetBankAccountResponse = {
     bank_name: string;
     swift_code?: string | null;
     iban?: string | null;
+    sepa_beneficiary_bic?: string | null;
     is_primary: boolean;
     created_at: string;
     updated_at: string;
@@ -426,6 +428,39 @@ export type CreateRtpResponse = {
     created_at: string;
 };
 
+export type CreateSepaInput = {
+    receiver_id: string;
+    name: string;
+    account_class: AccountClass;
+    sepa_iban: string;
+    sepa_beneficiary_bic: string;
+    sepa_beneficiary_legal_name: string;
+    sepa_beneficiary_address_line_1: string;
+    sepa_beneficiary_address_line_2?: string | null;
+    sepa_beneficiary_city: string;
+    sepa_beneficiary_state_province_region?: string | null;
+    sepa_beneficiary_postal_code: string;
+    sepa_beneficiary_country: Country;
+};
+
+export type CreateSepaResponse = {
+    id: string;
+    type: "sepa";
+    name: string;
+    account_class: AccountClass;
+    recipient_relationship: RecipientRelationship | null;
+    sepa_iban: string;
+    sepa_beneficiary_bic: string;
+    sepa_beneficiary_legal_name: string;
+    sepa_beneficiary_address_line_1: string;
+    sepa_beneficiary_address_line_2: string | null;
+    sepa_beneficiary_city: string;
+    sepa_beneficiary_state_province_region: string | null;
+    sepa_beneficiary_postal_code: string;
+    sepa_beneficiary_country: Country;
+    created_at: string;
+};
+
 export type CreateTedInput = {
     receiver_id: string;
     name: string;
@@ -563,6 +598,15 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
         }: CreateTedInput): Promise<BlindpayApiResponse<CreateTedResponse>> {
             return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
                 type: "ted",
+                ...data,
+            });
+        },
+        createSepa({
+            receiver_id,
+            ...data
+        }: CreateSepaInput): Promise<BlindpayApiResponse<CreateSepaResponse>> {
+            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+                type: "sepa",
                 ...data,
             });
         },

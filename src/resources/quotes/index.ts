@@ -4,7 +4,6 @@ import type {
     CurrencyType,
     Network,
     StablecoinToken,
-    TransactionDocumentType,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
@@ -14,12 +13,9 @@ export type CreateQuoteInput = {
     cover_fees: boolean;
     request_amount: number;
     network: Network;
-    token?: StablecoinToken | null;
+    token: StablecoinToken;
     description?: string | null;
     partner_fee_id?: string | null;
-    transaction_document_file: string | null;
-    transaction_document_id?: string | null;
-    transaction_document_type?: TransactionDocumentType | null;
 };
 export type CreateQuoteResponse = {
     id: string;
