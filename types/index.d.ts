@@ -656,3 +656,17 @@ export type PayoutTrackingPartnerFee = {
   }
 
 export type KycStatus = "awaiting_contract" | "compliance_request" | "verifying" | "approved" | "rejected" | "deprecated" | "pending_review";
+
+export type ManualExecutionStatus = "failed";
+
+export type WebhookEvent = "receiver.delete";
+
+export type ReceiverDeleteWebhookOut = {
+    id: string;
+    event: Extract<WebhookEvent, "receiver.delete">;
+    instance_id: string;
+    receiver_id: string;
+    created_at: string;
+    data: Record<string, unknown>;
+    metadata: Record<string, unknown> | null;
+};

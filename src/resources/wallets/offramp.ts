@@ -1,7 +1,18 @@
 import type { BlindpayApiResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
-export type OfframpWalletNetwork = "tron" | "solana";
+export type OfframpWalletNetwork =
+    | "tron"
+    | "solana"
+    | "arbitrum"
+    | "arbitrum_sepolia"
+    | "base"
+    | "base_sepolia"
+    | "ethereum"
+    | "polygon"
+    | "polygon_amoy"
+    | "sepolia"
+    | "solana_devnet";
 
 export type OfframpWallet = {
     id: string;

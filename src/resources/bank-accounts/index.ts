@@ -85,6 +85,7 @@ export type ListBankAccountsResponse = {
         pix_safe_branch_code?: string;
         pix_safe_cpf_cnpj?: string;
         tron_wallet_hash?: string;
+        sepa_beneficiary_bic?: string | null;
         offramp_wallets?: Array<{
             address: string;
             id: string;
@@ -120,6 +121,7 @@ export type GetBankAccountResponse = {
     bank_name: string;
     swift_code?: string | null;
     iban?: string | null;
+    sepa_beneficiary_bic?: string | null;
     is_primary: boolean;
     created_at: string;
     updated_at: string;

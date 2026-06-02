@@ -86,7 +86,8 @@ export type Payout = {
     transfers_account?: string;
     transfers_type: "CVU" | "CBU" | "ALIAS";
     has_virtual_account: boolean;
-    billing_fee_amount?: string | null;
+    billing_fee_amount?: number | null;
+    cpn_payment_id?: string | null;
     jpm_track_data?: Record<string, unknown> | string | null;
     ted_bank_code?: string | null;
     ted_branch_code?: string | null;
