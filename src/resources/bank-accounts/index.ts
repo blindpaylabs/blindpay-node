@@ -601,5 +601,14 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
                 ...data,
             });
         },
+        createSepa({
+            receiver_id,
+            ...data
+        }: CreateSepaInput): Promise<BlindpayApiResponse<CreateSepaResponse>> {
+            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+                type: "sepa",
+                ...data,
+            });
+        },
     };
 }

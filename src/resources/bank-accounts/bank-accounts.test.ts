@@ -8,6 +8,7 @@ import type {
     CreatePixResponse,
     CreatePixSafeResponse,
     CreateRtpResponse,
+    CreateSepaResponse,
     CreateSpeiResponse,
     CreateWireResponse,
     GetBankAccountResponse,
