@@ -432,7 +432,6 @@ export type CreateSepaInput = {
     receiver_id: string;
     name: string;
     account_class: AccountClass;
-    recipient_relationship?: RecipientRelationship | null;
     sepa_iban: string;
     sepa_beneficiary_bic: string;
     sepa_beneficiary_legal_name: string;
@@ -442,10 +441,6 @@ export type CreateSepaInput = {
     sepa_beneficiary_state_province_region?: string | null;
     sepa_beneficiary_postal_code: string;
     sepa_beneficiary_country: Country;
-    business_industry?: BusinessIndustry;
-    phone_number?: string;
-    tax_id?: string;
-    date_of_birth?: string;
 };
 
 export type CreateSepaResponse = {
