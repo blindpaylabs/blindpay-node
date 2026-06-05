@@ -73,7 +73,7 @@ export type Owner = {
     title: string | null;
     tax_type?: OwnerTaxType | null;
     instance_id?: string;
-    receiver_id?: string;
+    customer_id?: string;
 };
 
 export type IndividualWithStandardKYC = {
@@ -384,7 +384,7 @@ export type CreateBusinessWithStandardKYBResponse = {
     id: string;
 };
 
-export type ListReceiversInput = PaginationParams & {
+export type ListCustomersInput = PaginationParams & {
     full_name?: string;
     receiver_name?: string;
     status?: string;
@@ -393,20 +393,20 @@ export type ListReceiversInput = PaginationParams & {
     country?: Country;
 };
 
-export type ListReceiversResponse = {
+export type ListCustomersResponse = {
     data: Array<IndividualWithStandardKYC | IndividualWithEnhancedKYC | BusinessWithStandardKYB>;
     pagination: PaginationMetadata;
 };
 
-export type GetReceiverInput = string;
+export type GetCustomerInput = string;
 
-export type GetReceiverResponse =
+export type GetCustomerResponse =
     | IndividualWithStandardKYC
     | IndividualWithEnhancedKYC
     | BusinessWithStandardKYB;
 
-export type UpdateReceiverInput = {
-    receiver_id: string;
+export type UpdateCustomerInput = {
+    customer_id: string;
     account_purpose?: AccountPurpose | null;
     address_line_1?: string;
     address_line_2?: string;
@@ -454,11 +454,11 @@ export type UpdateReceiverInput = {
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
 };
 
-export type DeleteReceiverInput = string;
+export type DeleteCustomerInput = string;
 
-export type GetReceiverLimitsInput = string;
+export type GetCustomerLimitsInput = string;
 
-export type GetReceiverLimitsResponse = {
+export type GetCustomerLimitsResponse = {
     limits: {
         payin: {
             daily: number;
@@ -485,7 +485,7 @@ export type LimitIncreaseRequestSupportingDocumentType =
 
 export type GetLimitIncreaseRequestsResponse = Array<{
     id: string;
-    receiver_id: string;
+    customer_id: string;
     status: LimitIncreaseRequestStatus;
     daily: number;
     monthly: number;
@@ -500,7 +500,7 @@ export type GetLimitIncreaseRequestsResponse = Array<{
 }>;
 
 export type RequestLimitIncreaseInput = {
-    receiver_id: string;
+    customer_id: string;
     daily: number;
     monthly: number;
     per_transaction: number;
@@ -512,22 +512,16 @@ export type RequestLimitIncreaseResponse = {
     id: string;
 };
 
-/**
- * @deprecated Use `createCustomersResource` instead. The `/receivers` API
- * surface is being renamed to `/customers` and will be removed in v4.0.0.
- * See the migration changelog for details:
- * https://www.blindpay.com/changelog/2026-06-04-customers-rename
- */
-export function createReceiversResource(instanceId: string, client: InternalApiClient) {
+export function createCustomersResource(instanceId: string, client: InternalApiClient) {
     return {
-        list(params?: ListReceiversInput): Promise<BlindpayApiResponse<ListReceiversResponse>> {
+        list(params?: ListCustomersInput): Promise<BlindpayApiResponse<ListCustomersResponse>> {
             const queryParams = params ? `?${new URLSearchParams(params)}` : "";
-            return client.get(`/instances/${instanceId}/receivers${queryParams}`);
+            return client.get(`/instances/${instanceId}/customers${queryParams}`);
         },
         createIndividualWithStandardKYC(
             data: CreateIndividualWithStandardKYCInput
         ): Promise<BlindpayApiResponse<CreateIndividualWithStandardKYCResponse>> {
-            return client.post(`/instances/${instanceId}/receivers`, {
+            return client.post(`/instances/${instanceId}/customers`, {
                 kyc_type: "standard",
                 type: "individual",
                 ...data,
@@ -536,7 +530,7 @@ export function createReceiversResource(instanceId: string, client: InternalApiC
         createIndividualWithEnhancedKYC(
             data: CreateIndividualWithEnhancedKYCInput
         ): Promise<BlindpayApiResponse<CreateIndividualWithEnhancedKYCResponse>> {
-            return client.post(`/instances/${instanceId}/receivers`, {
+            return client.post(`/instances/${instanceId}/customers`, {
                 kyc_type: "enhanced",
                 type: "individual",
                 ...data,
@@ -545,37 +539,37 @@ export function createReceiversResource(instanceId: string, client: InternalApiC
         createBusinessWithStandardKYB(
             data: CreateBusinessWithStandardKYBInput
         ): Promise<BlindpayApiResponse<CreateBusinessWithStandardKYBResponse>> {
-            return client.post(`/instances/${instanceId}/receivers`, {
+            return client.post(`/instances/${instanceId}/customers`, {
                 kyc_type: "standard",
                 type: "business",
                 ...data,
             });
         },
-        get(receiver_id: GetReceiverInput): Promise<BlindpayApiResponse<GetReceiverResponse>> {
-            return client.get(`/instances/${instanceId}/receivers/${receiver_id}`);
+        get(customer_id: GetCustomerInput): Promise<BlindpayApiResponse<GetCustomerResponse>> {
+            return client.get(`/instances/${instanceId}/customers/${customer_id}`);
         },
-        update({ receiver_id, ...data }: UpdateReceiverInput): Promise<BlindpayApiResponse<void>> {
-            return client.put(`/instances/${instanceId}/receivers/${receiver_id}`, data);
+        update({ customer_id, ...data }: UpdateCustomerInput): Promise<BlindpayApiResponse<void>> {
+            return client.put(`/instances/${instanceId}/customers/${customer_id}`, data);
         },
-        delete(receiver_id: DeleteReceiverInput): Promise<BlindpayApiResponse<void>> {
-            return client.delete(`/instances/${instanceId}/receivers/${receiver_id}`);
+        delete(customer_id: DeleteCustomerInput): Promise<BlindpayApiResponse<void>> {
+            return client.delete(`/instances/${instanceId}/customers/${customer_id}`);
         },
         getLimits(
-            receiver_id: GetReceiverLimitsInput
-        ): Promise<BlindpayApiResponse<GetReceiverLimitsResponse>> {
-            return client.get(`/instances/${instanceId}/limits/receivers/${receiver_id}`);
+            customer_id: GetCustomerLimitsInput
+        ): Promise<BlindpayApiResponse<GetCustomerLimitsResponse>> {
+            return client.get(`/instances/${instanceId}/limits/customers/${customer_id}`);
         },
         getLimitIncreaseRequests(
-            receiver_id: GetLimitIncreaseRequestsInput
+            customer_id: GetLimitIncreaseRequestsInput
         ): Promise<BlindpayApiResponse<GetLimitIncreaseRequestsResponse>> {
-            return client.get(`/instances/${instanceId}/receivers/${receiver_id}/limit-increase`);
+            return client.get(`/instances/${instanceId}/customers/${customer_id}/limit-increase`);
         },
         requestLimitIncrease({
-            receiver_id,
+            customer_id,
             ...data
         }: RequestLimitIncreaseInput): Promise<BlindpayApiResponse<RequestLimitIncreaseResponse>> {
             return client.post(
-                `/instances/${instanceId}/receivers/${receiver_id}/limit-increase`,
+                `/instances/${instanceId}/customers/${customer_id}/limit-increase`,
                 data
             );
         },

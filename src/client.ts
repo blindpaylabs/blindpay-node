@@ -6,6 +6,7 @@ import { BlindPayError } from "./internal/blindpay-error";
 import { createApiKeysResource } from "./resources/api-keys";
 import { createAvailableResource } from "./resources/available";
 import { createBankAccountsResource } from "./resources/bank-accounts";
+import { createCustomersResource } from "./resources/customers";
 import { createFeesResource } from "./resources/fees";
 import { createInstancesResource } from "./resources/instances";
 import { createPartnerFeesResource } from "./resources/partner-fees";
@@ -43,6 +44,15 @@ export class BlindPay {
     readonly fees: ReturnType<typeof createFeesResource>;
     readonly upload: ReturnType<typeof createUploadResource>;
     readonly virtualAccounts: ReturnType<typeof createVirtualAccountsResource>;
+    readonly customers: ReturnType<typeof createCustomersResource> & {
+        bankAccounts: ReturnType<typeof createBankAccountsResource>;
+    };
+    /**
+     * @deprecated Use `customers` instead. The `/receivers` API surface is
+     * being renamed to `/customers` and will be removed in v4.0.0. See the
+     * migration changelog for details:
+     * https://www.blindpay.com/changelog/2026-06-04-customers-rename
+     */
     readonly receivers: ReturnType<typeof createReceiversResource> & {
         bankAccounts: ReturnType<typeof createBankAccountsResource>;
     };
@@ -118,6 +128,11 @@ export class BlindPay {
         this.fees = createFeesResource(this.instanceId, this.api);
 
         this.upload = createUploadResource(this.baseUrl, this.headers);
+
+        this.customers = {
+            ...createCustomersResource(this.instanceId, this.api),
+            bankAccounts: createBankAccountsResource(this.instanceId, this.api),
+        };
 
         this.receivers = {
             ...createReceiversResource(this.instanceId, this.api),
