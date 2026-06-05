@@ -386,9 +386,9 @@ export type CreateBusinessWithStandardKYBResponse = {
 
 export type ListCustomersInput = PaginationParams & {
     full_name?: string;
-    receiver_name?: string;
+    customer_name?: string;
     status?: string;
-    receiver_id?: string;
+    customer_id?: string;
     bank_account_id?: string;
     country?: Country;
 };
@@ -515,7 +515,19 @@ export type RequestLimitIncreaseResponse = {
 export function createCustomersResource(instanceId: string, client: InternalApiClient) {
     return {
         list(params?: ListCustomersInput): Promise<BlindpayApiResponse<ListCustomersResponse>> {
-            const queryParams = params ? `?${new URLSearchParams(params)}` : "";
+            // The API's filter schema still uses receiver_id/receiver_name. Translate
+            // customer_* inputs to the wire-level names so consumers see a clean
+            // customer-only surface. Drop this mapping once the API accepts customer_*.
+            const wireParams = params
+                ? Object.fromEntries(
+                      Object.entries(params).map(([k, v]) => {
+                          if (k === "customer_id") return ["receiver_id", v];
+                          if (k === "customer_name") return ["receiver_name", v];
+                          return [k, v];
+                      })
+                  )
+                : undefined;
+            const queryParams = wireParams ? `?${new URLSearchParams(wireParams)}` : "";
             return client.get(`/instances/${instanceId}/customers${queryParams}`);
         },
         createIndividualWithStandardKYC(
