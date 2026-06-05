@@ -384,6 +384,7 @@ type CreateBusinessWithStandardKYBResponse = {
     id: string;
 };
 
+/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
 export type ListReceiversInput = PaginationParams & {
     full_name?: string;
     receiver_name?: string;
@@ -393,18 +394,22 @@ export type ListReceiversInput = PaginationParams & {
     country?: Country;
 };
 
+/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
 export type ListReceiversResponse = {
     data: Array<IndividualWithStandardKYC | IndividualWithEnhancedKYC | BusinessWithStandardKYB>;
     pagination: PaginationMetadata;
 };
 
+/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
 export type GetReceiverInput = string;
 
+/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
 export type GetReceiverResponse =
     | IndividualWithStandardKYC
     | IndividualWithEnhancedKYC
     | BusinessWithStandardKYB;
 
+/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
 export type UpdateReceiverInput = {
     receiver_id: string;
     account_purpose?: AccountPurpose | null;
@@ -454,10 +459,13 @@ export type UpdateReceiverInput = {
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
 };
 
+/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
 export type DeleteReceiverInput = string;
 
+/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
 export type GetReceiverLimitsInput = string;
 
+/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
 export type GetReceiverLimitsResponse = {
     limits: {
         payin: {
