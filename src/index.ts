@@ -10,17 +10,7 @@ export * from "./resources/payins";
 export * from "./resources/payins/quotes";
 export * from "./resources/payouts";
 export * from "./resources/quotes";
-export {
-    createReceiversResource,
-    type DeleteReceiverInput,
-    type GetReceiverInput,
-    type GetReceiverLimitsInput,
-    type GetReceiverLimitsResponse,
-    type GetReceiverResponse,
-    type ListReceiversInput,
-    type ListReceiversResponse,
-    type UpdateReceiverInput,
-} from "./resources/receivers";
+export * from "./resources/receivers";
 export * from "./resources/transfers";
 export * from "./resources/upload";
 export * from "./resources/virtual-accounts";

@@ -1,15 +1,30 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "../../client";
-import type {
-    CreateBusinessWithStandardKYBResponse,
-    CreateIndividualWithEnhancedKYCResponse,
-    CreateIndividualWithStandardKYCResponse,
-    GetLimitIncreaseRequestsResponse,
-    GetReceiverLimitsResponse,
-    GetReceiverResponse,
-    ListReceiversResponse,
-    RequestLimitIncreaseResponse,
-} from ".";
+import type { GetReceiverLimitsResponse, GetReceiverResponse, ListReceiversResponse } from ".";
+
+// Inline shapes for response types that are no longer exported from this module
+// (they collide with customers/ on the SDK's root export). The receivers module
+// is being deleted in v4.0.0 anyway.
+type CreateResponse = { id: string };
+type CreateIndividualWithStandardKYCResponse = CreateResponse;
+type CreateIndividualWithEnhancedKYCResponse = CreateResponse;
+type CreateBusinessWithStandardKYBResponse = CreateResponse;
+type RequestLimitIncreaseResponse = CreateResponse;
+type GetLimitIncreaseRequestsResponse = Array<{
+    id: string;
+    receiver_id: string;
+    status: "in_review" | "approved" | "rejected";
+    daily: number;
+    monthly: number;
+    per_transaction: number;
+    supporting_document_file: string;
+    supporting_document_type: string;
+    created_at: string;
+    updated_at: string;
+    approved_per_transaction?: number | null;
+    approved_daily?: number | null;
+    approved_monthly?: number | null;
+}>;
 
 describe("Receivers", () => {
     afterEach(() => fetchMock.resetMocks());
