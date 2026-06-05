@@ -18,22 +18,18 @@ import type {
 import type { InternalApiClient } from "../../internal/api-client";
 import type { StrictOmit } from "../../internal/helpers/strict-omit";
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type ProofOfAddressDocType =
+export type CustomerProofOfAddressDocType =
     | "UTILITY_BILL"
     | "BANK_STATEMENT"
     | "RENTAL_AGREEMENT"
     | "TAX_DOCUMENT"
     | "GOVERNMENT_CORRESPONDENCE";
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type IdentificationDocument = "PASSPORT" | "ID_CARD" | "DRIVERS";
+export type CustomerIdentificationDocument = "PASSPORT" | "ID_CARD" | "DRIVERS";
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type AmlStatus = "clear" | "hit" | "error";
+export type CustomerAmlStatus = "clear" | "hit" | "error";
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type AmlHits = {
+export type CustomerAmlHits = {
     has_sanction_match: boolean;
     has_pep_match: boolean;
     has_watchlist_match: boolean;
@@ -41,27 +37,25 @@ export type AmlHits = {
     has_adversemedia_match: boolean;
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type FraudWarning = {
+export type CustomerFraudWarning = {
     id: string | null;
     name: string | null;
     operation: string | null;
     score: number | null;
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type OwnerTaxType = "SSN" | "ITIN";
+export type CustomerOwnerTaxType = "SSN" | "ITIN";
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type KycType = "light" | "standard" | "enhanced";
+export type CustomerKycType = "light" | "standard" | "enhanced";
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type OwnerRole = "beneficial_controlling" | "beneficial_owner" | "controlling_person";
+export type CustomerOwnerRole =
+    | "beneficial_controlling"
+    | "beneficial_owner"
+    | "controlling_person";
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type Owner = {
+export type CustomerOwner = {
     id: string;
-    role: OwnerRole;
+    role: CustomerOwnerRole;
     first_name: string;
     last_name: string;
     date_of_birth: string;
@@ -73,24 +67,23 @@ export type Owner = {
     country: Country;
     postal_code: string;
     id_doc_country: Country;
-    id_doc_type: IdentificationDocument;
+    id_doc_type: CustomerIdentificationDocument;
     id_doc_front_file: string;
     id_doc_back_file: string | null;
-    proof_of_address_doc_type: ProofOfAddressDocType;
+    proof_of_address_doc_type: CustomerProofOfAddressDocType;
     proof_of_address_doc_file: string | null;
     ownership_percentage: number | null;
     title: string | null;
-    tax_type?: OwnerTaxType | null;
+    tax_type?: CustomerOwnerTaxType | null;
     instance_id?: string;
-    receiver_id?: string;
+    customer_id?: string;
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type IndividualWithStandardKYC = {
+export type CustomerIndividualWithStandardKYC = {
     id: string;
     is_tos_accepted: boolean;
     type: Extract<AccountClass, "individual">;
-    kyc_type: Extract<KycType, "standard">;
+    kyc_type: Extract<CustomerKycType, "standard">;
     kyc_status: KycStatus;
     kyc_warnings: Array<{
         code: string | null;
@@ -109,13 +102,13 @@ export type IndividualWithStandardKYC = {
     ip_address: string | null;
     image_url: string | null;
     phone_number: string;
-    proof_of_address_doc_type: ProofOfAddressDocType;
+    proof_of_address_doc_type: CustomerProofOfAddressDocType;
     proof_of_address_doc_file: string;
     first_name: string;
     last_name: string;
     date_of_birth: string;
     id_doc_country: Country;
-    id_doc_type: IdentificationDocument;
+    id_doc_type: CustomerIdentificationDocument;
     id_doc_front_file: string;
     id_doc_back_file: string;
     aiprise_validation_key: string;
@@ -128,9 +121,9 @@ export type IndividualWithStandardKYC = {
         daily: number;
         monthly: number;
     };
-    fraud_warnings?: FraudWarning[] | null;
-    aml_status?: AmlStatus | null;
-    aml_hits?: AmlHits | null;
+    fraud_warnings?: CustomerFraudWarning[] | null;
+    aml_status?: CustomerAmlStatus | null;
+    aml_hits?: CustomerAmlHits | null;
     account_purpose?: AccountPurpose | null;
     account_purpose_other?: string | null;
     occupation?: string | null;
@@ -148,12 +141,11 @@ export type IndividualWithStandardKYC = {
     publicly_traded?: boolean | null;
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type IndividualWithEnhancedKYC = {
+export type CustomerIndividualWithEnhancedKYC = {
     id: string;
     is_tos_accepted: boolean;
     type: Extract<AccountClass, "individual">;
-    kyc_type: Extract<KycType, "enhanced">;
+    kyc_type: Extract<CustomerKycType, "enhanced">;
     kyc_status: KycStatus;
     kyc_warnings: Array<{
         code: string | null;
@@ -172,13 +164,13 @@ export type IndividualWithEnhancedKYC = {
     ip_address: string | null;
     image_url: string | null;
     phone_number: string | null;
-    proof_of_address_doc_type: ProofOfAddressDocType;
+    proof_of_address_doc_type: CustomerProofOfAddressDocType;
     proof_of_address_doc_file: string;
     first_name: string;
     last_name: string;
     date_of_birth: string;
     id_doc_country: Country;
-    id_doc_type: IdentificationDocument;
+    id_doc_type: CustomerIdentificationDocument;
     id_doc_front_file: string;
     id_doc_back_file: string | null;
     aiprise_validation_key: string;
@@ -196,9 +188,9 @@ export type IndividualWithEnhancedKYC = {
         daily: number;
         monthly: number;
     };
-    fraud_warnings?: FraudWarning[] | null;
-    aml_status?: AmlStatus | null;
-    aml_hits?: AmlHits | null;
+    fraud_warnings?: CustomerFraudWarning[] | null;
+    aml_status?: CustomerAmlStatus | null;
+    aml_hits?: CustomerAmlHits | null;
     account_purpose?: AccountPurpose | null;
     account_purpose_other?: string | null;
     occupation?: string | null;
@@ -214,13 +206,12 @@ export type IndividualWithEnhancedKYC = {
     publicly_traded?: boolean | null;
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type BusinessWithStandardKYB = {
+export type CustomerBusinessWithStandardKYB = {
     id: string;
     is_tos_accepted: boolean;
     is_fbo: boolean;
     type: Extract<AccountClass, "business">;
-    kyc_type: Extract<KycType, "standard">;
+    kyc_type: Extract<CustomerKycType, "standard">;
     kyc_status: KycStatus;
     kyc_warnings: Array<{
         code: string | null;
@@ -239,13 +230,13 @@ export type BusinessWithStandardKYB = {
     ip_address: string | null;
     image_url: string | null;
     phone_number: string | null;
-    proof_of_address_doc_type: ProofOfAddressDocType;
+    proof_of_address_doc_type: CustomerProofOfAddressDocType;
     proof_of_address_doc_file: string;
     legal_name: string;
     alternate_name: string | null;
     formation_date: string;
     website: string | null;
-    owners: Owner[];
+    owners: CustomerOwner[];
     incorporation_doc_file: string;
     proof_of_ownership_doc_file: string;
     external_id: string | null;
@@ -259,9 +250,9 @@ export type BusinessWithStandardKYB = {
         daily: number;
         monthly: number;
     };
-    fraud_warnings?: FraudWarning[] | null;
-    aml_status?: AmlStatus | null;
-    aml_hits?: AmlHits | null;
+    fraud_warnings?: CustomerFraudWarning[] | null;
+    aml_status?: CustomerAmlStatus | null;
+    aml_hits?: CustomerAmlHits | null;
     account_purpose?: AccountPurpose | null;
     account_purpose_other?: string | null;
     occupation?: string | null;
@@ -276,8 +267,7 @@ export type BusinessWithStandardKYB = {
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type CreateIndividualWithStandardKYCInput = {
+export type CreateCustomerIndividualWithStandardKYCInput = {
     country: Country;
     email: string;
     account_purpose?: AccountPurpose | null;
@@ -290,14 +280,14 @@ export type CreateIndividualWithStandardKYCInput = {
     id_doc_back_file?: string | null;
     id_doc_country?: Country | null;
     id_doc_front_file?: string | null;
-    id_doc_type?: IdentificationDocument | null;
+    id_doc_type?: CustomerIdentificationDocument | null;
     image_url?: string | null;
     ip_address?: string | null;
     last_name?: string | null;
     phone_number?: string | null;
     postal_code?: string | null;
     proof_of_address_doc_file?: string | null;
-    proof_of_address_doc_type?: ProofOfAddressDocType | null;
+    proof_of_address_doc_type?: CustomerProofOfAddressDocType | null;
     selfie_file?: string | null;
     source_of_funds_doc_file?: string | null;
     source_of_funds_doc_type?: SourceOfFundsDocType | null;
@@ -311,13 +301,11 @@ export type CreateIndividualWithStandardKYCInput = {
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type CreateIndividualWithStandardKYCResponse = {
+export type CreateCustomerIndividualWithStandardKYCResponse = {
     id: string;
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type CreateIndividualWithEnhancedKYCInput = {
+export type CreateCustomerIndividualWithEnhancedKYCInput = {
     country: Country;
     email: string;
     account_purpose?: AccountPurpose | null;
@@ -330,14 +318,14 @@ export type CreateIndividualWithEnhancedKYCInput = {
     id_doc_back_file?: string | null;
     id_doc_country?: Country | null;
     id_doc_front_file?: string | null;
-    id_doc_type?: IdentificationDocument | null;
+    id_doc_type?: CustomerIdentificationDocument | null;
     image_url?: string | null;
     ip_address?: string | null;
     last_name?: string | null;
     phone_number?: string | null;
     postal_code?: string | null;
     proof_of_address_doc_file?: string | null;
-    proof_of_address_doc_type?: ProofOfAddressDocType | null;
+    proof_of_address_doc_type?: CustomerProofOfAddressDocType | null;
     purpose_of_transactions?: PurposeOfTransactions | null;
     purpose_of_transactions_explanation?: string | null;
     selfie_file?: string | null;
@@ -353,13 +341,11 @@ export type CreateIndividualWithEnhancedKYCInput = {
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type CreateIndividualWithEnhancedKYCResponse = {
+export type CreateCustomerIndividualWithEnhancedKYCResponse = {
     id: string;
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type CreateBusinessWithStandardKYBInput = {
+export type CreateCustomerBusinessWithStandardKYBInput = {
     country: Country;
     email: string;
     account_purpose?: AccountPurpose | null;
@@ -377,11 +363,11 @@ export type CreateBusinessWithStandardKYBInput = {
     incorporation_doc_file?: string | null;
     ip_address?: string | null;
     legal_name?: string | null;
-    owners?: Array<StrictOmit<Owner, "id">> | null;
+    owners?: Array<StrictOmit<CustomerOwner, "id">> | null;
     phone_number?: string | null;
     postal_code?: string | null;
     proof_of_address_doc_file?: string | null;
-    proof_of_address_doc_type?: ProofOfAddressDocType | null;
+    proof_of_address_doc_type?: CustomerProofOfAddressDocType | null;
     proof_of_ownership_doc_file?: string | null;
     publicly_traded?: boolean | null;
     source_of_funds_doc_file?: string | null;
@@ -397,39 +383,37 @@ export type CreateBusinessWithStandardKYBInput = {
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type CreateBusinessWithStandardKYBResponse = {
+export type CreateCustomerBusinessWithStandardKYBResponse = {
     id: string;
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type ListReceiversInput = PaginationParams & {
+export type ListCustomersInput = PaginationParams & {
     full_name?: string;
-    receiver_name?: string;
+    customer_name?: string;
     status?: string;
-    receiver_id?: string;
+    customer_id?: string;
     bank_account_id?: string;
     country?: Country;
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type ListReceiversResponse = {
-    data: Array<IndividualWithStandardKYC | IndividualWithEnhancedKYC | BusinessWithStandardKYB>;
+export type ListCustomersResponse = {
+    data: Array<
+        | CustomerIndividualWithStandardKYC
+        | CustomerIndividualWithEnhancedKYC
+        | CustomerBusinessWithStandardKYB
+    >;
     pagination: PaginationMetadata;
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type GetReceiverInput = string;
+export type GetCustomerInput = string;
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type GetReceiverResponse =
-    | IndividualWithStandardKYC
-    | IndividualWithEnhancedKYC
-    | BusinessWithStandardKYB;
+export type GetCustomerResponse =
+    | CustomerIndividualWithStandardKYC
+    | CustomerIndividualWithEnhancedKYC
+    | CustomerBusinessWithStandardKYB;
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type UpdateReceiverInput = {
-    receiver_id: string;
+export type UpdateCustomerInput = {
+    customer_id: string;
     account_purpose?: AccountPurpose | null;
     address_line_1?: string;
     address_line_2?: string;
@@ -448,17 +432,17 @@ export type UpdateReceiverInput = {
     id_doc_back_file?: string;
     id_doc_country?: Country;
     id_doc_front_file?: string;
-    id_doc_type?: IdentificationDocument;
+    id_doc_type?: CustomerIdentificationDocument;
     image_url?: string;
     incorporation_doc_file?: string;
     ip_address?: string;
     last_name?: string;
     legal_name?: string;
-    owners?: Array<StrictOmit<Owner, "id">>;
+    owners?: Array<StrictOmit<CustomerOwner, "id">>;
     phone_number?: string;
     postal_code?: string;
     proof_of_address_doc_file?: string;
-    proof_of_address_doc_type?: ProofOfAddressDocType;
+    proof_of_address_doc_type?: CustomerProofOfAddressDocType;
     proof_of_ownership_doc_file?: string;
     publicly_traded?: boolean | null;
     purpose_of_transactions?: PurposeOfTransactions;
@@ -477,14 +461,11 @@ export type UpdateReceiverInput = {
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type DeleteReceiverInput = string;
+export type DeleteCustomerInput = string;
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type GetReceiverLimitsInput = string;
+export type GetCustomerLimitsInput = string;
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type GetReceiverLimitsResponse = {
+export type GetCustomerLimitsResponse = {
     limits: {
         payin: {
             daily: number;
@@ -497,14 +478,11 @@ export type GetReceiverLimitsResponse = {
     };
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type GetLimitIncreaseRequestsInput = string;
+export type GetCustomerLimitIncreaseRequestsInput = string;
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type LimitIncreaseRequestStatus = "in_review" | "approved" | "rejected";
+export type CustomerLimitIncreaseRequestStatus = "in_review" | "approved" | "rejected";
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type LimitIncreaseRequestSupportingDocumentType =
+export type CustomerLimitIncreaseRequestSupportingDocumentType =
     | "individual_bank_statement"
     | "individual_tax_return"
     | "individual_proof_of_income"
@@ -512,16 +490,15 @@ export type LimitIncreaseRequestSupportingDocumentType =
     | "business_financial_statements"
     | "business_tax_return";
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type GetLimitIncreaseRequestsResponse = Array<{
+export type GetCustomerLimitIncreaseRequestsResponse = Array<{
     id: string;
-    receiver_id: string;
-    status: LimitIncreaseRequestStatus;
+    customer_id: string;
+    status: CustomerLimitIncreaseRequestStatus;
     daily: number;
     monthly: number;
     per_transaction: number;
     supporting_document_file: string;
-    supporting_document_type: LimitIncreaseRequestSupportingDocumentType;
+    supporting_document_type: CustomerLimitIncreaseRequestSupportingDocumentType;
     created_at: string;
     updated_at: string;
     approved_per_transaction?: number | null;
@@ -529,94 +506,91 @@ export type GetLimitIncreaseRequestsResponse = Array<{
     approved_monthly?: number | null;
 }>;
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type RequestLimitIncreaseInput = {
-    receiver_id: string;
+export type RequestCustomerLimitIncreaseInput = {
+    customer_id: string;
     daily: number;
     monthly: number;
     per_transaction: number;
     supporting_document_file: string;
-    supporting_document_type: LimitIncreaseRequestSupportingDocumentType;
+    supporting_document_type: CustomerLimitIncreaseRequestSupportingDocumentType;
 };
 
-/** @deprecated Renamed to customers. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-export type RequestLimitIncreaseResponse = {
+export type RequestCustomerLimitIncreaseResponse = {
     id: string;
 };
 
-/**
- * @deprecated Use `customers` instead. The `/receivers` API surface is being
- * renamed to `/customers` and will be removed in v4.0.0.
- * https://www.blindpay.com/changelog/2026-06-04-customers-rename
- */
-export function createReceiversResource(instanceId: string, client: InternalApiClient) {
+export function createCustomersResource(instanceId: string, client: InternalApiClient) {
     return {
-        /** @deprecated Use `customers.list` instead. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-        list(params?: ListReceiversInput): Promise<BlindpayApiResponse<ListReceiversResponse>> {
-            const queryParams = params ? `?${new URLSearchParams(params)}` : "";
-            return client.get(`/instances/${instanceId}/receivers${queryParams}`);
+        list(params?: ListCustomersInput): Promise<BlindpayApiResponse<ListCustomersResponse>> {
+            // The API's filter schema still uses receiver_id/receiver_name. Translate
+            // customer_* inputs to the wire-level names so consumers see a clean
+            // customer-only surface. Drop this mapping once the API accepts customer_*.
+            const wireParams = params
+                ? Object.fromEntries(
+                      Object.entries(params).map(([k, v]) => {
+                          if (k === "customer_id") return ["receiver_id", v];
+                          if (k === "customer_name") return ["receiver_name", v];
+                          return [k, v];
+                      })
+                  )
+                : undefined;
+            const queryParams = wireParams ? `?${new URLSearchParams(wireParams)}` : "";
+            return client.get(`/instances/${instanceId}/customers${queryParams}`);
         },
-        /** @deprecated Use `customers.createIndividualWithStandardKYC` instead. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
         createIndividualWithStandardKYC(
-            data: CreateIndividualWithStandardKYCInput
-        ): Promise<BlindpayApiResponse<CreateIndividualWithStandardKYCResponse>> {
-            return client.post(`/instances/${instanceId}/receivers`, {
+            data: CreateCustomerIndividualWithStandardKYCInput
+        ): Promise<BlindpayApiResponse<CreateCustomerIndividualWithStandardKYCResponse>> {
+            return client.post(`/instances/${instanceId}/customers`, {
                 kyc_type: "standard",
                 type: "individual",
                 ...data,
             });
         },
-        /** @deprecated Use `customers.createIndividualWithEnhancedKYC` instead. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
         createIndividualWithEnhancedKYC(
-            data: CreateIndividualWithEnhancedKYCInput
-        ): Promise<BlindpayApiResponse<CreateIndividualWithEnhancedKYCResponse>> {
-            return client.post(`/instances/${instanceId}/receivers`, {
+            data: CreateCustomerIndividualWithEnhancedKYCInput
+        ): Promise<BlindpayApiResponse<CreateCustomerIndividualWithEnhancedKYCResponse>> {
+            return client.post(`/instances/${instanceId}/customers`, {
                 kyc_type: "enhanced",
                 type: "individual",
                 ...data,
             });
         },
-        /** @deprecated Use `customers.createBusinessWithStandardKYB` instead. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
         createBusinessWithStandardKYB(
-            data: CreateBusinessWithStandardKYBInput
-        ): Promise<BlindpayApiResponse<CreateBusinessWithStandardKYBResponse>> {
-            return client.post(`/instances/${instanceId}/receivers`, {
+            data: CreateCustomerBusinessWithStandardKYBInput
+        ): Promise<BlindpayApiResponse<CreateCustomerBusinessWithStandardKYBResponse>> {
+            return client.post(`/instances/${instanceId}/customers`, {
                 kyc_type: "standard",
                 type: "business",
                 ...data,
             });
         },
-        /** @deprecated Use `customers.get` instead. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-        get(receiver_id: GetReceiverInput): Promise<BlindpayApiResponse<GetReceiverResponse>> {
-            return client.get(`/instances/${instanceId}/receivers/${receiver_id}`);
+        get(customer_id: GetCustomerInput): Promise<BlindpayApiResponse<GetCustomerResponse>> {
+            return client.get(`/instances/${instanceId}/customers/${customer_id}`);
         },
-        /** @deprecated Use `customers.update` instead. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-        update({ receiver_id, ...data }: UpdateReceiverInput): Promise<BlindpayApiResponse<void>> {
-            return client.put(`/instances/${instanceId}/receivers/${receiver_id}`, data);
+        update({ customer_id, ...data }: UpdateCustomerInput): Promise<BlindpayApiResponse<void>> {
+            return client.put(`/instances/${instanceId}/customers/${customer_id}`, data);
         },
-        /** @deprecated Use `customers.delete` instead. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
-        delete(receiver_id: DeleteReceiverInput): Promise<BlindpayApiResponse<void>> {
-            return client.delete(`/instances/${instanceId}/receivers/${receiver_id}`);
+        delete(customer_id: DeleteCustomerInput): Promise<BlindpayApiResponse<void>> {
+            return client.delete(`/instances/${instanceId}/customers/${customer_id}`);
         },
-        /** @deprecated Use `customers.getLimits` instead. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
         getLimits(
-            receiver_id: GetReceiverLimitsInput
-        ): Promise<BlindpayApiResponse<GetReceiverLimitsResponse>> {
-            return client.get(`/instances/${instanceId}/limits/receivers/${receiver_id}`);
+            customer_id: GetCustomerLimitsInput
+        ): Promise<BlindpayApiResponse<GetCustomerLimitsResponse>> {
+            return client.get(`/instances/${instanceId}/limits/customers/${customer_id}`);
         },
-        /** @deprecated Use `customers.getLimitIncreaseRequests` instead. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
         getLimitIncreaseRequests(
-            receiver_id: GetLimitIncreaseRequestsInput
-        ): Promise<BlindpayApiResponse<GetLimitIncreaseRequestsResponse>> {
-            return client.get(`/instances/${instanceId}/receivers/${receiver_id}/limit-increase`);
+            customer_id: GetCustomerLimitIncreaseRequestsInput
+        ): Promise<BlindpayApiResponse<GetCustomerLimitIncreaseRequestsResponse>> {
+            return client.get(`/instances/${instanceId}/customers/${customer_id}/limit-increase`);
         },
-        /** @deprecated Use `customers.requestLimitIncrease` instead. https://www.blindpay.com/changelog/2026-06-04-customers-rename */
         requestLimitIncrease({
-            receiver_id,
+            customer_id,
             ...data
-        }: RequestLimitIncreaseInput): Promise<BlindpayApiResponse<RequestLimitIncreaseResponse>> {
+        }: RequestCustomerLimitIncreaseInput): Promise<
+            BlindpayApiResponse<RequestCustomerLimitIncreaseResponse>
+        > {
             return client.post(
-                `/instances/${instanceId}/receivers/${receiver_id}/limit-increase`,
+                `/instances/${instanceId}/customers/${customer_id}/limit-increase`,
                 data
             );
         },

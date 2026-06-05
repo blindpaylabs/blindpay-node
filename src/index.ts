@@ -2,6 +2,7 @@ export * from "./client";
 export * from "./resources/api-keys";
 export * from "./resources/available";
 export * from "./resources/bank-accounts";
+export * from "./resources/customers";
 export * from "./resources/fees";
 export * from "./resources/instances";
 export * from "./resources/partner-fees";
