@@ -1,14 +1,14 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "../../client";
 import type {
-    CreateBusinessWithStandardKYBResponse,
-    CreateIndividualWithEnhancedKYCResponse,
-    CreateIndividualWithStandardKYCResponse,
+    CreateCustomerBusinessWithStandardKYBResponse,
+    CreateCustomerIndividualWithEnhancedKYCResponse,
+    CreateCustomerIndividualWithStandardKYCResponse,
+    GetCustomerLimitIncreaseRequestsResponse,
     GetCustomerLimitsResponse,
     GetCustomerResponse,
-    GetLimitIncreaseRequestsResponse,
     ListCustomersResponse,
-    RequestLimitIncreaseResponse,
+    RequestCustomerLimitIncreaseResponse,
 } from ".";
 
 describe("Customers", () => {
@@ -192,7 +192,7 @@ describe("Customers", () => {
 
     describe("Create customer", () => {
         it("should create an individual customer with standard KYC", async () => {
-            const mockedCustomer: CreateIndividualWithStandardKYCResponse = {
+            const mockedCustomer: CreateCustomerIndividualWithStandardKYCResponse = {
                 id: "re_Euw7HN4OdxPn",
             };
 
@@ -227,7 +227,7 @@ describe("Customers", () => {
         });
 
         it("should create an individual customer with enhanced KYC", async () => {
-            const mockedCustomer: CreateIndividualWithEnhancedKYCResponse = {
+            const mockedCustomer: CreateCustomerIndividualWithEnhancedKYCResponse = {
                 id: "re_YuaMcI2B8zbQ",
             };
 
@@ -268,7 +268,7 @@ describe("Customers", () => {
         });
 
         it("should create a business customer with standard KYB", async () => {
-            const mockedCustomer: CreateBusinessWithStandardKYBResponse = {
+            const mockedCustomer: CreateCustomerBusinessWithStandardKYBResponse = {
                 id: "re_IOxAUL24LG7P",
             };
 
@@ -574,7 +574,7 @@ describe("Customers", () => {
 
     describe("Get limit increase requests", () => {
         it("should get limit increase requests for a customer", async () => {
-            const mockedLimitIncreaseRequests: GetLimitIncreaseRequestsResponse = [
+            const mockedLimitIncreaseRequests: GetCustomerLimitIncreaseRequestsResponse = [
                 {
                     id: "rl_000000000000",
                     customer_id: "re_YuaMcI2B8zbQ",
@@ -615,7 +615,7 @@ describe("Customers", () => {
 
     describe("Get limit increase requests with approved fields", () => {
         it("should get limit increase requests with approved amounts", async () => {
-            const mockedLimitIncreaseRequests: GetLimitIncreaseRequestsResponse = [
+            const mockedLimitIncreaseRequests: GetCustomerLimitIncreaseRequestsResponse = [
                 {
                     id: "rl_000000000000",
                     customer_id: "re_YuaMcI2B8zbQ",
@@ -647,7 +647,7 @@ describe("Customers", () => {
 
     describe("Request limit increase", () => {
         it("should request a limit increase for a customer", async () => {
-            const mockedResponse: RequestLimitIncreaseResponse = {
+            const mockedResponse: RequestCustomerLimitIncreaseResponse = {
                 id: "rl_000000000000",
             };
 
