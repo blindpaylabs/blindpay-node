@@ -34,8 +34,8 @@ describe("Bank accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.bankAccounts.createPix({
-                receiver_id: "re_000000000000",
+            const { data, error } = await blindpay.customers.bankAccounts.createPix({
+                customer_id: "re_000000000000",
                 name: "PIX Account",
                 pix_key: "14947677768",
             });
@@ -61,8 +61,8 @@ describe("Bank accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.bankAccounts.createArgentinaTransfers({
-                receiver_id: "re_000000000000",
+            const { data, error } = await blindpay.customers.bankAccounts.createArgentinaTransfers({
+                customer_id: "re_000000000000",
                 name: "Argentina Transfers Account",
                 beneficiary_name: "Individual full name or business name",
                 transfers_type: "CVU",
@@ -91,8 +91,8 @@ describe("Bank accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.bankAccounts.createSpei({
-                receiver_id: "re_000000000000",
+            const { data, error } = await blindpay.customers.bankAccounts.createSpei({
+                customer_id: "re_000000000000",
                 name: "SPEI Account",
                 beneficiary_name: "Individual full name or business name",
                 spei_protocol: "clabe",
@@ -126,8 +126,8 @@ describe("Bank accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.bankAccounts.createColombiaAch({
-                receiver_id: "re_000000000000",
+            const { data, error } = await blindpay.customers.bankAccounts.createColombiaAch({
+                customer_id: "re_000000000000",
                 name: "Colombia ACH Account",
                 account_type: "checking",
                 ach_cop_beneficiary_first_name: "Fernando",
@@ -176,8 +176,8 @@ describe("Bank accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.bankAccounts.createAch({
-                receiver_id: "re_000000000000",
+            const { data, error } = await blindpay.customers.bankAccounts.createAch({
+                customer_id: "re_000000000000",
                 name: "ACH Account",
                 account_class: "individual",
                 account_number: "1001001234",
@@ -221,8 +221,8 @@ describe("Bank accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.bankAccounts.createWire({
-                receiver_id: "re_000000000000",
+            const { data, error } = await blindpay.customers.bankAccounts.createWire({
+                customer_id: "re_000000000000",
                 name: "Wire Account",
                 account_class: "individual",
                 account_number: "1001001234",
@@ -287,8 +287,8 @@ describe("Bank accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.bankAccounts.createInternationalSwift({
-                receiver_id: "re_000000000000",
+            const { data, error } = await blindpay.customers.bankAccounts.createInternationalSwift({
+                customer_id: "re_000000000000",
                 name: "International Swift Account",
                 account_class: "individual",
                 recipient_relationship: "first_party",
@@ -343,8 +343,8 @@ describe("Bank accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.bankAccounts.createRtp({
-                receiver_id: "re_000000000000",
+            const { data, error } = await blindpay.customers.bankAccounts.createRtp({
+                customer_id: "re_000000000000",
                 name: "John Doe RTP",
                 account_class: "individual",
                 beneficiary_name: "John Doe",
@@ -367,7 +367,7 @@ describe("Bank accounts", () => {
         it("should get a bank account", async () => {
             const mockedBankAccount: GetBankAccountResponse = {
                 id: "ba_000000000000",
-                receiver_id: "rcv_123",
+                customer_id: "rcv_123",
                 account_holder_name: "Individual full name or business name",
                 account_number: "1001001234",
                 routing_number: "012345678",
@@ -384,8 +384,8 @@ describe("Bank accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.bankAccounts.get({
-                receiver_id: "re_000000000000",
+            const { data, error } = await blindpay.customers.bankAccounts.get({
+                customer_id: "re_000000000000",
                 id: "ba_000000000000",
             });
 
@@ -468,8 +468,8 @@ describe("Bank accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.bankAccounts.list({
-                receiver_id: "re_000000000000",
+            const { data, error } = await blindpay.customers.bankAccounts.list({
+                customer_id: "re_000000000000",
             });
 
             expect(error).toBeNull();
@@ -496,8 +496,8 @@ describe("Bank accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.bankAccounts.createPixSafe({
-                receiver_id: "re_000000000000",
+            const { data, error } = await blindpay.customers.bankAccounts.createPixSafe({
+                customer_id: "re_000000000000",
                 name: "PIX Safe Account",
                 beneficiary_name: "Maria Silva",
                 account_number: "123456789",
@@ -536,8 +536,8 @@ describe("Bank accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.bankAccounts.createSepa({
-                receiver_id: "re_000000000000",
+            const { data, error } = await blindpay.customers.bankAccounts.createSepa({
+                customer_id: "re_000000000000",
                 name: "SEPA Account",
                 account_class: "individual",
                 sepa_iban: "BE68539007547034",
@@ -560,8 +560,8 @@ describe("Bank accounts", () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const { data, error } = await blindpay.receivers.bankAccounts.delete({
-                receiver_id: "re_000000000000",
+            const { data, error } = await blindpay.customers.bankAccounts.delete({
+                customer_id: "re_000000000000",
                 id: "ba_000000000000",
             });
 

@@ -143,7 +143,7 @@ describe("Virtual accounts", () => {
             });
 
             const { data, error } = await blindpay.virtualAccounts.get({
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 id: "va_000000000000",
             });
 
@@ -197,7 +197,7 @@ describe("Virtual accounts", () => {
             });
 
             const { data, error } = await blindpay.virtualAccounts.create({
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 banking_partner: "jpmorgan",
                 blockchain_wallet_id: "bw_000000000000",
                 token: "USDC",
@@ -260,7 +260,7 @@ describe("Virtual accounts", () => {
             });
 
             const { data, error } = await blindpay.virtualAccounts.create({
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 banking_partner: "cfsb",
                 blockchain_wallet_id: "bw_000000000000",
                 token: "USDC",
@@ -280,7 +280,7 @@ describe("Virtual accounts", () => {
             });
 
             const { data, error } = await blindpay.virtualAccounts.update({
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 id: "va_000000000000",
                 blockchain_wallet_id: "bw_000000000001",
                 token: "USDT",

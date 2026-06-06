@@ -51,7 +51,7 @@ export type ListVirtualAccountsInput = string;
 export type ListVirtualAccountsResponse = VirtualAccount[];
 
 export type CreateVirtualAccountInput = {
-    receiver_id: string;
+    customer_id: string;
     banking_partner: BankingPartner;
     token: StablecoinToken;
     blockchain_wallet_id: string;
@@ -63,14 +63,14 @@ export type CreateVirtualAccountInput = {
 export type CreateVirtualAccountResponse = VirtualAccount;
 
 export type GetVirtualAccountInput = {
-    receiver_id: string;
+    customer_id: string;
     id: string;
 };
 
 export type GetVirtualAccountResponse = VirtualAccount;
 
 export type UpdateVirtualAccountInput = {
-    receiver_id: string;
+    customer_id: string;
     id: string;
     token: StablecoinToken;
     blockchain_wallet_id: string;
@@ -79,34 +79,34 @@ export type UpdateVirtualAccountInput = {
 export function createVirtualAccountsResource(instanceId: string, client: InternalApiClient) {
     return {
         list(
-            receiver_id: ListVirtualAccountsInput
+            customer_id: ListVirtualAccountsInput
         ): Promise<BlindpayApiResponse<ListVirtualAccountsResponse>> {
-            return client.get(`/instances/${instanceId}/receivers/${receiver_id}/virtual-accounts`);
+            return client.get(`/instances/${instanceId}/customers/${customer_id}/virtual-accounts`);
         },
         get({
-            receiver_id,
+            customer_id,
             id,
         }: GetVirtualAccountInput): Promise<BlindpayApiResponse<GetVirtualAccountResponse>> {
             return client.get(
-                `/instances/${instanceId}/receivers/${receiver_id}/virtual-accounts/${id}`
+                `/instances/${instanceId}/customers/${customer_id}/virtual-accounts/${id}`
             );
         },
         create({
-            receiver_id,
+            customer_id,
             ...data
         }: CreateVirtualAccountInput): Promise<BlindpayApiResponse<CreateVirtualAccountResponse>> {
             return client.post(
-                `/instances/${instanceId}/receivers/${receiver_id}/virtual-accounts`,
+                `/instances/${instanceId}/customers/${customer_id}/virtual-accounts`,
                 data
             );
         },
         update({
-            receiver_id,
+            customer_id,
             id,
             ...data
         }: UpdateVirtualAccountInput): Promise<BlindpayApiResponse<void>> {
             return client.put(
-                `/instances/${instanceId}/receivers/${receiver_id}/virtual-accounts/${id}`,
+                `/instances/${instanceId}/customers/${customer_id}/virtual-accounts/${id}`,
                 data
             );
         },

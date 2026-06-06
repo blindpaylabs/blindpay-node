@@ -24,7 +24,7 @@ export type RecipientRelationship =
     | "other";
 
 export type ListBankAccountsInput = {
-    receiver_id: string;
+    customer_id: string;
     status?: string;
     type?: Rail;
     name?: string;
@@ -107,13 +107,13 @@ export type ListBankAccountsResponse = {
 };
 
 export type GetBankAccountInput = {
-    receiver_id: string;
+    customer_id: string;
     id: string;
 };
 
 export type GetBankAccountResponse = {
     id: string;
-    receiver_id: string;
+    customer_id: string;
     account_holder_name: string;
     account_number: string;
     routing_number: string;
@@ -128,12 +128,12 @@ export type GetBankAccountResponse = {
 };
 
 export type DeleteBankAccountInput = {
-    receiver_id: string;
+    customer_id: string;
     id: string;
 };
 
 export type CreatePixInput = {
-    receiver_id: string;
+    customer_id: string;
     name: string;
     pix_key: string;
 };
@@ -147,7 +147,7 @@ export type CreatePixResponse = {
 };
 
 export type CreatePixSafeInput = {
-    receiver_id: string;
+    customer_id: string;
     name: string;
     beneficiary_name: string;
     account_number: string;
@@ -171,7 +171,7 @@ export type CreatePixSafeResponse = {
 };
 
 export type CreateArgentinaTransfersInput = {
-    receiver_id: string;
+    customer_id: string;
     name: string;
     beneficiary_name: string;
     transfers_account: string;
@@ -189,7 +189,7 @@ export type CreateArgentinaTransfersResponse = {
 };
 
 export type CreateSpeiInput = {
-    receiver_id: string;
+    customer_id: string;
     beneficiary_name: string;
     name: string;
     spei_clabe: string;
@@ -209,7 +209,7 @@ export type CreateSpeiResponse = {
 };
 
 export type CreateColombiaAchInput = {
-    receiver_id: string;
+    customer_id: string;
     name: string;
     account_type: BankAccountType;
     ach_cop_beneficiary_first_name: string;
@@ -237,7 +237,7 @@ export type CreateColombiaAchResponse = {
 };
 
 export type CreateAchInput = {
-    receiver_id: string;
+    customer_id: string;
     name: string;
     account_class: AccountClass;
     account_number: string;
@@ -284,7 +284,7 @@ export type CreateAchResponse = {
 };
 
 export type CreateWireInput = {
-    receiver_id: string;
+    customer_id: string;
     name: string;
     account_class: AccountClass;
     account_number: string;
@@ -322,7 +322,7 @@ export type CreateWireResponse = {
 };
 
 export type CreateInternationalSwiftInput = {
-    receiver_id: string;
+    customer_id: string;
     name: string;
     account_class: AccountClass;
     recipient_relationship: RecipientRelationship;
@@ -391,7 +391,7 @@ export type CreateInternationalSwiftResponse = {
 };
 
 export type CreateRtpInput = {
-    receiver_id: string;
+    customer_id: string;
     name: string;
     account_class: AccountClass;
     beneficiary_name: string;
@@ -429,7 +429,7 @@ export type CreateRtpResponse = {
 };
 
 export type CreateSepaInput = {
-    receiver_id: string;
+    customer_id: string;
     name: string;
     account_class: AccountClass;
     sepa_iban: string;
@@ -462,7 +462,7 @@ export type CreateSepaResponse = {
 };
 
 export type CreateTedInput = {
-    receiver_id: string;
+    customer_id: string;
     name: string;
     beneficiary_name: string;
     ted_bank_code: string;
@@ -484,128 +484,128 @@ export type CreateTedResponse = {
 export function createBankAccountsResource(instanceId: string, client: InternalApiClient) {
     return {
         list({
-            receiver_id,
+            customer_id,
             ...params
         }: ListBankAccountsInput): Promise<BlindpayApiResponse<ListBankAccountsResponse>> {
             const queryParams = Object.keys(params).length
                 ? `?${new URLSearchParams(params as Record<string, string>)}`
                 : "";
             return client.get(
-                `/instances/${instanceId}/receivers/${receiver_id}/bank-accounts${queryParams}`
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts${queryParams}`
             );
         },
         get({
-            receiver_id,
+            customer_id,
             id,
         }: GetBankAccountInput): Promise<BlindpayApiResponse<GetBankAccountResponse>> {
             return client.get(
-                `/instances/${instanceId}/receivers/${receiver_id}/bank-accounts/${id}`
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${id}`
             );
         },
-        delete({ receiver_id, id }: DeleteBankAccountInput): Promise<BlindpayApiResponse<void>> {
+        delete({ customer_id, id }: DeleteBankAccountInput): Promise<BlindpayApiResponse<void>> {
             return client.delete(
-                `/instances/${instanceId}/receivers/${receiver_id}/bank-accounts/${id}`
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${id}`
             );
         },
         createPix({
-            receiver_id,
+            customer_id,
             ...data
         }: CreatePixInput): Promise<BlindpayApiResponse<CreatePixResponse>> {
-            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
                 type: "pix",
                 ...data,
             });
         },
         createPixSafe({
-            receiver_id,
+            customer_id,
             ...data
         }: CreatePixSafeInput): Promise<BlindpayApiResponse<CreatePixSafeResponse>> {
-            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
                 type: "pix_safe",
                 ...data,
             });
         },
         createArgentinaTransfers({
-            receiver_id,
+            customer_id,
             ...data
         }: CreateArgentinaTransfersInput): Promise<
             BlindpayApiResponse<CreateArgentinaTransfersResponse>
         > {
-            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
                 type: "transfers_bitso",
                 ...data,
             });
         },
         createSpei({
-            receiver_id,
+            customer_id,
             ...data
         }: CreateSpeiInput): Promise<BlindpayApiResponse<CreateSpeiResponse>> {
-            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
                 type: "spei_bitso",
                 ...data,
             });
         },
         createColombiaAch({
-            receiver_id,
+            customer_id,
             ...data
         }: CreateColombiaAchInput): Promise<BlindpayApiResponse<CreateColombiaAchResponse>> {
-            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
                 type: "ach_cop_bitso",
                 ...data,
             });
         },
         createAch({
-            receiver_id,
+            customer_id,
             ...data
         }: CreateAchInput): Promise<BlindpayApiResponse<CreateAchResponse>> {
-            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
                 type: "ach",
                 ...data,
             });
         },
         createWire({
-            receiver_id,
+            customer_id,
             ...data
         }: CreateWireInput): Promise<BlindpayApiResponse<CreateWireResponse>> {
-            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
                 type: "wire",
                 ...data,
             });
         },
         createInternationalSwift({
-            receiver_id,
+            customer_id,
             ...data
         }: CreateInternationalSwiftInput): Promise<
             BlindpayApiResponse<CreateInternationalSwiftResponse>
         > {
-            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
                 type: "international_swift",
                 ...data,
             });
         },
         createRtp({
-            receiver_id,
+            customer_id,
             ...data
         }: CreateRtpInput): Promise<BlindpayApiResponse<CreateRtpResponse>> {
-            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
                 type: "rtp",
                 ...data,
             });
         },
         createTed({
-            receiver_id,
+            customer_id,
             ...data
         }: CreateTedInput): Promise<BlindpayApiResponse<CreateTedResponse>> {
-            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
                 type: "ted",
                 ...data,
             });
         },
         createSepa({
-            receiver_id,
+            customer_id,
             ...data
         }: CreateSepaInput): Promise<BlindpayApiResponse<CreateSepaResponse>> {
-            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/bank-accounts`, {
+            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
                 type: "sepa",
                 ...data,
             });

@@ -11,7 +11,7 @@ export type CustodialWallet = {
 };
 
 export type CreateCustodialWalletInput = {
-    receiver_id: string;
+    customer_id: string;
     name: string;
     network: Network;
     external_id?: string | null;
@@ -24,7 +24,7 @@ export type ListCustodialWalletsInput = string;
 export type ListCustodialWalletsResponse = CustodialWallet[];
 
 export type GetCustodialWalletInput = {
-    receiver_id: string;
+    customer_id: string;
     id: string;
 };
 
@@ -38,7 +38,7 @@ export type WalletTokenBalance = {
 };
 
 export type GetCustodialWalletBalanceInput = {
-    receiver_id: string;
+    customer_id: string;
     id: string;
 };
 
@@ -49,46 +49,46 @@ export type GetCustodialWalletBalanceResponse = {
 };
 
 export type DeleteCustodialWalletInput = {
-    receiver_id: string;
+    customer_id: string;
     id: string;
 };
 
 export function createCustodialWalletsResource(instanceId: string, client: InternalApiClient) {
     return {
         list(
-            receiver_id: ListCustodialWalletsInput
+            customer_id: ListCustodialWalletsInput
         ): Promise<BlindpayApiResponse<ListCustodialWalletsResponse>> {
-            return client.get(`/instances/${instanceId}/receivers/${receiver_id}/wallets`);
+            return client.get(`/instances/${instanceId}/customers/${customer_id}/wallets`);
         },
         get({
-            receiver_id,
+            customer_id,
             id,
         }: GetCustodialWalletInput): Promise<BlindpayApiResponse<GetCustodialWalletResponse>> {
-            return client.get(`/instances/${instanceId}/receivers/${receiver_id}/wallets/${id}`);
+            return client.get(`/instances/${instanceId}/customers/${customer_id}/wallets/${id}`);
         },
         create({
-            receiver_id,
+            customer_id,
             ...data
         }: CreateCustodialWalletInput): Promise<
             BlindpayApiResponse<CreateCustodialWalletResponse>
         > {
-            return client.post(`/instances/${instanceId}/receivers/${receiver_id}/wallets`, data);
+            return client.post(`/instances/${instanceId}/customers/${customer_id}/wallets`, data);
         },
         getBalance({
-            receiver_id,
+            customer_id,
             id,
         }: GetCustodialWalletBalanceInput): Promise<
             BlindpayApiResponse<GetCustodialWalletBalanceResponse>
         > {
             return client.get(
-                `/instances/${instanceId}/receivers/${receiver_id}/wallets/${id}/balance`
+                `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/balance`
             );
         },
         delete({
-            receiver_id,
+            customer_id,
             id,
         }: DeleteCustodialWalletInput): Promise<BlindpayApiResponse<{ success: boolean }>> {
-            return client.delete(`/instances/${instanceId}/receivers/${receiver_id}/wallets/${id}`);
+            return client.delete(`/instances/${instanceId}/customers/${customer_id}/wallets/${id}`);
         },
     };
 }

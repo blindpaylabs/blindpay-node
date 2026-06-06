@@ -14,7 +14,6 @@ import { createPayinsResource } from "./resources/payins";
 import { createPayinQuotesResource } from "./resources/payins/quotes";
 import { createPayoutsResource } from "./resources/payouts";
 import { createQuotesResource } from "./resources/quotes";
-import { createReceiversResource } from "./resources/receivers";
 import { createTermsOfServiceResource } from "./resources/terms-of-service";
 import { createTransfersResource } from "./resources/transfers";
 import { createUploadResource } from "./resources/upload";
@@ -45,15 +44,6 @@ export class BlindPay {
     readonly upload: ReturnType<typeof createUploadResource>;
     readonly virtualAccounts: ReturnType<typeof createVirtualAccountsResource>;
     readonly customers: ReturnType<typeof createCustomersResource> & {
-        bankAccounts: ReturnType<typeof createBankAccountsResource>;
-    };
-    /**
-     * @deprecated Use `customers` instead. The `/receivers` API surface is
-     * being renamed to `/customers` and will be removed in v4.0.0. See the
-     * migration changelog for details:
-     * https://www.blindpay.com/changelog/2026-06-04-customers-rename
-     */
-    readonly receivers: ReturnType<typeof createReceiversResource> & {
         bankAccounts: ReturnType<typeof createBankAccountsResource>;
     };
     readonly instances: ReturnType<typeof createInstancesResource> & {
@@ -131,11 +121,6 @@ export class BlindPay {
 
         this.customers = {
             ...createCustomersResource(this.instanceId, this.api),
-            bankAccounts: createBankAccountsResource(this.instanceId, this.api),
-        };
-
-        this.receivers = {
-            ...createReceiversResource(this.instanceId, this.api),
             bankAccounts: createBankAccountsResource(this.instanceId, this.api),
         };
 

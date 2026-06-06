@@ -16,30 +16,30 @@ export type ListBlockchainWalletsResponse = Array<{
     address?: string;
     signature_tx_hash?: string;
     is_account_abstraction: boolean;
-    receiver_id: string;
+    customer_id: string;
 }>;
 
 export type CreateBlockchainWalletWithAddressInput = {
-    receiver_id: string;
+    customer_id: string;
     name: string;
     network: Network;
     address: string;
 };
 
 export type CreateBlockchainWalletWithHashInput = {
-    receiver_id: string;
+    customer_id: string;
     name: string;
     network: Network;
     signature_tx_hash: string;
 };
 
 export type GetBlockchainWalletInput = {
-    receiver_id: string;
+    customer_id: string;
     id: string;
 };
 
 export type DeleteBlockchainWalletInput = {
-    receiver_id: string;
+    customer_id: string;
     id: string;
 };
 
@@ -50,7 +50,7 @@ export type GetBlockchainWalletResponse = {
     address?: string;
     signature_tx_hash?: string;
     is_account_abstraction: boolean;
-    receiver_id: string;
+    customer_id: string;
 };
 
 export type CreateBlockchainWalletResponse = {
@@ -60,7 +60,7 @@ export type CreateBlockchainWalletResponse = {
     address?: string;
     signature_tx_hash?: string;
     is_account_abstraction: boolean;
-    receiver_id: string;
+    customer_id: string;
 };
 
 export type CreateAssetTrustlineInput = string;
@@ -100,20 +100,20 @@ export type MintUsdbSolanaResponse = {
 export function createBlockchainWalletsResource(instanceId: string, client: InternalApiClient) {
     return {
         list(
-            receiver_id: ListBlockchainWalletsInput
+            customer_id: ListBlockchainWalletsInput
         ): Promise<BlindpayApiResponse<ListBlockchainWalletsResponse>> {
             return client.get(
-                `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets`
+                `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets`
             );
         },
         createWithAddress({
-            receiver_id,
+            customer_id,
             ...data
         }: CreateBlockchainWalletWithAddressInput): Promise<
             BlindpayApiResponse<CreateBlockchainWalletResponse>
         > {
             return client.post(
-                `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets`,
+                `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets`,
                 {
                     ...data,
                     is_account_abstraction: true,
@@ -121,13 +121,13 @@ export function createBlockchainWalletsResource(instanceId: string, client: Inte
             );
         },
         createWithHash({
-            receiver_id,
+            customer_id,
             ...data
         }: CreateBlockchainWalletWithHashInput): Promise<
             BlindpayApiResponse<CreateBlockchainWalletResponse>
         > {
             return client.post(
-                `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets`,
+                `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets`,
                 {
                     ...data,
                     is_account_abstraction: false,
@@ -135,26 +135,26 @@ export function createBlockchainWalletsResource(instanceId: string, client: Inte
             );
         },
         getWalletMessage(
-            receiver_id: GetBlockchainWalletMessage
+            customer_id: GetBlockchainWalletMessage
         ): Promise<BlindpayApiResponse<GetBlockchainWalletMessageResponse>> {
             return client.get(
-                `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets/sign-message`
+                `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets/sign-message`
             );
         },
         get({
-            receiver_id,
+            customer_id,
             id,
         }: GetBlockchainWalletInput): Promise<BlindpayApiResponse<GetBlockchainWalletResponse>> {
             return client.get(
-                `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets/${id}`
+                `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets/${id}`
             );
         },
         delete({
-            receiver_id,
+            customer_id,
             id,
         }: DeleteBlockchainWalletInput): Promise<BlindpayApiResponse<void>> {
             return client.delete(
-                `/instances/${instanceId}/receivers/${receiver_id}/blockchain-wallets/${id}`
+                `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets/${id}`
             );
         },
         createAssetTrustline(

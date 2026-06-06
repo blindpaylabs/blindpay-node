@@ -13,7 +13,7 @@ describe("Offramp wallets", () => {
                     id: "ow_000000000000",
                     external_id: "your_external_id",
                     instance_id: "in_000000000000",
-                    receiver_id: "re_000000000000",
+                    customer_id: "re_000000000000",
                     bank_account_id: "ba_000000000000",
                     network: "tron",
                     address: "TALJN9zTTEL9TVBb4WuTt6wLvPqJZr3hvb",
@@ -27,7 +27,7 @@ describe("Offramp wallets", () => {
             });
 
             const { data, error } = await blindpay.wallets.offramp.list({
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 bank_account_id: "ba_000000000000",
             });
 
@@ -52,7 +52,7 @@ describe("Offramp wallets", () => {
             const { data, error } = await blindpay.wallets.offramp.create({
                 external_id: "your_external_id",
                 network: "tron",
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 bank_account_id: "ba_000000000000",
             });
 
@@ -76,7 +76,7 @@ describe("Offramp wallets", () => {
 
             const { data, error } = await blindpay.wallets.offramp.create({
                 network: "solana",
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 bank_account_id: "ba_000000000000",
             });
 
@@ -91,7 +91,7 @@ describe("Offramp wallets", () => {
                 id: "ow_000000000000",
                 external_id: "your_external_id",
                 instance_id: "in_000000000000",
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 bank_account_id: "ba_000000000000",
                 network: "tron",
                 address: "TALJN9zTTEL9TVBb4WuTt6wLvPqJZr3hvb",
@@ -106,7 +106,7 @@ describe("Offramp wallets", () => {
             const { data, error } = await blindpay.wallets.offramp.get({
                 id: "ow_000000000000",
                 bank_account_id: "ba_000000000000",
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
             });
 
             expect(error).toBeNull();
