@@ -31,7 +31,7 @@ describe("Custodial Wallets", () => {
             });
 
             const { data, error } = await blindpay.wallets.custodial.create({
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 name: "Main Wallet",
                 network: "polygon",
             });
@@ -65,7 +65,7 @@ describe("Custodial Wallets", () => {
             });
 
             const { data, error } = await blindpay.wallets.custodial.get({
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 id: "wa_000000000000",
             });
 
@@ -102,7 +102,7 @@ describe("Custodial Wallets", () => {
             });
 
             const { data, error } = await blindpay.wallets.custodial.getBalance({
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 id: "wa_000000000000",
             });
 
@@ -118,7 +118,7 @@ describe("Custodial Wallets", () => {
             });
 
             const { data, error } = await blindpay.wallets.custodial.delete({
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 id: "wa_000000000000",
             });
 
