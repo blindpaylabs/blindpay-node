@@ -2,10 +2,12 @@
 "@blindpay/node": minor
 ---
 
-API sync updates - Added missing enum values and receiver fields
+Added new enum types and fields to match API updates:
 
-- Added new enum types to shared types: BusinessIndustry, AccountPurpose, BusinessType, EstimatedAnnualRevenue, SourceOfWealth, BankingPartner, SoleProprietorDocType, RecipientRelationship, PurposeOfTransactions, SourceOfFundsDocType, PaymentMethod
-- Added non-numeric BusinessIndustry values: dapp, exchange, gambling, gaming, infra, marketplace, neo_bank, other, saas, social, wallet
-- Added recipient_relationship and sole_proprietor_doc_type fields to receiver types and input types
-- Added require_passkey field to instance update input
-- Refactored receivers to use shared enum types instead of local duplicates
+- Added AipriseDocumentType enum with document type values
+- Added ManualExecutionStatus enum with "failed" status
+- Added WebhookEvent enum with "receiver.delete" event
+- Fixed EstimatedAnnualRevenue enum value (250000000_plus)
+- Added cpn_payment_id and sender_legal_name fields to Payin type
+- Added sender_legal_name field to Payout type
+- Fixed billing_fee_amount type in Payin (number instead of string)

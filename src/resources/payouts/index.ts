@@ -88,6 +88,7 @@ export type Payout = {
     has_virtual_account: boolean;
     billing_fee_amount?: number | null;
     cpn_payment_id?: string | null;
+    sender_legal_name?: string | null;
     jpm_track_data?: Record<string, unknown> | string | null;
     ted_bank_code?: string | null;
     ted_branch_code?: string | null;
