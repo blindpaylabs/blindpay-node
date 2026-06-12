@@ -539,7 +539,7 @@ export type EstimatedAnnualRevenue =
     | "1000000_9999999"
     | "10000000_49999999"
     | "50000000_249999999"
-    | "2500000000_plus";
+    | "250000000_plus";
 
 export type SourceOfWealth =
     | "business_dividends_or_profits"
@@ -656,3 +656,16 @@ export type PayoutTrackingPartnerFee = {
   }
 
 export type KycStatus = "awaiting_contract" | "compliance_request" | "verifying" | "approved" | "rejected" | "deprecated" | "pending_review";
+
+export type AipriseDocumentType =
+    | "ADDRESS_PROOF_DOCUMENT"
+    | "BANK_STATEMENT_DOCUMENT"
+    | "OTHER"
+    | "SOURCE_OF_FUNDS_DOCUMENT"
+    | "TAX_CERTIFICATE"
+    | "USER_SELFIE"
+    | "VISA_DOCUMENT";
+
+export type ManualExecutionStatus = "failed";
+
+export type WebhookEvent = "receiver.delete";
