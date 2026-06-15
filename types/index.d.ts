@@ -656,3 +656,18 @@ export type PayoutTrackingPartnerFee = {
   }
 
 export type KycStatus = "awaiting_contract" | "compliance_request" | "verifying" | "approved" | "rejected" | "deprecated" | "pending_review";
+
+export type AipriseDocumentType =
+    | "ADDRESS_PROOF_DOCUMENT"
+    | "BANK_STATEMENT_DOCUMENT"
+    | "OTHER"
+    | "SOURCE_OF_FUNDS_DOCUMENT"
+    | "TAX_CERTIFICATE"
+    | "USER_SELFIE"
+    | "VISA_DOCUMENT";
+
+export type ApprovalRate = "high" | "low" | "medium";
+
+export type ManualExecutionStatus = "failed";
+
+export type WebhookEvent = "receiver.delete";
