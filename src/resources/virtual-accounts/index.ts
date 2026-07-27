@@ -55,7 +55,6 @@ export type CreateVirtualAccountInput = {
     banking_partner: BankingPartner;
     token: StablecoinToken;
     blockchain_wallet_id: string;
-    signed_agreement_id?: string | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
     sole_proprietor_doc_file?: string | null;
 };

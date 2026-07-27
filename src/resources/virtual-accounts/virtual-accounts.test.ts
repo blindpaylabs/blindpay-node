@@ -201,7 +201,6 @@ describe("Virtual accounts", () => {
                 banking_partner: "jpmorgan",
                 blockchain_wallet_id: "bw_000000000000",
                 token: "USDC",
-                signed_agreement_id: "123e4567-e89b-12d3-a456-426614174000",
             });
 
             expect(error).toBeNull();
