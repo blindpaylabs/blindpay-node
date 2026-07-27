@@ -73,7 +73,7 @@ export type Owner = {
     title: string | null;
     tax_type?: OwnerTaxType | null;
     instance_id?: string;
-    customer_id?: string;
+    receiver_id?: string;
 };
 
 export type IndividualWithStandardKYC = {
@@ -485,7 +485,7 @@ export type LimitIncreaseRequestSupportingDocumentType =
 
 export type GetLimitIncreaseRequestsResponse = Array<{
     id: string;
-    customer_id: string;
+    receiver_id: string;
     status: LimitIncreaseRequestStatus;
     daily: number;
     monthly: number;

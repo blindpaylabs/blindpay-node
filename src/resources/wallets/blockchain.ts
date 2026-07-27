@@ -16,7 +16,7 @@ export type ListBlockchainWalletsResponse = Array<{
     address?: string;
     signature_tx_hash?: string;
     is_account_abstraction: boolean;
-    customer_id: string;
+    receiver_id: string;
 }>;
 
 export type CreateBlockchainWalletWithAddressInput = {
@@ -50,7 +50,7 @@ export type GetBlockchainWalletResponse = {
     address?: string;
     signature_tx_hash?: string;
     is_account_abstraction: boolean;
-    customer_id: string;
+    receiver_id: string;
 };
 
 export type CreateBlockchainWalletResponse = {
@@ -60,7 +60,7 @@ export type CreateBlockchainWalletResponse = {
     address?: string;
     signature_tx_hash?: string;
     is_account_abstraction: boolean;
-    customer_id: string;
+    receiver_id: string;
 };
 
 export type CreateAssetTrustlineInput = string;
