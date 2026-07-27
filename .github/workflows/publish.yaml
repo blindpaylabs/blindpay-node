@@ -19,7 +19,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
         with:
-          ref: ${{ github.head_ref }}
           fetch-depth: 0
 
       - name: Setup Bun
@@ -33,11 +32,42 @@ jobs:
           node-version: 24
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Resolve version
+        id: version
+        run: echo "value=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      # This runs on every push to main, so skip an unchanged version instead of
+      # failing the run on "cannot publish over the previously published version".
+      - name: Check whether version is already published
+        id: published
+        run: |
+          if npm view "@blindpay/node@${{ steps.version.outputs.value }}" version >/dev/null 2>&1; then
+            echo "value=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Install dependencies
+        if: steps.published.outputs.value == 'false'
         run: bun install --frozen-lockfile
 
       - name: Build package
+        if: steps.published.outputs.value == 'false'
         run: bun run build
 
+      # Auth comes from npm trusted publishing (OIDC), enabled by id-token: write.
+      # Do not add NODE_AUTH_TOKEN: it writes an _authToken into .npmrc, which
+      # takes precedence over the OIDC exchange and fails with E404.
       - name: Publish package
+        if: steps.published.outputs.value == 'false'
         run: npm publish
+
+      - name: Tag and create release
+        if: steps.published.outputs.value == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="v${{ steps.version.outputs.value }}"
+          git tag "$TAG"
+          git push origin "$TAG"
+          gh release create "$TAG" --title "$TAG" --generate-notes
