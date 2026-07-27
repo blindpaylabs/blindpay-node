@@ -40,7 +40,7 @@ describe("Blockchain wallets", () => {
                     address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
                     signature_tx_hash: "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
                     is_account_abstraction: false,
-                    receiver_id: "re_000000000000",
+                    customer_id: "re_000000000000",
                 },
             ];
 
@@ -64,7 +64,7 @@ describe("Blockchain wallets", () => {
                 address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
                 signature_tx_hash: undefined,
                 is_account_abstraction: true,
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
             };
 
             fetchMock.mockResponseOnce(JSON.stringify(mockedWallet), {
@@ -92,7 +92,7 @@ describe("Blockchain wallets", () => {
                 address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
                 signature_tx_hash: "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
                 is_account_abstraction: false,
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
             };
 
             fetchMock.mockResponseOnce(JSON.stringify(mockedWallet), {
@@ -120,7 +120,7 @@ describe("Blockchain wallets", () => {
                 address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
                 signature_tx_hash: "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
                 is_account_abstraction: false,
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
             };
 
             fetchMock.mockResponseOnce(JSON.stringify(mockedWallet), {

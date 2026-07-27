@@ -18,7 +18,7 @@ export type OfframpWallet = {
     id: string;
     external_id: string;
     instance_id: string;
-    receiver_id: string;
+    customer_id: string;
     bank_account_id: string;
     network: OfframpWalletNetwork;
     address: string;
