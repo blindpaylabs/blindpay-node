@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "../../client";
+import type { OfframpWallet } from "./offramp";
 
 describe("Offramp wallets", () => {
     afterEach(() => fetchMock.resetMocks());
@@ -8,12 +9,12 @@ describe("Offramp wallets", () => {
 
     describe("List offramp wallets", () => {
         it("should list offramp wallets", async () => {
-            const mockedOfframpWallets = [
+            const mockedOfframpWallets: OfframpWallet[] = [
                 {
                     id: "ow_000000000000",
                     external_id: "your_external_id",
                     instance_id: "in_000000000000",
-                    customer_id: "re_000000000000",
+                    receiver_id: "re_000000000000",
                     bank_account_id: "ba_000000000000",
                     network: "tron",
                     address: "TALJN9zTTEL9TVBb4WuTt6wLvPqJZr3hvb",
@@ -87,11 +88,11 @@ describe("Offramp wallets", () => {
 
     describe("Get offramp wallet", () => {
         it("should get an offramp wallet", async () => {
-            const mockedOfframpWallet = {
+            const mockedOfframpWallet: OfframpWallet = {
                 id: "ow_000000000000",
                 external_id: "your_external_id",
                 instance_id: "in_000000000000",
-                customer_id: "re_000000000000",
+                receiver_id: "re_000000000000",
                 bank_account_id: "ba_000000000000",
                 network: "tron",
                 address: "TALJN9zTTEL9TVBb4WuTt6wLvPqJZr3hvb",

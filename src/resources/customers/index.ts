@@ -73,7 +73,7 @@ export type Owner = {
     title: string | null;
     tax_type?: OwnerTaxType | null;
     instance_id?: string;
-    customer_id?: string;
+    receiver_id?: string;
 };
 
 export type IndividualWithStandardKYC = {
@@ -485,7 +485,7 @@ export type LimitIncreaseRequestSupportingDocumentType =
 
 export type GetLimitIncreaseRequestsResponse = Array<{
     id: string;
-    customer_id: string;
+    receiver_id: string;
     status: LimitIncreaseRequestStatus;
     daily: number;
     monthly: number;
@@ -515,19 +515,7 @@ export type RequestLimitIncreaseResponse = {
 export function createCustomersResource(instanceId: string, client: InternalApiClient) {
     return {
         list(params?: ListCustomersInput): Promise<BlindpayApiResponse<ListCustomersResponse>> {
-            // The API's filter schema still uses receiver_id/receiver_name. Translate
-            // customer_* inputs to the wire-level names so consumers see a clean
-            // customer-only surface. Drop this mapping once the API accepts customer_*.
-            const wireParams = params
-                ? Object.fromEntries(
-                      Object.entries(params).map(([k, v]) => {
-                          if (k === "customer_id") return ["receiver_id", v];
-                          if (k === "customer_name") return ["receiver_name", v];
-                          return [k, v];
-                      })
-                  )
-                : undefined;
-            const queryParams = wireParams ? `?${new URLSearchParams(wireParams)}` : "";
+            const queryParams = params ? `?${new URLSearchParams(params)}` : "";
             return client.get(`/instances/${instanceId}/customers${queryParams}`);
         },
         createIndividualWithStandardKYC(

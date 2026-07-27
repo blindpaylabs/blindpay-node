@@ -577,7 +577,7 @@ describe("Customers", () => {
             const mockedLimitIncreaseRequests: GetLimitIncreaseRequestsResponse = [
                 {
                     id: "rl_000000000000",
-                    customer_id: "re_YuaMcI2B8zbQ",
+                    receiver_id: "re_YuaMcI2B8zbQ",
                     status: "in_review",
                     daily: 50000,
                     monthly: 250000,
@@ -589,7 +589,7 @@ describe("Customers", () => {
                 },
                 {
                     id: "rl_000000000000",
-                    customer_id: "re_YuaMcI2B8zbQ",
+                    receiver_id: "re_YuaMcI2B8zbQ",
                     status: "approved",
                     daily: 30000,
                     monthly: 150000,
@@ -618,7 +618,7 @@ describe("Customers", () => {
             const mockedLimitIncreaseRequests: GetLimitIncreaseRequestsResponse = [
                 {
                     id: "rl_000000000000",
-                    customer_id: "re_YuaMcI2B8zbQ",
+                    receiver_id: "re_YuaMcI2B8zbQ",
                     status: "approved",
                     daily: 50000,
                     monthly: 250000,

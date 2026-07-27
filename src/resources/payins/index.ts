@@ -99,6 +99,7 @@ export type Payin = {
 export type ListPayinsInput = PaginationParams & {
     status?: TransactionStatus;
     receiver_id?: string;
+    customer_id?: string;
 };
 
 export type ListPayinsResponse =

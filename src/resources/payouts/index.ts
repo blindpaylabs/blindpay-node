@@ -96,6 +96,7 @@ export type Payout = {
 
 export type ListPayoutsInput = PaginationParams & {
     receiver_id?: string;
+    customer_id?: string;
 };
 
 export type ListPayoutsResponse = {

@@ -71,8 +71,8 @@ All types are defined in the same file as the factory function, above it. Naming
 | Create response | `CreatePartnerFeeResponse` |
 | Get input | `GetPayinInput` |
 | Get response | `GetPayinResponse` |
-| Update input | `UpdateReceiverInput` |
-| Delete input | `DeleteReceiverInput` |
+| Update input | `UpdateCustomerInput` |
+| Delete input | `DeleteCustomerInput` |
 | String-only IDs | `export type GetPayinInput = string;` |
 | Object inputs | `export type CreatePayoutInput = { ... };` |
 
@@ -724,18 +724,18 @@ update({ widget_id, ...data }: UpdateWidgetInput): Promise<BlindpayApiResponse<v
 3. **Nested resource IDs**: all IDs come from the input object.
 ```typescript
 export type GetOfframpWalletInput = {
-    receiver_id: string;
+    customer_id: string;
     bank_account_id: string;
     id: string;
 };
 
 get({
-    receiver_id,
+    customer_id,
     bank_account_id,
     id,
 }: GetOfframpWalletInput): Promise<BlindpayApiResponse<GetOfframpWalletResponse>> {
     return client.get(
-        `/instances/${instanceId}/receivers/${receiver_id}/bank-accounts/${bank_account_id}/offramp-wallets/${id}`
+        `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets/${id}`
     );
 },
 ```
@@ -758,7 +758,7 @@ When one endpoint creates different variants based on a `type` field, create sep
 createIndividualWithStandardKYC(
     data: CreateIndividualWithStandardKYCInput
 ): Promise<BlindpayApiResponse<CreateIndividualWithStandardKYCResponse>> {
-    return client.post(`/instances/${instanceId}/receivers`, {
+    return client.post(`/instances/${instanceId}/customers`, {
         kyc_type: "standard",
         type: "individual",
         ...data,
