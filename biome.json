@@ -7,7 +7,14 @@
     },
     "files": {
         "ignoreUnknown": false,
-        "includes": ["**", "!**/node_modules", "!**/dist", "!**/build", "!**/*.d.ts"]
+        "includes": [
+            "**",
+            "!**/node_modules",
+            "!**/dist",
+            "!**/build",
+            "!**/*.d.ts",
+            "!.api-sync/spec-snapshot.json"
+        ]
     },
     "formatter": {
         "enabled": true,

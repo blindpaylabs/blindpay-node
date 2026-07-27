@@ -2,8 +2,6 @@ import type { BlindpayApiResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type WebhookEvents =
-    | "receiver.new" // @deprecated use "customer.new" instead
-    | "receiver.update" // @deprecated use "customer.update" instead
     | "bankAccount.new"
     | "payout.new"
     | "payout.update"
@@ -24,7 +22,6 @@ export type WebhookEvents =
     | "transfer.complete"
     | "wallet.new"
     | "wallet.inbound"
-    | "receiver.delete" // @deprecated use "customer.delete" instead
     | "customer.new"
     | "customer.update"
     | "customer.delete";

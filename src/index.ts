@@ -1,5 +1,4 @@
 export * from "./client";
-export * from "./resources/api-keys";
 export * from "./resources/available";
 export * from "./resources/bank-accounts";
 export * from "./resources/customers";

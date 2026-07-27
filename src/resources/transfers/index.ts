@@ -44,11 +44,11 @@ export type Transfer = {
     sender_token: StablecoinToken;
     sender_amount: number;
     receiver_amount: number;
-    receiver_network: Network;
-    receiver_token: StablecoinToken;
-    receiver_wallet_address: string;
+    customer_network: Network;
+    customer_token: StablecoinToken;
+    customer_wallet_address: string;
     partner_fee_amount: number | null;
-    receiver_id: string;
+    customer_id: string;
     address: string;
     network: Network;
 };
@@ -56,9 +56,9 @@ export type Transfer = {
 export type CreateTransferQuoteInput = {
     wallet_id: string;
     sender_token: StablecoinToken;
-    receiver_wallet_address: string;
-    receiver_token: StablecoinToken;
-    receiver_network: Network;
+    customer_wallet_address: string;
+    customer_token: StablecoinToken;
+    customer_network: Network;
     request_amount: number;
     cover_fees?: boolean | null;
     amount_reference: "sender" | "receiver";

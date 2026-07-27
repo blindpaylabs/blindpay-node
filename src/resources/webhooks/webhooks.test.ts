@@ -18,7 +18,7 @@ describe("Webhooks", () => {
 
             const { data, error } = await blindpay.instances.webhookEndpoints.create({
                 url: "https://example.com/webhook",
-                events: ["receiver.new"],
+                events: ["customer.new"],
             });
 
             expect(error).toBeNull();
@@ -32,7 +32,7 @@ describe("Webhooks", () => {
                 {
                     id: "we_000000000000",
                     url: "https://example.com/webhook",
-                    events: ["receiver.new"],
+                    events: ["customer.new"],
                     last_event_at: "2024-01-01T00:00:00.000Z",
                     instance_id: "in_000000000000",
                     created_at: "2021-01-01T00:00:00Z",

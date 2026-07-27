@@ -17,7 +17,7 @@ describe("Payins", () => {
             const mockedPayins: ListPayinsResponse = {
                 data: [
                     {
-                        receiver_id: "re_000000000000",
+                        customer_id: "re_000000000000",
                         id: "re_000000000000",
                         pix_code:
                             "00020101021226790014br.gov.bcb.pix2557brcode.starkinfra.com/v2/bcf07f6c4110454e9fd6f120bab13e835204000053039865802BR5915Blind Pay, Inc.6010Vila Velha62070503***6304BCAB",
@@ -140,7 +140,7 @@ describe("Payins", () => {
     describe("Get payin", () => {
         it("should get a payin", async () => {
             const mockedPayin: GetPayinResponse = {
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 id: "re_000000000000",
                 pix_code:
                     "00020101021226790014br.gov.bcb.pix2557brcode.starkinfra.com/v2/bcf07f6c4110454e9fd6f120bab13e835204000053039865802BR5915Blind Pay, Inc.6010Vila Velha62070503***6304BCAB",
@@ -256,7 +256,7 @@ describe("Payins", () => {
     describe("Get payin track", () => {
         it("should get payin tracking information", async () => {
             const mockedPayinTrack: GetPayinTrackResponse = {
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 id: "re_000000000000",
                 pix_code:
                     "00020101021226790014br.gov.bcb.pix2557brcode.starkinfra.com/v2/bcf07f6c4110454e9fd6f120bab13e835204000053039865802BR5915Blind Pay, Inc.6010Vila Velha62070503***6304BCAB",
@@ -449,7 +449,7 @@ describe("Payins", () => {
                         address_line_2: "San Francisco, CA 94129",
                     },
                 },
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 receiver_amount: 1010,
             };
 

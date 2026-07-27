@@ -22,7 +22,7 @@ import type { InternalApiClient } from "../../internal/api-client";
 export type SpeiProtocol = "clabe" | "debitcard" | "phonenum";
 
 export type Payout = {
-    receiver_id: string;
+    customer_id: string;
     id: string;
     status: TransactionStatus;
     sender_wallet_address: string;
@@ -50,7 +50,7 @@ export type Payout = {
     commercial_quotation: number;
     blindpay_quotation: number;
     total_fee_amount: number;
-    receiver_local_amount: number;
+    customer_local_amount: number;
     currency: Exclude<Currency, "USDB" | "USDC" | "USDT">;
     transaction_document_file: string;
     transaction_document_type: TransactionDocumentType;
@@ -95,7 +95,6 @@ export type Payout = {
 };
 
 export type ListPayoutsInput = PaginationParams & {
-    receiver_id?: string;
     customer_id?: string;
 };
 
@@ -105,7 +104,7 @@ export type ListPayoutsResponse = {
 };
 
 export type CreatePayoutInput = {
-    receiver_id: string;
+    customer_id: string;
     bank_account_id: string;
     amount: number;
     currency: Currency;
@@ -159,7 +158,7 @@ export type CreateStellarPayoutResponse = {
     tracking_transaction?: PayoutTrackingTransaction;
     tracking_partner_fee?: PayoutTrackingPartnerFee;
     tracking_liquidity?: PayoutTrackingLiquidity;
-    receiver_id: string;
+    customer_id: string;
 };
 
 export type CreateEvmPayoutInput = {
@@ -176,7 +175,7 @@ export type CreateEvmPayoutResponse = {
     tracking_transaction?: PayoutTrackingTransaction;
     tracking_partner_fee?: PayoutTrackingPartnerFee;
     tracking_liquidity?: PayoutTrackingLiquidity;
-    receiver_id: string;
+    customer_id: string;
 };
 
 export type CreateSolanaPayoutInput = {
@@ -194,7 +193,7 @@ export type CreateSolanaPayoutResponse = {
     tracking_transaction: PayoutTrackingTransaction;
     tracking_partner_fee?: PayoutTrackingPartnerFee | null;
     tracking_liquidity?: PayoutTrackingLiquidity | null;
-    receiver_id: string | null;
+    customer_id: string | null;
 };
 
 export function createPayoutsResource(instanceId: string, client: InternalApiClient) {

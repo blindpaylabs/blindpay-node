@@ -21,7 +21,7 @@ describe("Payouts", () => {
             const mockedPayouts: ListPayoutsResponse = {
                 data: [
                     {
-                        receiver_id: "re_000000000000",
+                        customer_id: "re_000000000000",
                         id: "pa_000000000000",
                         status: "processing",
                         sender_wallet_address: "0x123...890",
@@ -81,7 +81,7 @@ describe("Payouts", () => {
                         commercial_quotation: 495,
                         blindpay_quotation: 485,
                         total_fee_amount: 1.5,
-                        receiver_local_amount: 1000,
+                        customer_local_amount: 1000,
                         currency: "BRL",
                         transaction_document_file: "https://example.com/image.png",
                         transaction_document_type: "invoice",
@@ -140,7 +140,7 @@ describe("Payouts", () => {
     describe("Get payout", () => {
         it("should get a payout", async () => {
             const mockedPayout: GetPayoutResponse = {
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 id: "pa_000000000000",
                 status: "processing",
                 sender_wallet_address: "0x123...890",
@@ -200,7 +200,7 @@ describe("Payouts", () => {
                 commercial_quotation: 495,
                 blindpay_quotation: 485,
                 total_fee_amount: 1.5,
-                receiver_local_amount: 1000,
+                customer_local_amount: 1000,
                 currency: "BRL",
                 transaction_document_file: "https://example.com/image.png",
                 transaction_document_type: "invoice",
@@ -252,7 +252,7 @@ describe("Payouts", () => {
     describe("Get payout track", () => {
         it("should get payout tracking information", async () => {
             const mockedPayoutTrack: GetPayoutTrackResponse = {
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
                 id: "pa_000000000000",
                 status: "processing",
                 sender_wallet_address: "0x123...890",
@@ -312,7 +312,7 @@ describe("Payouts", () => {
                 commercial_quotation: 495,
                 blindpay_quotation: 485,
                 total_fee_amount: 1.5,
-                receiver_local_amount: 1000,
+                customer_local_amount: 1000,
                 currency: "BRL",
                 transaction_document_file: "https://example.com/image.png",
                 transaction_document_type: "invoice",
@@ -425,7 +425,7 @@ describe("Payouts", () => {
                     estimated_time_of_arrival: "1_business_day",
                     completed_at: "2011-10-05T14:48:00.000Z",
                 },
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
             };
 
             fetchMock.mockResponseOnce(JSON.stringify(mockedStellarPayout), {
@@ -486,7 +486,7 @@ describe("Payouts", () => {
                     estimated_time_of_arrival: "1_business_day",
                     completed_at: "2011-10-05T14:48:00.000Z",
                 },
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
             };
 
             fetchMock.mockResponseOnce(JSON.stringify(mockedEvmPayout), {
@@ -547,7 +547,7 @@ describe("Payouts", () => {
                     estimated_time_of_arrival: "1_business_day",
                     completed_at: "2011-10-05T14:48:00.000Z",
                 },
-                receiver_id: "re_000000000000",
+                customer_id: "re_000000000000",
             };
 
             fetchMock.mockResponseOnce(JSON.stringify(mockedSolanaPayout), {
