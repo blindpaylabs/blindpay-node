@@ -37,7 +37,7 @@ export type CreateQuoteResponse = {
             chainId: number;
         };
     } | null;
-    receiver_local_amount?: number | null;
+    customer_local_amount?: number | null;
     description?: string | null;
 };
 

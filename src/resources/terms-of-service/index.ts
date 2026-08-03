@@ -3,7 +3,7 @@ import type { InternalApiClient } from "../../internal/api-client";
 
 export type InitiateInput = {
     idempotency_key: string;
-    receiver_id: string | null;
+    customer_id: string | null;
     redirect_url: string | null;
 };
 
@@ -15,12 +15,12 @@ export function createTermsOfServiceResource(instanceId: string, client: Interna
     return {
         initiate({
             idempotency_key,
-            receiver_id,
+            customer_id,
             redirect_url,
         }: InitiateInput): Promise<BlindpayApiResponse<InitiateResponse>> {
             return client.post(`/e/instances/${instanceId}/tos`, {
                 idempotency_key,
-                receiver_id,
+                customer_id,
                 redirect_url,
             });
         },

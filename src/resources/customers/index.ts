@@ -73,7 +73,6 @@ export type Owner = {
     title: string | null;
     tax_type?: OwnerTaxType | null;
     instance_id?: string;
-    receiver_id?: string;
     customer_id?: string;
 };
 

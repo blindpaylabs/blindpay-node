@@ -52,7 +52,7 @@ blindpay-node/
 
 ### File naming
 
-- Resource directories: kebab-case matching the API path segment (`partner-fees`, `api-keys`, `bank-accounts`).
+- Resource directories: kebab-case matching the API path segment (`partner-fees`, `virtual-accounts`, `bank-accounts`).
 - Single-file resources inside a directory: `index.ts`.
 - Grouped resources without their own parent: individual files (`wallets/blockchain.ts`, `wallets/custodial.ts`).
 - Sub-resource files: placed inside the parent resource directory (`payins/quotes.ts`).
@@ -386,7 +386,7 @@ Types like `Currency`, `Network`, `StablecoinToken`, `TransactionStatus`, `Pagin
 
 ## How to: Add a Sub-Resource
 
-A sub-resource is nested under a parent on the client (e.g., `blindpay.payins.quotes`, `blindpay.instances.apiKeys`).
+A sub-resource is nested under a parent on the client (e.g., `blindpay.payins.quotes`, `blindpay.instances.webhookEndpoints`).
 
 ### Step 1: Create the sub-resource file
 

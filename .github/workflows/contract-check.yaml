@@ -1,0 +1,16 @@
+name: Contract Check
+
+on:
+  workflow_call:
+
+jobs:
+  contract-check:
+    name: Verify wire contract against spec snapshot
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run contract check
+        run: node scripts/contract-check.mjs

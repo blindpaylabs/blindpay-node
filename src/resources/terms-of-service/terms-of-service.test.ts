@@ -19,7 +19,7 @@ describe("Terms of Service", () => {
 
             const { data, error } = await blindpay.instances.tos.initiate({
                 idempotency_key: "123e4567-e89b-12d3-a456-426614174000",
-                receiver_id: null,
+                customer_id: null,
                 redirect_url: null,
             });
 

@@ -54,7 +54,7 @@ export type BlindpayBankDetails = {
 
 export type Payin = {
     id: string;
-    receiver_id: string;
+    customer_id: string;
     pix_code?: string | null;
     memo_code?: string | null;
     clabe?: string | null;
@@ -98,7 +98,6 @@ export type Payin = {
 
 export type ListPayinsInput = PaginationParams & {
     status?: TransactionStatus;
-    receiver_id?: string;
     customer_id?: string;
 };
 
@@ -136,7 +135,7 @@ export type CreateEvmPayinResponse = Pick<
     | "tracking_partner_fee"
 > & {
     blindpay_bank_details: BlindpayBankDetails;
-    receiver_id?: string | null;
+    customer_id?: string | null;
     receiver_amount?: number | null;
     payment_method?: PayinPaymentMethod | null;
     billing_fee?: number | null;

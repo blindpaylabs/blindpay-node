@@ -3,7 +3,6 @@ import { version } from "../package.json";
 import type { BlindpayApiResponse } from "../types";
 import type { InternalApiClient } from "./internal/api-client";
 import { BlindPayError } from "./internal/blindpay-error";
-import { createApiKeysResource } from "./resources/api-keys";
 import { createAvailableResource } from "./resources/available";
 import { createBankAccountsResource } from "./resources/bank-accounts";
 import { createCustomersResource } from "./resources/customers";
@@ -47,7 +46,6 @@ export class BlindPay {
         bankAccounts: ReturnType<typeof createBankAccountsResource>;
     };
     readonly instances: ReturnType<typeof createInstancesResource> & {
-        apiKeys: ReturnType<typeof createApiKeysResource>;
         webhookEndpoints: ReturnType<typeof createWebhookEndpointsResource>;
         tos: ReturnType<typeof createTermsOfServiceResource>;
     };
@@ -97,7 +95,6 @@ export class BlindPay {
 
         this.instances = {
             ...createInstancesResource(this.instanceId, this.api),
-            apiKeys: createApiKeysResource(this.instanceId, this.api),
             webhookEndpoints: createWebhookEndpointsResource(this.instanceId, this.api),
             tos: createTermsOfServiceResource(this.instanceId, this.api),
         };

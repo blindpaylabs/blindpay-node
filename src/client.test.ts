@@ -9,7 +9,7 @@ describe("BlindPay client", () => {
     it("handles successful empty JSON responses", async () => {
         fetchMock.mockResponseOnce("", { status: 200 });
 
-        const { data, error } = await blindpay.instances.apiKeys.delete("ak_000000000000");
+        const { data, error } = await blindpay.instances.webhookEndpoints.delete("wh_000000000000");
 
         expect(error).toBeNull();
         expect(data).toBeNull();
