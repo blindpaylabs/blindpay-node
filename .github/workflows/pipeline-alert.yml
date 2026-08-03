@@ -1,0 +1,59 @@
+name: Pipeline Alert
+
+# Pages Slack when a release-critical workflow fails. A silent pipeline is how
+# publishing stayed broken for two and a half months, so a missing webhook
+# secret fails this job loudly instead of skipping.
+
+on:
+  workflow_run:
+    workflows: ["API Sync", "Publish", "Main"]
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  notify:
+    name: Notify Slack
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post to Slack
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          REPO: ${{ github.repository }}
+          IS_TEST: ${{ github.event_name == 'workflow_dispatch' }}
+          WF_NAME: ${{ github.event.workflow_run.name }}
+          WF_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          WF_URL: ${{ github.event.workflow_run.html_url }}
+          WF_ACTOR: ${{ github.event.workflow_run.actor.login }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then
+            echo "SLACK_WEBHOOK_URL is not set in this repository, so failures here reach nobody."
+            exit 1
+          fi
+
+          if [ "$IS_TEST" = "true" ]; then
+            HEADER=":white_check_mark: Pipeline alerting is wired up for $REPO"
+            DETAIL="Manual test ping. No workflow failed."
+            LINK="https://github.com/$REPO/actions"
+          else
+            HEADER=":rotating_light: $WF_NAME failed in $REPO"
+            DETAIL="Branch $WF_BRANCH, triggered by $WF_ACTOR."
+            LINK="$WF_URL"
+          fi
+
+          jq -n --arg header "$HEADER" --arg detail "$DETAIL" --arg link "$LINK" \
+            '{text: $header, blocks: [
+                {type: "section", text: {type: "mrkdwn", text: ("*" + $header + "*\n" + $detail)}},
+                {type: "section", text: {type: "mrkdwn", text: ("<" + $link + "|Open in GitHub Actions>")}}
+              ]}' > payload.json
+
+          code=$(curl -sS -o response.txt -w '%{http_code}' -X POST \
+            -H 'Content-Type: application/json' \
+            --data @payload.json "$SLACK_WEBHOOK_URL")
+
+          if [ "$code" != "200" ]; then
+            echo "Slack rejected the alert with HTTP $code:"
+            cat response.txt
+            exit 1
+          fi
+          echo "Alert delivered."
