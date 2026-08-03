@@ -70,7 +70,7 @@
     },
     {
       "name": "Errors",
-      "description": "## Error responses\n\nEvery error response uses this envelope:\n\n```json\n{\n  \"success\": false,\n  \"code\": \"QUOTES_EXPIRED\",\n  \"message\": \"quote_expired\",\n  \"description\": \"This quote has expired. Request a new quote and try again.\",\n  \"errors\": [],\n  \"trace_id\": \"0af7651916cd43dd8448eb211c80319c\"\n}\n```\n\n- `code` is a stable identifier, safe to build programmatic handling on.\n- `message` is a legacy machine string kept for backward compatibility. Prefer `code`.\n- `description` is human-readable text, safe to show to end users.\n- `trace_id` identifies the request. Include it when contacting support.\n\nRetry semantics per code: `retryable` means the same request can be retried as is, `terminal` means do not retry, and `actionable` means the request succeeds only after you fix something (for example funding a balance or correcting bank details).\n\nThe Status column shows the HTTP status a code typically responds with; the per-endpoint error tabs list the exact status each endpoint returns.\n\n### Error codes\n\n| Code | Status | Retry | Description |\n| --- | --- | --- | --- |\n| `AUTH_EMAIL_ALREADY_REGISTERED` | 409 | terminal | This email address is already registered. |\n| `AUTH_FORBIDDEN` | 403 | terminal | You do not have permission to perform this action. |\n| `AUTH_IP_BLOCKED` | 403 | terminal | Requests from this IP address are not allowed for this API key. |\n| `AUTH_RATE_LIMITED` | 429 | retryable | Too many requests. Wait a moment and try again. |\n| `AUTH_SERVICE_UNAVAILABLE` | 503 | retryable | The authentication service is temporarily unavailable. Try again shortly. |\n| `AUTH_TOKEN_INVALID` | 401 | actionable | This link or token is invalid or has expired. Request a new one. |\n| `AUTH_UNAUTHORIZED` | 401 | actionable | Authentication failed. Check your API key or session and try again. |\n| `BANK_ACCOUNTS_INCOMPLETE` | 400 | actionable | The bank account details are incomplete for this payment method. Provide the missing fields. |\n| `BANK_ACCOUNTS_INVALID_BANK_CODE` | 400 | actionable | The bank code provided is not valid for this payment rail. The message lists where to fetch the valid codes. |\n| `BANK_ACCOUNTS_INVALID_ROUTING` | 400 | actionable | The routing number provided is not valid. Check the number and try again. |\n| `BANK_ACCOUNTS_NOT_APPROVED` | 403 | actionable | This bank account is not approved yet. |\n| `BANK_ACCOUNTS_NOT_FOUND` | 404 | actionable | The requested bank account was not found. |\n| `BANK_ACCOUNTS_PARTNER_NOT_SUPPORTED` | 400 | terminal | This banking option is not supported for this operation. |\n| `BANK_ACCOUNTS_RTP_NOT_SUPPORTED` | 400 | terminal | The provided routing number does not support instant payments. |\n| `BILLING_INVOICE_NOT_FOUND` | 404 | actionable | The requested invoice was not found. |\n| `BILLING_INVOICE_NOT_PAYABLE` | 409 | terminal | This invoice cannot be paid or collected in its current state. |\n| `BILLING_NOT_AVAILABLE` | 403 | terminal | Billing is not available for development instances. |\n| `BLOCKCHAIN_CALL_FAILED` | 400 | retryable | The blockchain call could not be completed. Check the transaction details and try again. |\n| `BLOCKCHAIN_NETWORK_NOT_SUPPORTED` | 400 | terminal | This network or token combination is not supported for this operation. |\n| `BLOCKCHAIN_TX_FAILED` | 502 | retryable | The blockchain transaction failed. Try again, and contact support if the problem persists. |\n| `COMPLIANCE_RFI_IN_PROGRESS` | 409 | actionable | An information request is already in progress. Resolve it before continuing. |\n| `COMPLIANCE_RFI_INVALID` | 400 | actionable | The information request could not be processed. Check the submitted fields. |\n| `CUSTOMERS_ALREADY_APPROVED` | 409 | terminal | This customer is already approved. |\n| `CUSTOMERS_BUSINESS_ENHANCED_NOT_AVAILABLE` | 400 | terminal | Enhanced verification is not available for business customers. Use standard verification (kyc_type: standard) for businesses. |\n| `CUSTOMERS_COUNTRY_NOT_SUPPORTED` | 400 | terminal | This country is not supported for this operation. |\n| `CUSTOMERS_ENHANCED_KYC_REQUIRED` | 400 | actionable | Individuals from high-risk countries must use enhanced verification (kyc_type: enhanced); standard verification is not available for them. See https://www.blindpay.com/docs/kb/supported-countries for country tiers. |\n| `CUSTOMERS_ID_DOCUMENT_INVALID` | 400 | actionable | The identity document is not an accepted passport or national ID. Provide a valid passport or national ID for this customer (a driver license is not accepted for high-risk countries). |\n| `CUSTOMERS_INVALID_DATA` | 422 | actionable | The customer data was rejected by the banking provider. Check the highlighted fields and try again. |\n| `CUSTOMERS_INVALID_PHONE` | 400 | actionable | The phone number provided is not valid. Check the number and try again. |\n| `CUSTOMERS_INVALID_TAX_ID` | 400 | actionable | The tax ID provided is not valid. Check the value and try again. |\n| `CUSTOMERS_KYC_NOT_APPROVED` | 403 | actionable | This customer has not completed verification yet. Complete the verification before continuing. |\n| `CUSTOMERS_NOT_FOUND` | 404 | actionable | The requested customer was not found. |\n| `CUSTOMERS_ONBOARDING_INCOMPLETE` | 400 | actionable | Onboarding is not complete yet. Finish the remaining steps before continuing. |\n| `DATA_INTEGRITY_ERROR` | 422 | terminal | This record could not be loaded because it contains invalid stored data. Contact support with the ID below. |\n| `FEES_NOT_FOUND` | 404 | actionable | The requested fee configuration was not found. |\n| `FEES_PARTNER_FEE_EXCEEDED` | 400 | actionable | The partner fee exceeds the allowed maximum for this transaction. |\n| `FILES_ANALYSIS_FAILED` | 502 | retryable | The document could not be analyzed. Try again, and contact support if the problem persists. |\n| `FILES_EMPTY` | 400 | actionable | The uploaded file is empty. Upload a valid file. |\n| `FILES_TOO_LARGE` | 400 | actionable | The file is too large. Upload a smaller file. |\n| `FILES_TYPE_NOT_ALLOWED` | 400 | actionable | This file type is not allowed. Upload a supported file type. |\n| `FILES_UNREADABLE` | 400 | actionable | We could not read the uploaded file. Check the file and try again. |\n| `INSTANCES_BLOCKED` | 403 | terminal | This account is blocked. Contact support for assistance. |\n| `INSTANCES_LIMIT_REACHED` | 400 | terminal | You reached the maximum number of instances allowed for your account. |\n| `INSTANCES_NOT_FOUND` | 404 | actionable | The requested instance was not found. |\n| `INTERNAL_ERROR` | 500 | retryable | Something went wrong on our side. Try again, and contact support with the trace ID if the problem persists. |\n| `LIMITS_AMOUNT_OUT_OF_RANGE` | 400 | actionable | The amount is outside the allowed range. The message includes the allowed range. |\n| `LIMITS_VOLUME_EXCEEDED` | 400 | actionable | You exceeded your transaction volume limit. The message includes the remaining amount available. |\n| `PAYINS_ALREADY_TERMINAL` | 409 | terminal | This payin already reached a final status and cannot be changed. |\n| `PAYINS_METHOD_NOT_SUPPORTED` | 400 | terminal | This payment method is not supported for this operation. |\n| `PAYINS_NOT_FOUND` | 404 | actionable | The requested payin was not found. |\n| `PAYINS_TAX_ID_REQUIRED` | 400 | actionable | A tax ID is required for this payment method. Provide the tax ID and try again. |\n| `PAYOUTS_ALLOWANCE_NOT_CONFIRMED` | 400 | retryable | The token approval for this payout has not been confirmed on-chain yet, or the approved amount is lower than the payout amount. Wait for the approval transaction to confirm and execute the quote again. |\n| `PAYOUTS_AMOUNT_BELOW_MINIMUM` | 400 | actionable | The amount is below the minimum for this payment rail. |\n| `PAYOUTS_DOCUMENTS_NOT_ACCEPTED` | 400 | terminal | Document upload is only available for international wire payouts. |\n| `PAYOUTS_INSUFFICIENT_BALANCE` | 400 | actionable | There is not enough balance to complete this payout. Fund your balance and try again. |\n| `PAYOUTS_NOT_FOUND` | 404 | actionable | The requested payout was not found. |\n| `QUOTES_ALREADY_USED` | 409 | actionable | This quote was already used. Request a new quote. |\n| `QUOTES_EXPIRED` | 400 | actionable | This quote has expired. Request a new quote and try again. |\n| `QUOTES_INSUFFICIENT_LIQUIDITY` | 400 | actionable | There is not enough market liquidity to fill this amount right now. Try a smaller amount or try again later. |\n| `QUOTES_INVALID_STATE` | 400 | actionable | This quote cannot be authorized in its current state. Request a new quote and try again. |\n| `QUOTES_NOT_FOUND` | 404 | actionable | The requested quote was not found. |\n| `QUOTES_OTC_NOT_SUPPORTED` | 400 | actionable | This OTC configuration is not supported. OTC requires BRL with USDT, and either the sender amount with fees not covered, or the receiver amount with fees covered. |\n| `QUOTES_RATE_UNAVAILABLE` | 502 | retryable | An exchange rate is temporarily unavailable. Try again shortly. |\n| `TOS_ALREADY_ACCEPTED` | 409 | terminal | These terms of service were already accepted. |\n| `TOS_NOT_ACCEPTED` | 400 | actionable | The terms of service must be accepted before continuing. |\n| `TOS_NOT_FOUND` | 404 | actionable | The requested terms of service record was not found. |\n| `TRANSFERS_NOT_ENABLED` | 403 | terminal | Wallets and transfers are not enabled for this account. Contact support to enable them. |\n| `VALIDATION_FAILED` | 400 | actionable | The request contains invalid fields. Check the errors list for details. |\n| `VALIDATION_INVALID_REQUEST` | 400 | actionable | The request is not valid for this operation. Check the parameters and try again. |\n| `VALIDATION_MISSING_BODY` | 400 | actionable | The request body is missing or malformed. Send valid JSON with the Content-Type: application/json header. |\n| `VALIDATION_MISSING_REQUIRED_FIELDS` | 400 | actionable | Required fields are missing. Provide the missing fields and try again. |\n| `VIRTUAL_ACCOUNTS_DISABLED` | 403 | terminal | Virtual accounts are not enabled for this account. Contact support to enable them. |\n| `VIRTUAL_ACCOUNTS_DOCUMENTS_REQUIRED` | 400 | actionable | Additional documents are required to create this virtual account. Upload the requested documents. |\n| `VIRTUAL_ACCOUNTS_NOT_APPROVED` | 403 | actionable | This virtual account is not approved yet. |\n| `VIRTUAL_ACCOUNTS_NOT_FOUND` | 404 | actionable | The requested virtual account was not found. |\n| `VIRTUAL_ACCOUNTS_PROVISION_FAILED` | 502 | retryable | We could not create the virtual account. Try again, and contact support if the problem persists. |\n| `VIRTUAL_ACCOUNTS_REGION_NOT_SUPPORTED` | 400 | terminal | Virtual accounts are not available for this country or region. |\n| `WALLETS_BALANCE_UNAVAILABLE` | 503 | retryable | The wallet balance is temporarily unavailable. Try again shortly. |\n| `WALLETS_NOT_FOUND` | 404 | actionable | The requested wallet was not found. |\n| `WEBHOOKS_LIMIT_REACHED` | 400 | terminal | You reached the maximum number of webhook endpoints. |\n| `WEBHOOKS_SIGNATURE_INVALID` | 401 | terminal | The webhook signature is missing or invalid. |\n| `WEBHOOKS_URL_INVALID` | 400 | actionable | The webhook URL is not valid. Use a reachable HTTPS URL. |\n"
+      "description": "## Error responses\n\nEvery error response uses this envelope:\n\n```json\n{\n  \"success\": false,\n  \"code\": \"QUOTES_EXPIRED\",\n  \"message\": \"quote_expired\",\n  \"description\": \"This quote has expired. Request a new quote and try again.\",\n  \"errors\": [],\n  \"trace_id\": \"0af7651916cd43dd8448eb211c80319c\"\n}\n```\n\n- `code` is a stable identifier, safe to build programmatic handling on.\n- `message` is a legacy machine string kept for backward compatibility. Prefer `code`.\n- `description` is human-readable text, safe to show to end users.\n- `trace_id` identifies the request. Include it when contacting support.\n\nRetry semantics per code: `retryable` means the same request can be retried as is, `terminal` means do not retry, and `actionable` means the request succeeds only after you fix something (for example funding a balance or correcting bank details).\n\nThe Status column shows the HTTP status a code typically responds with; the per-endpoint error tabs list the exact status each endpoint returns.\n\n### Error codes\n\n| Code | Status | Retry | Description |\n| --- | --- | --- | --- |\n| `AUTH_EMAIL_ALREADY_REGISTERED` | 409 | terminal | This email address is already registered. |\n| `AUTH_FORBIDDEN` | 403 | terminal | You do not have permission to perform this action. |\n| `AUTH_IP_BLOCKED` | 403 | terminal | Requests from this IP address are not allowed for this API key. |\n| `AUTH_RATE_LIMITED` | 429 | retryable | Too many requests. Wait a moment and try again. |\n| `AUTH_SERVICE_UNAVAILABLE` | 503 | retryable | The authentication service is temporarily unavailable. Try again shortly. |\n| `AUTH_TOKEN_INVALID` | 401 | actionable | This link or token is invalid or has expired. Request a new one. |\n| `AUTH_UNAUTHORIZED` | 401 | actionable | Authentication failed. Check your API key or session and try again. |\n| `BANK_ACCOUNTS_INCOMPLETE` | 400 | actionable | The bank account details are incomplete for this payment method. Provide the missing fields. |\n| `BANK_ACCOUNTS_INVALID_BANK_CODE` | 400 | actionable | The bank code provided is not valid for this payment rail. The message lists where to fetch the valid codes. |\n| `BANK_ACCOUNTS_INVALID_ROUTING` | 400 | actionable | The routing number provided is not valid. Check the number and try again. |\n| `BANK_ACCOUNTS_NOT_APPROVED` | 403 | actionable | This bank account is not approved yet. |\n| `BANK_ACCOUNTS_NOT_FOUND` | 404 | actionable | The requested bank account was not found. |\n| `BANK_ACCOUNTS_PARTNER_NOT_SUPPORTED` | 400 | terminal | This banking option is not supported for this operation. |\n| `BANK_ACCOUNTS_RTP_NOT_SUPPORTED` | 400 | terminal | The provided routing number does not support instant payments. |\n| `BILLING_INVOICE_NOT_FOUND` | 404 | actionable | The requested invoice was not found. |\n| `BILLING_INVOICE_NOT_PAYABLE` | 409 | terminal | This invoice cannot be paid or collected in its current state. |\n| `BILLING_NOT_AVAILABLE` | 403 | terminal | Billing is not available for development instances. |\n| `BLOCKCHAIN_CALL_FAILED` | 400 | retryable | The blockchain call could not be completed. Check the transaction details and try again. |\n| `BLOCKCHAIN_NETWORK_NOT_SUPPORTED` | 400 | terminal | This network or token combination is not supported for this operation. |\n| `BLOCKCHAIN_TOKEN_NOT_SUPPORTED` | 400 | actionable | This token is not supported for this instance type. Development instances settle in USDB; production instances settle in USDC or USDT. |\n| `BLOCKCHAIN_TX_FAILED` | 502 | retryable | The blockchain transaction failed. Try again, and contact support if the problem persists. |\n| `COMPLIANCE_RFI_IN_PROGRESS` | 409 | actionable | An information request is already in progress. Resolve it before continuing. |\n| `COMPLIANCE_RFI_INVALID` | 400 | actionable | The information request could not be processed. Check the submitted fields. |\n| `CUSTOMERS_ALREADY_APPROVED` | 409 | terminal | This customer is already approved. |\n| `CUSTOMERS_BUSINESS_ENHANCED_NOT_AVAILABLE` | 400 | terminal | Enhanced verification is not available for business customers. Use standard verification (kyc_type: standard) for businesses. |\n| `CUSTOMERS_COUNTRY_NOT_SUPPORTED` | 400 | terminal | This country is not supported for this operation. |\n| `CUSTOMERS_ENHANCED_KYC_REQUIRED` | 400 | actionable | Individuals from high-risk countries must use enhanced verification (kyc_type: enhanced); standard verification is not available for them. See https://www.blindpay.com/docs/kb/supported-countries for country tiers. |\n| `CUSTOMERS_ID_DOCUMENT_INVALID` | 400 | actionable | The identity document is not an accepted passport or national ID. Provide a valid passport or national ID for this customer (a driver license is not accepted for high-risk countries). |\n| `CUSTOMERS_INVALID_DATA` | 422 | actionable | The customer data was rejected by the banking provider. Check the highlighted fields and try again. |\n| `CUSTOMERS_INVALID_PHONE` | 400 | actionable | The phone number provided is not valid. Check the number and try again. |\n| `CUSTOMERS_INVALID_TAX_ID` | 400 | actionable | The tax ID provided is not valid. Check the value and try again. |\n| `CUSTOMERS_KYC_NOT_APPROVED` | 403 | actionable | This customer has not completed verification yet. Complete the verification before continuing. |\n| `CUSTOMERS_NOT_FOUND` | 404 | actionable | The requested customer was not found. |\n| `CUSTOMERS_ONBOARDING_INCOMPLETE` | 400 | actionable | Onboarding is not complete yet. Finish the remaining steps before continuing. |\n| `DATA_INTEGRITY_ERROR` | 422 | terminal | This record could not be loaded because it contains invalid stored data. Contact support with the ID below. |\n| `FEES_NOT_FOUND` | 404 | actionable | The requested fee configuration was not found. |\n| `FEES_PARTNER_FEE_EXCEEDED` | 400 | actionable | The partner fee exceeds the allowed maximum for this transaction. |\n| `FILES_ANALYSIS_FAILED` | 502 | retryable | The document could not be analyzed. Try again, and contact support if the problem persists. |\n| `FILES_EMPTY` | 400 | actionable | The uploaded file is empty. Upload a valid file. |\n| `FILES_TOO_LARGE` | 400 | actionable | The file is too large. Upload a smaller file. |\n| `FILES_TYPE_NOT_ALLOWED` | 400 | actionable | This file type is not allowed. Upload a supported file type. |\n| `FILES_UNREADABLE` | 400 | actionable | We could not read the uploaded file. Check the file and try again. |\n| `INSTANCES_BLOCKED` | 403 | terminal | This account is blocked. Contact support for assistance. |\n| `INSTANCES_LIMIT_REACHED` | 400 | terminal | You reached the maximum number of instances allowed for your account. |\n| `INSTANCES_NOT_FOUND` | 404 | actionable | The requested instance was not found. |\n| `INTERNAL_ERROR` | 500 | retryable | Something went wrong on our side. Try again, and contact support with the trace ID if the problem persists. |\n| `LIMITS_AMOUNT_OUT_OF_RANGE` | 400 | actionable | The amount is outside the allowed range. The message includes the allowed range. |\n| `LIMITS_VOLUME_EXCEEDED` | 400 | actionable | You exceeded your transaction volume limit. The message includes the remaining amount available. |\n| `PAYINS_ALREADY_TERMINAL` | 409 | terminal | This payin already reached a final status and cannot be changed. |\n| `PAYINS_METHOD_NOT_SUPPORTED` | 400 | terminal | This payment method is not supported for this operation. |\n| `PAYINS_NOT_FOUND` | 404 | actionable | The requested payin was not found. |\n| `PAYINS_TAX_ID_REQUIRED` | 400 | actionable | A tax ID is required for this payment method. Provide the tax ID and try again. |\n| `PAYOUTS_ALLOWANCE_NOT_CONFIRMED` | 400 | retryable | The token approval for this payout has not been confirmed on-chain yet, or the approved amount is lower than the payout amount. Wait for the approval transaction to confirm and execute the quote again. |\n| `PAYOUTS_AMOUNT_BELOW_MINIMUM` | 400 | actionable | The amount is below the minimum for this payment rail. |\n| `PAYOUTS_DOCUMENTS_NOT_ACCEPTED` | 400 | terminal | Document upload is only available for international wire payouts. |\n| `PAYOUTS_INSUFFICIENT_BALANCE` | 400 | actionable | There is not enough balance to complete this payout. Fund your balance and try again. |\n| `PAYOUTS_NOT_FOUND` | 404 | actionable | The requested payout was not found. |\n| `QUOTES_ALREADY_USED` | 409 | actionable | This quote was already used. Request a new quote. |\n| `QUOTES_EXPIRED` | 400 | actionable | This quote has expired. Request a new quote and try again. |\n| `QUOTES_INSUFFICIENT_LIQUIDITY` | 400 | actionable | There is not enough market liquidity to fill this amount right now. Try a smaller amount or try again later. |\n| `QUOTES_INVALID_STATE` | 400 | actionable | This quote cannot be authorized in its current state. Request a new quote and try again. |\n| `QUOTES_NOT_FOUND` | 404 | actionable | The requested quote was not found. |\n| `QUOTES_OTC_NOT_SUPPORTED` | 400 | actionable | This OTC configuration is not supported. OTC requires BRL with USDT, and either the sender amount with fees not covered, or the receiver amount with fees covered. |\n| `QUOTES_RATE_UNAVAILABLE` | 502 | retryable | An exchange rate is temporarily unavailable. Try again shortly. |\n| `TOS_ALREADY_ACCEPTED` | 409 | terminal | These terms of service were already accepted. |\n| `TOS_NOT_ACCEPTED` | 400 | actionable | The terms of service must be accepted before continuing. |\n| `TOS_NOT_FOUND` | 404 | actionable | The requested terms of service record was not found. |\n| `TRANSFERS_NOT_ENABLED` | 403 | terminal | Wallets and transfers are not enabled for this account. Contact support to enable them. |\n| `VALIDATION_FAILED` | 400 | actionable | The request contains invalid fields. Check the errors list for details. |\n| `VALIDATION_INVALID_REQUEST` | 400 | actionable | The request is not valid for this operation. Check the parameters and try again. |\n| `VALIDATION_MISSING_BODY` | 400 | actionable | The request body is missing or malformed. Send valid JSON with the Content-Type: application/json header. |\n| `VALIDATION_MISSING_REQUIRED_FIELDS` | 400 | actionable | Required fields are missing. Provide the missing fields and try again. |\n| `VIRTUAL_ACCOUNTS_DISABLED` | 403 | terminal | Virtual accounts are not enabled for this account. Contact support to enable them. |\n| `VIRTUAL_ACCOUNTS_DOCUMENTS_REQUIRED` | 400 | actionable | Additional documents are required to create this virtual account. Upload the requested documents. |\n| `VIRTUAL_ACCOUNTS_NOT_APPROVED` | 403 | actionable | This virtual account is not approved yet. |\n| `VIRTUAL_ACCOUNTS_NOT_FOUND` | 404 | actionable | The requested virtual account was not found. |\n| `VIRTUAL_ACCOUNTS_PROVISION_FAILED` | 502 | retryable | We could not create the virtual account. Try again, and contact support if the problem persists. |\n| `VIRTUAL_ACCOUNTS_REGION_NOT_SUPPORTED` | 400 | terminal | Virtual accounts are not available for this country or region. |\n| `WALLETS_ATTACHED_TO_VIRTUAL_ACCOUNT` | 400 | terminal | This wallet is attached to a virtual account and cannot be deleted. Delete the virtual account first. |\n| `WALLETS_BALANCE_UNAVAILABLE` | 503 | retryable | The wallet balance is temporarily unavailable. Try again shortly. |\n| `WALLETS_NOT_FOUND` | 404 | actionable | The requested wallet was not found. |\n| `WEBHOOKS_LIMIT_REACHED` | 400 | terminal | You reached the maximum number of webhook endpoints. |\n| `WEBHOOKS_SIGNATURE_INVALID` | 401 | terminal | The webhook signature is missing or invalid. |\n| `WEBHOOKS_URL_INVALID` | 400 | actionable | The webhook URL is not valid. Use a reachable HTTPS URL. |\n"
     }
   ],
   "security": [
@@ -6480,6 +6480,15 @@
                 "description": "Fed Input Message Accountability Data (IMAD). Domestic Fedwire payments only; null on ACH and SWIFT.",
                 "example": "20260526MMQFMP2M008120"
               },
+              "provider_reference": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 120,
+                "description": "Provider (JPMorgan/Zenus) payment reference captured from the ACCOUNT.ACCOUNT booking webhook (Zenus contractSource.sourceRef). Present for some ACH/wire payouts; a bank-side reference, not the formal ACH network trace number.",
+                "example": "2084734238TC"
+              },
               "provider_clearing_system": {
                 "type": [
                   "string",
@@ -7035,6 +7044,15 @@
                 "maxLength": 120,
                 "description": "Fed Input Message Accountability Data (IMAD). Domestic Fedwire payments only; null on ACH and SWIFT.",
                 "example": "20260526MMQFMP2M008120"
+              },
+              "provider_reference": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 120,
+                "description": "Provider (JPMorgan/Zenus) payment reference captured from the ACCOUNT.ACCOUNT booking webhook (Zenus contractSource.sourceRef). Present for some ACH/wire payouts; a bank-side reference, not the formal ACH network trace number.",
+                "example": "2084734238TC"
               },
               "provider_clearing_system": {
                 "type": [
@@ -7592,6 +7610,15 @@
                 "description": "Fed Input Message Accountability Data (IMAD). Domestic Fedwire payments only; null on ACH and SWIFT.",
                 "example": "20260526MMQFMP2M008120"
               },
+              "provider_reference": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 120,
+                "description": "Provider (JPMorgan/Zenus) payment reference captured from the ACCOUNT.ACCOUNT booking webhook (Zenus contractSource.sourceRef). Present for some ACH/wire payouts; a bank-side reference, not the formal ACH network trace number.",
+                "example": "2084734238TC"
+              },
               "provider_clearing_system": {
                 "type": [
                   "string",
@@ -8147,6 +8174,15 @@
                 "maxLength": 120,
                 "description": "Fed Input Message Accountability Data (IMAD). Domestic Fedwire payments only; null on ACH and SWIFT.",
                 "example": "20260526MMQFMP2M008120"
+              },
+              "provider_reference": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 120,
+                "description": "Provider (JPMorgan/Zenus) payment reference captured from the ACCOUNT.ACCOUNT booking webhook (Zenus contractSource.sourceRef). Present for some ACH/wire payouts; a bank-side reference, not the formal ACH network trace number.",
+                "example": "2084734238TC"
               },
               "provider_clearing_system": {
                 "type": [
@@ -13563,6 +13599,14 @@
             "minLength": 15,
             "maxLength": 15,
             "example": "pf_000000000000"
+          },
+          "refund_wallet_address": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional wallet address to receive the refund if this payout fails or is refunded. Must be a valid address on the quote network. When omitted, refunds are sent back to the sender wallet address.",
+            "example": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C"
           }
         },
         "required": [
@@ -13811,6 +13855,15 @@
                 "maxLength": 120,
                 "description": "Fed Input Message Accountability Data (IMAD). Domestic Fedwire payments only; null on ACH and SWIFT.",
                 "example": "20260526MMQFMP2M008120"
+              },
+              "provider_reference": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 120,
+                "description": "Provider (JPMorgan/Zenus) payment reference captured from the ACCOUNT.ACCOUNT booking webhook (Zenus contractSource.sourceRef). Present for some ACH/wire payouts; a bank-side reference, not the formal ACH network trace number.",
+                "example": "2084734238TC"
               },
               "provider_clearing_system": {
                 "type": [
@@ -15481,6 +15534,15 @@
                 "maxLength": 120,
                 "description": "Fed Input Message Accountability Data (IMAD). Domestic Fedwire payments only; null on ACH and SWIFT.",
                 "example": "20260526MMQFMP2M008120"
+              },
+              "provider_reference": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 120,
+                "description": "Provider (JPMorgan/Zenus) payment reference captured from the ACCOUNT.ACCOUNT booking webhook (Zenus contractSource.sourceRef). Present for some ACH/wire payouts; a bank-side reference, not the formal ACH network trace number.",
+                "example": "2084734238TC"
               },
               "provider_clearing_system": {
                 "type": [
@@ -35072,6 +35134,18 @@
               "null"
             ]
           },
+          "funding_end_to_end_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "payer_tax_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "is_otc": {
             "type": "boolean"
           },
@@ -35106,6 +35180,8 @@
           "memo_code",
           "recipient_tax_id",
           "veem_customer_id",
+          "funding_end_to_end_id",
+          "payer_tax_id",
           "is_otc",
           "created_at",
           "updated_at"
@@ -41688,7 +41764,7 @@
             }
           },
           "400": {
-            "description": "Possible error codes: `VALIDATION_FAILED`. See the Error responses section for retry semantics.",
+            "description": "Possible error codes: `VALIDATION_FAILED`, `WALLETS_ATTACHED_TO_VIRTUAL_ACCOUNT`. See the Error responses section for retry semantics.",
             "content": {
               "application/json": {
                 "schema": {
@@ -41702,6 +41778,17 @@
                       "code": "VALIDATION_FAILED",
                       "message": "validation_failed",
                       "description": "The request contains invalid fields. Check the errors list for details.",
+                      "errors": [],
+                      "trace_id": "0af7651916cd43dd8448eb211c80319c"
+                    }
+                  },
+                  "WALLETS_ATTACHED_TO_VIRTUAL_ACCOUNT": {
+                    "summary": "WALLETS_ATTACHED_TO_VIRTUAL_ACCOUNT",
+                    "value": {
+                      "success": false,
+                      "code": "WALLETS_ATTACHED_TO_VIRTUAL_ACCOUNT",
+                      "message": "wallet_attached_to_virtual_account",
+                      "description": "This wallet is attached to a virtual account and cannot be deleted. Delete the virtual account first.",
                       "errors": [],
                       "trace_id": "0af7651916cd43dd8448eb211c80319c"
                     }
@@ -46029,6 +46116,29 @@
               }
             }
           },
+          "404": {
+            "description": "Possible error codes: `WALLETS_NOT_FOUND`. See the Error responses section for retry semantics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "WALLETS_NOT_FOUND": {
+                    "summary": "WALLETS_NOT_FOUND",
+                    "value": {
+                      "success": false,
+                      "code": "WALLETS_NOT_FOUND",
+                      "message": "wallet_not_found",
+                      "description": "The requested wallet was not found.",
+                      "errors": [],
+                      "trace_id": "0af7651916cd43dd8448eb211c80319c"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "429": {
             "description": "Possible error codes: `AUTH_RATE_LIMITED`. See the Error responses section for retry semantics.",
             "content": {
@@ -47124,6 +47234,29 @@
               }
             }
           },
+          "404": {
+            "description": "Possible error codes: `WALLETS_NOT_FOUND`. See the Error responses section for retry semantics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "WALLETS_NOT_FOUND": {
+                    "summary": "WALLETS_NOT_FOUND",
+                    "value": {
+                      "success": false,
+                      "code": "WALLETS_NOT_FOUND",
+                      "message": "wallet_not_found",
+                      "description": "The requested wallet was not found.",
+                      "errors": [],
+                      "trace_id": "0af7651916cd43dd8448eb211c80319c"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "422": {
             "description": "Possible error codes: `CUSTOMERS_INVALID_DATA`. See the Error responses section for retry semantics.",
             "content": {
@@ -47921,7 +48054,7 @@
             }
           },
           "400": {
-            "description": "Possible error codes: `TRANSFERS_NOT_ENABLED`, `VALIDATION_FAILED`. See the Error responses section for retry semantics.",
+            "description": "Possible error codes: `TRANSFERS_NOT_ENABLED`, `VALIDATION_FAILED`, `WALLETS_ATTACHED_TO_VIRTUAL_ACCOUNT`. See the Error responses section for retry semantics.",
             "content": {
               "application/json": {
                 "schema": {
@@ -47946,6 +48079,17 @@
                       "code": "VALIDATION_FAILED",
                       "message": "validation_failed",
                       "description": "The request contains invalid fields. Check the errors list for details.",
+                      "errors": [],
+                      "trace_id": "0af7651916cd43dd8448eb211c80319c"
+                    }
+                  },
+                  "WALLETS_ATTACHED_TO_VIRTUAL_ACCOUNT": {
+                    "summary": "WALLETS_ATTACHED_TO_VIRTUAL_ACCOUNT",
+                    "value": {
+                      "success": false,
+                      "code": "WALLETS_ATTACHED_TO_VIRTUAL_ACCOUNT",
+                      "message": "wallet_attached_to_virtual_account",
+                      "description": "This wallet is attached to a virtual account and cannot be deleted. Delete the virtual account first.",
                       "errors": [],
                       "trace_id": "0af7651916cd43dd8448eb211c80319c"
                     }
@@ -49297,6 +49441,29 @@
                       "code": "AUTH_FORBIDDEN",
                       "message": "user_not_allowed",
                       "description": "You do not have permission to perform this action.",
+                      "errors": [],
+                      "trace_id": "0af7651916cd43dd8448eb211c80319c"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Possible error codes: `WALLETS_NOT_FOUND`. See the Error responses section for retry semantics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "WALLETS_NOT_FOUND": {
+                    "summary": "WALLETS_NOT_FOUND",
+                    "value": {
+                      "success": false,
+                      "code": "WALLETS_NOT_FOUND",
+                      "message": "wallet_not_found",
+                      "description": "The requested wallet was not found.",
                       "errors": [],
                       "trace_id": "0af7651916cd43dd8448eb211c80319c"
                     }
