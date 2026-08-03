@@ -5,7 +5,7 @@
     "": {
       "name": "@blindpay/node",
       "dependencies": {
-        "svix": "1.94.0",
+        "svix": "1.99.1",
       },
       "devDependencies": {
         "@biomejs/biome": "2.2.2",
@@ -536,7 +536,7 @@
 
     "supports-color": ["supports-color@7.2.0", "", { "dependencies": { "has-flag": "^4.0.0" } }, "sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw=="],
 
-    "svix": ["svix@1.94.0", "", { "dependencies": { "standardwebhooks": "1.0.0" } }, "sha512-FuP5nJez1P/SeK+4zOBI8RrNhtrzMTBSvwuD4yGGsn+Af2yQazid6OwPu3fpZpMifOJxrJua0su/dYB5fe4v9Q=="],
+    "svix": ["svix@1.99.1", "", { "dependencies": { "standardwebhooks": "1.0.0" } }, "sha512-JfpvbAg5iT5NagDAfOq3e6Ci6NbOMbMm6C3DnfDBB60m2JDK+Z2hXPE9XNAmutb53DCdPoih1V70IbklZnX09A=="],
 
     "term-size": ["term-size@2.2.1", "", {}, "sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg=="],
 
