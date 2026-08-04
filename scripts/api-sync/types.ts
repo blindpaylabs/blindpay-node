@@ -87,9 +87,28 @@ export type KnownDivergenceEntry =
     | KnownDivergencePropertyEntry
     | KnownDivergenceTypeMismatchEntry;
 
+export type EnumPropertyOmissionEntry = {
+    schema: string;
+    property: string;
+    reason: string;
+    owner: string;
+};
+
+export type NestedShapeOmissionEntry = {
+    schema: string;
+    path: string;
+    reason: string;
+    owner: string;
+};
+
 export type UnmodeledFile = {
     properties: UnmodeledPropertyEntry[];
     knownDivergences: KnownDivergenceEntry[];
+    /** Enum-constrained properties intentionally not (yet) covered by spec-map.json's enums[]
+     * or by the ordinary field-type comparison; see enum-coverage.ts. */
+    enumPropertyOmissions: EnumPropertyOmissionEntry[];
+    /** Inline nested object/array-item shapes intentionally not (yet) modeled; see nested-coverage.ts. */
+    nestedShapeOmissions: NestedShapeOmissionEntry[];
 };
 
 export type ApplicableChange =

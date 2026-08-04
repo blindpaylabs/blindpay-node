@@ -882,5 +882,440 @@
             "reason": "Pre-existing SDK-only field on UpdateCustomerInput with no matching property on UpdateCustomerIn in the spec.",
             "owner": "eric@blindpay.com"
         }
+    ],
+    "enumPropertyOmissions": [],
+    "nestedShapeOmissions": [
+        {
+            "schema": "BankAccountOut",
+            "path": "offramp_wallets[]",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreateCustomerIn",
+            "path": "owners[]",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "blindpay_bank_details",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "blindpay_bank_details.ach",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "blindpay_bank_details.beneficiary",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "blindpay_bank_details.receiving_bank",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "blindpay_bank_details.rtp",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "blindpay_bank_details.swift_receiving_bank",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "blindpay_bank_details.wire",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "tracking_complete",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "tracking_payment",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "tracking_payment.review_context",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "tracking_transaction",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "tracking_transaction.pse_instruction",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "tracking_transaction.ted_instruction",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "tracking_transaction.transfers_instruction",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinQuoteIn",
+            "path": "payer_rules",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreateTransferOut",
+            "path": "tracking_bridge_swap",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreateTransferOut",
+            "path": "tracking_complete",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreateTransferOut",
+            "path": "tracking_paymaster",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CreateTransferOut",
+            "path": "tracking_transaction_monitoring",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CustomerOut",
+            "path": "aml_hits",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CustomerOut",
+            "path": "fraud_warnings[]",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CustomerOut",
+            "path": "kyc_warnings[]",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CustomerOut",
+            "path": "limit",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "CustomerOut",
+            "path": "owners[]",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "GetCustomerLimitsOut",
+            "path": "limits",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "GetCustomerLimitsOut",
+            "path": "limits.payin",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "GetCustomerLimitsOut",
+            "path": "limits.payout",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "blindpay_bank_details",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "blindpay_bank_details.ach",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "blindpay_bank_details.beneficiary",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "blindpay_bank_details.receiving_bank",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "blindpay_bank_details.rtp",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "blindpay_bank_details.swift_receiving_bank",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "blindpay_bank_details.wire",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "payer_rules",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "tracking_complete",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "tracking_payment",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "tracking_payment.review_context",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "tracking_transaction",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "tracking_transaction.pse_instruction",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "tracking_transaction.ted_instruction",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "tracking_transaction.transfers_instruction",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayoutOnEvmOut",
+            "path": "tracking_complete",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayoutOnEvmOut",
+            "path": "tracking_documents",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayoutOnEvmOut",
+            "path": "tracking_liquidity",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayoutOnEvmOut",
+            "path": "tracking_payment",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayoutOnEvmOut",
+            "path": "tracking_transaction",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayoutOut",
+            "path": "jpm_track_data",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayoutOut",
+            "path": "tracking_complete",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayoutOut",
+            "path": "tracking_documents",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayoutOut",
+            "path": "tracking_liquidity",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayoutOut",
+            "path": "tracking_payment",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayoutOut",
+            "path": "tracking_transaction",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "QuoteOut",
+            "path": "contract",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "QuoteOut",
+            "path": "contract.abi[]",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "QuoteOut",
+            "path": "contract.network",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "TransferOut",
+            "path": "tracking_bridge_swap",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "TransferOut",
+            "path": "tracking_complete",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "TransferOut",
+            "path": "tracking_paymaster",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "TransferOut",
+            "path": "tracking_transaction_monitoring",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "UpdateCustomerIn",
+            "path": "owners[]",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "VirtualAccountOut",
+            "path": "blockchain_wallet",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "VirtualAccountOut",
+            "path": "us",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "VirtualAccountOut",
+            "path": "us.ach",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "VirtualAccountOut",
+            "path": "us.beneficiary",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "VirtualAccountOut",
+            "path": "us.receiving_bank",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "VirtualAccountOut",
+            "path": "us.rtp",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "VirtualAccountOut",
+            "path": "us.swift_intermediary_bank",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "VirtualAccountOut",
+            "path": "us.swift_receiving_bank",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "VirtualAccountOut",
+            "path": "us.wire",
+            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
+            "owner": "eric@blindpay.com"
+        }
     ]
 }

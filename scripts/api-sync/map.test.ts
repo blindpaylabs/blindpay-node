@@ -1,6 +1,8 @@
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
+import { findUnmappedEnumProperties } from "./enum-coverage";
 import { isKnownEnumDivergence, isUnmodeledProperty, loadSpecMap, loadUnmodeled } from "./map";
+import { findUnmappedNestedShapes } from "./nested-coverage";
 import { findDeclarationSpan, readSource } from "./sdk-scan";
 import {
     loadSpec,
@@ -63,6 +65,16 @@ describe("spec-map.json validity", () => {
         const ignoredNames = new Set(map.ignore.schemas.map((e) => e.name));
         const uncovered = [...reachable].filter((n) => !mappedNames.has(n) && !ignoredNames.has(n));
         expect(uncovered).toEqual([]);
+    });
+
+    it("every enum-constrained property resolves to a mapped enum symbol, the ordinary field-type audit, or a recorded omission", () => {
+        const gaps = findUnmappedEnumProperties(spec, map, unmodeled);
+        expect(gaps).toEqual([]);
+    });
+
+    it("every inline nested object/array-item shape has a recorded omission (the map format has no nested entries yet)", () => {
+        const gaps = findUnmappedNestedShapes(spec, map, unmodeled);
+        expect(gaps).toEqual([]);
     });
 });
 

@@ -20,11 +20,41 @@ jobs:
         with:
           bun-version: 1.2.18
 
-      - name: Fetch the delivered spec
+      # Fails loudly rather than syncing against a wrong, truncated, or already-superseded spec:
+      # the delivery branch must carry both spec-current.json and a delivery.json manifest whose
+      # spec_sha256 actually hashes to spec-current.json's bytes, and (when the dispatch payload
+      # carries its own spec_sha256) the manifest must agree with what triggered this run.
+      - name: Fetch and verify the delivered spec manifest
+        env:
+          DISPATCH_SHA256: ${{ github.event.client_payload.spec_sha256 }}
         run: |
+          set -e
           git fetch origin api-sync-data
           mkdir -p .api-sync
-          git show origin/api-sync-data:.api-sync/spec-current.json > .api-sync/spec-current.json
+
+          if ! git show origin/api-sync-data:.api-sync/spec-current.json > .api-sync/spec-current.json; then
+            echo "::error::.api-sync/spec-current.json is missing on the api-sync-data branch."
+            exit 1
+          fi
+          if ! git show origin/api-sync-data:.api-sync/delivery.json > .api-sync/delivery.json; then
+            echo "::error::.api-sync/delivery.json is missing on the api-sync-data branch."
+            exit 1
+          fi
+
+          MANIFEST_SHA256=$(jq -r '.spec_sha256' .api-sync/delivery.json)
+          ACTUAL_SHA256=$(sha256sum .api-sync/spec-current.json | cut -d' ' -f1)
+          if [ "$MANIFEST_SHA256" != "$ACTUAL_SHA256" ]; then
+            echo "::error::spec-current.json sha256 ($ACTUAL_SHA256) does not match delivery.json's spec_sha256 ($MANIFEST_SHA256)."
+            exit 1
+          fi
+
+          if [ -n "$DISPATCH_SHA256" ] && [ "$DISPATCH_SHA256" != "$MANIFEST_SHA256" ]; then
+            echo "::error::stale delivery: the dispatch payload's spec_sha256 ($DISPATCH_SHA256) differs from delivery.json's ($MANIFEST_SHA256)."
+            exit 1
+          fi
+
+          echo "Verified spec-current.json (sha256 $ACTUAL_SHA256) against delivery.json:"
+          jq -r '"  source_repository: \(.source_repository)\n  source_sha: \(.source_sha)\n  generated_at: \(.generated_at)"' .api-sync/delivery.json
 
       - name: Check for existing api-sync PR
         id: check-pr
