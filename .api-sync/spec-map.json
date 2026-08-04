@@ -1759,14 +1759,6 @@
                 "reason": "Webhook payload body for blockchainWallet.new; same reasoning as BankAccountWebhookOut."
             },
             {
-                "name": "CreateInstanceRfiBody",
-                "reason": "Orphan schema, same situation as CreateRfiBody."
-            },
-            {
-                "name": "CreateRfiBody",
-                "reason": "Orphan schema (zero $ref anywhere; the actual POST /rfi request body is inline `{type: object, additionalProperties: {}}`, not $ref'd to this schema). Grouped with the Rfi family since it is a request-body remnant for the unmodeled RFI resource."
-            },
-            {
                 "name": "CustomerDeleteWebhookOut",
                 "reason": "Webhook payload body for customer.delete; same reasoning as BankAccountWebhookOut."
             },
@@ -1781,10 +1773,6 @@
             {
                 "name": "InstanceRfi",
                 "reason": "Instance-level RFI variant; not modeled, same as Rfi."
-            },
-            {
-                "name": "LedgerOperation",
-                "reason": "unreferenced by any public operation"
             },
             {
                 "name": "LimitIncreaseNewWebhookOut",
