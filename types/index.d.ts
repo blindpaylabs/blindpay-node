@@ -551,7 +551,7 @@ export type SourceOfWealth =
     | "inheritance"
     | "affiliate_or_royalty_income";
 
-export type BankingPartner = "jpmorgan" | "citi" | "hsbc" | "cfsb";
+export type BankingPartner = "jpmorgan" | "citi" | "hsbc" | "cfsb" | "portage";
 
 export type SoleProprietorDocType = "master_service_agreement" | "salary_slip" | "bank_statement";
 

@@ -1,0 +1,59 @@
+name: API Sync Check
+
+on:
+  workflow_call:
+
+jobs:
+  api-sync-check:
+    name: Verify SDK sync state against the spec
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.18
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # State reconciliation against the committed snapshot (the only spec guaranteed present on
+      # a plain checkout): exits 1 with a precise message for any pending drift or needs-human
+      # finding, silent (besides a one-line OK) when clean. Also IS the map-validity check: every
+      # spec-map.json entry must resolve (schema/property/path locator against the snapshot,
+      # file + symbol against the source tree) before any drift can even be computed.
+      - name: sync:check (state + map validity)
+        run: bun scripts/api-sync/index.ts --check --spec .api-sync/spec-snapshot.json
+
+      # Determinism: apply the same input into two independent worktrees and diff. No
+      # timestamps, no randomness, no map-iteration-order leaks; running twice must be
+      # byte-identical. Uses the committed snapshot as its own input, so this proof needs
+      # nothing external to run.
+      - name: Determinism proof
+        run: |
+          set -e
+          git worktree add --detach /tmp/api-sync-det-a HEAD
+          git worktree add --detach /tmp/api-sync-det-b HEAD
+          (cd /tmp/api-sync-det-a && bun install --frozen-lockfile --silent && bun scripts/api-sync/index.ts --apply --spec .api-sync/spec-snapshot.json)
+          (cd /tmp/api-sync-det-b && bun install --frozen-lockfile --silent && bun scripts/api-sync/index.ts --apply --spec .api-sync/spec-snapshot.json)
+          diff -rq /tmp/api-sync-det-a /tmp/api-sync-det-b \
+            --exclude=node_modules --exclude=.git --exclude=bun.lock
+          git worktree remove --force /tmp/api-sync-det-a
+          git worktree remove --force /tmp/api-sync-det-b
+
+      # Non-blocking, printed on every run: spec operations with no recognizable SDK endpoint
+      # string (known real gaps: the Rfi family, POST /v1/upload/analyze), and the full
+      # state-based type audit including nullability, which sync:check deliberately does not
+      # enforce (see reconcile.ts). Never gates CI; a human triages this list in Phase C.
+      - name: Coverage + type-audit report (non-blocking)
+        if: always()
+        run: |
+          echo "=== Coverage gaps (spec operations with no recognizable SDK endpoint string) ==="
+          bun run sync:coverage
+          echo
+          echo "=== Type audit (informational only; see PayinOut.billing_fee_amount etc.) ==="
+          bun run audit:types
