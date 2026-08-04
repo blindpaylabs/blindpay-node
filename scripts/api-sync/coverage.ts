@@ -21,22 +21,30 @@ function allResourceSource(repoRoot: string): string {
 /**
  * Non-blocking heuristic: an operation "has SDK coverage" if the last literal (non-`{param}`)
  * path segment appears anywhere in the resource sources' request-building template strings.
- * Approximate by design (this is a printed report, not a gate), its job is to make gaps like
- * the RFI resource and POST /v1/upload/analyze show up on every run instead of silently.
+ * Approximate by design, its job is to make gaps like the RFI resource show up on every run
+ * instead of silently. Used both by the standalone --coverage report and, for the handful of
+ * operations outside operation-gen.ts's instance-scoped template (its precise per-operation
+ * matcher covers everything else), as the operation-insert discovery signal.
  */
+export function hasCoarseSdkEndpointString(path: string, source: string): boolean {
+    const segments = path
+        .replace(/^\/v1\//, "")
+        .split("/")
+        .filter((seg) => seg.length > 0 && !seg.startsWith("{"));
+    const needle = segments[segments.length - 1];
+    return !!needle && source.includes(needle);
+}
+
 export function computeCoverageGaps(spec: Spec, repoRoot: string): string[] {
     const source = allResourceSource(repoRoot);
     const gaps: string[] = [];
     for (const key of operationKeys(spec)) {
         const [method, path] = key.split(" ");
-        const segments = path
-            .replace(/^\/v1\//, "")
-            .split("/")
-            .filter((seg) => seg.length > 0 && !seg.startsWith("{"));
-        const needle = segments[segments.length - 1];
-        if (!needle || !source.includes(needle)) {
+        if (!hasCoarseSdkEndpointString(path, source)) {
             gaps.push(`${method.toUpperCase()} ${path}`);
         }
     }
     return gaps.sort();
 }
+
+export { allResourceSource };

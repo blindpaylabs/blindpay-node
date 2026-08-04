@@ -81,7 +81,11 @@ export function reconcile(
     spec: Spec,
     map: SpecMap,
     unmodeled: UnmodeledFile,
-    repoRoot: string
+    repoRoot: string,
+    /** "file:symbol" sites operation-insert is about to (re)create this same run: a mapped
+     * site not existing YET is exactly what discovers the coverage gap in the first place, not
+     * a separate failure reconcile() should also report. */
+    pendingSites: Set<string> = new Set()
 ): ReconcileResult {
     const applicable: ApplicableChange[] = [];
     const needsHuman: string[] = [];
@@ -97,6 +101,8 @@ export function reconcile(
     const enumSymbolsCovered = new Set(map.enums.flatMap((e) => e.sdk.map((s) => s.symbol)));
 
     for (const entry of map.enums) {
+        if (entry.sdk.every((s) => pendingSites.has(`${s.file}:${s.symbol}`))) continue;
+
         const label = locatorLabel(entry.spec);
         let specMembers: Set<string>;
         try {
@@ -122,9 +128,11 @@ export function reconcile(
                 }
                 sdkMembers = extracted;
             } catch (err) {
-                needsHuman.push(
-                    `enum mapping "${label}" -> ${site.file}:${site.symbol} not found: ${(err as Error).message}`
-                );
+                if (!pendingSites.has(`${site.file}:${site.symbol}`)) {
+                    needsHuman.push(
+                        `enum mapping "${label}" -> ${site.file}:${site.symbol} not found: ${(err as Error).message}`
+                    );
+                }
                 continue;
             }
 
@@ -149,6 +157,10 @@ export function reconcile(
     }
 
     for (const entry of map.types) {
+        // Every mapped site is about to be (re)created by operation-insert this same run: it
+        // owns this entry's fields entirely, nothing here to compare against yet.
+        if (entry.sdk.every((s) => pendingSites.has(`${s.file}:${s.symbol}`))) continue;
+
         const label = locatorLabel(entry.spec);
         const schemaName = isPathLocator(entry.spec) ? label : entry.spec.schema;
         const propertyName = isPathLocator(entry.spec) ? undefined : entry.spec.property;
@@ -179,9 +191,13 @@ export function reconcile(
                 for (const k of keys) union.add(k);
                 fieldsBySite.set(siteKey, extractTopLevelFields(span.text));
             } catch (err) {
-                needsHuman.push(
-                    `type mapping "${label}" -> ${siteKey} not found: ${(err as Error).message}`
-                );
+                if (pendingSites.has(siteKey)) {
+                    opaqueSites.add(siteKey); // about to be (re)created; nothing to compare yet
+                } else {
+                    needsHuman.push(
+                        `type mapping "${label}" -> ${siteKey} not found: ${(err as Error).message}`
+                    );
+                }
             }
         }
 
