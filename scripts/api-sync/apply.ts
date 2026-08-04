@@ -96,3 +96,88 @@ export function insertOptionalField(
     const patched = lines.join("\n");
     return content.slice(0, span.start) + patched + content.slice(span.end);
 }
+
+/**
+ * Inserts `typeDecls` (one or more `export type X = ...;` blocks, already blank-line separated)
+ * directly above `export function <factoryFn>(...)`. Idempotent: a no-op if the exact block
+ * (verbatim) is already present, so a second --apply against unchanged state is byte-identical.
+ */
+export function insertTypeDeclarations(
+    content: string,
+    factoryFn: string,
+    typeDecls: string
+): string {
+    if (!typeDecls) return content;
+    if (content.includes(typeDecls)) return content;
+    const declRe = new RegExp(`^export function ${factoryFn}\\b`, "m");
+    const match = declRe.exec(content);
+    if (!match) throw new Error(`apply: could not locate "export function ${factoryFn}"`);
+    return `${content.slice(0, match.index)}${typeDecls}\n\n${content.slice(match.index)}`;
+}
+
+/**
+ * Inserts one method (already formatted as `methodName(...): ReturnType { ... },`, 8-space
+ * indented) as the last entry of `export function <factoryFn>(...) { return { ... }; }`'s
+ * returned object literal. Idempotent: a no-op if a method with the same name already exists
+ * anywhere in that returned object.
+ */
+export function insertResourceMethod(
+    content: string,
+    factoryFn: string,
+    methodName: string,
+    methodSource: string
+): string {
+    const declRe = new RegExp(`^export function ${factoryFn}\\b[^{]*\\{`, "m");
+    const declMatch = declRe.exec(content);
+    if (!declMatch) throw new Error(`apply: could not locate "export function ${factoryFn}"`);
+
+    const fnBodyStart = declMatch.index + declMatch[0].length;
+    const returnRe = /return\s*\{/;
+    const returnMatch = returnRe.exec(content.slice(fnBodyStart));
+    if (!returnMatch) throw new Error(`apply: could not locate "return {" in "${factoryFn}"`);
+    const objStart = fnBodyStart + returnMatch.index + returnMatch[0].length; // just after "return {"
+
+    let depth = 1;
+    let i = objStart;
+    while (i < content.length && depth > 0) {
+        if (content[i] === "{") depth++;
+        else if (content[i] === "}") depth--;
+        if (depth === 0) break;
+        i++;
+    }
+    const objEnd = i; // index of the matching "}"
+
+    const objectText = content.slice(objStart, objEnd);
+    if (new RegExp(`(^|\\s)${methodName}\\s*\\(`).test(objectText)) {
+        return content; // method already present; idempotent no-op
+    }
+
+    const insertion = `\n        ${methodSource}`;
+    return `${content.slice(0, objEnd)}${insertion}\n    ${content.slice(objEnd)}`;
+}
+
+/**
+ * Adds any of `names` not already present to the (single) `import type { ... } from
+ * "../../../types";` statement, alphabetically merged into the existing list.
+ */
+export function ensureSharedTypeImports(content: string, names: string[]): string {
+    if (names.length === 0) return content;
+    const re = /import type \{([^}]*)\} from "([./]*types)";/;
+    const match = re.exec(content);
+    if (!match) {
+        const missing = names.map((n) => `"${n}"`).join(", ");
+        throw new Error(
+            `apply: could not locate a shared "import type { ... } from \\".../types\\";" statement to add ${missing} to`
+        );
+    }
+    const existing = match[1]
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+    const merged = new Set([...existing, ...names]);
+    const sorted = [...merged].sort();
+    const replacement = `import type {\n    ${sorted.join(",\n    ")},\n} from "${match[2]}";`;
+    return (
+        content.slice(0, match.index) + replacement + content.slice(match.index + match[0].length)
+    );
+}

@@ -44,6 +44,13 @@ export type SpecMap = {
     types: TypeMapEntry[];
     ignore: {
         schemas: IgnoreEntry[];
+        /** Coverage gaps (spec operation, no SDK endpoint) the operation-insert classifier
+         * found NON-STANDARD, and a human has reviewed and accepted as "not generatable, not
+         * yet built" rather than a bug. `name` is "METHOD /path", matching computeCoverageGaps'
+         * key format. Grandfathers pre-existing known gaps so this patcher doesn't suddenly
+         * hard-fail on gaps nobody has gotten to yet; a genuinely NEW non-standard gap still
+         * fails needs-human until someone adds it here (or builds it by hand). */
+        operations?: IgnoreEntry[];
     };
 };
 
@@ -111,6 +118,37 @@ export type UnmodeledFile = {
     nestedShapeOmissions: NestedShapeOmissionEntry[];
 };
 
+export type NewSchemaMapEntry =
+    | { kind: "schema"; schema: string; file: string; symbol: string; notes: string | null }
+    | {
+          kind: "path";
+          path: string;
+          method: string;
+          location: string;
+          file: string;
+          symbol: string;
+          notes: string;
+      };
+
+/**
+ * A spec operation with no SDK endpoint, classified STANDARD by operation-gen.ts: JSON in/out,
+ * belongs to an existing resource (by literal path segment), and expressible exactly by the
+ * generator's method template. `typeDecls`/`methodSource` are the literal text to splice into
+ * `site.file`; `newMapEntries` are spec-map.json types[] entries to append so future field/enum
+ * drift on any newly-modeled named schema is patchable the same way as everything else.
+ */
+export type OperationInsertChange = {
+    kind: "operation-insert";
+    method: string;
+    path: string;
+    site: SdkSite;
+    methodName: string;
+    typeDecls: string;
+    methodSource: string;
+    importsNeeded: string[];
+    newMapEntries: NewSchemaMapEntry[];
+};
+
 export type ApplicableChange =
     | {
           kind: "enum-insert";
@@ -126,7 +164,8 @@ export type ApplicableChange =
           field: string;
           tsType: string;
           site: SdkSite;
-      };
+      }
+    | OperationInsertChange;
 
 export type NeedsHumanIssue = {
     message: string;

@@ -1858,6 +1858,28 @@
                 "name": "WalletInboundSchemaOut",
                 "reason": "Webhook payload body for wallet.inbound; same reasoning as BankAccountWebhookOut."
             }
+        ],
+        "operations": [
+            {
+                "name": "GET /v1/instances/{instance_id}/customers/{customer_id}/rfi",
+                "reason": "Rfi (request-for-information) family has no existing SDK resource; a human must design it, the generator will not guess a brand-new resource."
+            },
+            {
+                "name": "GET /v1/instances/{instance_id}/rfi",
+                "reason": "Rfi family, same as the customer-scoped variant."
+            },
+            {
+                "name": "POST /v1/instances/{instance_id}/customers/{customer_id}/rfi",
+                "reason": "Rfi family, same as the customer-scoped GET."
+            },
+            {
+                "name": "POST /v1/instances/{instance_id}/rfi",
+                "reason": "Rfi family, same as the customer-scoped GET."
+            },
+            {
+                "name": "POST /v1/upload/analyze",
+                "reason": "Multipart/binary upload, not instance-scoped and not JSON in/out; classifier never guesses this shape."
+            }
         ]
     }
 }

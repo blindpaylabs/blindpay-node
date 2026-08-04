@@ -68,3 +68,9 @@ export function isKnownTypeMismatchDivergence(
 export function findSdkFileExists(repoRoot: string, file: string): boolean {
     return existsSync(join(repoRoot, file));
 }
+
+/** True if `${method.toUpperCase()} ${path}` is a recorded, human-accepted ignore.operations entry. */
+export function isIgnoredOperation(map: SpecMap, method: string, path: string): boolean {
+    const key = `${method.toUpperCase()} ${path}`;
+    return (map.ignore.operations ?? []).some((e) => e.name === key);
+}
