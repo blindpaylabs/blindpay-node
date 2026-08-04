@@ -30,19 +30,19 @@ jobs:
         run: |
           set -e
           git fetch origin api-sync-data
-          mkdir -p .api-sync
+          mkdir -p /tmp/api-sync
 
-          if ! git show origin/api-sync-data:.api-sync/spec-current.json > .api-sync/spec-current.json; then
+          if ! git show origin/api-sync-data:.api-sync/spec-current.json > /tmp/api-sync/spec-current.json; then
             echo "::error::.api-sync/spec-current.json is missing on the api-sync-data branch."
             exit 1
           fi
-          if ! git show origin/api-sync-data:.api-sync/delivery.json > .api-sync/delivery.json; then
+          if ! git show origin/api-sync-data:.api-sync/delivery.json > /tmp/api-sync/delivery.json; then
             echo "::error::.api-sync/delivery.json is missing on the api-sync-data branch."
             exit 1
           fi
 
-          MANIFEST_SHA256=$(jq -r '.spec_sha256' .api-sync/delivery.json)
-          ACTUAL_SHA256=$(sha256sum .api-sync/spec-current.json | cut -d' ' -f1)
+          MANIFEST_SHA256=$(jq -r '.spec_sha256' /tmp/api-sync/delivery.json)
+          ACTUAL_SHA256=$(sha256sum /tmp/api-sync/spec-current.json | cut -d' ' -f1)
           if [ "$MANIFEST_SHA256" != "$ACTUAL_SHA256" ]; then
             echo "::error::spec-current.json sha256 ($ACTUAL_SHA256) does not match delivery.json's spec_sha256 ($MANIFEST_SHA256)."
             exit 1
@@ -54,7 +54,7 @@ jobs:
           fi
 
           echo "Verified spec-current.json (sha256 $ACTUAL_SHA256) against delivery.json:"
-          jq -r '"  source_repository: \(.source_repository)\n  source_sha: \(.source_sha)\n  generated_at: \(.generated_at)"' .api-sync/delivery.json
+          jq -r '"  source_repository: \(.source_repository)\n  source_sha: \(.source_sha)\n  generated_at: \(.generated_at)"' /tmp/api-sync/delivery.json
 
       - name: Check for existing api-sync PR
         id: check-pr
@@ -93,7 +93,7 @@ jobs:
         id: sync
         run: |
           set +e
-          bun scripts/api-sync/index.ts --apply --spec .api-sync/spec-current.json --report /tmp/sync-report.json
+          bun scripts/api-sync/index.ts --apply --spec /tmp/api-sync/spec-current.json --report /tmp/sync-report.json
           echo "exit_code=$?" >> "$GITHUB_OUTPUT"
           set -e
           echo "bump=$(jq -r '.bump' /tmp/sync-report.json)" >> "$GITHUB_OUTPUT"
