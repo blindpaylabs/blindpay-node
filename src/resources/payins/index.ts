@@ -83,7 +83,7 @@ export type Payin = {
     blindpay_quotation: number;
     currency: Extract<Currency, "BRL" | "USD" | "MXN" | "COP" | "ARS">;
     billing_fee?: number | null;
-    billing_fee_amount?: string | null;
+    billing_fee_amount?: number | null;
     is_otc?: boolean | null;
     payer_rules?: PayerRules | null;
     name: string;
