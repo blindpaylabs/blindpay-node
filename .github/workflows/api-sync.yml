@@ -96,10 +96,13 @@ jobs:
             "$(jq -r '.applied[] | "- " + .' /tmp/sync-report.json)")"
           git push --force-with-lease origin api-sync
 
+      # The PAT, not GITHUB_TOKEN: a merge performed with GITHUB_TOKEN produces a
+      # push that starts no workflow, so the sync would land on main and never
+      # publish to npm.
       - name: Create or update PR
         if: steps.commit.outcome == 'success'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.SDK_SYNC_PAT }}
         run: |
           BUMP="${{ steps.sync.outputs.bump }}"
           VERSION="${{ steps.sync.outputs.new_version }}"

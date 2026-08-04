@@ -55,8 +55,8 @@
         "test:coverage": "vitest run --coverage",
         "sync": "bun scripts/api-sync/index.ts --apply",
         "sync:check": "bun scripts/api-sync/index.ts --check",
-        "sync:coverage": "bun scripts/api-sync/index.ts --coverage --spec .api-sync/spec-snapshot.json",
-        "audit:types": "bun scripts/api-sync/index.ts --audit-types --spec .api-sync/spec-snapshot.json"
+        "sync:coverage": "bun scripts/api-sync/index.ts --coverage",
+        "audit:types": "bun scripts/api-sync/index.ts --audit-types"
     },
     "exports": {
         ".": {
