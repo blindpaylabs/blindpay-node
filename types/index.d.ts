@@ -26,7 +26,7 @@ export type BankAccountType = "checking" | "saving";
 
 export type Currency = "USDC" | "USDT" | "USDB" | "BRL" | "USD" | "MXN" | "COP" | "ARS";
 
-export type Rail = "wire" | "ach" | "pix" | "pix_safe" | "spei_bitso" | "transfers_bitso" | "ach_cop_bitso" | "international_swift" | "rtp" | "ted";
+export type Rail = "wire" | "ach" | "pix" | "pix_safe" | "spei_bitso" | "transfers_bitso" | "ach_cop_bitso" | "international_swift" | "rtp" | "ted" | "sepa";
     
 export type AccountClass = "individual" | "business";
     
@@ -539,7 +539,7 @@ export type EstimatedAnnualRevenue =
     | "1000000_9999999"
     | "10000000_49999999"
     | "50000000_249999999"
-    | "2500000000_plus";
+    | "250000000_plus";
 
 export type SourceOfWealth =
     | "business_dividends_or_profits"

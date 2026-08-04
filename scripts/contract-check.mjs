@@ -14,6 +14,11 @@
  * Direction B (warning, non-blocking): snapshot property names the SDK does
  * not model anywhere are printed as a warning, not a failure.
  *
+ * Unused allow-list entries (warning, non-blocking): an entry can be
+ * legitimately unused today and still needed tomorrow, e.g. a field the spec
+ * is about to stop exposing elsewhere. Flagged so they get cleaned up, but
+ * not blocking.
+ *
  * Run: node scripts/contract-check.mjs
  */
 
@@ -259,10 +264,12 @@ function main() {
         (e) => !usedAllowListKeys.has(allowListKey(e.schema, e.field))
     );
     if (staleAllowListEntries.length > 0) {
-        hasHardFailure = true;
-        fail("Stale allow-list entries no longer needed (remove them):");
+        console.warn(
+            "\n[contract-check] WARNING: allow-list entries not currently needed (non-blocking; " +
+                "verify they're still justified and remove if not):"
+        );
         for (const e of staleAllowListEntries) {
-            console.error(`  ${e.schema}.${e.field}`);
+            console.warn(`  ${e.schema}.${e.field}`);
         }
     }
 

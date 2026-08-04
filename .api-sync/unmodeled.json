@@ -670,14 +670,6 @@
             "owner": "eric@blindpay.com"
         },
         {
-            "kind": "enum",
-            "schema": "BankAccountWebhookOut",
-            "enumProperty": "type",
-            "reason": "Spec's Rail (bank-account type) enum has 11 values including sepa; this SDK's Rail union has 10 and is missing sepa, even though the SDK already implements SEPA bank-account creation (createSepa/CreateSepaInput). Looks like a safe, easy follow-up: add \"sepa\" to the shared Rail union.",
-            "owner": "eric@blindpay.com",
-            "member": "sepa"
-        },
-        {
             "kind": "type-mismatch",
             "schema": "CreateBankAccountIn",
             "field": "swift_payment_code",
@@ -812,13 +804,6 @@
             "owner": "eric@blindpay.com"
         },
         {
-            "kind": "type-mismatch",
-            "schema": "PayinOut",
-            "field": "billing_fee_amount",
-            "reason": "Real pre-existing type bug: spec declares billing_fee_amount as a number (cents), but Payin (payins/index.ts) declares `billing_fee_amount?: string | null`. Every other amount-in-cents field on Payin (billing_fee, partner_fee, total_fee_amount, etc.) is numeric; this one field is not. Flagged for a human fix, not silently corrected here since changing a public field's type is a breaking change for any consumer already coercing/parsing it as a string.",
-            "owner": "eric@blindpay.com"
-        },
-        {
             "kind": "enum",
             "schema": "PayinOut",
             "enumProperty": "currency",
@@ -881,13 +866,6 @@
             "schema": "UpdateCustomerIn",
             "enumProperty": "business_industry",
             "reason": "Spec's business_industry NAICS enum added code 446120 (this SDK is missing it) and does not include this SDK's non-NAICS crypto/web3 business categories (dapp, exchange, gambling, gaming, infra, marketplace, neo_bank, other, saas, social, wallet), which appear to be a deliberate SDK-side addition for wallet/exchange-type instances rather than spec drift.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "enum",
-            "schema": "UpdateCustomerIn",
-            "enumProperty": "estimated_annual_revenue",
-            "reason": "VALUE MISMATCH, not a missing member: this SDK's top tier is literally \"2500000000_plus\" (2.5 billion) but the spec's top tier is \"250000000_plus\" (250 million, one fewer zero). As written, this SDK's type currently accepts a value the API would reject, and has no literal for the value the API actually expects. Likely a typo in the SDK; needs a human decision on the fix (correcting the literal is a breaking change for any caller already depending on the wrong spelling, however unlikely).",
             "owner": "eric@blindpay.com"
         },
         {

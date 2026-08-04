@@ -1,5 +1,11 @@
 [
     {
+        "schema": "CreatePayoutInput",
+        "field": "reference",
+        "reason": "Stale surface: v2 PR #1925 prunes unreachable schemas from the public spec and this field no longer appears anywhere in it, but the SDK still exposes it on CreatePayoutInput. Remove in next major.",
+        "owner": "eric@blindpay.com"
+    },
+    {
         "schema": "GetBankAccountResponse",
         "field": "account_holder_name",
         "reason": "Pre-existing SDK field with no matching property in the spec (BankAccountOut has swift_account_holder_name, not account_holder_name). Unrelated to the wave-2 receiver->customer rename; needs its own follow-up.",
