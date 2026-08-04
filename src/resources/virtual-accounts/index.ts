@@ -1,7 +1,7 @@
 import type { BlindpayApiResponse, KycStatus, Network, StablecoinToken } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
-export type BankingPartner = "jpmorgan" | "citi" | "hsbc" | "cfsb" | "portage";
+export type BankingPartner = "jpmorgan" | "citi" | "hsbc" | "cfsb" | "portage" | "ssb";
 
 export type SoleProprietorDocType = "master_service_agreement" | "salary_slip" | "bank_statement";
 
