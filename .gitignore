@@ -61,3 +61,6 @@ dist
 
 # Snyk Security Extension - AI Rules (auto-generated)
 .cursor/rules/snyk_rules.mdc
+
+# api-sync: delivered fresh each CI run from the api-sync-data branch, never committed
+.api-sync/spec-current.json

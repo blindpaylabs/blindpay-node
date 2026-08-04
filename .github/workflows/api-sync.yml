@@ -16,13 +16,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Fetch API sync data
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.18
+
+      - name: Fetch the delivered spec
         run: |
-          mkdir -p /tmp/api-sync
           git fetch origin api-sync-data
-          git show origin/api-sync-data:.api-sync/changelog.md > /tmp/api-sync/changelog.md
-          echo "=== Changelog ==="
-          cat /tmp/api-sync/changelog.md
+          mkdir -p .api-sync
+          git show origin/api-sync-data:.api-sync/spec-current.json > .api-sync/spec-current.json
 
       - name: Check for existing api-sync PR
         id: check-pr
@@ -31,10 +33,10 @@ jobs:
         run: |
           PR_NUMBER=$(gh pr list --head api-sync --json number --jq '.[0].number // empty')
           if [ -n "$PR_NUMBER" ]; then
-            echo "existing_pr=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "existing_pr=$PR_NUMBER" >> "$GITHUB_OUTPUT"
             echo "Found existing api-sync PR: #$PR_NUMBER"
           else
-            echo "existing_pr=" >> $GITHUB_OUTPUT
+            echo "existing_pr=" >> "$GITHUB_OUTPUT"
             echo "No existing api-sync PR found"
           fi
 
@@ -48,70 +50,91 @@ jobs:
             git checkout -b api-sync
           fi
 
-      - name: Apply changes with Claude Code
-        uses: anthropics/claude-code-action@v1
-        with:
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          claude_args: '--model claude-opus-5 --allowedTools "Bash(*),Read,Edit,Write,Glob,Grep"'
-          prompt: |
-            You are updating this SDK to match API changes. Read CLAUDE.md for this SDK's conventions.
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
 
-            The changelog is at /tmp/api-sync/changelog.md — it contains ALL the information you need.
-            Do NOT read openapi.json. The changelog is self-contained.
+      # The entire "what changed, and can this repo express it without a human" decision is a
+      # pure, deterministic script: scripts/api-sync/. It reconciles the SDK's declared surface
+      # against the delivered spec state (not an event diff — see reconcile.ts for why), applies
+      # only enum-member and optional-field additions, and hard-fails on anything else: a
+      # removal, a required-ness or type change, a new operation or schema, or a mapped
+      # symbol/anchor it can no longer find. No LLM, no best-guessing.
+      - name: Run the deterministic patcher
+        id: sync
+        run: |
+          set +e
+          bun scripts/api-sync/index.ts --apply --spec .api-sync/spec-current.json --report /tmp/sync-report.json
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+          set -e
+          echo "bump=$(jq -r '.bump' /tmp/sync-report.json)" >> "$GITHUB_OUTPUT"
+          echo "new_version=$(jq -r '.newVersion // empty' /tmp/sync-report.json)" >> "$GITHUB_OUTPUT"
+          echo "applied_count=$(jq -r '.applied | length' /tmp/sync-report.json)" >> "$GITHUB_OUTPUT"
 
-            INSTRUCTIONS:
-            1. Read CLAUDE.md thoroughly for this SDK's patterns and conventions.
-            2. Read /tmp/api-sync/changelog.md — it lists every enum type with every value, every field to add, and every change to make.
-            3. Implement ALL changes. Go through the changelog section by section:
-               - Section 1 (Enum Types): For each enum listed, check if the SDK has it. If missing, create it. If it exists, add any missing values. The changelog lists ALL values — add the ones that don't exist yet.
-               - Section 2 (Receiver Fields): Add each listed field to the receiver input/output types.
-               - Section 3 (Version): Minor bump.
-            4. Do not skip ANY enum or field. Every item in the changelog must be addressed.
-            5. Follow CLAUDE.md patterns exactly for naming, typing, and file organization.
-            6. MINOR version bump only.
-            7. Run, in this order:
-                 bun run lint:fix          # auto-fix formatter issues (trailing newlines, etc.)
-                 bun run check-types       # type-check
-                 bun run lint:check        # validate (must report 0 errors)
-                 bun run test              # run the test suite
-               Fix any errors until all four are clean. Running only
-               `lint:check` will surface formatter diffs as failures —
-               always run `lint:fix` first.
-            8. Do NOT create commits — just modify the files.
+      # A precise, actionable failure (removal, type change, new operation/schema, missing
+      # anchor) fails the run loudly instead of silently applying nothing. If the repo also has
+      # an alerting hook wired to failed runs of this workflow, that is what pages a human.
+      - name: Fail loudly on a needs-human finding
+        if: steps.sync.outputs.exit_code != '0'
+        run: |
+          echo "::error::api-sync found change(s) it cannot apply automatically. See needsHuman below."
+          jq -r '.needsHuman[] | "- " + .' /tmp/sync-report.json
+          exit 1
+
+      - name: Exit quietly when there is nothing to apply
+        if: steps.sync.outputs.applied_count == '0'
+        run: echo "No pending drift; nothing to sync."
 
       - name: Commit and push
         id: commit
+        if: steps.sync.outputs.applied_count != '0'
         run: |
-          git remote set-url origin "https://x-access-token:${{ secrets.SDK_SYNC_PAT }}@github.com/${{ github.repository }}.git"
-          git checkout -- .github/workflows/ 2>/dev/null || true
-          git add -A
-          git reset HEAD .github/workflows/ 2>/dev/null || true
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          echo "has_changes=true" >> $GITHUB_OUTPUT
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -m "feat: sync SDK with API changes"
+          git add -A
+          git commit -m "$(printf 'feat: sync SDK with API changes (v%s)\n\nApplied:\n%s\n' \
+            "${{ steps.sync.outputs.new_version }}" \
+            "$(jq -r '.applied[] | "- " + .' /tmp/sync-report.json)")"
           git push --force-with-lease origin api-sync
 
+      # The PAT, not GITHUB_TOKEN: a merge performed with GITHUB_TOKEN produces a
+      # push that starts no workflow, so the sync would land on main and never
+      # publish to npm.
       - name: Create or update PR
-        if: steps.commit.outputs.has_changes == 'true'
+        if: steps.commit.outcome == 'success'
         env:
           GH_TOKEN: ${{ secrets.SDK_SYNC_PAT }}
         run: |
+          BUMP="${{ steps.sync.outputs.bump }}"
+          VERSION="${{ steps.sync.outputs.new_version }}"
+          if [ "$BUMP" = "minor" ]; then
+            PREFIX="feat"
+          else
+            PREFIX="fix"
+          fi
+          TITLE="${PREFIX}: sync SDK with API changes (v${VERSION})"
           EXISTING_PR="${{ steps.check-pr.outputs.existing_pr }}"
 
+          {
+            echo "Automated, script-generated SDK update from an API spec change."
+            echo "No LLM was involved in producing this diff; see scripts/api-sync/ in this repo."
+            echo
+            echo "### Applied"
+            jq -r '.applied[] | "- " + .' /tmp/sync-report.json
+            echo
+            echo "### Known divergences (recorded, not applied)"
+            jq -r '.knownDivergences[] | "- " + .' /tmp/sync-report.json
+            echo
+            echo "Version bump: \`${BUMP}\` -> v${VERSION}"
+          } > /tmp/pr-body.md
+
           if [ -n "$EXISTING_PR" ]; then
-            echo "Updating existing PR #$EXISTING_PR"
-            gh pr comment "$EXISTING_PR" --body "Updated with latest API changes."
+            gh pr edit "$EXISTING_PR" --title "$TITLE" --body-file /tmp/pr-body.md
+            PR_NUMBER="$EXISTING_PR"
           else
-            gh pr create \
-              --title "feat: sync SDK with API changes" \
-              --body "Automated SDK update from API changes." \
-              --base main \
-              --head api-sync \
-              --label api-sync
+            gh pr create --title "$TITLE" --body-file /tmp/pr-body.md --base main --head api-sync --label api-sync
+            PR_NUMBER=$(gh pr list --head api-sync --json number --jq '.[0].number')
           fi
+
+          # Enable auto-merge so the required checks (sync:check, determinism, tests, lint,
+          # contract-check, etc.) are the only gate; a needs-human run never reaches this step.
+          gh pr merge "$PR_NUMBER" --auto --squash

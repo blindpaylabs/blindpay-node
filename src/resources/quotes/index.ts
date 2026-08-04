@@ -16,6 +16,7 @@ export type CreateQuoteInput = {
     token: StablecoinToken;
     description?: string | null;
     partner_fee_id?: string | null;
+    refund_wallet_address?: string | null;
 };
 export type CreateQuoteResponse = {
     id: string;

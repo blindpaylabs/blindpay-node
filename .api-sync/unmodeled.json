@@ -1,0 +1,908 @@
+{
+    "properties": [
+        {
+            "kind": "property",
+            "schema": "AvailableBankDetails",
+            "field": "requiredWhen",
+            "reason": "Conditional-requirement metadata (field/operator/values, describing when a bank-detail-form field becomes required) added to each AvailableBankDetails item; GetBankDetailsResponse does not model it.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "BankAccountOut",
+            "field": "swift_ifsc_branch_code",
+            "reason": "See CreateBankAccountIn.swift_ifsc_branch_code: same new field missing on the response side (GetBankAccountResponse/ListBankAccountsResponse/CreateInternationalSwiftResponse).",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreateBankAccountIn",
+            "field": "checkbook_account_id",
+            "reason": "Provider-internal account handle (Checkbook integration) present on the bank-account create schema; not settable through any of the 11 rail create input types, consistent with the existing aiprise_validation_key-style internal-field pattern already allow-listed elsewhere.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreateBankAccountIn",
+            "field": "checkbook_user_key",
+            "reason": "See CreateBankAccountIn.checkbook_account_id (same Checkbook-provider internal field).",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreateBankAccountIn",
+            "field": "force_cpf_cnpj",
+            "reason": "New PIX-key CPF/CNPJ validation override flag; not modeled on CreatePixInput.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreateBankAccountIn",
+            "field": "onemoney_external_account_id",
+            "reason": "Provider-internal account handle (OneMoney integration); same pattern as checkbook_account_id.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreateBankAccountIn",
+            "field": "status",
+            "reason": "Bank-account status is present on the shared create schema (likely a server-computed/back-office field, not client-settable) but not modeled on any of the 11 rail create input types; needs confirmation of intended write access before modeling.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreateBankAccountIn",
+            "field": "swift_ifsc_branch_code",
+            "reason": "IFSC branch code (Indian bank routing) added alongside the existing SWIFT fields; not modeled on CreateInternationalSwiftInput.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreateBankAccountIn",
+            "field": "type",
+            "reason": "Discriminator field injected by the factory function body (bank-accounts/index.ts:508-610: `{ type: \"pix\", ...data }` etc.), never carried on any of the 11 rail create input types by design.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreateBlockchainWalletIn",
+            "field": "is_account_abstraction",
+            "reason": "Discriminator field injected by the factory function body (blockchain.ts:109-136: createWithAddress sets true, createWithHash sets false), never carried on either input type by design.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreateCustomerIn",
+            "field": "additional_info",
+            "reason": "See CustomerOut.additional_info: same new field, not modeled on any of the 3 KYC/KYB input types.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreateCustomerIn",
+            "field": "kyc_type",
+            "reason": "Discriminator field injected by the factory function body (customers/index.ts:521-547: `{ kyc_type: \"standard\"|\"enhanced\", ...data }`), never carried on any of the 3 KYC/KYB input types by design.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreateCustomerIn",
+            "field": "latitude",
+            "reason": "See CustomerOut.latitude: same new field, not modeled on any of the 3 KYC/KYB input types.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreateCustomerIn",
+            "field": "longitude",
+            "reason": "See CreateCustomerIn.latitude.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreateCustomerIn",
+            "field": "type",
+            "reason": "Discriminator field injected by the factory function body (customers/index.ts:521-547: `{ type: \"individual\"|\"business\", ...data }`), never carried on any of the 3 KYC/KYB input types by design.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreatePayinIn",
+            "field": "payin_quote_id",
+            "reason": "CreateEvmPayinInput (payins/index.ts) is `= string`, a bare scalar alias for the value the factory sends as {payin_quote_id}, not an object literal; there is no key to mechanically add a field to. Verified by reading the factory: createEvm(payin_quote_id) posts exactly {payin_quote_id}, matching this schema's one property.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreatePayinOut",
+            "field": "billing_fee_amount",
+            "reason": "billing_fee_amount is not in CreateEvmPayinResponse's Pick<Payin,...> list and has no inline fallback; only the legacy billing_fee field is carried.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreatePayinOut",
+            "field": "partner_fee",
+            "reason": "Same partner_fee/transaction_fee_amount/billing_fee_amount gaps as PayinOut (CreateEvmPayinResponse Picks its shared fields from Payin, which does not have them either).",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreatePayinOut",
+            "field": "transaction_fee_amount",
+            "reason": "See CreatePayinOut.partner_fee.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreatePayinQuoteOut",
+            "field": "billing_fee_amount",
+            "reason": "New computed billing-fee-in-cents field added to CreatePayinQuoteOut; CreatePayinQuoteResponse does not model it (mirrors the same gap on CreateQuoteResponse/QuoteOut).",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CustomerOut",
+            "field": "additional_info",
+            "reason": "Extra-documents/notes attachment list (label+value+AdditionalInfoItem) added to CustomerOut; not modeled on any of the 3 KYC/KYB response types.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CustomerOut",
+            "field": "business_type",
+            "reason": "CreateBusinessWithStandardKYBInput accepts business_type on create, but BusinessWithStandardKYB (the response type) never surfaces it back; a response-side-only gap.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CustomerOut",
+            "field": "customer_id",
+            "reason": "CustomerOut carries both `id` and a separate `customer_id` (the wave-2 rename's canonical identifier); none of the 3 KYC/KYB response types expose `customer_id`, only `id`.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CustomerOut",
+            "field": "latitude",
+            "reason": "Optional geolocation pair added to CustomerOut (forwarded to the identity/fraud providers); not modeled on any of the 3 KYC/KYB response types.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CustomerOut",
+            "field": "longitude",
+            "reason": "See CustomerOut.latitude.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "Error",
+            "field": "code",
+            "reason": "This SDK's error envelope (ErrorResponse) only ever surfaces `message`, the legacy machine string. It does not expose the newer stable `code` the spec explicitly recommends building programmatic handling on.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "Error",
+            "field": "description",
+            "reason": "See Error.code: human-readable, safe-to-display explanation, not modeled.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "Error",
+            "field": "errors",
+            "reason": "See Error.code: structured per-field validation error list, not modeled.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "Error",
+            "field": "success",
+            "reason": "See Error.code: the {success: false} discriminator flag on the error envelope, not modeled (this SDK signals an error by BlindpayApiResponse.error being non-null instead).",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "Error",
+            "field": "trace_id",
+            "reason": "See Error.code: request trace ID for support correlation, not modeled.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "GetFeesOut",
+            "field": "sepa",
+            "reason": "SEPA fee tier added alongside the other rail fee tiers; GetFeesResponse does not model it (consistent with the SDK-wide SEPA gaps: Rail enum and CreateBankAccountIn/BankAccountOut swift_ifsc_branch_code notwithstanding, SEPA itself is only partially wired).",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayinOut",
+            "field": "approved_risk_sources",
+            "reason": "See tracking_payment.review_source: same pending PR.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_payment"
+        },
+        {
+            "kind": "property",
+            "schema": "PayinOut",
+            "field": "end_to_end_id",
+            "reason": "Payin tracking_transaction gained 6 fields (end_to_end_id, provider_name, provider_transaction_id, sender_bank_name, ted_instruction, transaction_hash) that PayinTrackingTransaction does not model; same class of gap as tracking_payment, needs its own reviewed pass.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_transaction"
+        },
+        {
+            "kind": "property",
+            "schema": "PayinOut",
+            "field": "manual_concluded_at",
+            "reason": "Manual OTC-liquidity execution tracking (manual_execution_status plus its concluded_at/concluded_by pair) added to PayinOut; not modeled on Payin.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayinOut",
+            "field": "manual_concluded_by",
+            "reason": "See manual_concluded_at.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayinOut",
+            "field": "manual_execution_status",
+            "reason": "See manual_concluded_at.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayinOut",
+            "field": "partner_fee",
+            "reason": "New computed partner-fee-in-cents field (distinct from partner_fee_amount) added to PayinOut; not modeled on Payin.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayinOut",
+            "field": "provider_name",
+            "reason": "See tracking_transaction.end_to_end_id: same pending gap.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_transaction"
+        },
+        {
+            "kind": "property",
+            "schema": "PayinOut",
+            "field": "provider_transaction_id",
+            "reason": "See tracking_transaction.end_to_end_id: same pending gap.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_transaction"
+        },
+        {
+            "kind": "property",
+            "schema": "PayinOut",
+            "field": "review_context",
+            "reason": "See tracking_payment.review_source: same pending PR.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_payment"
+        },
+        {
+            "kind": "property",
+            "schema": "PayinOut",
+            "field": "review_source",
+            "reason": "Manual-review risk-context fields added to the payin tracking_payment step (review_source, review_context, approved_risk_sources); this SDK's PayinTrackingPayment models only step/provider_name/completed_at. Additive, needs its own reviewed PR alongside the payout tracking_payment expansion above.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_payment"
+        },
+        {
+            "kind": "property",
+            "schema": "PayinOut",
+            "field": "sender_bank_name",
+            "reason": "See tracking_transaction.end_to_end_id: same pending gap.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_transaction"
+        },
+        {
+            "kind": "property",
+            "schema": "PayinOut",
+            "field": "ted_instruction",
+            "reason": "See tracking_transaction.end_to_end_id: same pending gap (a Brazilian TED-rail instruction sub-object, mirroring pse_instruction/transfers_instruction which are already modeled).",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_transaction"
+        },
+        {
+            "kind": "property",
+            "schema": "PayinOut",
+            "field": "transaction_fee_amount",
+            "reason": "See PayinOut.partner_fee: added alongside it, not modeled.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayinOut",
+            "field": "transaction_hash",
+            "reason": "See tracking_transaction.end_to_end_id: same pending gap.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_transaction"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOnEvmOut",
+            "field": "bank_account_id",
+            "reason": "PayoutOnEvmOut (the shared create-payout response for evm/solana/stellar) carries several fields Payout itself is also missing (see PayoutOut.partner_fee, .tracking_documents, .transaction_fee_amount); bank_account_id and offramp_wallet_id are additionally new here and not modeled on any of CreateStellarPayoutResponse/CreateEvmPayoutResponse/CreateSolanaPayoutResponse.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOnEvmOut",
+            "field": "billing_fee_amount",
+            "reason": "See PayoutOut: same field missing on the create-response types too.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOnEvmOut",
+            "field": "offramp_wallet_id",
+            "reason": "See PayoutOnEvmOut.bank_account_id.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOnEvmOut",
+            "field": "partner_fee",
+            "reason": "See PayoutOut.partner_fee: same field missing on the create-response types too.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOnEvmOut",
+            "field": "tracking_documents",
+            "reason": "See PayoutOut.tracking_documents: same new tracking step missing on the create-response types too.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOnEvmOut",
+            "field": "transaction_fee_amount",
+            "reason": "See PayoutOut.transaction_fee_amount: same field missing on the create-response types too.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "coelsa_id",
+            "reason": "SDK's shared tracking-payment type models a 12 of 20 field subset of the payout tracking_payment object (this SDK already models the 6 recipient_* fields plus provider_name/provider_transaction_id/provider_status/estimated_time_of_arrival/completed_at); exposing the remaining 8 payout-only fields (coelsa_id, end_to_end_id, provider_clearing_system, provider_error_reason, provider_imad, provider_integration, provider_reference, provider_uetr) is a deliberate additive change that needs one reviewed PR across all SDKs, not a blind per-field add.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_payment"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "end_to_end_id",
+            "reason": "See tracking_payment.coelsa_id: same pending cross-SDK PR.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_payment"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "ledger_in_transaction_id",
+            "reason": "Payout tracking_transaction gained 4 ledger/provider fields (ledger_in_transaction_id, ledger_out_transaction_id, provider_error_reason, provider_transaction_id) that PayoutTrackingTransaction does not model.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_transaction"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "ledger_out_transaction_id",
+            "reason": "See tracking_transaction.ledger_in_transaction_id: same pending gap.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_transaction"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "partner_fee",
+            "reason": "New computed partner-fee-in-cents field (distinct from the existing partner_fee_amount) added alongside billing_fee_amount/transaction_fee_amount; none of the three are modeled on Payout.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "pix_safe_bank_code",
+            "reason": "PIX SAFE rail fields present on the shared PayoutOut/BankAccountOut shape but never copied onto Payout (whose bank-account fields are otherwise a near-complete flattening of BankAccountOut).",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "pix_safe_branch_code",
+            "reason": "See pix_safe_bank_code.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "pix_safe_cpf_cnpj",
+            "reason": "See pix_safe_bank_code.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "provider_clearing_system",
+            "reason": "See tracking_payment.coelsa_id: same pending cross-SDK PR.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_payment"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "provider_error_reason",
+            "reason": "See tracking_payment.coelsa_id: same pending cross-SDK PR.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_payment"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "provider_error_reason",
+            "reason": "See tracking_transaction.ledger_in_transaction_id: same pending gap.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_transaction"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "provider_imad",
+            "reason": "See tracking_payment.coelsa_id: same pending cross-SDK PR.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_payment"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "provider_integration",
+            "reason": "See tracking_payment.coelsa_id: same pending cross-SDK PR.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_payment"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "provider_reference",
+            "reason": "See tracking_payment.coelsa_id: same pending cross-SDK PR.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_payment"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "provider_transaction_id",
+            "reason": "See tracking_transaction.ledger_in_transaction_id: same pending gap.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_transaction"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "provider_transaction_id",
+            "reason": "Payout tracking_complete gained a refund-tracking pair (provider_transaction_id for the refund transaction, refund_reason) that PayoutTrackingComplete does not model.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_complete"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "provider_uetr",
+            "reason": "See tracking_payment.coelsa_id: same pending cross-SDK PR.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_payment"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "refund_reason",
+            "reason": "See tracking_complete.provider_transaction_id: same pending gap.",
+            "owner": "eric@blindpay.com",
+            "property": "tracking_complete"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "sender_legal_name",
+            "reason": "New field (legal name of the sending instance, shown on the receipt) not modeled on Payout.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "tracking_documents",
+            "reason": "Entire new tracking step (step, completed_at, reviewed_by, status) added for international-wire document review; not modeled at all on Payout, or on the create-response types (PayoutOnEvmOut). Needs a new shared PayoutTrackingDocuments type plus wiring into Payout/CreateStellarPayoutResponse/CreateEvmPayoutResponse/CreateSolanaPayoutResponse.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "transaction_fee_amount",
+            "reason": "See partner_fee: added alongside it, not modeled.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "QuoteOut",
+            "field": "billing_fee_amount",
+            "reason": "New computed billing-fee-in-cents field added to QuoteOut; CreateQuoteResponse does not model it.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "TransferOut",
+            "field": "external_id",
+            "reason": "New pass-through external_id field added to TransferOut; Transfer does not model it.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "UpdateCustomerIn",
+            "field": "additional_info",
+            "reason": "See CustomerOut.additional_info: same new field, not modeled on UpdateCustomerInput.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "UpdateCustomerIn",
+            "field": "latitude",
+            "reason": "See CustomerOut.latitude: same new field, not modeled on UpdateCustomerInput.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "UpdateCustomerIn",
+            "field": "longitude",
+            "reason": "See UpdateCustomerIn.latitude.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "UpdateInstanceIn",
+            "field": "compliance_emails",
+            "reason": "New instance-level RFI notification settings (an email allow-list plus a toggle) added to UpdateInstanceIn; UpdateInstanceInput does not model either.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "UpdateInstanceIn",
+            "field": "customer_rfi_emails_enabled",
+            "reason": "See UpdateInstanceIn.compliance_emails.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "UpdateInstanceMemberIn",
+            "field": "user_role",
+            "reason": "instances/index.ts:60-65 renames the SDK's `role` field to the wire body key `user_role` inside the factory function; the input type itself is named `role`, not `user_role`. Sibling quirk to the already allow-listed UpdateInstanceMemberRoleInput.memberId path-param entry.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "VirtualAccountOut",
+            "field": "customer_id",
+            "reason": "New field added to VirtualAccountOut; VirtualAccount (virtual-accounts/index.ts) does not model it, even though the surrounding customer-scoped resource already threads customer_id through the URL.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "get /v1/instances/{id}/members",
+            "field": "has_passkey",
+            "reason": "Per-member passkey-enrollment flag added; GetInstanceMembersResponse (instances/index.ts) does not model it.",
+            "owner": "eric@blindpay.com"
+        }
+    ],
+    "knownDivergences": [
+        {
+            "kind": "enum",
+            "schema": "AvailableBankDetails",
+            "enumProperty": "[].key",
+            "reason": "Spec's available-bank-details key enum has grown to 73 values; this SDK's BankDetailKey union models 48 and is missing 24 (business_industry, date_of_birth, force_cpf_cnpj, onemoney_external_account_id, phone_number, pix_safe_bank_code, pix_safe_branch_code, pix_safe_cpf_cnpj, recipient_relationship, sepa_beneficiary_address_line_1, sepa_beneficiary_address_line_2, sepa_beneficiary_bic, sepa_beneficiary_city, sepa_beneficiary_country, sepa_beneficiary_legal_name, sepa_beneficiary_postal_code, sepa_beneficiary_state_province_region, sepa_iban, status, swift_ifsc_branch_code, swift_payment_code, tax_id, ted_bank_code, ted_branch_code, ted_cpf_cnpj). This is a purely descriptive/display enum (used to label dynamic bank-detail form fields), so the gap is cosmetic rather than a functional block, but is substantial enough to need one reviewed pass rather than a blind append.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "type-mismatch",
+            "schema": "AvailableRails",
+            "field": "country",
+            "reason": "GetRailsResponse declares country as a bare string; the spec constrains it to the full ISO country-code enum (same list as the shared Country type). Read-only informational endpoint (GET /available/rails); a modeling gap, not a functional one.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "BankAccountOut",
+            "field": "bank_name",
+            "reason": "Pre-existing SDK-only field on GetBankAccountResponse with no matching property on BankAccountOut in the spec (same family as the already allow-listed account_holder_name/swift_code/is_primary/iban).",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "type-mismatch",
+            "schema": "BankAccountOut",
+            "field": "business_industry",
+            "reason": "ListBankAccountsResponse's inline array-item literal declares business_industry as a bare `string | null`; every create*Input type in the same file (CreateAchInput, CreateWireInput, CreateInternationalSwiftInput, CreateRtpInput) correctly types the same field as the shared BusinessIndustry union. The list endpoint's response type alone was never brought in line.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "BankAccountOut",
+            "field": "customer_id",
+            "reason": "Pre-existing SDK-only field on GetBankAccountResponse with no matching property on BankAccountOut in the spec; same family as bank_name.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "BankAccountOut",
+            "field": "offramp_wallets.[].circle_wallet_id",
+            "reason": "ListBankAccountsResponse's inline offramp_wallets literal (bank-accounts/index.ts:88-93) models {address,id,network,external_id} but spec's BankAccountOut.offramp_wallets item also carries circle_wallet_id; a narrower, independently-named SDK symbol would be needed to track this sub-shape mechanically.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "type-mismatch",
+            "schema": "BankAccountOut",
+            "field": "spei_protocol",
+            "reason": "ListBankAccountsResponse's inline array-item literal declares spei_protocol as a bare `string`; CreateSpeiResponse in the same file correctly types it as SpeiProtocol. The list endpoint's response type alone was never brought in line.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "type-mismatch",
+            "schema": "BankAccountOut",
+            "field": "status",
+            "reason": "ListBankAccountsResponse's inline array-item literal declares status as a bare `string | null`; spec constrains it to a 4-value approval-status enum (verifying, approved, rejected, deprecated). Never modeled as a named SDK type at all.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "type-mismatch",
+            "schema": "BankAccountOut",
+            "field": "swift_payment_code",
+            "reason": "CreateInternationalSwiftResponse and ListBankAccountsResponse both declare swift_payment_code as a bare `string | null`; spec constrains it to a large country-specific SWIFT purpose-code enum (hundreds of values, e.g. ae_swift_str, jp_swift_101). Given the size, a named SDK union is likely the wrong shape for this field regardless; flagged for a human modeling decision, not a blind enum type.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "BankAccountOut",
+            "field": "updated_at",
+            "reason": "Pre-existing SDK-only field on GetBankAccountResponse with no matching property on BankAccountOut in the spec; same family as bank_name.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "enum",
+            "schema": "BankAccountWebhookOut",
+            "enumProperty": "type",
+            "reason": "Spec's Rail (bank-account type) enum has 11 values including sepa; this SDK's Rail union has 10 and is missing sepa, even though the SDK already implements SEPA bank-account creation (createSepa/CreateSepaInput). Looks like a safe, easy follow-up: add \"sepa\" to the shared Rail union.",
+            "owner": "eric@blindpay.com",
+            "member": "sepa"
+        },
+        {
+            "kind": "type-mismatch",
+            "schema": "CreateBankAccountIn",
+            "field": "swift_payment_code",
+            "reason": "CreateInternationalSwiftInput declares swift_payment_code as a bare `string`; same large country-specific SWIFT purpose-code enum as BankAccountOut.swift_payment_code above.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreateCustomerIn",
+            "field": "recipient_relationship",
+            "reason": "Pre-existing SDK-only field on all 3 create KYC/KYB input types with no matching property on CreateCustomerIn in the spec.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreateCustomerIn",
+            "field": "sole_proprietor_doc_type",
+            "reason": "Pre-existing SDK-only field on all 3 create KYC/KYB input types with no matching property on CreateCustomerIn in the spec.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreatePartnerFeeInput",
+            "field": "evm_wallet_address",
+            "reason": "Already tracked in .api-sync/contract-check-allowlist.json; mirrored here so this repo's own reconciliation state does not depend on that file staying in sync.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreatePartnerFeeInput",
+            "field": "stellar_wallet_address",
+            "reason": "See CreatePartnerFeeInput.evm_wallet_address.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreatePartnerFeeResponse",
+            "field": "evm_wallet_address",
+            "reason": "See CreatePartnerFeeInput.evm_wallet_address.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreatePartnerFeeResponse",
+            "field": "stellar_wallet_address",
+            "reason": "See CreatePartnerFeeInput.evm_wallet_address.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreatePayinOut",
+            "field": "billing_fee",
+            "reason": "Already tracked in .api-sync/contract-check-allowlist.json as CreateEvmPayinResponse.billing_fee; mirrored here.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CreateTransferOut",
+            "field": "tracking_partner_fee",
+            "reason": "Already tracked in .api-sync/contract-check-allowlist.json as CreateTransferResponse.tracking_partner_fee; mirrored here.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "enum",
+            "schema": "CustomerLimitIncreaseIn",
+            "enumProperty": "supporting_document_type",
+            "reason": "Spec's supporting_document_type enum has grown to 15 values; this SDK's LimitIncreaseRequestSupportingDocumentType models 6 and is missing 9 (business_accounts_receivable, business_contract, business_merchant_processor_statement, business_shareholder_loan, individual_blockchain_wallet_statement, individual_crypto_exchange_statement, individual_employment_letter, individual_investment_statement, individual_pay_stub).",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "enum",
+            "schema": "CustomerOut",
+            "enumProperty": "kyc_status",
+            "reason": "Spec's kyc_status has 8 values (verifying, approved, rejected, deprecated, pending_review, awaiting_contract, compliance_request, approved_rfi); this SDK's KycStatus models 7, missing approved_rfi. approved_rfi is reached only through the RFI resource, which this SDK does not implement (see ignore.schemas); adding the enum member without the resource would be misleading.",
+            "owner": "eric@blindpay.com",
+            "member": "approved_rfi"
+        },
+        {
+            "kind": "property",
+            "schema": "CustomerOut",
+            "field": "recipient_relationship",
+            "reason": "Pre-existing SDK-only field on all 3 KYC/KYB response types with no matching property on CustomerOut in the spec.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "CustomerOut",
+            "field": "sole_proprietor_doc_type",
+            "reason": "Pre-existing SDK-only field on all 3 KYC/KYB response types with no matching property on CustomerOut in the spec.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "type-mismatch",
+            "schema": "CustomerOut",
+            "field": "source_of_funds_doc_type",
+            "reason": "IndividualWithEnhancedKYC declares source_of_funds_doc_type as a bare `string`; the other 2 KYC/KYB response types (IndividualWithStandardKYC, BusinessWithStandardKYB) correctly type the same field as `SourceOfFundsDocType | null`. Only the enhanced-KYC variant was never brought in line.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "GetPartnerFeeResponse",
+            "field": "evm_wallet_address",
+            "reason": "See CreatePartnerFeeInput.evm_wallet_address.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "GetPartnerFeeResponse",
+            "field": "stellar_wallet_address",
+            "reason": "See CreatePartnerFeeInput.evm_wallet_address.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "ListPartnerFeesResponse",
+            "field": "evm_wallet_address",
+            "reason": "See CreatePartnerFeeInput.evm_wallet_address.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "ListPartnerFeesResponse",
+            "field": "stellar_wallet_address",
+            "reason": "See CreatePartnerFeeInput.evm_wallet_address.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayinOut",
+            "field": "billing_fee",
+            "reason": "Already tracked in .api-sync/contract-check-allowlist.json (superseded by billing_fee_amount); mirrored here for the same reason as the partner-fee entries above.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "type-mismatch",
+            "schema": "PayinOut",
+            "field": "billing_fee_amount",
+            "reason": "Real pre-existing type bug: spec declares billing_fee_amount as a number (cents), but Payin (payins/index.ts) declares `billing_fee_amount?: string | null`. Every other amount-in-cents field on Payin (billing_fee, partner_fee, total_fee_amount, etc.) is numeric; this one field is not. Flagged for a human fix, not silently corrected here since changing a public field's type is a breaking change for any consumer already coercing/parsing it as a string.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "enum",
+            "schema": "PayinOut",
+            "enumProperty": "currency",
+            "reason": "Spec's fiat currency enum added EUR; this SDK's Currency union (which also carries the 3 crypto settlement tokens as a deliberate broader union) is missing it.",
+            "owner": "eric@blindpay.com",
+            "member": "EUR"
+        },
+        {
+            "kind": "property",
+            "schema": "PayinOut",
+            "field": "tracking_partner_fee",
+            "reason": "Already tracked in .api-sync/contract-check-allowlist.json (no longer exists on PayinOut in the spec); mirrored here.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOnEvmOut",
+            "field": "tracking_partner_fee",
+            "reason": "Already tracked in .api-sync/contract-check-allowlist.json as CreateStellarPayoutResponse/CreateEvmPayoutResponse/CreateSolanaPayoutResponse.tracking_partner_fee; mirrored here.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "type-mismatch",
+            "schema": "PayoutOut",
+            "field": "ach_cop_document_type",
+            "reason": "Payout declares ach_cop_document_type as a bare `string`; BankAccountOut's own create*Input/Response types (CreateColombiaAchInput/Response) correctly type the same field as AchCopDocument. Only the flattened Payout type was never brought in line.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "type-mismatch",
+            "schema": "PayoutOut",
+            "field": "provider_name",
+            "reason": "Nested at tracking_payment.provider_name. Spec constrains it to a fixed list of human-readable bank/provider display labels (\"HSBC\", \"JPMorgan Chase\", \"Portage Bank\", etc.); PayoutTrackingPayment declares it as a bare `string | null`. Given this is a display label list that grows whenever a new banking partner is onboarded, a strict union may be the wrong shape for this field regardless; flagged for a human modeling decision, not a blind enum type.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "PayoutOut",
+            "field": "tracking_partner_fee",
+            "reason": "Already tracked in .api-sync/contract-check-allowlist.json (no longer exists on any Payout schema in the spec); mirrored here.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "enum",
+            "schema": "PayoutOut",
+            "enumProperty": "tracking_payment.estimated_time_of_arrival",
+            "reason": "Spec's EstimatedTimeOfArrival gained a 7th value, 5_30_min, between 5_min and 30_min; this SDK's EstimatedTimeOfArrival union still has the original 6. Bootstrap note: this enum is declared with single quotes (unlike most others in this codebase), which is exactly why it slipped past this project's own first bootstrap pass; fixed before committing.",
+            "owner": "eric@blindpay.com",
+            "member": "5_30_min"
+        },
+        {
+            "kind": "property",
+            "schema": "TransferOut",
+            "field": "tracking_partner_fee",
+            "reason": "Already tracked in .api-sync/contract-check-allowlist.json (no longer exists on TransferOut in the spec); mirrored here.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "enum",
+            "schema": "UpdateCustomerIn",
+            "enumProperty": "business_industry",
+            "reason": "Spec's business_industry NAICS enum added code 446120 (this SDK is missing it) and does not include this SDK's non-NAICS crypto/web3 business categories (dapp, exchange, gambling, gaming, infra, marketplace, neo_bank, other, saas, social, wallet), which appear to be a deliberate SDK-side addition for wallet/exchange-type instances rather than spec drift.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "enum",
+            "schema": "UpdateCustomerIn",
+            "enumProperty": "estimated_annual_revenue",
+            "reason": "VALUE MISMATCH, not a missing member: this SDK's top tier is literally \"2500000000_plus\" (2.5 billion) but the spec's top tier is \"250000000_plus\" (250 million, one fewer zero). As written, this SDK's type currently accepts a value the API would reject, and has no literal for the value the API actually expects. Likely a typo in the SDK; needs a human decision on the fix (correcting the literal is a breaking change for any caller already depending on the wrong spelling, however unlikely).",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "UpdateCustomerIn",
+            "field": "recipient_relationship",
+            "reason": "Pre-existing SDK-only field on UpdateCustomerInput with no matching property on UpdateCustomerIn in the spec.",
+            "owner": "eric@blindpay.com"
+        },
+        {
+            "kind": "property",
+            "schema": "UpdateCustomerIn",
+            "field": "sole_proprietor_doc_type",
+            "reason": "Pre-existing SDK-only field on UpdateCustomerInput with no matching property on UpdateCustomerIn in the spec.",
+            "owner": "eric@blindpay.com"
+        }
+    ]
+}

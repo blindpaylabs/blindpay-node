@@ -1,6 +1,6 @@
 {
     "name": "@blindpay/node",
-    "version": "5.0.1",
+    "version": "5.1.0",
     "description": "Official Node.js SDK for Blindpay API - Stablecoin API for global payments",
     "keywords": [
         "blindpay",
@@ -52,7 +52,11 @@
         "lint:check": "biome check .",
         "lint:fix": "biome check --write .",
         "test": "vitest run",
-        "test:coverage": "vitest run --coverage"
+        "test:coverage": "vitest run --coverage",
+        "sync": "bun scripts/api-sync/index.ts --apply",
+        "sync:check": "bun scripts/api-sync/index.ts --check",
+        "sync:coverage": "bun scripts/api-sync/index.ts --coverage",
+        "audit:types": "bun scripts/api-sync/index.ts --audit-types"
     },
     "exports": {
         ".": {
