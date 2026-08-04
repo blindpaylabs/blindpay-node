@@ -16,8 +16,15 @@ export function loadSpecMap(path: string): SpecMap {
 
 export function loadUnmodeled(path: string): UnmodeledFile {
     const raw = JSON.parse(readFileSync(path, "utf8"));
-    if (!Array.isArray(raw.properties) || !Array.isArray(raw.knownDivergences)) {
-        throw new Error(`${path}: expected {properties: [], knownDivergences: []}`);
+    if (
+        !Array.isArray(raw.properties) ||
+        !Array.isArray(raw.knownDivergences) ||
+        !Array.isArray(raw.enumPropertyOmissions) ||
+        !Array.isArray(raw.nestedShapeOmissions)
+    ) {
+        throw new Error(
+            `${path}: expected {properties: [], knownDivergences: [], enumPropertyOmissions: [], nestedShapeOmissions: []}`
+        );
     }
     return raw;
 }
