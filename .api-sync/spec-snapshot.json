@@ -3393,7 +3393,7 @@
                   "string",
                   "null"
                 ],
-                "description": "Risk source that sent this payin to manual review",
+                "description": "Primary risk source that sent this payin to manual review",
                 "example": "seon_review"
               },
               "review_context": {
@@ -3403,6 +3403,28 @@
                 ],
                 "additionalProperties": {},
                 "description": "Structured risk context for manual review"
+              },
+              "review_sources": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Every risk source that flagged this payin on the pending review",
+                "example": [
+                  "seon_review",
+                  "new_instance"
+                ]
+              },
+              "review_contexts": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {},
+                "description": "Structured risk context per flagging source"
               },
               "approved_risk_sources": {
                 "type": [
@@ -4082,7 +4104,7 @@
                   "string",
                   "null"
                 ],
-                "description": "Risk source that sent this payin to manual review",
+                "description": "Primary risk source that sent this payin to manual review",
                 "example": "seon_review"
               },
               "review_context": {
@@ -4092,6 +4114,28 @@
                 ],
                 "additionalProperties": {},
                 "description": "Structured risk context for manual review"
+              },
+              "review_sources": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Every risk source that flagged this payin on the pending review",
+                "example": [
+                  "seon_review",
+                  "new_instance"
+                ]
+              },
+              "review_contexts": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {},
+                "description": "Structured risk context per flagging source"
               },
               "approved_risk_sources": {
                 "type": [
@@ -5039,7 +5083,7 @@
                   "string",
                   "null"
                 ],
-                "description": "Risk source that sent this payin to manual review",
+                "description": "Primary risk source that sent this payin to manual review",
                 "example": "seon_review"
               },
               "review_context": {
@@ -5049,6 +5093,28 @@
                 ],
                 "additionalProperties": {},
                 "description": "Structured risk context for manual review"
+              },
+              "review_sources": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Every risk source that flagged this payin on the pending review",
+                "example": [
+                  "seon_review",
+                  "new_instance"
+                ]
+              },
+              "review_contexts": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {},
+                "description": "Structured risk context per flagging source"
               },
               "approved_risk_sources": {
                 "type": [
@@ -5728,7 +5794,7 @@
                   "string",
                   "null"
                 ],
-                "description": "Risk source that sent this payin to manual review",
+                "description": "Primary risk source that sent this payin to manual review",
                 "example": "seon_review"
               },
               "review_context": {
@@ -5738,6 +5804,28 @@
                 ],
                 "additionalProperties": {},
                 "description": "Structured risk context for manual review"
+              },
+              "review_sources": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Every risk source that flagged this payin on the pending review",
+                "example": [
+                  "seon_review",
+                  "new_instance"
+                ]
+              },
+              "review_contexts": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {},
+                "description": "Structured risk context per flagging source"
               },
               "approved_risk_sources": {
                 "type": [
@@ -17148,7 +17236,7 @@
                   "string",
                   "null"
                 ],
-                "description": "Risk source that sent this payin to manual review",
+                "description": "Primary risk source that sent this payin to manual review",
                 "example": "seon_review"
               },
               "review_context": {
@@ -17158,6 +17246,28 @@
                 ],
                 "additionalProperties": {},
                 "description": "Structured risk context for manual review"
+              },
+              "review_sources": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Every risk source that flagged this payin on the pending review",
+                "example": [
+                  "seon_review",
+                  "new_instance"
+                ]
+              },
+              "review_contexts": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {},
+                "description": "Structured risk context per flagging source"
               },
               "approved_risk_sources": {
                 "type": [
@@ -17878,7 +17988,7 @@
                   "string",
                   "null"
                 ],
-                "description": "Risk source that sent this payin to manual review",
+                "description": "Primary risk source that sent this payin to manual review",
                 "example": "seon_review"
               },
               "review_context": {
@@ -17888,6 +17998,28 @@
                 ],
                 "additionalProperties": {},
                 "description": "Structured risk context for manual review"
+              },
+              "review_sources": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Every risk source that flagged this payin on the pending review",
+                "example": [
+                  "seon_review",
+                  "new_instance"
+                ]
+              },
+              "review_contexts": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {},
+                "description": "Structured risk context per flagging source"
               },
               "approved_risk_sources": {
                 "type": [
