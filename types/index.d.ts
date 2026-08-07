@@ -333,6 +333,8 @@ export type PayinTrackingPayment = {
     step: TrackingStatus
     provider_name?: string | null
     completed_at?: string | null
+    review_contexts?: Record<string, unknown> | null;
+    review_sources?: unknown[] | null;
   };
   
 export type PayinTrackingComplete = {
