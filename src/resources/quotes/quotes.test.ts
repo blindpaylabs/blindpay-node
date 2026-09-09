@@ -77,5 +77,27 @@ describe("Quotes", () => {
             expect(error).toBeNull();
             expect(data).toEqual(mockedFxRate);
         });
+
+        it("should request a USDC to EUR FX rate", async () => {
+            fetchMock.mockResponseOnce(
+                JSON.stringify({
+                    commercial_quotation: 0.86,
+                    blindpay_quotation: 0.85,
+                    result_amount: 850,
+                    instance_flat_fee: 50,
+                    instance_percentage_fee: 0,
+                }),
+                { headers: { "Content-Type": "application/json" } }
+            );
+
+            const { error } = await blindpay.quotes.getFxRate({
+                currency_type: "sender",
+                from: "USDC",
+                to: "EUR",
+                request_amount: 1000,
+            });
+
+            expect(error).toBeNull();
+        });
     });
 });

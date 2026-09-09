@@ -804,14 +804,6 @@
             "owner": "eric@blindpay.com"
         },
         {
-            "kind": "enum",
-            "schema": "PayinOut",
-            "enumProperty": "currency",
-            "reason": "Spec's fiat currency enum added EUR; this SDK's Currency union (which also carries the 3 crypto settlement tokens as a deliberate broader union) is missing it.",
-            "owner": "eric@blindpay.com",
-            "member": "EUR"
-        },
-        {
             "kind": "property",
             "schema": "PayinOut",
             "field": "tracking_partner_fee",

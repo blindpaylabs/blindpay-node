@@ -5,12 +5,19 @@ import type {
     GetPayinResponse,
     GetPayinTrackResponse,
     ListPayinsResponse,
+    Payin,
 } from ".";
 
 describe("Payins", () => {
     afterEach(() => fetchMock.resetMocks());
 
     const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
+
+    it("should type EUR payin responses", () => {
+        const currency: Payin["currency"] = "EUR";
+
+        expect(currency).toBe("EUR");
+    });
 
     describe("List payins", () => {
         it("should list payins", async () => {
