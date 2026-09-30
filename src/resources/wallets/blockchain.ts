@@ -16,6 +16,7 @@ export type ListBlockchainWalletsResponse = Array<{
     address?: string;
     signature_tx_hash?: string;
     is_account_abstraction: boolean;
+    is_self_custody: boolean | null;
     customer_id: string;
 }>;
 
@@ -24,6 +25,7 @@ export type CreateBlockchainWalletWithAddressInput = {
     name: string;
     network: Network;
     address: string;
+    is_self_custody?: boolean;
 };
 
 export type CreateBlockchainWalletWithHashInput = {
@@ -31,6 +33,7 @@ export type CreateBlockchainWalletWithHashInput = {
     name: string;
     network: Network;
     signature_tx_hash: string;
+    is_self_custody?: boolean;
 };
 
 export type GetBlockchainWalletInput = {
@@ -50,6 +53,7 @@ export type GetBlockchainWalletResponse = {
     address?: string;
     signature_tx_hash?: string;
     is_account_abstraction: boolean;
+    is_self_custody: boolean | null;
     customer_id: string;
 };
 
@@ -60,8 +64,17 @@ export type CreateBlockchainWalletResponse = {
     address?: string;
     signature_tx_hash?: string;
     is_account_abstraction: boolean;
+    is_self_custody: boolean | null;
     customer_id: string;
 };
+
+export type SetBlockchainWalletSelfCustodyInput = {
+    customer_id: string;
+    id: string;
+    is_self_custody: boolean;
+};
+
+export type SetBlockchainWalletSelfCustodyResponse = GetBlockchainWalletResponse;
 
 export type CreateAssetTrustlineInput = string;
 
@@ -155,6 +168,18 @@ export function createBlockchainWalletsResource(instanceId: string, client: Inte
         }: DeleteBlockchainWalletInput): Promise<BlindpayApiResponse<void>> {
             return client.delete(
                 `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets/${id}`
+            );
+        },
+        setSelfCustody({
+            customer_id,
+            id,
+            ...data
+        }: SetBlockchainWalletSelfCustodyInput): Promise<
+            BlindpayApiResponse<SetBlockchainWalletSelfCustodyResponse>
+        > {
+            return client.patch(
+                `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets/${id}`,
+                data
             );
         },
         createAssetTrustline(

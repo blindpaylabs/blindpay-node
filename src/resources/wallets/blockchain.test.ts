@@ -7,6 +7,7 @@ import type {
     ListBlockchainWalletsResponse,
     MintUsdbSolanaResponse,
     PrepareSolanaDelegationTransactionResponse,
+    SetBlockchainWalletSelfCustodyResponse,
 } from "./blockchain";
 
 describe("Blockchain wallets", () => {
@@ -40,6 +41,7 @@ describe("Blockchain wallets", () => {
                     address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
                     signature_tx_hash: "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
                     is_account_abstraction: false,
+                    is_self_custody: null,
                     customer_id: "re_000000000000",
                 },
             ];
@@ -64,6 +66,7 @@ describe("Blockchain wallets", () => {
                 address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
                 signature_tx_hash: undefined,
                 is_account_abstraction: true,
+                is_self_custody: true,
                 customer_id: "re_000000000000",
             };
 
@@ -76,10 +79,15 @@ describe("Blockchain wallets", () => {
                 name: "Wallet Display Name",
                 network: "polygon",
                 address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+                is_self_custody: true,
             });
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedWallet);
+            expect(JSON.parse(fetchMock.mock.calls[0][1]?.body as string)).toMatchObject({
+                is_self_custody: true,
+                is_account_abstraction: true,
+            });
         });
     });
 
@@ -92,6 +100,7 @@ describe("Blockchain wallets", () => {
                 address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
                 signature_tx_hash: "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
                 is_account_abstraction: false,
+                is_self_custody: null,
                 customer_id: "re_000000000000",
             };
 
@@ -120,6 +129,7 @@ describe("Blockchain wallets", () => {
                 address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
                 signature_tx_hash: "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
                 is_account_abstraction: false,
+                is_self_custody: null,
                 customer_id: "re_000000000000",
             };
 
@@ -134,6 +144,41 @@ describe("Blockchain wallets", () => {
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedWallet);
+        });
+    });
+
+    describe("Set blockchain wallet self-custody", () => {
+        it("should PATCH the self-custody answer on the customer route", async () => {
+            const mockedWallet: SetBlockchainWalletSelfCustodyResponse = {
+                id: "bw_000000000000",
+                name: "Wallet Display Name",
+                network: "polygon",
+                address: "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+                signature_tx_hash: "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
+                is_account_abstraction: false,
+                is_self_custody: false,
+                customer_id: "re_000000000000",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedWallet), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.wallets.blockchain.setSelfCustody({
+                customer_id: "re_000000000000",
+                id: "bw_000000000000",
+                is_self_custody: false,
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedWallet);
+
+            const [url, init] = fetchMock.mock.calls[0];
+            expect(url).toContain(
+                "/instances/in_000000000000/customers/re_000000000000/blockchain-wallets/bw_000000000000"
+            );
+            expect(init?.method).toBe("PATCH");
+            expect(JSON.parse(init?.body as string)).toEqual({ is_self_custody: false });
         });
     });
 

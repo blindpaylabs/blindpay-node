@@ -166,5 +166,41 @@
         "field": "payout_id",
         "reason": "Path parameter (the spec names it id) modeled on the request input type for URL building; never a wire body property. Pre-existing modeling choice, unrelated to the customers rename.",
         "owner": "eric@blindpay.com"
+    },
+    {
+        "schema": "ListBlockchainWalletsResponse",
+        "field": "is_self_custody",
+        "reason": "Added by blindpay-v2 PR #2632 (BCB Resolution 588 self-custody flag); not in the spec snapshot until that ships and api-sync refreshes it. Remove once the snapshot contains is_self_custody.",
+        "owner": "darlan@blindpay.com"
+    },
+    {
+        "schema": "CreateBlockchainWalletWithAddressInput",
+        "field": "is_self_custody",
+        "reason": "Added by blindpay-v2 PR #2632 (BCB Resolution 588 self-custody flag); not in the spec snapshot until that ships and api-sync refreshes it. Remove once the snapshot contains is_self_custody.",
+        "owner": "darlan@blindpay.com"
+    },
+    {
+        "schema": "CreateBlockchainWalletWithHashInput",
+        "field": "is_self_custody",
+        "reason": "Added by blindpay-v2 PR #2632 (BCB Resolution 588 self-custody flag); not in the spec snapshot until that ships and api-sync refreshes it. Remove once the snapshot contains is_self_custody.",
+        "owner": "darlan@blindpay.com"
+    },
+    {
+        "schema": "GetBlockchainWalletResponse",
+        "field": "is_self_custody",
+        "reason": "Added by blindpay-v2 PR #2632 (BCB Resolution 588 self-custody flag); not in the spec snapshot until that ships and api-sync refreshes it. Remove once the snapshot contains is_self_custody.",
+        "owner": "darlan@blindpay.com"
+    },
+    {
+        "schema": "CreateBlockchainWalletResponse",
+        "field": "is_self_custody",
+        "reason": "Added by blindpay-v2 PR #2632 (BCB Resolution 588 self-custody flag); not in the spec snapshot until that ships and api-sync refreshes it. Remove once the snapshot contains is_self_custody.",
+        "owner": "darlan@blindpay.com"
+    },
+    {
+        "schema": "SetBlockchainWalletSelfCustodyInput",
+        "field": "is_self_custody",
+        "reason": "Added by blindpay-v2 PR #2632 (BCB Resolution 588 self-custody flag); not in the spec snapshot until that ships and api-sync refreshes it. Remove once the snapshot contains is_self_custody.",
+        "owner": "darlan@blindpay.com"
     }
 ]
