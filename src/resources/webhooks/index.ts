@@ -8,6 +8,7 @@ export type WebhookEvents =
     | "payout.complete"
     | "payout.partnerFee"
     | "blockchainWallet.new"
+    | "blockchainWallet.update"
     | "payin.new"
     | "payin.update"
     | "payin.complete"
