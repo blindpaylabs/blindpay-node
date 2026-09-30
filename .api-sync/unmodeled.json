@@ -1316,6 +1316,18 @@
             "path": "us.wire",
             "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
             "owner": "eric@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "tracking_payment.review_contexts",
+            "reason": "Inline nested shape added to the payin tracking_payment step alongside review_source/review_context; the SDK does not model it yet (same pending tracking_payment PR). Recorded so main's test suite goes green again.",
+            "owner": "darlan@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "tracking_payment.review_contexts",
+            "reason": "Inline nested shape added to the payin tracking_payment step alongside review_source/review_context; the SDK does not model it yet (same pending tracking_payment PR). Recorded so main's test suite goes green again.",
+            "owner": "darlan@blindpay.com"
         }
     ]
 }
