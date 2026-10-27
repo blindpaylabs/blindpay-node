@@ -126,7 +126,7 @@ export class BlindPay {
 
         this.fees = createFeesResource(this.instanceId, this.api);
 
-        this.upload = createUploadResource(this.baseUrl, this.headers, this.api);
+        this.upload = createUploadResource(this.instanceId, this.baseUrl, this.headers, this.api);
 
         this.customers = {
             ...createCustomersResource(this.instanceId, this.api),

@@ -307,8 +307,8 @@
         {
             "schema": "CreateCustomerIn",
             "path": "owners[]",
-            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
-            "owner": "eric@blindpay.com"
+            "reason": "Modeled as CreateCustomerOwnerInput in src/resources/customers/index.ts and mapped via CreateCustomerIn.owners in spec-map.json; recorded here because nested-shape coverage only accepts omission entries, not map entries.",
+            "owner": "thayto@blindpay.com"
         },
         {
             "schema": "CreatePayinOut",
@@ -673,8 +673,8 @@
         {
             "schema": "UpdateCustomerIn",
             "path": "owners[]",
-            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
-            "owner": "eric@blindpay.com"
+            "reason": "Modeled as UpdateCustomerOwnerInput in src/resources/customers/index.ts and mapped via UpdateCustomerIn.owners in spec-map.json; recorded here because nested-shape coverage only accepts omission entries, not map entries.",
+            "owner": "thayto@blindpay.com"
         },
         {
             "schema": "VirtualAccountOut",

@@ -30,12 +30,6 @@
         "owner": "eric@blindpay.com"
     },
     {
-        "schema": "IndividualWithEnhancedKYC",
-        "field": "individual_holding_doc_front_file",
-        "reason": "Pre-existing SDK field absent from the enhanced-KYC individual schema in the spec. Unrelated to wave 2; needs its own follow-up.",
-        "owner": "eric@blindpay.com"
-    },
-    {
         "schema": "UpdateInstanceMemberRoleInput",
         "field": "memberId",
         "reason": "Path-only identifier used to build /members/{id}; never serialized as a JSON body key. Pre-existing camelCase naming (inconsistent with this SDK's snake_case convention) unrelated to wave 2.",
@@ -146,24 +140,6 @@
     {
         "schema": "GetBankAccountResponse",
         "field": "iban",
-        "reason": "Absent from the public spec snapshot; only appeared alongside internal-only surface in the unfiltered spec. Pre-existing SDK field, unrelated to the customers rename; needs its own investigation.",
-        "owner": "eric@blindpay.com"
-    },
-    {
-        "schema": "IndividualWithStandardKYC",
-        "field": "aiprise_validation_key",
-        "reason": "Absent from the public spec snapshot; only appeared alongside internal-only surface in the unfiltered spec. Pre-existing SDK field, unrelated to the customers rename; needs its own investigation.",
-        "owner": "eric@blindpay.com"
-    },
-    {
-        "schema": "IndividualWithEnhancedKYC",
-        "field": "aiprise_validation_key",
-        "reason": "Absent from the public spec snapshot; only appeared alongside internal-only surface in the unfiltered spec. Pre-existing SDK field, unrelated to the customers rename; needs its own investigation.",
-        "owner": "eric@blindpay.com"
-    },
-    {
-        "schema": "BusinessWithStandardKYB",
-        "field": "aiprise_validation_key",
         "reason": "Absent from the public spec snapshot; only appeared alongside internal-only surface in the unfiltered spec. Pre-existing SDK field, unrelated to the customers rename; needs its own investigation.",
         "owner": "eric@blindpay.com"
     },

@@ -14,6 +14,7 @@ import type {
     SoleProprietorDocType,
     SourceOfFundsDocType,
     SourceOfWealth,
+    SuccessResponse,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { StrictOmit } from "../../internal/helpers/strict-omit";
@@ -74,6 +75,55 @@ export type Owner = {
     tax_type?: OwnerTaxType | null;
     instance_id?: string;
     customer_id?: string;
+};
+
+/** An owner sent when creating a business customer. */
+export type CreateCustomerOwnerInput = {
+    role: OwnerRole;
+    first_name: string;
+    last_name: string;
+    date_of_birth: string;
+    tax_id: string;
+    address_line_1: string;
+    address_line_2?: string | null;
+    city: string;
+    state_province_region: string;
+    country: Country;
+    postal_code: string;
+    id_doc_country: Country;
+    id_doc_type: IdentificationDocument;
+    id_doc_front_file: string;
+    id_doc_back_file?: string | null;
+    proof_of_address_doc_type?: ProofOfAddressDocType | null;
+    proof_of_address_doc_file?: string | null;
+    ownership_percentage?: number | null;
+    title?: string | null;
+    tax_type?: OwnerTaxType | null;
+};
+
+/** An existing owner to update. `id` must match one of the customer's owners. */
+export type UpdateCustomerOwnerInput = {
+    id: string;
+    role?: OwnerRole;
+    first_name?: string;
+    last_name?: string;
+    date_of_birth?: string;
+    tax_id?: string;
+    address_line_1?: string;
+    address_line_2?: string | null;
+    city?: string;
+    state_province_region?: string;
+    country?: Country;
+    postal_code?: string;
+    id_doc_country?: Country;
+    id_doc_type?: IdentificationDocument;
+    id_doc_front_file?: string;
+    id_doc_back_file?: string | null;
+    proof_of_address_doc_type?: ProofOfAddressDocType | null;
+    proof_of_address_doc_file?: string | null;
+    ownership_percentage?: number | null;
+    title?: string | null;
+    tax_type?: OwnerTaxType | null;
 };
 
 export type VirtualAccountPreapprovalStatus = "in_review" | "approved" | "rejected";
@@ -163,12 +213,11 @@ export type IndividualWithStandardKYC = {
     proof_of_address_doc_file: string | null;
     first_name: string | null;
     last_name: string | null;
-    date_of_birth: string;
+    date_of_birth?: string | null;
     id_doc_country: Country | null;
     id_doc_type: IdentificationDocument | null;
     id_doc_front_file: string | null;
     id_doc_back_file: string | null;
-    aiprise_validation_key: string;
     instance_id: string;
     tos_id: string | null;
     created_at: string | null;
@@ -233,16 +282,14 @@ export type IndividualWithEnhancedKYC = {
     proof_of_address_doc_file: string | null;
     first_name: string | null;
     last_name: string | null;
-    date_of_birth: string;
+    date_of_birth?: string | null;
     id_doc_country: Country | null;
     id_doc_type: IdentificationDocument | null;
     id_doc_front_file: string | null;
     id_doc_back_file: string | null;
-    aiprise_validation_key: string;
     instance_id: string;
     source_of_funds_doc_type: SourceOfFundsDocType | null;
     source_of_funds_doc_file: string | null;
-    individual_holding_doc_front_file: string;
     purpose_of_transactions: PurposeOfTransactions | null;
     purpose_of_transactions_explanation: string | null;
     tos_id: string | null;
@@ -307,7 +354,7 @@ export type BusinessWithStandardKYB = {
     proof_of_address_doc_file: string | null;
     legal_name: string | null;
     alternate_name: string | null;
-    formation_date: string;
+    formation_date?: string | null;
     website: string | null;
     owners: Owner[] | null;
     incorporation_doc_file: string | null;
@@ -315,7 +362,6 @@ export type BusinessWithStandardKYB = {
     external_id: string | null;
     instance_id: string;
     tos_id: string | null;
-    aiprise_validation_key: string;
     created_at: string | null;
     updated_at: string | null;
     limit: {
@@ -338,6 +384,7 @@ export type BusinessWithStandardKYB = {
     source_of_wealth?: SourceOfWealth | null;
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
+    publicly_traded?: boolean | null;
     cnae_condition?: CustomerCnaeCondition;
     virtual_account_preapproval?: CustomerVirtualAccountPreapproval;
     is_nested?: boolean | null;
@@ -347,6 +394,23 @@ export type BusinessWithStandardKYB = {
     latitude?: number | null;
     longitude?: number | null;
 };
+
+/** Legacy KYC tier carried by customers migrated from older tiers. It can't be created. */
+export type IndividualWithLightKYC = StrictOmit<IndividualWithStandardKYC, "kyc_type"> & {
+    kyc_type: Extract<KycType, "light">;
+};
+
+/** Legacy KYB tier carried by customers migrated from older tiers. It can't be created. */
+export type BusinessWithLightKYB = StrictOmit<BusinessWithStandardKYB, "kyc_type"> & {
+    kyc_type: Extract<KycType, "light">;
+};
+
+export type Customer =
+    | IndividualWithStandardKYC
+    | IndividualWithEnhancedKYC
+    | IndividualWithLightKYC
+    | BusinessWithStandardKYB
+    | BusinessWithLightKYB;
 
 export type CreateIndividualWithStandardKYCInput = {
     country: Country;
@@ -387,6 +451,7 @@ export type CreateIndividualWithStandardKYCInput = {
 
 export type CreateIndividualWithStandardKYCResponse = {
     id: string;
+    customer_id: string;
 };
 
 export type CreateIndividualWithEnhancedKYCInput = {
@@ -430,6 +495,7 @@ export type CreateIndividualWithEnhancedKYCInput = {
 
 export type CreateIndividualWithEnhancedKYCResponse = {
     id: string;
+    customer_id: string;
 };
 
 export type CreateBusinessWithStandardKYBInput = {
@@ -450,7 +516,7 @@ export type CreateBusinessWithStandardKYBInput = {
     incorporation_doc_file?: string | null;
     ip_address?: string | null;
     legal_name?: string | null;
-    owners?: Array<StrictOmit<Owner, "id">> | null;
+    owners?: CreateCustomerOwnerInput[] | null;
     phone_number?: string | null;
     postal_code?: string | null;
     proof_of_address_doc_file?: string | null;
@@ -475,12 +541,13 @@ export type CreateBusinessWithStandardKYBInput = {
 
 export type CreateBusinessWithStandardKYBResponse = {
     id: string;
+    customer_id: string;
 };
 
 export type ListCustomersInput = PaginationParams & {
     full_name?: string;
     customer_name?: string;
-    status?: string;
+    status?: KycStatus;
     customer_id?: string;
     bank_account_id?: string;
     country?: Country;
@@ -488,19 +555,14 @@ export type ListCustomersInput = PaginationParams & {
 
 export type ListCustomersResponse =
     | {
-          data: Array<
-              IndividualWithStandardKYC | IndividualWithEnhancedKYC | BusinessWithStandardKYB
-          >;
+          data: Customer[];
           pagination: PaginationMetadata;
       }
-    | Array<IndividualWithStandardKYC | IndividualWithEnhancedKYC | BusinessWithStandardKYB>;
+    | Customer[];
 
 export type GetCustomerInput = string;
 
-export type GetCustomerResponse =
-    | IndividualWithStandardKYC
-    | IndividualWithEnhancedKYC
-    | BusinessWithStandardKYB;
+export type GetCustomerResponse = Customer;
 
 export type UpdateCustomerInput = {
     customer_id: string;
@@ -512,9 +574,9 @@ export type UpdateCustomerInput = {
     business_industry?: BusinessIndustry | null;
     business_type?: BusinessType | null;
     city?: string | null;
-    country?: Country;
+    country: Country;
     date_of_birth?: string;
-    email?: string;
+    email: string;
     estimated_annual_revenue?: EstimatedAnnualRevenue | null;
     external_id?: string | null;
     first_name?: string | null;
@@ -528,7 +590,7 @@ export type UpdateCustomerInput = {
     ip_address?: string | null;
     last_name?: string | null;
     legal_name?: string | null;
-    owners?: Array<StrictOmit<Owner, "id">> | null;
+    owners?: UpdateCustomerOwnerInput[] | null;
     phone_number?: string | null;
     postal_code?: string | null;
     proof_of_address_doc_file?: string | null;
@@ -664,10 +726,13 @@ export function createCustomersResource(instanceId: string, client: InternalApiC
         get(customer_id: GetCustomerInput): Promise<BlindpayApiResponse<GetCustomerResponse>> {
             return client.get(`/instances/${instanceId}/customers/${customer_id}`);
         },
-        update({ customer_id, ...data }: UpdateCustomerInput): Promise<BlindpayApiResponse<void>> {
+        update({
+            customer_id,
+            ...data
+        }: UpdateCustomerInput): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.put(`/instances/${instanceId}/customers/${customer_id}`, data);
         },
-        delete(customer_id: DeleteCustomerInput): Promise<BlindpayApiResponse<void>> {
+        delete(customer_id: DeleteCustomerInput): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.delete(`/instances/${instanceId}/customers/${customer_id}`);
         },
         getLimits(

@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import type { SuccessResponse } from "../../../types";
 import { BlindPay } from "../../client";
 import type { GetInstanceResponse } from ".";
 
@@ -6,6 +7,7 @@ describe("Instances", () => {
     afterEach(() => fetchMock.resetMocks());
 
     const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
+    const mockedSuccess: SuccessResponse = { success: true };
 
     describe("Get instance", () => {
         it("should get the instance", async () => {
@@ -58,7 +60,7 @@ describe("Instances", () => {
 
     describe("Update instance", () => {
         it("should update an instance", async () => {
-            fetchMock.mockResponseOnce(JSON.stringify({ data: null }), {
+            fetchMock.mockResponseOnce(JSON.stringify(mockedSuccess), {
                 headers: { "Content-Type": "application/json" },
             });
 
@@ -67,39 +69,39 @@ describe("Instances", () => {
             });
 
             expect(error).toBeNull();
-            expect(data).toEqual({ data: null });
+            expect(data).toEqual(mockedSuccess);
         });
     });
 
     describe("Delete instance", () => {
         it("should delete an instance", async () => {
-            fetchMock.mockResponseOnce(JSON.stringify({ data: null }), {
+            fetchMock.mockResponseOnce(JSON.stringify(mockedSuccess), {
                 headers: { "Content-Type": "application/json" },
             });
 
             const { data, error } = await blindpay.instances.delete();
 
             expect(error).toBeNull();
-            expect(data).toEqual({ data: null });
+            expect(data).toEqual(mockedSuccess);
         });
     });
 
     describe("Delete instance member", () => {
         it("should delete an instance member", async () => {
-            fetchMock.mockResponseOnce(JSON.stringify({ data: null }), {
+            fetchMock.mockResponseOnce(JSON.stringify(mockedSuccess), {
                 headers: { "Content-Type": "application/json" },
             });
 
             const { data, error } = await blindpay.instances.deleteMember("us_000000000000");
 
             expect(error).toBeNull();
-            expect(data).toEqual({ data: null });
+            expect(data).toEqual(mockedSuccess);
         });
     });
 
     describe("Update instance member role", () => {
         it("should update instance member role", async () => {
-            fetchMock.mockResponseOnce(JSON.stringify({ data: null }), {
+            fetchMock.mockResponseOnce(JSON.stringify(mockedSuccess), {
                 headers: { "Content-Type": "application/json" },
             });
 
@@ -109,7 +111,7 @@ describe("Instances", () => {
             });
 
             expect(error).toBeNull();
-            expect(data).toEqual({ data: null });
+            expect(data).toEqual(mockedSuccess);
         });
     });
 });

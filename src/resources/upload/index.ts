@@ -54,7 +54,7 @@ export type UploadAnalyzeResponse = {
 
 export type PresignInput = {
     file_url: string;
-    instance_id: string;
+    instance_id?: string;
 };
 
 export type PresignResponse = {
@@ -63,6 +63,7 @@ export type PresignResponse = {
 };
 
 export function createUploadResource(
+    instanceId: string,
     baseUrl: string,
     headers: Record<string, string>,
     client: InternalApiClient
@@ -70,9 +71,9 @@ export function createUploadResource(
     async function postMultipart<T>(
         path: string,
         formData: FormData,
-        instance_id?: string
+        instance_id: string
     ): Promise<BlindpayApiResponse<T>> {
-        const queryParams = instance_id ? `?${new URLSearchParams({ instance_id })}` : "";
+        const queryParams = `?${new URLSearchParams({ instance_id })}`;
 
         const { "Content-Type": _, ...headersWithoutContentType } = headers;
 
@@ -104,7 +105,7 @@ export function createUploadResource(
             formData.append("file", file);
             formData.append("bucket", bucket);
 
-            return postMultipart("/upload", formData, instance_id);
+            return postMultipart("/upload", formData, instance_id ?? instanceId);
         },
         analyze({
             file,
@@ -119,13 +120,16 @@ export function createUploadResource(
                 formData.append("metadata", metadata);
             }
 
-            return postMultipart("/upload/analyze", formData, instance_id);
+            return postMultipart("/upload/analyze", formData, instance_id ?? instanceId);
         },
         presign({
             instance_id,
             ...data
         }: PresignInput): Promise<BlindpayApiResponse<PresignResponse>> {
-            return client.post(`/presign?${new URLSearchParams({ instance_id })}`, data);
+            return client.post(
+                `/presign?${new URLSearchParams({ instance_id: instance_id ?? instanceId })}`,
+                data
+            );
         },
     };
 }

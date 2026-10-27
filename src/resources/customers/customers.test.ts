@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import type { SuccessResponse } from "../../../types";
 import { BlindPay } from "../../client";
 import type {
     CreateBusinessWithStandardKYBResponse,
@@ -15,6 +16,7 @@ describe("Customers", () => {
     afterEach(() => fetchMock.resetMocks());
 
     const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
+    const mockedSuccess: SuccessResponse = { success: true };
 
     describe("List customers without pagination params", () => {
         it("should return a plain array", async () => {
@@ -72,7 +74,6 @@ describe("Customers", () => {
                         id_doc_type: "PASSPORT",
                         id_doc_front_file: "https://example.com/image.png",
                         id_doc_back_file: "https://example.com/image.png",
-                        aiprise_validation_key: "",
                         instance_id: "in_000000000000",
                         tos_id: "to_3ZZhllJkvo5Z",
                         created_at: "2021-01-01T00:00:00.000Z",
@@ -110,11 +111,9 @@ describe("Customers", () => {
                         id_doc_type: "PASSPORT",
                         id_doc_front_file: "https://example.com/image.png",
                         id_doc_back_file: null,
-                        aiprise_validation_key: "enhanced-key",
                         instance_id: "in_000000000001",
                         source_of_funds_doc_type: "salary",
                         source_of_funds_doc_file: "https://example.com/image.png",
-                        individual_holding_doc_front_file: "https://example.com/image.png",
                         purpose_of_transactions: "investment_purposes",
                         purpose_of_transactions_explanation: "Investing in stocks",
                         tos_id: "to_nppX66ntvtHs",
@@ -180,7 +179,6 @@ describe("Customers", () => {
                         external_id: null,
                         instance_id: "in_000000000002",
                         tos_id: "to_nppX66ntvtHs",
-                        aiprise_validation_key: "",
                         created_at: "2015-03-15T00:00:00.000Z",
                         updated_at: "2015-03-15T00:00:00.000Z",
                         limit: {
@@ -212,6 +210,7 @@ describe("Customers", () => {
         it("should create an individual customer with standard KYC", async () => {
             const mockedCustomer: CreateIndividualWithStandardKYCResponse = {
                 id: "re_Euw7HN4OdxPn",
+                customer_id: "re_Euw7HN4OdxPn",
             };
 
             fetchMock.mockResponseOnce(JSON.stringify(mockedCustomer), {
@@ -241,12 +240,13 @@ describe("Customers", () => {
             });
 
             expect(error).toBeNull();
-            expect(data).toEqual({ id: "re_Euw7HN4OdxPn" });
+            expect(data).toEqual(mockedCustomer);
         });
 
         it("should create an individual customer with enhanced KYC", async () => {
             const mockedCustomer: CreateIndividualWithEnhancedKYCResponse = {
                 id: "re_YuaMcI2B8zbQ",
+                customer_id: "re_YuaMcI2B8zbQ",
             };
 
             fetchMock.mockResponseOnce(JSON.stringify(mockedCustomer), {
@@ -282,12 +282,13 @@ describe("Customers", () => {
             });
 
             expect(error).toBeNull();
-            expect(data).toEqual({ id: "re_YuaMcI2B8zbQ" });
+            expect(data).toEqual(mockedCustomer);
         });
 
         it("should create a business customer with standard KYB", async () => {
             const mockedCustomer: CreateBusinessWithStandardKYBResponse = {
                 id: "re_IOxAUL24LG7P",
+                customer_id: "re_IOxAUL24LG7P",
             };
 
             fetchMock.mockResponseOnce(JSON.stringify(mockedCustomer), {
@@ -341,11 +342,26 @@ describe("Customers", () => {
                         ownership_percentage: 25,
                         title: "CEO",
                     },
+                    {
+                        role: "controlling_person",
+                        first_name: "Ana",
+                        last_name: "Souza",
+                        date_of_birth: "1990-03-10T00:00:00.000Z",
+                        tax_id: "10987654321",
+                        address_line_1: "Rua Oscar Freire, 200",
+                        city: "São Paulo",
+                        state_province_region: "SP",
+                        country: "BR",
+                        postal_code: "01426-000",
+                        id_doc_country: "BR",
+                        id_doc_type: "ID_CARD",
+                        id_doc_front_file: "https://example.com/image.png",
+                    },
                 ],
             });
 
             expect(error).toBeNull();
-            expect(data).toEqual({ id: "re_IOxAUL24LG7P" });
+            expect(data).toEqual(mockedCustomer);
         });
     });
 
@@ -377,7 +393,6 @@ describe("Customers", () => {
                 id_doc_type: "PASSPORT",
                 id_doc_front_file: "https://example.com/image.png",
                 id_doc_back_file: "https://example.com/image.png",
-                aiprise_validation_key: "",
                 instance_id: "in_000000000000",
                 tos_id: null,
                 created_at: "2021-01-01T00:00:00.000Z",
@@ -450,7 +465,6 @@ describe("Customers", () => {
                 external_id: null,
                 instance_id: "in_000000000000",
                 tos_id: null,
-                aiprise_validation_key: "",
                 created_at: "2021-01-01T00:00:00.000Z",
                 updated_at: "2021-01-01T00:00:00.000Z",
                 limit: {
@@ -525,10 +539,8 @@ describe("Customers", () => {
                 id_doc_type: "PASSPORT",
                 id_doc_front_file: "https://example.com/image.png",
                 id_doc_back_file: "https://example.com/image.png",
-                aiprise_validation_key: "",
                 source_of_funds_doc_type: "savings",
                 source_of_funds_doc_file: "https://example.com/image.png",
-                individual_holding_doc_front_file: "https://example.com/image.png",
                 purpose_of_transactions: "personal_or_living_expenses",
                 purpose_of_transactions_explanation:
                     "I am receiving salary payments from my employer",
@@ -554,9 +566,60 @@ describe("Customers", () => {
         });
     });
 
+    describe("Get customer with light KYC", () => {
+        it("should get a migrated customer that carries the legacy light tier", async () => {
+            const mockedCustomer: GetCustomerResponse = {
+                id: "re_L1ghtKyc0000",
+                customer_id: "re_L1ghtKyc0000",
+                is_tos_accepted: true,
+                type: "individual",
+                kyc_type: "light",
+                kyc_status: "approved",
+                kyc_warnings: null,
+                email: "legacy@example.com",
+                tax_id: null,
+                address_line_1: null,
+                city: null,
+                state_province_region: null,
+                country: "US",
+                postal_code: null,
+                ip_address: null,
+                image_url: null,
+                phone_number: null,
+                proof_of_address_doc_type: null,
+                proof_of_address_doc_file: null,
+                first_name: "Legacy",
+                last_name: "Customer",
+                date_of_birth: null,
+                id_doc_country: null,
+                id_doc_type: null,
+                id_doc_front_file: null,
+                id_doc_back_file: null,
+                instance_id: "in_000000000000",
+                tos_id: null,
+                created_at: "2024-01-01T00:00:00.000Z",
+                updated_at: "2024-01-01T00:00:00.000Z",
+                limit: {
+                    per_transaction: 1000,
+                    daily: 2000,
+                    monthly: 5000,
+                },
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedCustomer), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.customers.get("re_L1ghtKyc0000");
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedCustomer);
+        });
+    });
+
     describe("Update customer", () => {
         it("should update a customer", async () => {
-            fetchMock.mockResponseOnce(JSON.stringify({ data: null }), {
+            fetchMock.mockResponseOnce(JSON.stringify(mockedSuccess), {
                 headers: { "Content-Type": "application/json" },
             });
 
@@ -587,6 +650,7 @@ describe("Customers", () => {
                 website: "https://site.com",
                 owners: [
                     {
+                        id: "ub_000000000000",
                         first_name: "Carlos",
                         last_name: "Silva",
                         role: "beneficial_owner",
@@ -620,20 +684,46 @@ describe("Customers", () => {
             });
 
             expect(error).toBeNull();
-            expect(data).toEqual({ data: null });
+            expect(data).toEqual(mockedSuccess);
+        });
+
+        it("should update a single owner by id", async () => {
+            fetchMock.mockResponseOnce(JSON.stringify(mockedSuccess), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.customers.update({
+                customer_id: "re_IOxAUL24LG7P",
+                email: "contato@empresa.com.br",
+                country: "BR",
+                owners: [{ id: "ub_000000000000", title: "CFO" }],
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedSuccess);
+
+            const [url, init] = fetchMock.mock.calls[0];
+            expect(url).toBe(
+                "https://api.blindpay.com/v1/instances/in_000000000000/customers/re_IOxAUL24LG7P"
+            );
+            expect(JSON.parse(init?.body as string)).toEqual({
+                email: "contato@empresa.com.br",
+                country: "BR",
+                owners: [{ id: "ub_000000000000", title: "CFO" }],
+            });
         });
     });
 
     describe("Delete customer", () => {
         it("should delete a customer", async () => {
-            fetchMock.mockResponseOnce(JSON.stringify({ data: null }), {
+            fetchMock.mockResponseOnce(JSON.stringify(mockedSuccess), {
                 headers: { "Content-Type": "application/json" },
             });
 
             const { data, error } = await blindpay.customers.delete("re_YuaMcI2B8zbQ");
 
             expect(error).toBeNull();
-            expect(data).toEqual({ data: null });
+            expect(data).toEqual(mockedSuccess);
         });
     });
 

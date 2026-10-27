@@ -558,7 +558,7 @@
                     "symbol": "BusinessIndustry"
                 }
             ],
-            "notes": "SDK union additionally carries crypto/web3 business categories (dapp, exchange, gambling, gaming, infra, marketplace, neo_bank, other, saas, social, wallet) that are not NAICS codes and are not part of this spec property at all."
+            "notes": null
         },
         {
             "spec": {
@@ -1417,7 +1417,17 @@
                 {
                     "file": "src/resources/customers/index.ts",
                     "symbol": "RequestLimitIncreaseResponse"
-                },
+                }
+            ],
+            "notes": "1-field {id} response shape shared by several create/request endpoints."
+        },
+        {
+            "spec": {
+                "path": "/v1/instances/{instance_id}/customers",
+                "method": "post",
+                "location": "response:200"
+            },
+            "sdk": [
                 {
                     "file": "src/resources/customers/index.ts",
                     "symbol": "CreateIndividualWithStandardKYCResponse"
@@ -1431,7 +1441,7 @@
                     "symbol": "CreateBusinessWithStandardKYBResponse"
                 }
             ],
-            "notes": "1-field {id} response shape shared by several create/request endpoints."
+            "notes": "inline object response {id, customer_id}, not a named schema. One response type per create variant."
         },
         {
             "spec": {
@@ -1449,9 +1459,17 @@
                 {
                     "file": "src/resources/customers/index.ts",
                     "symbol": "BusinessWithStandardKYB"
+                },
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "IndividualWithLightKYC"
+                },
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "BusinessWithLightKYB"
                 }
             ],
-            "notes": "Discriminator fan-out: the 3 KYC/KYB response types. Same GetCustomerResponse/ListCustomersResponse union is used for get/list."
+            "notes": "Discriminator fan-out: the 5 KYC/KYB response types, including the legacy light tier that migrated customers carry. The Customer union backs GetCustomerResponse and ListCustomersResponse."
         },
         {
             "spec": {
@@ -1478,6 +1496,32 @@
                 }
             ],
             "notes": "Nested at owners.[]."
+        },
+        {
+            "spec": {
+                "schema": "CreateCustomerIn",
+                "property": "owners"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "CreateCustomerOwnerInput"
+                }
+            ],
+            "notes": "Nested at owners.[]."
+        },
+        {
+            "spec": {
+                "schema": "UpdateCustomerIn",
+                "property": "owners"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "UpdateCustomerOwnerInput"
+                }
+            ],
+            "notes": "Nested at owners.[]. id is required; every other field is optional."
         },
         {
             "spec": {
@@ -2339,7 +2383,7 @@
                     "symbol": "PresignInput"
                 }
             ],
-            "notes": "JSON request of POST /v1/presign, exposed as upload.presign(). instance_id is a required query param, not part of PresignIn; the upload factory has no instanceId, so the caller passes it."
+            "notes": "JSON request of POST /v1/presign, exposed as upload.presign(). instance_id is a required query param, not part of PresignIn; it defaults to the client's instanceId when the caller omits it."
         },
         {
             "spec": {

@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse } from "../../../types";
+import type { BlindpayApiResponse, SuccessResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type InstanceMemberRole =
@@ -67,9 +67,7 @@ export type MigrateInstanceOwnershipInput = {
     user_id: string;
 };
 
-export type MigrateInstanceOwnershipResponse = {
-    success: boolean;
-};
+export type MigrateInstanceOwnershipResponse = SuccessResponse;
 
 export function createInstancesResource(instanceId: string, client: InternalApiClient) {
     return {
@@ -79,19 +77,21 @@ export function createInstancesResource(instanceId: string, client: InternalApiC
         getMembers(): Promise<BlindpayApiResponse<GetInstanceMembersResponse>> {
             return client.get(`/instances/${instanceId}/members`);
         },
-        update({ ...data }: UpdateInstanceInput): Promise<BlindpayApiResponse<void>> {
+        update({ ...data }: UpdateInstanceInput): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.put(`/instances/${instanceId}`, data);
         },
-        delete(): Promise<BlindpayApiResponse<void>> {
+        delete(): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.delete(`/instances/${instanceId}`);
         },
-        deleteMember(memberId: DeleteInstanceMemberInput): Promise<BlindpayApiResponse<void>> {
+        deleteMember(
+            memberId: DeleteInstanceMemberInput
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.delete(`/instances/${instanceId}/members/${memberId}`);
         },
         updateMemberRole({
             memberId,
             role,
-        }: UpdateInstanceMemberRoleInput): Promise<BlindpayApiResponse<void>> {
+        }: UpdateInstanceMemberRoleInput): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.put(`/instances/${instanceId}/members/${memberId}`, { user_role: role });
         },
         migrateOwnership({
