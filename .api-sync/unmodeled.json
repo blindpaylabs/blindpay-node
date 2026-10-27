@@ -66,37 +66,9 @@
         {
             "kind": "property",
             "schema": "Error",
-            "field": "code",
-            "reason": "This SDK's error envelope (ErrorResponse) only ever surfaces `message`, the legacy machine string. It does not expose the newer stable `code` the spec explicitly recommends building programmatic handling on.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "property",
-            "schema": "Error",
-            "field": "description",
-            "reason": "See Error.code: human-readable, safe-to-display explanation, not modeled.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "property",
-            "schema": "Error",
-            "field": "errors",
-            "reason": "See Error.code: structured per-field validation error list, not modeled.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "property",
-            "schema": "Error",
             "field": "success",
-            "reason": "See Error.code: the {success: false} discriminator flag on the error envelope, not modeled (this SDK signals an error by BlindpayApiResponse.error being non-null instead).",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "property",
-            "schema": "Error",
-            "field": "trace_id",
-            "reason": "See Error.code: request trace ID for support correlation, not modeled.",
-            "owner": "eric@blindpay.com"
+            "reason": "The error envelope's `success: false` flag is not copied onto ErrorResponse: BlindpayApiResponse already discriminates with `data: null` / `error`, so it would only restate that.",
+            "owner": "thayto@blindpay.com"
         },
         {
             "kind": "property",

@@ -1,7 +1,15 @@
 export type BlindpayApiResponse<T> = BlindpayErrorResponse | BlindpaySuccessResponse<T>
 
 export type ErrorResponse = {
+    /** Legacy machine-readable message; prefer `code` for programmatic handling. */
     message: string;
+    /** Stable error code, e.g. `PAYOUTS_INSUFFICIENT_BALANCE`. */
+    code?: string;
+    /** Human-readable explanation, safe to show to end users. */
+    description?: string;
+    errors?: string[];
+    /** Request trace ID; include it when contacting BlindPay support. */
+    trace_id?: string;
 }
 
 export type BlindpayErrorResponse = {

@@ -3,6 +3,7 @@ import { version } from "../package.json";
 import type { BlindpayApiResponse } from "../types";
 import type { InternalApiClient } from "./internal/api-client";
 import { BlindPayError } from "./internal/blindpay-error";
+import { toErrorResponse } from "./internal/error-response";
 import { createAvailableResource } from "./resources/available";
 import { createBankAccountsResource } from "./resources/bank-accounts";
 import { createCustomersResource } from "./resources/customers";
@@ -155,12 +156,9 @@ export class BlindPay {
             });
 
             if (!response.ok) {
-                const error = await this.parseJsonResponse<{ message?: string }>(response);
                 return {
                     data: null,
-                    error: {
-                        message: error?.message ?? "Unknown error",
-                    },
+                    error: toErrorResponse(await this.parseJsonResponse<unknown>(response)),
                 };
             }
 

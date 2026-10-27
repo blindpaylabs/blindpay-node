@@ -1,5 +1,6 @@
 import type { BlindpayApiResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { toErrorResponse } from "../../internal/error-response";
 
 export type UploadBucket = "avatar" | "onboarding" | "limit_increase" | "documents";
 
@@ -82,13 +83,7 @@ export function createUploadResource(
         });
 
         if (!response.ok) {
-            const error = await response.json();
-            return {
-                data: null,
-                error: {
-                    message: error?.message ?? "Unknown error",
-                },
-            };
+            return { data: null, error: toErrorResponse(await response.json()) };
         }
 
         const data = await response.json();

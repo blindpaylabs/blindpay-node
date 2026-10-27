@@ -113,17 +113,28 @@ describe("Upload", () => {
         });
 
         it("should return an error when analysis fails", async () => {
-            fetchMock.mockResponseOnce(JSON.stringify({ message: "Unsupported file" }), {
-                status: 400,
-                headers: { "Content-Type": "application/json" },
-            });
+            fetchMock.mockResponseOnce(
+                JSON.stringify({
+                    success: false,
+                    code: "UPLOAD_UNSUPPORTED_FILE",
+                    message: "Unsupported file",
+                    errors: [],
+                    trace_id: "0af7651916cd43dd8448eb211c80319c",
+                }),
+                { status: 400, headers: { "Content-Type": "application/json" } }
+            );
 
             const file = new Blob(["test content"], { type: "text/plain" });
 
             const { data, error } = await blindpay.upload.analyze({ file, type: "invoice" });
 
             expect(data).toBeNull();
-            expect(error).toEqual({ message: "Unsupported file" });
+            expect(error).toStrictEqual({
+                code: "UPLOAD_UNSUPPORTED_FILE",
+                message: "Unsupported file",
+                errors: [],
+                trace_id: "0af7651916cd43dd8448eb211c80319c",
+            });
         });
     });
 

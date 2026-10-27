@@ -15,6 +15,39 @@ describe("BlindPay client", () => {
         expect(error).toBeNull();
         expect(data).toBeNull();
     });
+
+    it("surfaces the API error envelope's code, description, errors and trace_id", async () => {
+        fetchMock.mockResponseOnce(
+            JSON.stringify({
+                success: false,
+                code: "PAYOUTS_INSUFFICIENT_BALANCE",
+                message: "not_enough_balance",
+                description: "There is not enough balance to complete this payout.",
+                errors: ["Bad Request"],
+                trace_id: "0af7651916cd43dd8448eb211c80319c",
+            }),
+            { status: 400 }
+        );
+
+        const { data, error } = await blindpay.payouts.get("pa_000000000000");
+
+        expect(data).toBeNull();
+        expect(error).toStrictEqual({
+            code: "PAYOUTS_INSUFFICIENT_BALANCE",
+            message: "not_enough_balance",
+            description: "There is not enough balance to complete this payout.",
+            errors: ["Bad Request"],
+            trace_id: "0af7651916cd43dd8448eb211c80319c",
+        });
+    });
+
+    it("keeps only a message when the error body is not an object", async () => {
+        fetchMock.mockResponseOnce(JSON.stringify("Bad Gateway"), { status: 502 });
+
+        const { error } = await blindpay.payouts.get("pa_000000000000");
+
+        expect(error).toStrictEqual({ message: "Unknown error" });
+    });
 });
 
 describe("verifyWebhookSignature", () => {

@@ -1489,7 +1489,7 @@
                     "symbol": "ErrorResponse"
                 }
             ],
-            "notes": "This SDK's error envelope only ever surfaces `message`; it does not expose the spec's stable `code`, `description`, `errors` list, or `trace_id`."
+            "notes": "The SDK's `error` object: every field but `success`, which BlindpayApiResponse's data/error split already carries."
         },
         {
             "spec": {
