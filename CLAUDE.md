@@ -295,7 +295,7 @@ describe("Widgets", () => {
 bunx changeset
 ```
 
-Select `@blindpay/node`, choose `minor` for new features, and write a summary.
+Choose `minor` for new features and write a summary. The Changesets CLI needs Node `^22.11 || >=24`.
 
 Alternatively, create a file `.changeset/{random-name}.md` manually:
 
@@ -555,6 +555,19 @@ The changeset file name should be a random short identifier (changesets CLI gene
 - `baseBranch`: `main`
 - `access`: `public` (npm)
 - `commit`: `false` (changesets do not auto-commit)
+- `changelog`: `@changesets/changelog-github` (links PRs and authors in `CHANGELOG.md`)
+
+### Releasing
+
+`.github/workflows/publish.yaml` runs the [Changesets release flow](https://changesets.dev/guide/automating) on every push to `main`:
+
+1. Changesets pending: open or update the `chore(release): version packages` PR. It bumps `package.json`, writes `CHANGELOG.md` and deletes the consumed changesets.
+2. That PR merged: type-check, test, build and pack, then publish to npm with trusted publishing (OIDC, no npm token), tag `vX.Y.Z` and create the GitHub release.
+
+Rules:
+- Never edit `version` in `package.json` by hand, and never run `changeset version` or `changeset publish` locally. A merge without a changeset releases nothing.
+- api-sync PRs write `.changeset/api-sync-<spec sha>.md` instead of bumping the version, so they release through the same Version Packages PR.
+- Keep the workflow file name `publish.yaml`: npm's trusted publisher is bound to it.
 
 ## OpenAPI to SDK Mapping Rules
 

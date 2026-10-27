@@ -97,7 +97,6 @@ jobs:
           echo "exit_code=$?" >> "$GITHUB_OUTPUT"
           set -e
           echo "bump=$(jq -r '.bump' /tmp/sync-report.json)" >> "$GITHUB_OUTPUT"
-          echo "new_version=$(jq -r '.newVersion // empty' /tmp/sync-report.json)" >> "$GITHUB_OUTPUT"
           echo "applied_count=$(jq -r '.applied | length' /tmp/sync-report.json)" >> "$GITHUB_OUTPUT"
 
       # A precise, actionable failure (removal, type change, new operation/schema, missing
@@ -121,27 +120,25 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "$(printf 'feat: sync SDK with API changes (v%s)\n\nApplied:\n%s\n' \
-            "${{ steps.sync.outputs.new_version }}" \
+          git commit -m "$(printf 'feat: sync SDK with API changes\n\nApplied:\n%s\n' \
             "$(jq -r '.applied[] | "- " + .' /tmp/sync-report.json)")"
           git push --force-with-lease origin api-sync
 
       # The PAT, not GITHUB_TOKEN: a merge performed with GITHUB_TOKEN produces a
-      # push that starts no workflow, so the sync would land on main and never
-      # publish to npm.
+      # push that starts no workflow, so the sync's changeset would land on main and
+      # never reach the Version Packages PR that publish.yaml maintains.
       - name: Create or update PR
         if: steps.commit.outcome == 'success'
         env:
           GH_TOKEN: ${{ secrets.SDK_SYNC_PAT }}
         run: |
           BUMP="${{ steps.sync.outputs.bump }}"
-          VERSION="${{ steps.sync.outputs.new_version }}"
           if [ "$BUMP" = "minor" ]; then
             PREFIX="feat"
           else
             PREFIX="fix"
           fi
-          TITLE="${PREFIX}: sync SDK with API changes (v${VERSION})"
+          TITLE="${PREFIX}: sync SDK with API changes"
           EXISTING_PR="${{ steps.check-pr.outputs.existing_pr }}"
 
           {
@@ -154,7 +151,8 @@ jobs:
             echo "### Known divergences (recorded, not applied)"
             jq -r '.knownDivergences[] | "- " + .' /tmp/sync-report.json
             echo
-            echo "Version bump: \`${BUMP}\` -> v${VERSION}"
+            echo "Changeset: \`$(jq -r '.changeset' /tmp/sync-report.json)\` (\`${BUMP}\`)."
+            echo "Merging this queues the release in the Version Packages PR; merging that PR publishes to npm."
           } > /tmp/pr-body.md
 
           if [ -n "$EXISTING_PR" ]; then

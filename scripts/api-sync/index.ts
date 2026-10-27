@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -10,6 +11,7 @@ import {
     insertTypeDeclarations,
 } from "./apply";
 import { auditTypes } from "./audit";
+import { changesetFileName, classifyBump, renderChangeset } from "./changeset";
 import { computeCoverageGaps } from "./coverage";
 import { detectNewSchemas, detectRemovals } from "./diff";
 import { findUnmappedEnumProperties } from "./enum-coverage";
@@ -26,12 +28,6 @@ import type {
     SpecMap,
     SyncReport,
 } from "./types";
-import {
-    bumpSemver,
-    classifyBump,
-    patchPackageJsonVersion,
-    readPackageJsonVersion,
-} from "./version";
 
 /**
  * Every "METHOD path" in the spec with no matching SDK endpoint, classified: STANDARD ones
@@ -247,8 +243,7 @@ function main(): void {
             needsHuman: allNeedsHuman,
             knownDivergences: divergencesHit.sort(),
             bump: "none",
-            previousVersion: null,
-            newVersion: null,
+            changeset: null,
             coverageGaps: [],
         });
         console.error("\n[api-sync] FAIL: needs-human changes detected:\n");
@@ -305,22 +300,21 @@ function main(): void {
     const hasOperationInsert = applicable.some((c) => c.kind === "operation-insert");
     const bump = classifyBump(hasEnumInsert, hasFieldInsert, hasOperationInsert);
 
-    let previousVersion: string | null = null;
-    let newVersion: string | null = null;
+    applied.sort();
+    let changeset: string | null = null;
     if (bump !== "none") {
-        const pkgRaw = readFileSync(packageJsonPath, "utf8");
-        previousVersion = readPackageJsonVersion(pkgRaw);
-        newVersion = bumpSemver(previousVersion, bump);
-        writeFileSync(packageJsonPath, patchPackageJsonVersion(pkgRaw, newVersion));
+        const { name } = JSON.parse(readFileSync(packageJsonPath, "utf8")) as { name: string };
+        const specSha256 = createHash("sha256").update(readFileSync(args.specPath)).digest("hex");
+        changeset = `.changeset/${changesetFileName(specSha256)}`;
+        writeFileSync(resolve(REPO_ROOT, changeset), renderChangeset(name, bump, applied));
     }
 
     const report: SyncReport = {
-        applied: applied.sort(),
+        applied,
         needsHuman: [],
         knownDivergences: divergencesHit.sort(),
         bump,
-        previousVersion,
-        newVersion,
+        changeset,
         coverageGaps: computeCoverageGaps(spec, REPO_ROOT),
     };
 

@@ -1,73 +1,151 @@
 name: Publish
 
+# Changesets release flow (https://changesets.dev/guide/automating):
+#   - changesets pending on main -> open or update the "Version Packages" PR
+#   - that PR merged (no changesets left, version not on npm yet) -> test, pack, then publish
+#     with npm trusted publishing (OIDC), tag vX.Y.Z and create the GitHub release
+#
+# Keep this file's name and `name: Publish`: npm's trusted publisher for @blindpay/node is
+# bound to publish.yaml, and pipeline-alert.yml pages Slack by workflow name.
+
 on:
   push:
     branches:
       - main
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+permissions: {}
 
-permissions:
-  contents: write
-  id-token: write
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  release:
-    name: Release
+  select-mode:
+    name: Select release mode
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      mode: ${{ steps.select-mode.outputs.mode }}
+      publish-plan-artifact-id: ${{ steps.select-mode.outputs.publish-plan-artifact-id }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          fetch-depth: 0
+          persist-credentials: false
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Select Changesets mode
+        id: select-mode
+        uses: changesets/action/select-mode@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+
+  version:
+    name: Open or update the Version Packages PR
+    needs: select-mode
+    if: needs.select-mode.outputs.mode == 'version'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          bun-version: 1.2.18
+          persist-credentials: false
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          registry-url: 'https://registry.npmjs.org'
+      - name: Setup
+        uses: ./.github/actions/setup
 
-      - name: Resolve version
-        id: version
-        run: echo "value=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
-
-      # This runs on every push to main, so skip an unchanged version instead of
-      # failing the run on "cannot publish over the previously published version".
-      - name: Check whether version is already published
-        id: published
+      # The PAT, not GITHUB_TOKEN: a PR opened or pushed with GITHUB_TOKEN starts no
+      # pull_request workflows, so the Version Packages PR would show no CI checks. No
+      # fallback to GITHUB_TOKEN: a missing PAT fails this run, and pipeline-alert.yml pages.
+      - name: Require SDK_SYNC_PAT
+        env:
+          SDK_SYNC_PAT: ${{ secrets.SDK_SYNC_PAT }}
         run: |
-          if npm view "@blindpay/node@${{ steps.version.outputs.value }}" version >/dev/null 2>&1; then
-            echo "value=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "value=false" >> "$GITHUB_OUTPUT"
+          if [ -z "$SDK_SYNC_PAT" ]; then
+            echo "::error::SDK_SYNC_PAT is not set, so the Version Packages PR cannot be opened with CI."
+            exit 1
           fi
 
-      - name: Install dependencies
-        if: steps.published.outputs.value == 'false'
-        run: bun install --frozen-lockfile
+      - name: Version packages
+        uses: changesets/action/version@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          github-token: ${{ secrets.SDK_SYNC_PAT }}
+          commit-message: "chore(release): version packages"
+          pr-title: "chore(release): version packages"
 
-      - name: Build package
-        if: steps.published.outputs.value == 'false'
+  pack:
+    name: Test and pack
+    needs: select-mode
+    if: needs.select-mode.outputs.mode == 'publish'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      pack-dir-artifact-id: ${{ steps.pack.outputs.pack-dir-artifact-id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      # Main runs the same checks on this push in parallel and does not gate this workflow,
+      # so the release re-checks the exact commit it is about to ship.
+      - name: Type-check
+        run: bun run check-types
+
+      - name: Test
+        run: bun run test
+
+      - name: Build
         run: bun run build
 
-      # Auth comes from npm trusted publishing (OIDC), enabled by id-token: write.
-      # Do not add NODE_AUTH_TOKEN: it writes an _authToken into .npmrc, which
-      # takes precedence over the OIDC exchange and fails with E404.
-      - name: Publish package
-        if: steps.published.outputs.value == 'false'
-        run: npm publish
+      - name: Pack
+        id: pack
+        uses: changesets/action/pack@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          publish-plan-artifact-id: ${{ needs.select-mode.outputs.publish-plan-artifact-id }}
 
-      - name: Tag and create release
-        if: steps.published.outputs.value == 'false'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  publish:
+    name: Publish to npm
+    needs: pack
+    runs-on: ubuntu-latest
+    # The only job holding the npm OIDC token; it publishes the tarball pack built and runs
+    # no project scripts of its own.
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # registry-url with no NODE_AUTH_TOKEN: a token in .npmrc takes precedence over the
+      # OIDC exchange and fails with E404.
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          registry-url: https://registry.npmjs.org
+
+      - name: Check npm supports trusted publishing
         run: |
-          TAG="v${{ steps.version.outputs.value }}"
-          git tag "$TAG"
-          git push origin "$TAG"
-          gh release create "$TAG" --title "$TAG" --generate-notes
+          NPM_VERSION="$(npm --version)"
+          if ! node -e '
+            const [major, minor, patch] = process.argv[1].split(".").map(Number);
+            process.exit(major > 11 || (major === 11 && (minor > 5 || (minor === 5 && patch >= 1))) ? 0 : 1);
+          ' "$NPM_VERSION"; then
+            echo "::error::npm $NPM_VERSION is older than 11.5.1, the first version with trusted publishing."
+            exit 1
+          fi
+          echo "npm $NPM_VERSION supports trusted publishing."
+
+      - name: Publish
+        uses: changesets/action/publish@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          pack-dir-artifact-id: ${{ needs.pack.outputs.pack-dir-artifact-id }}

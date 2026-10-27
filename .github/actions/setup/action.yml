@@ -1,0 +1,30 @@
+name: Setup
+description: Install Bun, Node.js and the locked dependencies.
+
+inputs:
+  registry-url:
+    description: Passed to actions/setup-node. Set only on the job that publishes to npm.
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      with:
+        bun-version: 1.2.18
+        # Release jobs never restore a cache: a poisoned cache must not reach the job that
+        # holds the npm OIDC token. setup-bun would otherwise restore and run a cached binary.
+        no-cache: true
+
+    - name: Setup Node.js
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      with:
+        node-version: 24
+        registry-url: ${{ inputs.registry-url }}
+        package-manager-cache: false
+
+    - name: Install dependencies
+      shell: bash
+      run: bun install --frozen-lockfile
