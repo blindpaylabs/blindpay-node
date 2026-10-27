@@ -10,7 +10,7 @@
         "global-payments",
         "payment-processing"
     ],
-    "homepage": "https://github.com/blindpaylabs/blindpay-node",
+    "homepage": "https://blindpay.com",
     "author": "Blindpay <alves@blindpay.com> (https://blindpay.com/)",
     "repository": {
         "type": "git",
