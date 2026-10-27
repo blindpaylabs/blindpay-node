@@ -25,6 +25,7 @@ import { createBlockchainWalletsResource } from "./resources/wallets/blockchain"
 import { createCustodialWalletsResource } from "./resources/wallets/custodial";
 import { createOfframpWalletsResource } from "./resources/wallets/offramp";
 import { createWebhookEndpointsResource } from "./resources/webhooks";
+import type { WebhookEvent } from "./resources/webhooks/events";
 
 export class BlindPay {
     // Options
@@ -247,28 +248,9 @@ export class BlindPay {
      * @param params.payload The raw request body as a string
      * @returns {boolean} True if the signature is valid, false otherwise
      */
-    verifyWebhookSignature({
-        secret,
-        headers,
-        payload,
-    }: {
-        secret: string;
-        headers: {
-            id: string;
-            timestamp: string;
-            signature: string;
-        };
-        payload: string;
-    }): boolean {
+    verifyWebhookSignature(params: WebhookVerificationInput): boolean {
         try {
-            const webhook = new Webhook(secret);
-
-            webhook.verify(payload, {
-                "svix-id": headers.id,
-                "svix-timestamp": headers.timestamp,
-                "svix-signature": headers.signature,
-            });
-
+            verifyWithSvix(params);
             return true;
         } catch {
             return false;
@@ -278,37 +260,36 @@ export class BlindPay {
     /**
      * Verifies a BlindPay webhook with Svix and returns its payload, typed by `webhook_event`.
      *
-     * @param params.secret The webhook secret from BlindPay dashboard
-     * @param params.headers The webhook headers object containing svix-id, svix-timestamp, and svix-signature
-     * @param params.payload The raw request body as a string
      * @returns The verified payload; narrow it with a `switch` on `event.webhook_event`
      * @throws {BlindPayError} When the signature or timestamp does not verify
      */
-    constructWebhookEvent({
-        secret,
-        headers,
-        payload,
-    }: {
-        secret: string;
-        headers: {
-            id: string;
-            timestamp: string;
-            signature: string;
-        };
-        payload: string;
-    }): import("./resources/webhooks/events").WebhookEvent {
+    constructWebhookEvent(params: WebhookVerificationInput): WebhookEvent {
         try {
-            const webhook = new Webhook(secret);
-
-            return webhook.verify(payload, {
-                "svix-id": headers.id,
-                "svix-timestamp": headers.timestamp,
-                "svix-signature": headers.signature,
-            }) as import("./resources/webhooks/events").WebhookEvent;
+            return verifyWithSvix(params) as WebhookEvent;
         } catch (error) {
             throw new BlindPayError(
                 `Webhook verification failed: ${error instanceof Error ? error.message : String(error)}`
             );
         }
     }
+}
+
+export type WebhookVerificationInput = {
+    secret: string;
+    headers: {
+        id: string;
+        timestamp: string;
+        signature: string;
+    };
+    /** The raw request body: re-serialized JSON changes the bytes and fails verification. */
+    payload: string;
+};
+
+/** Returns the parsed payload when the Svix signature and timestamp verify, else throws. */
+function verifyWithSvix({ secret, headers, payload }: WebhookVerificationInput): unknown {
+    return new Webhook(secret).verify(payload, {
+        "svix-id": headers.id,
+        "svix-timestamp": headers.timestamp,
+        "svix-signature": headers.signature,
+    });
 }
