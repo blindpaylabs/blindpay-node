@@ -12,24 +12,6 @@
         "owner": "eric@blindpay.com"
     },
     {
-        "schema": "GetBankAccountResponse",
-        "field": "account_holder_name",
-        "reason": "Pre-existing SDK field with no matching property in the spec (BankAccountOut has swift_account_holder_name, not account_holder_name). Unrelated to the wave-2 receiver->customer rename; needs its own follow-up.",
-        "owner": "eric@blindpay.com"
-    },
-    {
-        "schema": "GetBankAccountResponse",
-        "field": "swift_code",
-        "reason": "Pre-existing SDK field with no matching property in the spec (BankAccountOut has swift_code_bic, not swift_code). Unrelated to wave 2; needs its own follow-up.",
-        "owner": "eric@blindpay.com"
-    },
-    {
-        "schema": "GetBankAccountResponse",
-        "field": "is_primary",
-        "reason": "Pre-existing SDK field with no matching property anywhere on BankAccountOut in the spec. Unrelated to wave 2; needs its own follow-up.",
-        "owner": "eric@blindpay.com"
-    },
-    {
         "schema": "UpdateInstanceMemberRoleInput",
         "field": "memberId",
         "reason": "Path-only identifier used to build /members/{id}; never serialized as a JSON body key. Pre-existing camelCase naming (inconsistent with this SDK's snake_case convention) unrelated to wave 2.",
@@ -87,12 +69,6 @@
         "schema": "CreateTransferResponse",
         "field": "tracking_partner_fee",
         "reason": "Pre-existing tracking step modeled by the SDK that no longer exists on any Transfer schema in the spec. Unrelated to wave 2; needs its own follow-up.",
-        "owner": "eric@blindpay.com"
-    },
-    {
-        "schema": "GetBankAccountResponse",
-        "field": "iban",
-        "reason": "Absent from the public spec snapshot; only appeared alongside internal-only surface in the unfiltered spec. Pre-existing SDK field, unrelated to the customers rename; needs its own investigation.",
         "owner": "eric@blindpay.com"
     },
     {

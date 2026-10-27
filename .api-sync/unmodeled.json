@@ -82,20 +82,6 @@
         {
             "kind": "property",
             "schema": "BankAccountOut",
-            "field": "bank_name",
-            "reason": "Pre-existing SDK-only field on GetBankAccountResponse with no matching property on BankAccountOut in the spec (same family as the already allow-listed account_holder_name/swift_code/is_primary/iban).",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "property",
-            "schema": "BankAccountOut",
-            "field": "customer_id",
-            "reason": "Pre-existing SDK-only field on GetBankAccountResponse with no matching property on BankAccountOut in the spec; same family as bank_name.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "property",
-            "schema": "BankAccountOut",
             "field": "offramp_wallets.[].circle_wallet_id",
             "reason": "ListBankAccountsResponse's inline offramp_wallets literal (bank-accounts/index.ts:88-93) models {address,id,network,external_id} but spec's BankAccountOut.offramp_wallets item also carries circle_wallet_id; a narrower, independently-named SDK symbol would be needed to track this sub-shape mechanically.",
             "owner": "eric@blindpay.com"
@@ -105,13 +91,6 @@
             "schema": "BankAccountOut",
             "field": "swift_payment_code",
             "reason": "CreateInternationalSwiftResponse and ListBankAccountsResponse both declare swift_payment_code as a bare `string | null`; spec constrains it to a large country-specific SWIFT purpose-code enum (hundreds of values, e.g. ae_swift_str, jp_swift_101). Given the size, a named SDK union is likely the wrong shape for this field regardless; flagged for a human modeling decision, not a blind enum type.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "property",
-            "schema": "BankAccountOut",
-            "field": "updated_at",
-            "reason": "Pre-existing SDK-only field on GetBankAccountResponse with no matching property on BankAccountOut in the spec; same family as bank_name.",
             "owner": "eric@blindpay.com"
         },
         {

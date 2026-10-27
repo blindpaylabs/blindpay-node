@@ -911,9 +911,9 @@ export type EstimatedTimeOfArrival = '5_min' | '30_min' | '2_hours' | '1_busines
 
 export type PayoutTrackingTransaction = {
     step: TrackingStatus
-    status: 'failed' | 'found' | null;
-    transaction_hash: string | null
-    completed_at: string | null
+    status?: 'failed' | 'found' | null;
+    transaction_hash?: string | null
+    completed_at?: string | null
     ledger_in_transaction_id?: string | null;
     ledger_out_transaction_id?: string | null;
     provider_error_reason?: string | null;
@@ -922,17 +922,17 @@ export type PayoutTrackingTransaction = {
   
 export type PayoutTrackingPayment = {
     step: TrackingStatus
-    provider_name: string | null ;
-    provider_transaction_id: string | null ;
-    provider_status: 'canceled' | 'failed' | 'returned' | 'sent' | null
-    recipient_name: string | null ;
-    recipient_tax_id: string | null ;
-    recipient_bank_code: string | null ;
-    recipient_branch_code: string | null ;
-    recipient_account_number: string | null ;
-    recipient_account_type: string | null ;
-    estimated_time_of_arrival: EstimatedTimeOfArrival | null ;
-    completed_at: string | null ;
+    provider_name?: string | null ;
+    provider_transaction_id?: string | null ;
+    provider_status?: 'canceled' | 'failed' | 'returned' | 'sent' | null
+    recipient_name?: string | null ;
+    recipient_tax_id?: string | null ;
+    recipient_bank_code?: string | null ;
+    recipient_branch_code?: string | null ;
+    recipient_account_number?: string | null ;
+    recipient_account_type?: string | null ;
+    estimated_time_of_arrival?: EstimatedTimeOfArrival | null ;
+    completed_at?: string | null ;
     forced_provider?: PayoutForcedProvider | null;
     refund_review_actioned_at?: string | null;
     refund_review_detected_at?: string | null;
@@ -953,25 +953,25 @@ export type PayoutTrackingPayment = {
   
 export type PayoutTrackingLiquidity = {
     step: TrackingStatus
-    provider_transaction_id: string | null ;
-    provider_status: 'deposited' | 'converted' | 'withdrawn' | null;
-    estimated_time_of_arrival: EstimatedTimeOfArrival | null;
-    completed_at: string | null ;
+    provider_transaction_id?: string | null ;
+    provider_status?: 'deposited' | 'converted' | 'withdrawn' | null;
+    estimated_time_of_arrival?: EstimatedTimeOfArrival | null;
+    completed_at?: string | null ;
   }
   
 export type PayoutTrackingComplete = {
     step: TrackingStatus
-    status: 'tokens_refunded' | 'paid' | null;
-    transaction_hash: string | null;
-    completed_at: string | null;
+    status?: 'tokens_refunded' | 'paid' | null;
+    transaction_hash?: string | null;
+    completed_at?: string | null;
     provider_transaction_id?: string | null;
     refund_reason?: string | null;
   };
 
 export type PayoutTrackingPartnerFee = {
     step: TrackingStatus
-    transaction_hash: string | null;
-    completed_at: string | null;
+    transaction_hash?: string | null;
+    completed_at?: string | null;
   }
 
 export type KycStatus = "awaiting_contract" | "compliance_request" | "verifying" | "approved" | "rejected" | "deprecated" | "pending_review" | "approved_rfi";

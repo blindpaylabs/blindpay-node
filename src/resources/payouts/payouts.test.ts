@@ -583,11 +583,86 @@ describe("Payouts", () => {
         });
     });
 
+    describe("List payouts with filters", () => {
+        it("should send every filter as a query param", async () => {
+            fetchMock.mockResponseOnce(JSON.stringify([]), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { error } = await blindpay.payouts.list({
+                customer_id: "re_000000000000",
+                status: "on_hold",
+                customer_name: "John",
+                bank_account_id: "ba_000000000000",
+                country: "BR",
+                payment_method: "faster_payments",
+                network: "base",
+                token: "USDC",
+            });
+
+            expect(error).toBeNull();
+            expect(fetchMock.mock.calls[0][0]).toBe(
+                "https://api.blindpay.com/v1/instances/in_000000000000/payouts?customer_id=re_000000000000&status=on_hold&customer_name=John&bank_account_id=ba_000000000000&country=BR&payment_method=faster_payments&network=base&token=USDC"
+            );
+        });
+    });
+
+    describe("Create payout from a BlindPay-managed wallet", () => {
+        it("should create an EVM payout with only quote_id and wallet_id", async () => {
+            const mockedEvmPayout: CreateEvmPayoutResponse = {
+                id: "pa_000000000000",
+                status: "processing",
+                sender_wallet_address: "0x123...890",
+                tracking_complete: { step: "processing" },
+                tracking_payment: { step: "processing" },
+                tracking_transaction: { step: "processing" },
+                tracking_liquidity: { step: "processing" },
+                customer_id: "re_000000000000",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedEvmPayout), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.payouts.createEvm({
+                quote_id: "qu_000000000000",
+                wallet_id: "bl_000000000000",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedEvmPayout);
+            const [, init] = fetchMock.mock.calls[0];
+            expect(JSON.parse(init?.body as string)).toEqual({
+                quote_id: "qu_000000000000",
+                wallet_id: "bl_000000000000",
+            });
+        });
+
+        it("should accept quote_id alone on stellar, solana and stellar authorize", async () => {
+            fetchMock.mockResponse(JSON.stringify({ transaction_hash: "hash" }), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            await blindpay.payouts.authorizeStellarToken({ quote_id: "qu_000000000000" });
+            await blindpay.payouts.createStellar({ quote_id: "qu_000000000000" });
+            await blindpay.payouts.createSolana({
+                quote_id: "qu_000000000000",
+                wallet_id: "bl_000000000000",
+            });
+
+            expect(
+                fetchMock.mock.calls.map(([, init]) => JSON.parse(init?.body as string))
+            ).toEqual([
+                { quote_id: "qu_000000000000" },
+                { quote_id: "qu_000000000000" },
+                { quote_id: "qu_000000000000", wallet_id: "bl_000000000000" },
+            ]);
+        });
+    });
+
     describe("Submit payout documents", () => {
         it("should submit payout documents", async () => {
-            const mockedResponse: SubmitPayoutDocumentsResponse = {
-                id: "pd_000000000000",
-            };
+            const mockedResponse: SubmitPayoutDocumentsResponse = { success: true };
 
             fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
                 headers: { "Content-Type": "application/json" },

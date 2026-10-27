@@ -7,6 +7,7 @@ import type {
     BusinessIndustry,
     Country,
     Rail,
+    SuccessResponse,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { SpeiProtocol } from "../payouts";
@@ -27,7 +28,7 @@ export type BankAccountStatus = "verifying" | "approved" | "rejected" | "depreca
 
 export type ListBankAccountsInput = {
     customer_id: string;
-    status?: string;
+    status?: BankAccountStatus;
     type?: Rail;
     name?: string;
     bank_account_id?: string;
@@ -78,7 +79,7 @@ export type ListBankAccountsResponse = Array<{
     swift_bank_city?: string | null;
     swift_bank_state_province_region?: string | null;
     swift_bank_postal_code?: string | null;
-    swift_intermediary_bank_swift_code_bic?: string;
+    swift_intermediary_bank_swift_code_bic?: string | null;
     swift_intermediary_bank_account_number_iban?: string | null;
     swift_intermediary_bank_name?: string | null;
     swift_intermediary_bank_country?: Country | null;
@@ -87,7 +88,15 @@ export type ListBankAccountsResponse = Array<{
     pix_safe_branch_code?: string | null;
     pix_safe_cpf_cnpj?: string | null;
     tron_wallet_hash?: string | null;
+    sepa_iban?: string | null;
     sepa_beneficiary_bic?: string | null;
+    sepa_beneficiary_legal_name?: string | null;
+    sepa_beneficiary_address_line_1?: string | null;
+    sepa_beneficiary_address_line_2?: string | null;
+    sepa_beneficiary_city?: string | null;
+    sepa_beneficiary_state_province_region?: string | null;
+    sepa_beneficiary_postal_code?: string | null;
+    sepa_beneficiary_country?: Country | null;
     offramp_wallets?: Array<{
         address: string;
         id: string;
@@ -123,32 +132,9 @@ export type GetBankAccountInput = {
     id: string;
 };
 
-export type GetBankAccountResponse = {
-    id: string;
-    customer_id: string;
-    account_holder_name: string;
-    account_number: string | null;
-    routing_number: string | null;
-    account_type: BankAccountType | null;
-    bank_name: string;
-    swift_code?: string | null;
-    iban?: string | null;
-    sepa_beneficiary_bic?: string | null;
-    is_primary: boolean;
-    created_at: string | null;
-    updated_at: string;
-    faster_payments_account_number?: string | null;
-    faster_payments_beneficiary_address_line_1?: string | null;
-    faster_payments_beneficiary_address_line_2?: string | null;
-    faster_payments_beneficiary_city?: string | null;
-    faster_payments_beneficiary_country?: Country | null;
-    faster_payments_beneficiary_legal_name?: string | null;
-    faster_payments_beneficiary_postal_code?: string | null;
-    faster_payments_beneficiary_state_province_region?: string | null;
-    faster_payments_sort_code?: string | null;
-    plaid_connected_at?: string | null;
-    swift_ifsc_branch_code?: string | null;
-};
+export type BankAccount = ListBankAccountsResponse[number];
+
+export type GetBankAccountResponse = BankAccount;
 
 export type DeleteBankAccountInput = {
     customer_id: string;
@@ -713,6 +699,8 @@ export type CreateTedInput = {
     ted_bank_code: string | null;
     ted_branch_code: string | null;
     ted_cpf_cnpj: string | null;
+    account_number: string | null;
+    account_type: BankAccountType | null;
     faster_payments_account_number?: string | null;
     faster_payments_beneficiary_address_line_1?: string | null;
     faster_payments_beneficiary_address_line_2?: string | null;
@@ -734,6 +722,8 @@ export type CreateTedResponse = {
     ted_bank_code: string | null;
     ted_branch_code: string | null;
     ted_cpf_cnpj: string | null;
+    account_number: string | null;
+    account_type: BankAccountType | null;
     created_at: string | null;
     faster_payments_account_number?: string | null;
     faster_payments_beneficiary_address_line_1?: string | null;
@@ -746,6 +736,38 @@ export type CreateTedResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
+};
+
+export type CreateFasterPaymentsInput = {
+    customer_id: string;
+    name: string;
+    account_class: AccountClass | null;
+    faster_payments_sort_code: string | null;
+    faster_payments_account_number: string | null;
+    faster_payments_beneficiary_legal_name: string | null;
+    faster_payments_beneficiary_address_line_1: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_country: Country | null;
+};
+
+export type CreateFasterPaymentsResponse = {
+    id: string;
+    type: "faster_payments";
+    name: string;
+    account_class: AccountClass | null;
+    faster_payments_sort_code: string | null;
+    faster_payments_account_number: string | null;
+    faster_payments_beneficiary_legal_name: string | null;
+    faster_payments_beneficiary_address_line_1: string | null;
+    faster_payments_beneficiary_address_line_2: string | null;
+    faster_payments_beneficiary_city: string | null;
+    faster_payments_beneficiary_state_province_region: string | null;
+    faster_payments_beneficiary_postal_code: string | null;
+    faster_payments_beneficiary_country: Country | null;
+    created_at: string | null;
 };
 
 export type CreatePlaidBankAccountInput = {
@@ -778,7 +800,10 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
                 `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${id}`
             );
         },
-        delete({ customer_id, id }: DeleteBankAccountInput): Promise<BlindpayApiResponse<void>> {
+        delete({
+            customer_id,
+            id,
+        }: DeleteBankAccountInput): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.delete(
                 `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${id}`
             );
@@ -883,6 +908,15 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
         }: CreateSepaInput): Promise<BlindpayApiResponse<CreateSepaResponse>> {
             return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
                 type: "sepa",
+                ...data,
+            });
+        },
+        createFasterPayments({
+            customer_id,
+            ...data
+        }: CreateFasterPaymentsInput): Promise<BlindpayApiResponse<CreateFasterPaymentsResponse>> {
+            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
+                type: "faster_payments",
                 ...data,
             });
         },

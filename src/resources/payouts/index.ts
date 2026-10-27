@@ -15,6 +15,7 @@ import type {
     PayoutTrackingTransaction,
     Rail,
     StablecoinToken,
+    SuccessResponse,
     TrackingStatus,
     TransactionDocumentType,
     TransactionStatus,
@@ -125,6 +126,13 @@ export type Payout = {
 
 export type ListPayoutsInput = PaginationParams & {
     customer_id?: string;
+    status?: TransactionStatus;
+    customer_name?: string;
+    bank_account_id?: string;
+    country?: string;
+    payment_method?: Rail;
+    network?: string;
+    token?: string;
 };
 
 export type ListPayoutsResponse =
@@ -153,9 +161,7 @@ export type SubmitPayoutDocumentsInput = {
     description?: string;
 };
 
-export type SubmitPayoutDocumentsResponse = {
-    id: string;
-};
+export type SubmitPayoutDocumentsResponse = SuccessResponse;
 
 export type GetPayoutInput = string;
 
@@ -167,7 +173,7 @@ export type GetPayoutTrackResponse = Payout;
 
 export type AuthorizeStellarTokenInput = {
     quote_id: string;
-    sender_wallet_address: string;
+    sender_wallet_address?: string;
     wallet_id?: string;
 };
 
@@ -177,7 +183,7 @@ export type AuthorizeStellarTokenResponse = {
 
 export type CreateStellarPayoutInput = {
     quote_id: string;
-    sender_wallet_address: string;
+    sender_wallet_address?: string;
     signed_transaction?: string | null;
     wallet_id?: string;
 };
@@ -208,7 +214,7 @@ export type CreateStellarPayoutResponse = {
 
 export type CreateEvmPayoutInput = {
     quote_id: string;
-    sender_wallet_address: string;
+    sender_wallet_address?: string;
     wallet_id?: string;
 };
 
@@ -238,8 +244,8 @@ export type CreateEvmPayoutResponse = {
 
 export type CreateSolanaPayoutInput = {
     quote_id: string;
-    sender_wallet_address: string;
-    signed_transaction: string | null;
+    sender_wallet_address?: string;
+    signed_transaction?: string | null;
     wallet_id?: string;
 };
 

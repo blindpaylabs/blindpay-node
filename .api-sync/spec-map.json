@@ -1153,6 +1153,10 @@
                 {
                     "file": "src/resources/bank-accounts/index.ts",
                     "symbol": "CreateTedResponse"
+                },
+                {
+                    "file": "src/resources/bank-accounts/index.ts",
+                    "symbol": "CreateFasterPaymentsResponse"
                 }
             ],
             "notes": "Fan-out response side: get, list item, and 11 rail create-response types."
@@ -1237,6 +1241,10 @@
                 {
                     "file": "src/resources/bank-accounts/index.ts",
                     "symbol": "CreateTedInput"
+                },
+                {
+                    "file": "src/resources/bank-accounts/index.ts",
+                    "symbol": "CreateFasterPaymentsInput"
                 }
             ],
             "notes": "Discriminator fan-out: 11 rail create input types. The `type` discriminator itself is injected by the factory function body (bank-accounts/index.ts:508-610), not carried on any input type by design."
