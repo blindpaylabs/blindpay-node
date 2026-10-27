@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -12,6 +12,7 @@ let dir: string | null = null;
 function makeRepo(files: Record<string, string>): string {
     dir = mkdtempSync(join(tmpdir(), "api-sync-reconcile-"));
     for (const [rel, content] of Object.entries(files)) {
+        mkdirSync(join(dir, rel, ".."), { recursive: true });
         writeFileSync(join(dir, rel), content);
     }
     return dir;
@@ -163,6 +164,7 @@ describe("field-insertion (property reconciliation)", () => {
                 property: undefined,
                 field: "refund_wallet_address",
                 tsType: "string | null",
+                importsNeeded: [],
                 site: { file: "quotes.ts", symbol: "CreateQuoteInput" },
             },
         ]);
@@ -299,6 +301,112 @@ describe("field-insertion (property reconciliation)", () => {
         expect(needsHuman).toEqual([]);
         expect(applicable).toEqual([]);
         expect(divergencesHit.some((d) => d.includes("billing_fee_amount"))).toBe(true);
+    });
+});
+
+describe("field-insert of an enum-constrained property", () => {
+    const specWithField = (node: Record<string, unknown>): Spec => ({
+        paths: {},
+        components: {
+            schemas: { BankAccountOut: { type: "object", properties: { country: node } } },
+        },
+    });
+    const map: SpecMap = {
+        enums: [],
+        types: [
+            {
+                spec: { schema: "BankAccountOut" },
+                sdk: [{ file: "bank.ts", symbol: "BankAccount" }],
+            },
+        ],
+        ignore: { schemas: [] },
+    };
+    const files = () => ({
+        "bank.ts": "export type BankAccount = {\n    id: string;\n};\n",
+        "types/index.d.ts": 'export type Country = "BR" | "US";\n',
+    });
+
+    it("reuses the shared union whose members match exactly, and asks for its import", () => {
+        const repo = makeRepo(files());
+        const { applicable } = reconcile(
+            specWithField({ type: ["string", "null"], enum: ["US", "BR"] }),
+            map,
+            emptyUnmodeled(),
+            repo
+        );
+        expect(applicable).toEqual([
+            expect.objectContaining({
+                kind: "field-insert",
+                field: "country",
+                tsType: "Country | null",
+                importsNeeded: ["Country"],
+            }),
+        ]);
+    });
+
+    it("compiles an object property's own properties instead of Record<string, unknown>", () => {
+        const repo = makeRepo(files());
+        const { applicable } = reconcile(
+            specWithField({
+                type: ["object", "null"],
+                properties: {
+                    key: { type: "string" },
+                    code: { type: "string", enum: ["BR", "US"] },
+                },
+                required: ["key"],
+            }),
+            map,
+            emptyUnmodeled(),
+            repo
+        );
+        expect(applicable).toEqual([
+            expect.objectContaining({
+                tsType: "{\n    key: string;\n    code?: Country;\n} | null",
+                importsNeeded: ["Country"],
+            }),
+        ]);
+    });
+
+    it("keeps a free-form object (additionalProperties only) as Record<string, unknown>", () => {
+        const repo = makeRepo(files());
+        const { applicable } = reconcile(
+            specWithField({ type: ["object", "null"], additionalProperties: {} }),
+            map,
+            emptyUnmodeled(),
+            repo
+        );
+        expect(applicable).toEqual([
+            expect.objectContaining({
+                tsType: "Record<string, unknown> | null",
+                importsNeeded: [],
+            }),
+        ]);
+    });
+
+    it("keeps a boolean enum (e.g. `enum: [true]`) as boolean, matching the type check", () => {
+        const repo = makeRepo(files());
+        const { applicable } = reconcile(
+            specWithField({ type: "boolean", enum: [true] }),
+            map,
+            emptyUnmodeled(),
+            repo
+        );
+        expect(applicable).toEqual([
+            expect.objectContaining({ tsType: "boolean", importsNeeded: [] }),
+        ]);
+    });
+
+    it("falls back to a literal union, never a bare string, when no shared union matches", () => {
+        const repo = makeRepo(files());
+        const { applicable } = reconcile(
+            specWithField({ type: "string", enum: ["a", "b"] }),
+            map,
+            emptyUnmodeled(),
+            repo
+        );
+        expect(applicable).toEqual([
+            expect.objectContaining({ tsType: '"a" | "b"', importsNeeded: [] }),
+        ]);
     });
 });
 

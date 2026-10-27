@@ -1,11 +1,74 @@
-import { describe, expect, it } from "vitest";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { afterEach, describe, expect, it } from "vitest";
 import { detectNewOperations, detectNewSchemas, detectRemovals } from "./diff";
+import { clearSourceCache } from "./sdk-scan";
 import type { Spec } from "./spec";
 import type { SpecMap } from "./types";
 
 function emptyMap(overrides: Partial<SpecMap> = {}): SpecMap {
     return { enums: [], types: [], ignore: { schemas: [] }, ...overrides };
 }
+
+describe("detectRemovals against the SDK's current state", () => {
+    let dir: string | null = null;
+    afterEach(() => {
+        clearSourceCache();
+        if (dir) rmSync(dir, { recursive: true, force: true });
+        dir = null;
+    });
+
+    const specWith = (members: string[]): Spec => ({
+        paths: {},
+        components: {
+            schemas: {
+                VirtualAccountOut: {
+                    type: "object",
+                    properties: { banking_partner: { type: "string", enum: members } },
+                },
+            },
+        },
+    });
+    const map: SpecMap = {
+        enums: [
+            {
+                spec: { schema: "VirtualAccountOut", property: "banking_partner" },
+                sdk: [{ file: "types.ts", symbol: "BankingPartner" }],
+            },
+        ],
+        types: [],
+        ignore: { schemas: [] },
+    };
+    const repoDeclaring = (union: string) => {
+        dir = mkdtempSync(join(tmpdir(), "api-sync-diff-"));
+        writeFileSync(join(dir, "types.ts"), `export type BankingPartner = ${union};\n`);
+        return dir;
+    };
+
+    it("does not flag a removed member the SDK already dropped deliberately", () => {
+        const repo = repoDeclaring('"jpmorgan" | "citi"');
+        const removed = detectRemovals(
+            specWith(["jpmorgan", "citi", "ssb"]),
+            specWith(["jpmorgan", "citi"]),
+            map,
+            repo
+        );
+        expect(removed).toEqual([]);
+    });
+
+    it("still flags a removed member the SDK keeps declaring, naming only that member", () => {
+        const repo = repoDeclaring('"jpmorgan" | "ssb"');
+        const removed = detectRemovals(
+            specWith(["jpmorgan", "citi", "ssb"]),
+            specWith(["jpmorgan"]),
+            map,
+            repo
+        );
+        expect(removed).toHaveLength(1);
+        expect(removed[0]).toContain("lost member(s) [ssb]");
+    });
+});
 
 describe("detectRemovals", () => {
     it("hard-fails when a mapped enum loses a member between the snapshot and the new spec", () => {

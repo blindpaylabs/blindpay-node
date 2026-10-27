@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { isKnownEnumDivergence, isKnownTypeMismatchDivergence, isUnmodeledProperty } from "./map";
 import {
     extractEnumMembers,
@@ -10,6 +12,7 @@ import {
 } from "./sdk-scan";
 import { resolveEnumMembers, resolveLocator, resolveProperties, type Spec } from "./spec";
 import { classifySdkType, compareTypeSignatures, specTypeSignature } from "./type-check";
+import { loadCanonicalEnums, synthesizeObjectLiteral, type TypegenContext } from "./typegen";
 import {
     type ApplicableChange,
     isPathLocator,
@@ -48,18 +51,52 @@ function resolveFieldNode(spec: Spec, loc: SpecLocator, field: string): unknown 
     return node?.properties?.[field];
 }
 
-function inferTsType(node: unknown): string {
+/**
+ * TypeScript type for a field-insert. A string enum becomes the shared types/index.d.ts union
+ * with exactly the same members (as the method generator does), else a literal union: never a
+ * bare `string`, which the type check would immediately reject as a dropped enum.
+ */
+function inferTsType(
+    node: unknown,
+    canonicalEnums: Map<string, string>,
+    spec: Spec
+): { tsType: string; importsNeeded: string[] } {
     // biome-ignore lint/suspicious/noExplicitAny: raw OpenAPI schema node
     const n = node as any;
     const rawType = n?.type;
     const types: string[] = Array.isArray(rawType) ? rawType : rawType ? [rawType] : [];
     const nullable = types.includes("null");
+    const withNull = (base: string) => (nullable ? `${base} | null` : base);
+    // String enums only: the type check models enums as string unions (a boolean `enum: [true]`
+    // stays `boolean`).
+    const members: unknown[] = Array.isArray(n?.enum)
+        ? n.enum.filter((v: unknown) => typeof v === "string")
+        : [];
+    if (members.length > 0) {
+        const canonical = canonicalEnums.get(members.map(String).sort().join(","));
+        if (canonical) return { tsType: withNull(canonical), importsNeeded: [canonical] };
+        return {
+            tsType: withNull(members.map((v) => JSON.stringify(v)).join(" | ")),
+            importsNeeded: [],
+        };
+    }
+    if (types.includes("object") && Object.keys(n?.properties ?? {}).length > 0) {
+        // Same compiler the method generator uses; nested refs are inlined, never imported.
+        const ctx: TypegenContext = {
+            spec,
+            canonicalEnums,
+            wholeSchemas: new Map(),
+            importsNeeded: new Set(),
+        };
+        const literal = synthesizeObjectLiteral(ctx, n);
+        return { tsType: withNull(literal), importsNeeded: [...ctx.importsNeeded].sort() };
+    }
     let base = "string";
     if (types.includes("integer") || types.includes("number")) base = "number";
     else if (types.includes("boolean")) base = "boolean";
     else if (types.includes("object")) base = "Record<string, unknown>";
     else if (types.includes("array")) base = "unknown[]";
-    return nullable ? `${base} | null` : base;
+    return { tsType: withNull(base), importsNeeded: [] };
 }
 
 /**
@@ -90,6 +127,9 @@ export function reconcile(
     const applicable: ApplicableChange[] = [];
     const needsHuman: string[] = [];
     const divergencesHit: string[] = [];
+    const canonicalEnums = existsSync(join(repoRoot, "types/index.d.ts"))
+        ? loadCanonicalEnums(repoRoot)
+        : new Map<string, string>();
 
     // (schema, property) pairs already covered by a dedicated enums[] mapping, so the type-check
     // pass below never double-reports an enum-member gap the enum-reconciliation pass already owns.
@@ -228,7 +268,11 @@ export function reconcile(
             // to every declared union site above. Always optional (`field?: T`), matching spec: an
             // added property is never required on an already-shipped type, and emitting it as
             // non-optional would force every existing caller to start passing it.
-            const tsType = inferTsType(resolveFieldNode(spec, entry.spec, field));
+            const { tsType, importsNeeded } = inferTsType(
+                resolveFieldNode(spec, entry.spec, field),
+                canonicalEnums,
+                spec
+            );
             for (const target of nonOpaqueSites) {
                 applicable.push({
                     kind: "field-insert",
@@ -236,6 +280,7 @@ export function reconcile(
                     property: propertyName,
                     field,
                     tsType,
+                    importsNeeded,
                     site: target,
                 });
             }

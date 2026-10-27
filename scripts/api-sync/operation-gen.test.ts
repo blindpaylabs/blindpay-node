@@ -99,6 +99,74 @@ describe("operation-insert classifier", () => {
         );
     });
 
+    it("passes a parent resource ID that precedes the resource segment (e.g. customer_id)", () => {
+        const repoRoot = makeRepo(baseFiles());
+        const json = (schema: unknown) => ({ content: { "application/json": { schema } } });
+        const object = { type: "object", properties: { url: { type: "string" } } };
+        const path = "/v1/instances/{instance_id}/customers/{customer_id}/widgets/plaid";
+        const spec: Spec = {
+            paths: {
+                [path]: {
+                    post: {
+                        parameters: [{ name: "customer_id", in: "path", required: true }],
+                        requestBody: json(object),
+                        responses: { "200": json(object) },
+                    },
+                },
+            },
+            components: { schemas: {} },
+        };
+        const result = classifyNewOperation(
+            spec,
+            "post",
+            path,
+            emptyMap(),
+            repoRoot,
+            loadCanonicalEnums(repoRoot)
+        );
+        expect(result.standard).toBe(true);
+        if (!result.standard) throw new Error("unreachable");
+        expect(result.change.typeDecls).toContain("customer_id: string;");
+        expect(result.change.methodSource).toContain("customer_id,");
+        expect(result.change.methodSource).toContain(
+            "`/instances/${instanceId}/customers/${customer_id}/widgets/plaid`"
+        );
+    });
+
+    it("names a lone parent-ID scalar after its own parameter, not after the resource", () => {
+        const repoRoot = makeRepo(baseFiles());
+        const path = "/v1/instances/{instance_id}/customers/{customer_id}/widgets";
+        const spec: Spec = {
+            paths: {
+                [path]: {
+                    get: {
+                        parameters: [{ name: "customer_id", in: "path", required: true }],
+                        responses: {
+                            "200": {
+                                content: {
+                                    "application/json": { schema: { type: "array", items: {} } },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            components: { schemas: {} },
+        };
+        const result = classifyNewOperation(
+            spec,
+            "get",
+            path,
+            emptyMap(),
+            repoRoot,
+            loadCanonicalEnums(repoRoot)
+        );
+        expect(result.standard).toBe(true);
+        if (!result.standard) throw new Error("unreachable");
+        expect(result.change.methodSource).toContain("(customerId: ");
+        expect(result.change.methodSource).toContain("/customers/${customerId}/widgets");
+    });
+
     it("keeps an acronym path segment like `tos` whole when naming the generated types", () => {
         const repoRoot = makeRepo({
             ...baseFiles(),

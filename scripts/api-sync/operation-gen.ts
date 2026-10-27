@@ -275,10 +275,8 @@ export function classifyNewOperation(
     const segs = pathSegments(path);
     const rest = segs.slice(2); // drop "instances", "{instance_id}"
     const resourceIdx = rest.lastIndexOf(resourceSegment);
-    const pathParamNames = rest
-        .slice(resourceIdx + 1)
-        .filter((s) => s.startsWith("{"))
-        .map((s) => s.slice(1, -1));
+    // Every path ID after the instance, parent resources' included (customers/{customer_id}/...).
+    const pathParamNames = rest.filter((s) => s.startsWith("{")).map((s) => s.slice(1, -1));
     const extraLiteralSegments = rest.slice(resourceIdx + 1).filter((s) => !s.startsWith("{"));
     const isCollection = !rest[rest.length - 1]?.startsWith("{");
 
@@ -341,7 +339,10 @@ export function classifyNewOperation(
     } else if (pathFields.length === 1 && !hasBody && queryFields.length === 0) {
         inputKind = "scalar";
         inputSymbol = `${typePrefix}Input`;
-        scalarArgName = `${camelCase(singularize(resourceSegment))}Id`;
+        scalarArgName =
+            pathFields[0].name === "id"
+                ? `${camelCase(singularize(resourceSegment))}Id`
+                : camelCase(pathFields[0].name);
     } else {
         inputKind = "object";
         inputSymbol = `${typePrefix}Input`;

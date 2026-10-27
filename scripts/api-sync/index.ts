@@ -196,7 +196,7 @@ function main(): void {
         changeSortKey(a) < changeSortKey(b) ? -1 : 1
     );
 
-    const removalMessages = detectRemovals(snapshot, spec, map);
+    const removalMessages = detectRemovals(snapshot, spec, map, REPO_ROOT);
     // Judged against the map as this run will leave it, so schemas the operation-inserts above
     // are about to map are not reported as needing a human.
     const mapAfterInserts = withPendingMapEntries(
@@ -257,6 +257,10 @@ function main(): void {
         if (change.kind === "enum-insert") {
             after = insertEnumMember(before, change.site.symbol, change.member);
         } else if (change.kind === "field-insert") {
+            // A shared union is declared in types/index.d.ts itself, so that file never imports it.
+            if (file !== "types/index.d.ts") {
+                before = ensureSharedTypeImports(before, change.importsNeeded);
+            }
             after = insertOptionalField(before, change.site.symbol, change.field, change.tsType);
         } else {
             before = ensureSharedTypeImports(before, change.importsNeeded);
