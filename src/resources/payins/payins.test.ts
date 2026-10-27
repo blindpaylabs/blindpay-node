@@ -19,6 +19,12 @@ describe("Payins", () => {
         expect(currency).toBe("EUR");
     });
 
+    it("should type GBP payin responses", () => {
+        const currency: Payin["currency"] = "GBP";
+
+        expect(currency).toBe("GBP");
+    });
+
     describe("List payins", () => {
         it("should list payins", async () => {
             const mockedPayins: ListPayinsResponse = {
