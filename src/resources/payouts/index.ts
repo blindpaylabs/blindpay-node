@@ -14,6 +14,7 @@ import type {
     PayoutTrackingPayment,
     PayoutTrackingTransaction,
     Rail,
+    RequestOptions,
     StablecoinToken,
     SuccessResponse,
     TrackingStatus,
@@ -287,35 +288,39 @@ export function createPayoutsResource(instanceId: string, client: InternalApiCli
         ): Promise<BlindpayApiResponse<GetPayoutTrackResponse>> {
             return client.get(`/e/payouts/${payoutId}`);
         },
-        authorizeStellarToken({
-            ...data
-        }: AuthorizeStellarTokenInput): Promise<
-            BlindpayApiResponse<AuthorizeStellarTokenResponse>
-        > {
-            return client.post(`/instances/${instanceId}/payouts/stellar/authorize`, data);
+        authorizeStellarToken(
+            { ...data }: AuthorizeStellarTokenInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<AuthorizeStellarTokenResponse>> {
+            return client.post(`/instances/${instanceId}/payouts/stellar/authorize`, data, options);
         },
-        createStellar({
-            ...data
-        }: CreateStellarPayoutInput): Promise<BlindpayApiResponse<CreateStellarPayoutResponse>> {
-            return client.post(`/instances/${instanceId}/payouts/stellar`, data);
+        createStellar(
+            { ...data }: CreateStellarPayoutInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateStellarPayoutResponse>> {
+            return client.post(`/instances/${instanceId}/payouts/stellar`, data, options);
         },
-        createEvm({
-            ...data
-        }: CreateEvmPayoutInput): Promise<BlindpayApiResponse<CreateEvmPayoutResponse>> {
-            return client.post(`/instances/${instanceId}/payouts/evm`, data);
+        createEvm(
+            { ...data }: CreateEvmPayoutInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateEvmPayoutResponse>> {
+            return client.post(`/instances/${instanceId}/payouts/evm`, data, options);
         },
-        createSolana({
-            ...data
-        }: CreateSolanaPayoutInput): Promise<BlindpayApiResponse<CreateSolanaPayoutResponse>> {
-            return client.post(`/instances/${instanceId}/payouts/solana`, data);
+        createSolana(
+            { ...data }: CreateSolanaPayoutInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateSolanaPayoutResponse>> {
+            return client.post(`/instances/${instanceId}/payouts/solana`, data, options);
         },
-        submitDocuments({
-            payout_id,
-            ...data
-        }: SubmitPayoutDocumentsInput): Promise<
-            BlindpayApiResponse<SubmitPayoutDocumentsResponse>
-        > {
-            return client.post(`/instances/${instanceId}/payouts/${payout_id}/documents`, data);
+        submitDocuments(
+            { payout_id, ...data }: SubmitPayoutDocumentsInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SubmitPayoutDocumentsResponse>> {
+            return client.post(
+                `/instances/${instanceId}/payouts/${payout_id}/documents`,
+                data,
+                options
+            );
         },
     };
 }

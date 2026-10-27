@@ -7,6 +7,7 @@ import type {
     BusinessIndustry,
     Country,
     Rail,
+    RequestOptions,
     SuccessResponse,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
@@ -800,136 +801,180 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
                 `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${id}`
             );
         },
-        delete({
-            customer_id,
-            id,
-        }: DeleteBankAccountInput): Promise<BlindpayApiResponse<SuccessResponse>> {
+        delete(
+            { customer_id, id }: DeleteBankAccountInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.delete(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${id}`
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${id}`,
+                options
             );
         },
-        createPix({
-            customer_id,
-            ...data
-        }: CreatePixInput): Promise<BlindpayApiResponse<CreatePixResponse>> {
-            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
-                type: "pix",
-                ...data,
-            });
+        createPix(
+            { customer_id, ...data }: CreatePixInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreatePixResponse>> {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                {
+                    type: "pix",
+                    ...data,
+                },
+                options
+            );
         },
-        createPixSafe({
-            customer_id,
-            ...data
-        }: CreatePixSafeInput): Promise<BlindpayApiResponse<CreatePixSafeResponse>> {
-            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
-                type: "pix_safe",
-                ...data,
-            });
+        createPixSafe(
+            { customer_id, ...data }: CreatePixSafeInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreatePixSafeResponse>> {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                {
+                    type: "pix_safe",
+                    ...data,
+                },
+                options
+            );
         },
-        createArgentinaTransfers({
-            customer_id,
-            ...data
-        }: CreateArgentinaTransfersInput): Promise<
-            BlindpayApiResponse<CreateArgentinaTransfersResponse>
-        > {
-            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
-                type: "transfers_bitso",
-                ...data,
-            });
+        createArgentinaTransfers(
+            { customer_id, ...data }: CreateArgentinaTransfersInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateArgentinaTransfersResponse>> {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                {
+                    type: "transfers_bitso",
+                    ...data,
+                },
+                options
+            );
         },
-        createSpei({
-            customer_id,
-            ...data
-        }: CreateSpeiInput): Promise<BlindpayApiResponse<CreateSpeiResponse>> {
-            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
-                type: "spei_bitso",
-                ...data,
-            });
+        createSpei(
+            { customer_id, ...data }: CreateSpeiInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateSpeiResponse>> {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                {
+                    type: "spei_bitso",
+                    ...data,
+                },
+                options
+            );
         },
-        createColombiaAch({
-            customer_id,
-            ...data
-        }: CreateColombiaAchInput): Promise<BlindpayApiResponse<CreateColombiaAchResponse>> {
-            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
-                type: "ach_cop_bitso",
-                ...data,
-            });
+        createColombiaAch(
+            { customer_id, ...data }: CreateColombiaAchInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateColombiaAchResponse>> {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                {
+                    type: "ach_cop_bitso",
+                    ...data,
+                },
+                options
+            );
         },
-        createAch({
-            customer_id,
-            ...data
-        }: CreateAchInput): Promise<BlindpayApiResponse<CreateAchResponse>> {
-            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
-                type: "ach",
-                ...data,
-            });
+        createAch(
+            { customer_id, ...data }: CreateAchInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateAchResponse>> {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                {
+                    type: "ach",
+                    ...data,
+                },
+                options
+            );
         },
-        createWire({
-            customer_id,
-            ...data
-        }: CreateWireInput): Promise<BlindpayApiResponse<CreateWireResponse>> {
-            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
-                type: "wire",
-                ...data,
-            });
+        createWire(
+            { customer_id, ...data }: CreateWireInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateWireResponse>> {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                {
+                    type: "wire",
+                    ...data,
+                },
+                options
+            );
         },
-        createInternationalSwift({
-            customer_id,
-            ...data
-        }: CreateInternationalSwiftInput): Promise<
-            BlindpayApiResponse<CreateInternationalSwiftResponse>
-        > {
-            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
-                type: "international_swift",
-                ...data,
-            });
+        createInternationalSwift(
+            { customer_id, ...data }: CreateInternationalSwiftInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateInternationalSwiftResponse>> {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                {
+                    type: "international_swift",
+                    ...data,
+                },
+                options
+            );
         },
-        createRtp({
-            customer_id,
-            ...data
-        }: CreateRtpInput): Promise<BlindpayApiResponse<CreateRtpResponse>> {
-            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
-                type: "rtp",
-                ...data,
-            });
+        createRtp(
+            { customer_id, ...data }: CreateRtpInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateRtpResponse>> {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                {
+                    type: "rtp",
+                    ...data,
+                },
+                options
+            );
         },
-        createTed({
-            customer_id,
-            ...data
-        }: CreateTedInput): Promise<BlindpayApiResponse<CreateTedResponse>> {
-            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
-                type: "ted",
-                ...data,
-            });
+        createTed(
+            { customer_id, ...data }: CreateTedInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateTedResponse>> {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                {
+                    type: "ted",
+                    ...data,
+                },
+                options
+            );
         },
-        createSepa({
-            customer_id,
-            ...data
-        }: CreateSepaInput): Promise<BlindpayApiResponse<CreateSepaResponse>> {
-            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
-                type: "sepa",
-                ...data,
-            });
+        createSepa(
+            { customer_id, ...data }: CreateSepaInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateSepaResponse>> {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                {
+                    type: "sepa",
+                    ...data,
+                },
+                options
+            );
         },
-        createFasterPayments({
-            customer_id,
-            ...data
-        }: CreateFasterPaymentsInput): Promise<BlindpayApiResponse<CreateFasterPaymentsResponse>> {
-            return client.post(`/instances/${instanceId}/customers/${customer_id}/bank-accounts`, {
-                type: "faster_payments",
-                ...data,
-            });
+        createFasterPayments(
+            { customer_id, ...data }: CreateFasterPaymentsInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateFasterPaymentsResponse>> {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                {
+                    type: "faster_payments",
+                    ...data,
+                },
+                options
+            );
         },
 
-        createPlaid({
-            customer_id,
-            ...data
-        }: CreatePlaidBankAccountInput): Promise<
-            BlindpayApiResponse<CreatePlaidBankAccountResponse>
-        > {
+        createPlaid(
+            { customer_id, ...data }: CreatePlaidBankAccountInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreatePlaidBankAccountResponse>> {
             return client.post(
                 `/instances/${instanceId}/customers/${customer_id}/bank-accounts/plaid`,
-                data
+                data,
+                options
             );
         },
     };

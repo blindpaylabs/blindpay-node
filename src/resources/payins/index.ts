@@ -12,6 +12,7 @@ import type {
     PayinTrackingPartnerFee,
     PayinTrackingPayment,
     PayinTrackingTransaction,
+    RequestOptions,
     StablecoinToken,
     TransactionStatus,
 } from "../../../types";
@@ -165,11 +166,16 @@ export function createPayinsResource(instanceId: string, client: InternalApiClie
             return client.get(`/e/payins/${payinId}`);
         },
         createEvm(
-            payin_quote_id: CreateEvmPayinInput
+            payin_quote_id: CreateEvmPayinInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateEvmPayinResponse>> {
-            return client.post(`/instances/${instanceId}/payins/evm`, {
-                payin_quote_id,
-            });
+            return client.post(
+                `/instances/${instanceId}/payins/evm`,
+                {
+                    payin_quote_id,
+                },
+                options
+            );
         },
     };
 }

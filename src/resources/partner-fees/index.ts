@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse, SuccessResponse } from "../../../types";
+import type { BlindpayApiResponse, RequestOptions, SuccessResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type ListPartnerFeesResponse = Array<{
@@ -49,16 +49,20 @@ export function createPartnerFeesResource(instanceId: string, client: InternalAp
         list(): Promise<BlindpayApiResponse<ListPartnerFeesResponse>> {
             return client.get(`/instances/${instanceId}/partner-fees`);
         },
-        create({
-            ...data
-        }: CreatePartnerFeeInput): Promise<BlindpayApiResponse<CreatePartnerFeeResponse>> {
-            return client.post(`/instances/${instanceId}/partner-fees`, data);
+        create(
+            { ...data }: CreatePartnerFeeInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreatePartnerFeeResponse>> {
+            return client.post(`/instances/${instanceId}/partner-fees`, data, options);
         },
         get(id: GetPartnerFeeInput): Promise<BlindpayApiResponse<GetPartnerFeeResponse>> {
             return client.get(`/instances/${instanceId}/partner-fees/${id}`);
         },
-        delete(id: DeletePartnerFeeInput): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}/partner-fees/${id}`);
+        delete(
+            id: DeletePartnerFeeInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.delete(`/instances/${instanceId}/partner-fees/${id}`, options);
         },
     };
 }

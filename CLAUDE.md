@@ -143,7 +143,13 @@ Create `src/resources/{resource-name}/index.ts`.
 Template for a standard instance-scoped resource:
 
 ```typescript
-import type { BlindpayApiResponse, PaginationMetadata, PaginationParams } from "../../../types";
+import type {
+    BlindpayApiResponse,
+    PaginationMetadata,
+    PaginationParams,
+    RequestOptions,
+    SuccessResponse,
+} from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 // -- Entity type --
@@ -192,19 +198,26 @@ export function createWidgetsResource(instanceId: string, client: InternalApiCli
             const queryParams = params ? `?${new URLSearchParams(params)}` : "";
             return client.get(`/instances/${instanceId}/widgets${queryParams}`);
         },
-        create({
-            ...data
-        }: CreateWidgetInput): Promise<BlindpayApiResponse<CreateWidgetResponse>> {
-            return client.post(`/instances/${instanceId}/widgets`, data);
+        create(
+            { ...data }: CreateWidgetInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateWidgetResponse>> {
+            return client.post(`/instances/${instanceId}/widgets`, data, options);
         },
         get(id: GetWidgetInput): Promise<BlindpayApiResponse<GetWidgetResponse>> {
             return client.get(`/instances/${instanceId}/widgets/${id}`);
         },
-        update({ widget_id, ...data }: UpdateWidgetInput): Promise<BlindpayApiResponse<void>> {
-            return client.put(`/instances/${instanceId}/widgets/${widget_id}`, data);
+        update(
+            { widget_id, ...data }: UpdateWidgetInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.put(`/instances/${instanceId}/widgets/${widget_id}`, data, options);
         },
-        delete(id: DeleteWidgetInput): Promise<BlindpayApiResponse<void>> {
-            return client.delete(`/instances/${instanceId}/widgets/${id}`);
+        delete(
+            id: DeleteWidgetInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.delete(`/instances/${instanceId}/widgets/${id}`, options);
         },
     };
 }
@@ -353,9 +366,10 @@ export function createWidgetsResource(instanceId: string, client: InternalApiCli
     return {
         // ... existing methods ...
         activate(
-            id: ActivateWidgetInput
+            id: ActivateWidgetInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<ActivateWidgetResponse>> {
-            return client.post(`/instances/${instanceId}/widgets/${id}/activate`, {});
+            return client.post(`/instances/${instanceId}/widgets/${id}/activate`, {}, options);
         },
     };
 }
@@ -419,7 +433,7 @@ Place it inside the parent resource directory. For a sub-resource of `payins`:
 File: `src/resources/payins/quotes.ts`
 
 ```typescript
-import type { BlindpayApiResponse } from "../../../types";
+import type { BlindpayApiResponse, RequestOptions } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type CreatePayinQuoteInput = {
@@ -434,10 +448,11 @@ export type CreatePayinQuoteResponse = {
 
 export function createPayinQuotesResource(instanceId: string, client: InternalApiClient) {
     return {
-        create({
-            ...data
-        }: CreatePayinQuoteInput): Promise<BlindpayApiResponse<CreatePayinQuoteResponse>> {
-            return client.post(`/instances/${instanceId}/payin-quotes`, data);
+        create(
+            { ...data }: CreatePayinQuoteInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreatePayinQuoteResponse>> {
+            return client.post(`/instances/${instanceId}/payin-quotes`, data, options);
         },
     };
 }
@@ -754,8 +769,11 @@ export type UpdateWidgetInput = {
     name?: string;
 };
 
-update({ widget_id, ...data }: UpdateWidgetInput): Promise<BlindpayApiResponse<void>> {
-    return client.put(`/instances/${instanceId}/widgets/${widget_id}`, data);
+update(
+    { widget_id, ...data }: UpdateWidgetInput,
+    options?: RequestOptions
+): Promise<BlindpayApiResponse<SuccessResponse>> {
+    return client.put(`/instances/${instanceId}/widgets/${widget_id}`, data, options);
 },
 ```
 
@@ -783,10 +801,15 @@ get({
 Every method returns `Promise<BlindpayApiResponse<T>>` where `T` is the response type. `BlindpayApiResponse<T>` is a discriminated union:
 
 ```typescript
-type BlindpayApiResponse<T> = { data: T; error: null } | { data: null; error: { message: string } }
+type BlindpayApiResponse<T> = { data: T; error: null } | { data: null; error: ErrorResponse }
+// ErrorResponse: message, plus code, description, errors and trace_id when the API sends them
 ```
 
-For methods with no response body, use `Promise<BlindpayApiResponse<void>>`.
+When the spec's 200 response is `$ref Success`, use `Promise<BlindpayApiResponse<SuccessResponse>>`. For methods with no response body, use `Promise<BlindpayApiResponse<void>>`.
+
+### Request options (Idempotency-Key)
+
+Every method that sends a POST, PUT, PATCH or DELETE takes a trailing `options?: RequestOptions` and passes it to the client as the last argument; `options.idempotencyKey` becomes the `Idempotency-Key` header. GET methods never take it, and neither do unauthenticated `/e/` routes (the API ignores the header there). `src/resources/request-options.test.ts` fails on a mutation that doesn't forward it, and the api-sync generator emits the same signature.
 
 ### Discriminated/variant creation
 
@@ -794,13 +817,14 @@ When one endpoint creates different variants based on a `type` field, create sep
 
 ```typescript
 createIndividualWithStandardKYC(
-    data: CreateIndividualWithStandardKYCInput
+    data: CreateIndividualWithStandardKYCInput,
+    options?: RequestOptions
 ): Promise<BlindpayApiResponse<CreateIndividualWithStandardKYCResponse>> {
-    return client.post(`/instances/${instanceId}/customers`, {
-        kyc_type: "standard",
-        type: "individual",
-        ...data,
-    });
+    return client.post(
+        `/instances/${instanceId}/customers`,
+        { kyc_type: "standard", type: "individual", ...data },
+        options
+    );
 },
 ```
 
@@ -809,10 +833,11 @@ createIndividualWithStandardKYC(
 When passing an object body to `client.post`/`client.put`, use rest destructuring even when no fields need extracting:
 
 ```typescript
-create({
-    ...data
-}: CreateWidgetInput): Promise<BlindpayApiResponse<CreateWidgetResponse>> {
-    return client.post(`/instances/${instanceId}/widgets`, data);
+create(
+    { ...data }: CreateWidgetInput,
+    options?: RequestOptions
+): Promise<BlindpayApiResponse<CreateWidgetResponse>> {
+    return client.post(`/instances/${instanceId}/widgets`, data, options);
 },
 ```
 

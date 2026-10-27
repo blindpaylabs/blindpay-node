@@ -4,6 +4,7 @@ import type {
     CurrencyType,
     PayerRules,
     PaymentMethod,
+    RequestOptions,
     StablecoinToken,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
@@ -52,15 +53,17 @@ export type GetPayinFxRateResponse = {
 
 export function createPayinQuotesResource(instanceId: string, client: InternalApiClient) {
     return {
-        create({
-            ...data
-        }: CreatePayinQuoteInput): Promise<BlindpayApiResponse<CreatePayinQuoteResponse>> {
-            return client.post(`/instances/${instanceId}/payin-quotes`, data);
+        create(
+            { ...data }: CreatePayinQuoteInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreatePayinQuoteResponse>> {
+            return client.post(`/instances/${instanceId}/payin-quotes`, data, options);
         },
-        getFxRate({
-            ...data
-        }: GetPayinFxRateInput): Promise<BlindpayApiResponse<GetPayinFxRateResponse>> {
-            return client.post(`/instances/${instanceId}/payin-quotes/fx`, data);
+        getFxRate(
+            { ...data }: GetPayinFxRateInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetPayinFxRateResponse>> {
+            return client.post(`/instances/${instanceId}/payin-quotes/fx`, data, options);
         },
     };
 }

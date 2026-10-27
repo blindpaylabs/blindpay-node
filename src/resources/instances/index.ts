@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse, SuccessResponse } from "../../../types";
+import type { BlindpayApiResponse, RequestOptions, SuccessResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type InstanceMemberRole =
@@ -77,29 +77,36 @@ export function createInstancesResource(instanceId: string, client: InternalApiC
         getMembers(): Promise<BlindpayApiResponse<GetInstanceMembersResponse>> {
             return client.get(`/instances/${instanceId}/members`);
         },
-        update({ ...data }: UpdateInstanceInput): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.put(`/instances/${instanceId}`, data);
+        update(
+            { ...data }: UpdateInstanceInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.put(`/instances/${instanceId}`, data, options);
         },
-        delete(): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}`);
+        delete(options?: RequestOptions): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.delete(`/instances/${instanceId}`, options);
         },
         deleteMember(
-            memberId: DeleteInstanceMemberInput
+            memberId: DeleteInstanceMemberInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}/members/${memberId}`);
+            return client.delete(`/instances/${instanceId}/members/${memberId}`, options);
         },
-        updateMemberRole({
-            memberId,
-            role,
-        }: UpdateInstanceMemberRoleInput): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.put(`/instances/${instanceId}/members/${memberId}`, { user_role: role });
+        updateMemberRole(
+            { memberId, role }: UpdateInstanceMemberRoleInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.put(
+                `/instances/${instanceId}/members/${memberId}`,
+                { user_role: role },
+                options
+            );
         },
-        migrateOwnership({
-            ...data
-        }: MigrateInstanceOwnershipInput): Promise<
-            BlindpayApiResponse<MigrateInstanceOwnershipResponse>
-        > {
-            return client.post(`/instances/${instanceId}/ownership`, data);
+        migrateOwnership(
+            { ...data }: MigrateInstanceOwnershipInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<MigrateInstanceOwnershipResponse>> {
+            return client.post(`/instances/${instanceId}/ownership`, data, options);
         },
     };
 }

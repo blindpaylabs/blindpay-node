@@ -1,4 +1,4 @@
-import type { AccountClass, BlindpayApiResponse } from "../../../types";
+import type { AccountClass, BlindpayApiResponse, RequestOptions } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type RfiStatus = "pending" | "submitted" | "expired" | "cancelled";
@@ -88,10 +88,11 @@ export function createInstanceRfiResource(instanceId: string, client: InternalAp
             return client.get(`/instances/${instanceId}/rfi`);
         },
         /** On `{ success: false }` there is no pending RFI: refetch with `get` instead of retrying. */
-        submit({
-            response,
-        }: SubmitInstanceRfiInput): Promise<BlindpayApiResponse<SubmitRfiResponse>> {
-            return client.post(`/instances/${instanceId}/rfi`, response);
+        submit(
+            { response }: SubmitInstanceRfiInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SubmitRfiResponse>> {
+            return client.post(`/instances/${instanceId}/rfi`, response, options);
         },
     };
 }
@@ -103,11 +104,15 @@ export function createCustomerRfiResource(instanceId: string, client: InternalAp
             return client.get(`/instances/${instanceId}/customers/${customerId}/rfi`);
         },
         /** On success the customer's kyc_status flips back to verifying. On `{ success: false }`, refetch with `get` instead of retrying. */
-        submit({
-            customer_id,
-            response,
-        }: SubmitCustomerRfiInput): Promise<BlindpayApiResponse<SubmitRfiResponse>> {
-            return client.post(`/instances/${instanceId}/customers/${customer_id}/rfi`, response);
+        submit(
+            { customer_id, response }: SubmitCustomerRfiInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SubmitRfiResponse>> {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/rfi`,
+                response,
+                options
+            );
         },
     };
 }

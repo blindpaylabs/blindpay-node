@@ -3,6 +3,7 @@ import type {
     Currency,
     CurrencyType,
     Network,
+    RequestOptions,
     StablecoinToken,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
@@ -61,12 +62,18 @@ export type GetFxRateResponse = {
 
 export function createQuotesResource(instanceId: string, client: InternalApiClient) {
     return {
-        create({ ...data }: CreateQuoteInput): Promise<BlindpayApiResponse<CreateQuoteResponse>> {
-            return client.post(`/instances/${instanceId}/quotes`, data);
+        create(
+            { ...data }: CreateQuoteInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateQuoteResponse>> {
+            return client.post(`/instances/${instanceId}/quotes`, data, options);
         },
 
-        getFxRate({ ...data }: GetFxRateInput): Promise<BlindpayApiResponse<GetFxRateResponse>> {
-            return client.post(`/instances/${instanceId}/quotes/fx`, data);
+        getFxRate(
+            { ...data }: GetFxRateInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetFxRateResponse>> {
+            return client.post(`/instances/${instanceId}/quotes/fx`, data, options);
         },
     };
 }

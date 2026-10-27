@@ -109,3 +109,37 @@ describe("verifyWebhookSignature", () => {
         ).toBe(false);
     });
 });
+
+describe("Idempotency-Key", () => {
+    afterEach(() => fetchMock.resetMocks());
+
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
+    const sentKey = () => new Headers(fetchMock.mock.calls[0][1]?.headers).get("Idempotency-Key");
+    const payout = { quote_id: "qu_000000000000", sender_wallet_address: "0x000000000000" };
+
+    it("is sent as a header when a mutation is given one", async () => {
+        fetchMock.mockResponseOnce(JSON.stringify({ id: "pa_000000000000" }));
+
+        await blindpay.payouts.createEvm(payout, {
+            idempotencyKey: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        });
+
+        expect(sentKey()).toBe("a1b2c3d4-e5f6-7890-abcd-ef1234567890");
+    });
+
+    it("is sent on a DELETE too", async () => {
+        fetchMock.mockResponseOnce(JSON.stringify({ success: true }));
+
+        await blindpay.customers.delete("cu_000000000000", { idempotencyKey: "retry-1" });
+
+        expect(sentKey()).toBe("retry-1");
+    });
+
+    it("is not sent when the call has none", async () => {
+        fetchMock.mockResponseOnce(JSON.stringify({ id: "pa_000000000000" }));
+
+        await blindpay.payouts.createEvm(payout);
+
+        expect(sentKey()).toBeNull();
+    });
+});

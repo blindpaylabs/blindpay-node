@@ -11,6 +11,7 @@ import type {
     PaginationParams,
     PurposeOfTransactions,
     RecipientRelationship,
+    RequestOptions,
     SoleProprietorDocType,
     SourceOfFundsDocType,
     SourceOfWealth,
@@ -697,43 +698,61 @@ export function createCustomersResource(instanceId: string, client: InternalApiC
             return client.get(`/instances/${instanceId}/customers${queryParams}`);
         },
         createIndividualWithStandardKYC(
-            data: CreateIndividualWithStandardKYCInput
+            data: CreateIndividualWithStandardKYCInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateIndividualWithStandardKYCResponse>> {
-            return client.post(`/instances/${instanceId}/customers`, {
-                kyc_type: "standard",
-                type: "individual",
-                ...data,
-            });
+            return client.post(
+                `/instances/${instanceId}/customers`,
+                {
+                    kyc_type: "standard",
+                    type: "individual",
+                    ...data,
+                },
+                options
+            );
         },
         createIndividualWithEnhancedKYC(
-            data: CreateIndividualWithEnhancedKYCInput
+            data: CreateIndividualWithEnhancedKYCInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateIndividualWithEnhancedKYCResponse>> {
-            return client.post(`/instances/${instanceId}/customers`, {
-                kyc_type: "enhanced",
-                type: "individual",
-                ...data,
-            });
+            return client.post(
+                `/instances/${instanceId}/customers`,
+                {
+                    kyc_type: "enhanced",
+                    type: "individual",
+                    ...data,
+                },
+                options
+            );
         },
         createBusinessWithStandardKYB(
-            data: CreateBusinessWithStandardKYBInput
+            data: CreateBusinessWithStandardKYBInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateBusinessWithStandardKYBResponse>> {
-            return client.post(`/instances/${instanceId}/customers`, {
-                kyc_type: "standard",
-                type: "business",
-                ...data,
-            });
+            return client.post(
+                `/instances/${instanceId}/customers`,
+                {
+                    kyc_type: "standard",
+                    type: "business",
+                    ...data,
+                },
+                options
+            );
         },
         get(customer_id: GetCustomerInput): Promise<BlindpayApiResponse<GetCustomerResponse>> {
             return client.get(`/instances/${instanceId}/customers/${customer_id}`);
         },
-        update({
-            customer_id,
-            ...data
-        }: UpdateCustomerInput): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.put(`/instances/${instanceId}/customers/${customer_id}`, data);
+        update(
+            { customer_id, ...data }: UpdateCustomerInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.put(`/instances/${instanceId}/customers/${customer_id}`, data, options);
         },
-        delete(customer_id: DeleteCustomerInput): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}/customers/${customer_id}`);
+        delete(
+            customer_id: DeleteCustomerInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.delete(`/instances/${instanceId}/customers/${customer_id}`, options);
         },
         getLimits(
             customer_id: GetCustomerLimitsInput
@@ -745,13 +764,14 @@ export function createCustomersResource(instanceId: string, client: InternalApiC
         ): Promise<BlindpayApiResponse<GetLimitIncreaseRequestsResponse>> {
             return client.get(`/instances/${instanceId}/customers/${customer_id}/limit-increase`);
         },
-        requestLimitIncrease({
-            customer_id,
-            ...data
-        }: RequestLimitIncreaseInput): Promise<BlindpayApiResponse<RequestLimitIncreaseResponse>> {
+        requestLimitIncrease(
+            { customer_id, ...data }: RequestLimitIncreaseInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<RequestLimitIncreaseResponse>> {
             return client.post(
                 `/instances/${instanceId}/customers/${customer_id}/limit-increase`,
-                data
+                data,
+                options
             );
         },
     };

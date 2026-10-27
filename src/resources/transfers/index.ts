@@ -3,6 +3,7 @@ import type {
     Network,
     PaginationMetadata,
     PaginationParams,
+    RequestOptions,
     TrackingStatus,
     TransactionStatus,
     WalletToken,
@@ -121,18 +122,18 @@ export type GetTransferTrackResponse = Transfer;
 export function createTransfersResource(instanceId: string, client: InternalApiClient) {
     return {
         quotes: {
-            create({
-                ...data
-            }: CreateTransferQuoteInput): Promise<
-                BlindpayApiResponse<CreateTransferQuoteResponse>
-            > {
-                return client.post(`/instances/${instanceId}/transfer-quotes`, data);
+            create(
+                { ...data }: CreateTransferQuoteInput,
+                options?: RequestOptions
+            ): Promise<BlindpayApiResponse<CreateTransferQuoteResponse>> {
+                return client.post(`/instances/${instanceId}/transfer-quotes`, data, options);
             },
         },
-        create({
-            ...data
-        }: CreateTransferInput): Promise<BlindpayApiResponse<CreateTransferResponse>> {
-            return client.post(`/instances/${instanceId}/transfers`, data);
+        create(
+            { ...data }: CreateTransferInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateTransferResponse>> {
+            return client.post(`/instances/${instanceId}/transfers`, data, options);
         },
         list(params?: ListTransfersInput): Promise<BlindpayApiResponse<ListTransfersResponse>> {
             const queryParams = params ? `?${new URLSearchParams(params)}` : "";

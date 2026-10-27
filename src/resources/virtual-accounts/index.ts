@@ -2,6 +2,7 @@ import type {
     BlindpayApiResponse,
     KycStatus,
     Network,
+    RequestOptions,
     StablecoinToken,
     SuccessResponse,
 } from "../../../types";
@@ -136,23 +137,24 @@ export function createVirtualAccountsResource(instanceId: string, client: Intern
                 `/instances/${instanceId}/customers/${customer_id}/virtual-accounts/${id}`
             );
         },
-        create({
-            customer_id,
-            ...data
-        }: CreateVirtualAccountInput): Promise<BlindpayApiResponse<CreateVirtualAccountResponse>> {
+        create(
+            { customer_id, ...data }: CreateVirtualAccountInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateVirtualAccountResponse>> {
             return client.post(
                 `/instances/${instanceId}/customers/${customer_id}/virtual-accounts`,
-                data
+                data,
+                options
             );
         },
-        update({
-            customer_id,
-            id,
-            ...data
-        }: UpdateVirtualAccountInput): Promise<BlindpayApiResponse<SuccessResponse>> {
+        update(
+            { customer_id, id, ...data }: UpdateVirtualAccountInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.put(
                 `/instances/${instanceId}/customers/${customer_id}/virtual-accounts/${id}`,
-                data
+                data,
+                options
             );
         },
     };

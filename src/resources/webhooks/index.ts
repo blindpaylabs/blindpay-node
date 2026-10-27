@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse, SuccessResponse } from "../../../types";
+import type { BlindpayApiResponse, RequestOptions, SuccessResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type WebhookEvents =
@@ -67,15 +67,17 @@ export function createWebhookEndpointsResource(instanceId: string, client: Inter
         list(): Promise<BlindpayApiResponse<ListWebhookEndpointsResponse>> {
             return client.get(`/instances/${instanceId}/webhook-endpoints`);
         },
-        create({
-            ...data
-        }: CreateWebhookEndpointInput): Promise<
-            BlindpayApiResponse<CreateWebhookEndpointResponse>
-        > {
-            return client.post(`/instances/${instanceId}/webhook-endpoints`, data);
+        create(
+            { ...data }: CreateWebhookEndpointInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateWebhookEndpointResponse>> {
+            return client.post(`/instances/${instanceId}/webhook-endpoints`, data, options);
         },
-        delete(id: DeleteWebhookEndpointInput): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}/webhook-endpoints/${id}`);
+        delete(
+            id: DeleteWebhookEndpointInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.delete(`/instances/${instanceId}/webhook-endpoints/${id}`, options);
         },
         getSecret(
             id: GetWebhookEndpointSecretInput

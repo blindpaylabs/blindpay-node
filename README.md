@@ -85,12 +85,28 @@ This SDK uses a consistent error handling pattern. Always check for errors:
 const { data, error } = await blindpay.payins.list();
 
 if (error) {
-  // Handle error
-  console.error('API Error:', error.message);
+  // error.code is a stable code (e.g. PAYOUTS_INSUFFICIENT_BALANCE); error.description is
+  // safe to show to end users; include error.trace_id when contacting support.
+  console.error('API Error:', error.code ?? error.message);
   return;
 }
 
 console.log('Success:', data); // fully typed
+```
+
+## Safe retries (idempotency)
+
+Every method that creates, updates or deletes something takes an optional last argument. Pass an `idempotencyKey` and a retry with the same key and the same input replays the original response instead of acting twice, for example when a timeout leaves you unsure whether a payout was created. Keys are kept for 24 hours.
+
+```typescript
+import { randomUUID } from 'node:crypto';
+
+const idempotencyKey = randomUUID(); // reuse it only to retry this same call
+
+const { data, error } = await blindpay.payouts.createEvm(
+  { quote_id: 'qu_000000000000', sender_wallet_address: '0x...' },
+  { idempotencyKey }
+);
 ```
 
 ## Webhooks

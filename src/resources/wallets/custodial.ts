@@ -2,6 +2,7 @@ import type {
     BlindpayApiResponse,
     Network,
     PaginationMetadata,
+    RequestOptions,
     SuccessResponse,
     WalletToken,
 } from "../../../types";
@@ -118,13 +119,15 @@ export function createCustodialWalletsResource(instanceId: string, client: Inter
         }: GetCustodialWalletInput): Promise<BlindpayApiResponse<GetCustodialWalletResponse>> {
             return client.get(`/instances/${instanceId}/customers/${customer_id}/wallets/${id}`);
         },
-        create({
-            customer_id,
-            ...data
-        }: CreateCustodialWalletInput): Promise<
-            BlindpayApiResponse<CreateCustodialWalletResponse>
-        > {
-            return client.post(`/instances/${instanceId}/customers/${customer_id}/wallets`, data);
+        create(
+            { customer_id, ...data }: CreateCustodialWalletInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateCustodialWalletResponse>> {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/wallets`,
+                data,
+                options
+            );
         },
         getBalance({
             customer_id,
@@ -136,11 +139,14 @@ export function createCustodialWalletsResource(instanceId: string, client: Inter
                 `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/balance`
             );
         },
-        delete({
-            customer_id,
-            id,
-        }: DeleteCustodialWalletInput): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}/customers/${customer_id}/wallets/${id}`);
+        delete(
+            { customer_id, id }: DeleteCustodialWalletInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.delete(
+                `/instances/${instanceId}/customers/${customer_id}/wallets/${id}`,
+                options
+            );
         },
         getDeposits({
             customer_id,

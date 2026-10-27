@@ -1,4 +1,9 @@
-import type { BlindpayApiResponse, PaginationMetadata, PaginationParams } from "../../../types";
+import type {
+    BlindpayApiResponse,
+    PaginationMetadata,
+    PaginationParams,
+    RequestOptions,
+} from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { StrictOmit } from "../../internal/helpers/strict-omit";
 import type { CreateAchInput, CreateWireInput } from "../bank-accounts";
@@ -123,16 +128,20 @@ export function createPayablesResource(instanceId: string, client: InternalApiCl
             const queryParams = params ? `?${new URLSearchParams(params)}` : "";
             return client.get(`/instances/${instanceId}/payables${queryParams}`);
         },
-        create({
-            ...data
-        }: CreatePayableInput): Promise<BlindpayApiResponse<CreatePayableResponse>> {
-            return client.post(`/instances/${instanceId}/payables`, data);
+        create(
+            { ...data }: CreatePayableInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreatePayableResponse>> {
+            return client.post(`/instances/${instanceId}/payables`, data, options);
         },
         get(id: GetPayableInput): Promise<BlindpayApiResponse<GetPayableResponse>> {
             return client.get(`/instances/${instanceId}/payables/${id}`);
         },
-        delete(id: DeletePayableInput): Promise<BlindpayApiResponse<DeletePayableResponse>> {
-            return client.delete(`/instances/${instanceId}/payables/${id}`);
+        delete(
+            id: DeletePayableInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<DeletePayableResponse>> {
+            return client.delete(`/instances/${instanceId}/payables/${id}`, options);
         },
     };
 }

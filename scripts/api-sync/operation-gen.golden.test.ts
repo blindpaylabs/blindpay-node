@@ -62,7 +62,7 @@ function deleteTwoOperations(dir: string): void {
     quotes = deleteSpan(quotes, "export type CreateQuoteInput", "export type GetFxRateInput");
     quotes = deleteSpan(
         quotes,
-        "        create({ ...data }: CreateQuoteInput)",
+        "        create(\n            { ...data }: CreateQuoteInput,",
         "        getFxRate("
     );
     writeFileSync(quotesPath, quotes);

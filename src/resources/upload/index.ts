@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse } from "../../../types";
+import type { BlindpayApiResponse, RequestOptions } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import { toErrorResponse } from "../../internal/error-response";
 
@@ -122,13 +122,14 @@ export function createUploadResource(
 
             return postMultipart("/upload/analyze", formData, instance_id ?? instanceId);
         },
-        presign({
-            instance_id,
-            ...data
-        }: PresignInput): Promise<BlindpayApiResponse<PresignResponse>> {
+        presign(
+            { instance_id, ...data }: PresignInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<PresignResponse>> {
             return client.post(
                 `/presign?${new URLSearchParams({ instance_id: instance_id ?? instanceId })}`,
-                data
+                data,
+                options
             );
         },
     };

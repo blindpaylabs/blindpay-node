@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse, Network, SuccessResponse } from "../../../types";
+import type { BlindpayApiResponse, Network, RequestOptions, SuccessResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type GetBlockchainWalletMessage = string;
@@ -120,32 +120,30 @@ export function createBlockchainWalletsResource(instanceId: string, client: Inte
                 `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets`
             );
         },
-        createWithAddress({
-            customer_id,
-            ...data
-        }: CreateBlockchainWalletWithAddressInput): Promise<
-            BlindpayApiResponse<CreateBlockchainWalletResponse>
-        > {
+        createWithAddress(
+            { customer_id, ...data }: CreateBlockchainWalletWithAddressInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateBlockchainWalletResponse>> {
             return client.post(
                 `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets`,
                 {
                     ...data,
                     is_account_abstraction: true,
-                }
+                },
+                options
             );
         },
-        createWithHash({
-            customer_id,
-            ...data
-        }: CreateBlockchainWalletWithHashInput): Promise<
-            BlindpayApiResponse<CreateBlockchainWalletResponse>
-        > {
+        createWithHash(
+            { customer_id, ...data }: CreateBlockchainWalletWithHashInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateBlockchainWalletResponse>> {
             return client.post(
                 `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets`,
                 {
                     ...data,
                     is_account_abstraction: false,
-                }
+                },
+                options
             );
         },
         getWalletMessage(
@@ -163,49 +161,54 @@ export function createBlockchainWalletsResource(instanceId: string, client: Inte
                 `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets/${id}`
             );
         },
-        delete({
-            customer_id,
-            id,
-        }: DeleteBlockchainWalletInput): Promise<BlindpayApiResponse<SuccessResponse>> {
+        delete(
+            { customer_id, id }: DeleteBlockchainWalletInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.delete(
-                `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets/${id}`
+                `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets/${id}`,
+                options
             );
         },
-        setSelfCustody({
-            customer_id,
-            id,
-            ...data
-        }: SetBlockchainWalletSelfCustodyInput): Promise<
-            BlindpayApiResponse<SetBlockchainWalletSelfCustodyResponse>
-        > {
+        setSelfCustody(
+            { customer_id, id, ...data }: SetBlockchainWalletSelfCustodyInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SetBlockchainWalletSelfCustodyResponse>> {
             return client.patch(
                 `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets/${id}`,
-                data
+                data,
+                options
             );
         },
         createAssetTrustline(
-            address: CreateAssetTrustlineInput
+            address: CreateAssetTrustlineInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateAssetTrustlineResponse>> {
-            return client.post(`/instances/${instanceId}/create-asset-trustline`, {
-                address,
-            });
+            return client.post(
+                `/instances/${instanceId}/create-asset-trustline`,
+                {
+                    address,
+                },
+                options
+            );
         },
-        mintUsdbStellar({
-            ...data
-        }: MintUsdbStellarInput): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.post(`/instances/${instanceId}/mint-usdb-stellar`, data);
+        mintUsdbStellar(
+            { ...data }: MintUsdbStellarInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.post(`/instances/${instanceId}/mint-usdb-stellar`, data, options);
         },
-        mintUsdbSolana({
-            ...data
-        }: MintUsdbSolanaInput): Promise<BlindpayApiResponse<MintUsdbSolanaResponse>> {
-            return client.post(`/instances/${instanceId}/mint-usdb-solana`, data);
+        mintUsdbSolana(
+            { ...data }: MintUsdbSolanaInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<MintUsdbSolanaResponse>> {
+            return client.post(`/instances/${instanceId}/mint-usdb-solana`, data, options);
         },
-        prepareSolanaDelegationTransaction({
-            ...data
-        }: PrepareSolanaDelegationTransactionInput): Promise<
-            BlindpayApiResponse<PrepareSolanaDelegationTransactionResponse>
-        > {
-            return client.post(`/instances/${instanceId}/prepare-delegate-solana`, data);
+        prepareSolanaDelegationTransaction(
+            { ...data }: PrepareSolanaDelegationTransactionInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<PrepareSolanaDelegationTransactionResponse>> {
+            return client.post(`/instances/${instanceId}/prepare-delegate-solana`, data, options);
         },
     };
 }
