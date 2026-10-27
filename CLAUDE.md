@@ -110,6 +110,30 @@ Examples: `createPayinsResource`, `createPartnerFeesResource`, `createBlockchain
 - Linter: Biome recommended rules. No unused variables (error). `import type` required (error). No explicit `any` (warn).
 - TypeScript: `verbatimModuleSyntax: true` (must use `import type` for type-only imports). `strict: true`.
 
+## Generate before you hand-write
+
+`scripts/api-sync/` is a deterministic patcher (no LLM) that reconciles the SDK against the OpenAPI spec. Anything it can produce must come from it, not from a hand-written (or model-written) edit:
+
+```bash
+bun run sync -- --spec /tmp/openapi.public.json   # apply against the current public spec (built below)
+bun run sync:check                                # CI gate against the committed snapshot
+bun run audit:types                               # informational full type audit
+```
+
+`.api-sync/spec-snapshot.json` is the spec the SDK last synced to, so applying against it only restores methods the SDK lost. To pick up a new endpoint, build the current public spec from blindpay-v2's committed `openapi.json` with blindpay-v2's own public filter (run inside a blindpay-v2 checkout):
+
+```bash
+git fetch origin main
+mkdir -p /tmp/v2 && git archive origin/main apps/api/openapi.json apps/api/src/shared/helpers scripts/openapi-public-filter.ts | tar -x -C /tmp/v2
+(cd /tmp/v2 && bun scripts/openapi-public-filter.ts --in apps/api/openapi.json --out /tmp/openapi.public.json)
+```
+
+Normally the api-sync workflow does this for you: blindpay-v2's `sdk-sync.yml` delivers the spec and dispatches the run. A successful `--apply` also refreshes the snapshot.
+
+It applies three kinds of change on its own: new enum members, new optional fields, and new methods for standard operations on an existing resource (instance-scoped path, JSON request and response, an existing `create{X}Resource(instanceId, client)` factory). For anything else it prints the exact reason it stopped. Only then use the manual recipes below: a brand-new resource, non-instance paths (`/available/*`, `/e/*`), multipart uploads, non-GET operations with query parameters, and resource files with a non-standard factory. After a manual change, `bun run sync:check` names any `.api-sync/spec-map.json` entry still missing.
+
+Deliberate differences from the spec are recorded in `.api-sync/unmodeled.json` with an owner and a reason. Never silence a finding by editing that file without the reason being true.
+
 ## How to: Add a New Resource
 
 ### Step 1: Create the resource file
@@ -530,7 +554,7 @@ This project uses [Changesets](https://github.com/changesets/changesets).
 
 - `patch`: Bug fixes, type corrections, adding optional fields to existing types.
 - `minor`: New resources, new methods on existing resources, new sub-resources.
-- `major`: Removing resources/methods, renaming fields, removing fields, changing required/optional status of input fields.
+- `major`: Removing resources/methods, renaming fields, removing fields, changing required/optional status of input fields, adding `| null` to a response field, narrowing a response field from `string` to a union, removing an enum member.
 
 ### Creating a changeset
 
@@ -631,8 +655,9 @@ export type CreateWidgetInput = {
 ```
 
 Rules:
-- Required fields: no `?`, no `| null` (unless the API explicitly allows null).
-- Optional fields: use `?` and `| null` if nullable.
+- Required fields: no `?`.
+- Optional fields: use `?`.
+- Nullable fields (`type: [..., "null"]` in the spec): add `| null`, on inputs and responses alike. `sync:check` fails on a spec-nullable field whose SDK type has no `| null`.
 - String enums: use union literal types.
 - Numbers: use `number`.
 - Booleans: use `boolean`.
@@ -795,6 +820,7 @@ This is the consistent pattern used throughout the codebase.
 
 ### Summary: complete checklist for adding an OpenAPI endpoint
 
+0. First run `bun run sync -- --spec /tmp/openapi.public.json` (see "Generate before you hand-write"); if it generated the method, skip to step 7.
 1. Identify the API path and HTTP method.
 2. Determine which resource file it belongs to (or create a new one).
 3. Define the input type from request body schema + path params.
@@ -803,9 +829,7 @@ This is the consistent pattern used throughout the codebase.
 6. If new resource: register in `client.ts`, re-export from `index.ts`.
 7. Add tests.
 8. Add a changeset.
-9. Run `bun run lint:fix && bun run check-types && bun run lint:check && bun run test`.
+9. Run `bun run lint:fix && bun run check-types && bun run lint:check && bun run test && bun run sync:check`.
    Always run `lint:fix` first so Biome auto-applies formatter changes
    (trailing newlines, quote style, etc.); then `lint:check` validates
-   that nothing remains. Running only `lint:check` reports formatter
-   diffs as errors instead of fixing them — those are exactly the
-   issues api-sync runs were leaving behind.
+   that nothing remains.

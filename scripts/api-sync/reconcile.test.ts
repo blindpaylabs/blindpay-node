@@ -371,6 +371,43 @@ describe("needs-human classifications", () => {
         expect(needsHuman[0]).toContain('spec is "number", SDK declares "string"');
     });
 
+    it("a spec-nullable field whose SDK type has no | null, on a required response field", () => {
+        const repo = makeRepo({
+            "quotes.ts": [
+                "export type CreateQuoteResponse = {",
+                "    expires_at: number;",
+                "};",
+                "",
+            ].join("\n"),
+        });
+        const spec: Spec = {
+            paths: {},
+            components: {
+                schemas: {
+                    QuoteOut: {
+                        type: "object",
+                        properties: { expires_at: { type: ["number", "null"] } },
+                    },
+                },
+            },
+        };
+        const map: SpecMap = {
+            enums: [],
+            types: [
+                {
+                    spec: { schema: "QuoteOut" },
+                    sdk: [{ file: "quotes.ts", symbol: "CreateQuoteResponse" }],
+                },
+            ],
+            ignore: { schemas: [] },
+        };
+        const { applicable, needsHuman } = reconcile(spec, map, emptyUnmodeled(), repo);
+        expect(applicable).toEqual([]);
+        expect(needsHuman.length).toBe(1);
+        expect(needsHuman[0]).toContain("expires_at");
+        expect(needsHuman[0]).toContain('spec allows null but the SDK type has no "| null"');
+    });
+
     it("records a type-mismatch known divergence instead of failing", () => {
         const repo = makeRepo({
             "payins.ts": [

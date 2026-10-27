@@ -48,11 +48,9 @@ function categorize(problem: string): AuditFinding["category"] {
 
 /**
  * Full STATE-based comparison of every mapped property's spec type against its declared
- * TypeScript type, including nullability, which the blocking `--check`/`--apply` path
- * deliberately does not enforce (see reconcile.ts: this codebase does not mirror JSON
- * nullability into `| null` on response fields as a matter of pervasive, pre-existing house
- * style, not oversight; enforcing it retroactively is a separate, wholesale, human-reviewed
- * pass, not a Phase A concern). Always non-blocking: this function only ever reports, it never
+ * TypeScript type. Unlike the blocking `--check`/`--apply` path (see reconcile.ts), it ignores
+ * known divergences, discriminator fields and enum-mapping coverage, so it also lists every
+ * deliberate narrowing. Always non-blocking: this function only ever reports, it never
  * throws or exits non-zero, so it is safe to run unconditionally in CI. Its purpose is exactly
  * the one state-based reconciliation exists for elsewhere in this tool: make sure the SDK's
  * CURRENT surface disagreeing with the CURRENT spec is never invisible, even when the disagreement

@@ -7,8 +7,8 @@ export type SoleProprietorDocType = "master_service_agreement" | "salary_slip" |
 
 export type VirtualAccount = {
     id: string;
-    banking_partner: BankingPartner;
-    kyc_status: KycStatus;
+    banking_partner: BankingPartner | null;
+    kyc_status: KycStatus | null;
     us: {
         ach: {
             routing_number: string;
@@ -42,7 +42,7 @@ export type VirtualAccount = {
         } | null;
     };
     token: StablecoinToken;
-    blockchain_wallet_id: string;
+    blockchain_wallet_id: string | null;
     blockchain_wallet: { network: Network; address: string } | null;
 };
 

@@ -7,7 +7,7 @@ export type CustodialWallet = {
     external_id: string | null;
     address: string | null;
     network: Network;
-    created_at: string;
+    created_at: string | null;
 };
 
 export type CreateCustodialWalletInput = {

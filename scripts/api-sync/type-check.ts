@@ -159,7 +159,7 @@ export function classifySdkType(
 export function compareTypeSignatures(
     spec: TypeSignature,
     sdk: TypeSignature,
-    opts: { skipEnumValues: boolean; skipNullability?: boolean } = { skipEnumValues: false }
+    opts: { skipEnumValues: boolean } = { skipEnumValues: false }
 ): string[] {
     const problems: string[] = [];
 
@@ -174,7 +174,7 @@ export function compareTypeSignatures(
         return problems; // a base-kind mismatch makes enum/nullability comparisons meaningless
     }
 
-    if (!opts.skipNullability && spec.nullable && !sdk.nullable) {
+    if (spec.nullable && !sdk.nullable) {
         problems.push('spec allows null but the SDK type has no "| null"');
     }
 

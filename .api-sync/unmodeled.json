@@ -600,31 +600,10 @@
     ],
     "knownDivergences": [
         {
-            "kind": "enum",
-            "schema": "AvailableBankDetails",
-            "enumProperty": "[].key",
-            "reason": "Spec's available-bank-details key enum has grown to 73 values; this SDK's BankDetailKey union models 48 and is missing 24 (business_industry, date_of_birth, force_cpf_cnpj, onemoney_external_account_id, phone_number, pix_safe_bank_code, pix_safe_branch_code, pix_safe_cpf_cnpj, recipient_relationship, sepa_beneficiary_address_line_1, sepa_beneficiary_address_line_2, sepa_beneficiary_bic, sepa_beneficiary_city, sepa_beneficiary_country, sepa_beneficiary_legal_name, sepa_beneficiary_postal_code, sepa_beneficiary_state_province_region, sepa_iban, status, swift_ifsc_branch_code, swift_payment_code, tax_id, ted_bank_code, ted_branch_code, ted_cpf_cnpj). This is a purely descriptive/display enum (used to label dynamic bank-detail form fields), so the gap is cosmetic rather than a functional block, but is substantial enough to need one reviewed pass rather than a blind append.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "type-mismatch",
-            "schema": "AvailableRails",
-            "field": "country",
-            "reason": "GetRailsResponse declares country as a bare string; the spec constrains it to the full ISO country-code enum (same list as the shared Country type). Read-only informational endpoint (GET /available/rails); a modeling gap, not a functional one.",
-            "owner": "eric@blindpay.com"
-        },
-        {
             "kind": "property",
             "schema": "BankAccountOut",
             "field": "bank_name",
             "reason": "Pre-existing SDK-only field on GetBankAccountResponse with no matching property on BankAccountOut in the spec (same family as the already allow-listed account_holder_name/swift_code/is_primary/iban).",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "type-mismatch",
-            "schema": "BankAccountOut",
-            "field": "business_industry",
-            "reason": "ListBankAccountsResponse's inline array-item literal declares business_industry as a bare `string | null`; every create*Input type in the same file (CreateAchInput, CreateWireInput, CreateInternationalSwiftInput, CreateRtpInput) correctly types the same field as the shared BusinessIndustry union. The list endpoint's response type alone was never brought in line.",
             "owner": "eric@blindpay.com"
         },
         {
@@ -639,20 +618,6 @@
             "schema": "BankAccountOut",
             "field": "offramp_wallets.[].circle_wallet_id",
             "reason": "ListBankAccountsResponse's inline offramp_wallets literal (bank-accounts/index.ts:88-93) models {address,id,network,external_id} but spec's BankAccountOut.offramp_wallets item also carries circle_wallet_id; a narrower, independently-named SDK symbol would be needed to track this sub-shape mechanically.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "type-mismatch",
-            "schema": "BankAccountOut",
-            "field": "spei_protocol",
-            "reason": "ListBankAccountsResponse's inline array-item literal declares spei_protocol as a bare `string`; CreateSpeiResponse in the same file correctly types it as SpeiProtocol. The list endpoint's response type alone was never brought in line.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "type-mismatch",
-            "schema": "BankAccountOut",
-            "field": "status",
-            "reason": "ListBankAccountsResponse's inline array-item literal declares status as a bare `string | null`; spec constrains it to a 4-value approval-status enum (verifying, approved, rejected, deprecated). Never modeled as a named SDK type at all.",
             "owner": "eric@blindpay.com"
         },
         {
@@ -734,13 +699,6 @@
         },
         {
             "kind": "enum",
-            "schema": "CustomerLimitIncreaseIn",
-            "enumProperty": "supporting_document_type",
-            "reason": "Spec's supporting_document_type enum has grown to 15 values; this SDK's LimitIncreaseRequestSupportingDocumentType models 6 and is missing 9 (business_accounts_receivable, business_contract, business_merchant_processor_statement, business_shareholder_loan, individual_blockchain_wallet_statement, individual_crypto_exchange_statement, individual_employment_letter, individual_investment_statement, individual_pay_stub).",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "enum",
             "schema": "CustomerOut",
             "enumProperty": "kyc_status",
             "reason": "Spec's kyc_status has 8 values (verifying, approved, rejected, deprecated, pending_review, awaiting_contract, compliance_request, approved_rfi); this SDK's KycStatus models 7, missing approved_rfi. approved_rfi is reached only through the RFI resource, which this SDK does not implement (see ignore.schemas); adding the enum member without the resource would be misleading.",
@@ -759,13 +717,6 @@
             "schema": "CustomerOut",
             "field": "sole_proprietor_doc_type",
             "reason": "Pre-existing SDK-only field on all 3 KYC/KYB response types with no matching property on CustomerOut in the spec.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "type-mismatch",
-            "schema": "CustomerOut",
-            "field": "source_of_funds_doc_type",
-            "reason": "IndividualWithEnhancedKYC declares source_of_funds_doc_type as a bare `string`; the other 2 KYC/KYB response types (IndividualWithStandardKYC, BusinessWithStandardKYB) correctly type the same field as `SourceOfFundsDocType | null`. Only the enhanced-KYC variant was never brought in line.",
             "owner": "eric@blindpay.com"
         },
         {
@@ -820,13 +771,6 @@
         {
             "kind": "type-mismatch",
             "schema": "PayoutOut",
-            "field": "ach_cop_document_type",
-            "reason": "Payout declares ach_cop_document_type as a bare `string`; BankAccountOut's own create*Input/Response types (CreateColombiaAchInput/Response) correctly type the same field as AchCopDocument. Only the flattened Payout type was never brought in line.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "type-mismatch",
-            "schema": "PayoutOut",
             "field": "provider_name",
             "reason": "Nested at tracking_payment.provider_name. Spec constrains it to a fixed list of human-readable bank/provider display labels (\"HSBC\", \"JPMorgan Chase\", \"Portage Bank\", etc.); PayoutTrackingPayment declares it as a bare `string | null`. Given this is a display label list that grows whenever a new banking partner is onboarded, a strict union may be the wrong shape for this field regardless; flagged for a human modeling decision, not a blind enum type.",
             "owner": "eric@blindpay.com"
@@ -839,25 +783,10 @@
             "owner": "eric@blindpay.com"
         },
         {
-            "kind": "enum",
-            "schema": "PayoutOut",
-            "enumProperty": "tracking_payment.estimated_time_of_arrival",
-            "reason": "Spec's EstimatedTimeOfArrival gained a 7th value, 5_30_min, between 5_min and 30_min; this SDK's EstimatedTimeOfArrival union still has the original 6. Bootstrap note: this enum is declared with single quotes (unlike most others in this codebase), which is exactly why it slipped past this project's own first bootstrap pass; fixed before committing.",
-            "owner": "eric@blindpay.com",
-            "member": "5_30_min"
-        },
-        {
             "kind": "property",
             "schema": "TransferOut",
             "field": "tracking_partner_fee",
             "reason": "Already tracked in .api-sync/contract-check-allowlist.json (no longer exists on TransferOut in the spec); mirrored here.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "enum",
-            "schema": "UpdateCustomerIn",
-            "enumProperty": "business_industry",
-            "reason": "Spec's business_industry NAICS enum added code 446120 (this SDK is missing it) and does not include this SDK's non-NAICS crypto/web3 business categories (dapp, exchange, gambling, gaming, infra, marketplace, neo_bank, other, saas, social, wallet), which appear to be a deliberate SDK-side addition for wallet/exchange-type instances rather than spec drift.",
             "owner": "eric@blindpay.com"
         },
         {

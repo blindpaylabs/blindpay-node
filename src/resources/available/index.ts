@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse, Rail } from "../../../types";
+import type { BlindpayApiResponse, Country, Rail } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type BankDetailKey =
@@ -49,6 +49,31 @@ export type BankDetailKey =
     | "swift_intermediary_bank_swift_code_bic"
     | "swift_intermediary_bank_account_number_iban"
     | "swift_intermediary_bank_name"
+    | "business_industry"
+    | "date_of_birth"
+    | "force_cpf_cnpj"
+    | "onemoney_external_account_id"
+    | "phone_number"
+    | "pix_safe_bank_code"
+    | "pix_safe_branch_code"
+    | "pix_safe_cpf_cnpj"
+    | "recipient_relationship"
+    | "sepa_beneficiary_address_line_1"
+    | "sepa_beneficiary_address_line_2"
+    | "sepa_beneficiary_bic"
+    | "sepa_beneficiary_city"
+    | "sepa_beneficiary_country"
+    | "sepa_beneficiary_legal_name"
+    | "sepa_beneficiary_postal_code"
+    | "sepa_beneficiary_state_province_region"
+    | "sepa_iban"
+    | "status"
+    | "swift_ifsc_branch_code"
+    | "swift_payment_code"
+    | "tax_id"
+    | "ted_bank_code"
+    | "ted_branch_code"
+    | "ted_cpf_cnpj"
     | "swift_intermediary_bank_country";
 
 export type GetBankDetailsResponse = Array<{
@@ -60,13 +85,13 @@ export type GetBankDetailsResponse = Array<{
         value: string;
         is_active?: boolean;
     }>;
-    required: boolean;
+    required: boolean | null;
 }>;
 
 export type GetRailsResponse = Array<{
     label: string;
     value: Rail;
-    country: string;
+    country: Country;
 }>;
 
 export type GetNaicsCodesResponse = Array<{

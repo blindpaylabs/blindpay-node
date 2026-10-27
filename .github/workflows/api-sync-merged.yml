@@ -24,10 +24,11 @@ jobs:
           # Create a temporary worktree for the api-sync-data branch
           git checkout -B api-sync-data origin/api-sync-data 2>/dev/null || git checkout --orphan api-sync-data
 
-          # Remove the changelog (no longer needed) and update the baseline
-          # The baseline should be the spec that the SDK is now synced to
-          # We can't easily fetch blindpay-v2's spec from here, so we
-          # clear the last-synced-spec.json to signal "fully synced"
+          # This repo's patcher never reads these files, but blindpay-v2's
+          # sdk-sync.yml does: it takes .api-sync/last-synced-spec.json from
+          # this branch as the baseline for the prose changelog that drives
+          # blindpay-cli's generator. Clearing it here resets that baseline
+          # once a sync lands, so the next changelog is not cumulative forever.
           rm -f .api-sync/changelog.md
           rm -f .api-sync/last-synced-spec.json
           echo "Baseline cleared — SDK is in sync as of $(date -u +%Y-%m-%dT%H:%M:%SZ)" > .api-sync/SYNCED

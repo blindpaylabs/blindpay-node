@@ -56,7 +56,7 @@ export type Owner = {
     first_name: string;
     last_name: string;
     date_of_birth: string;
-    tax_id: string;
+    tax_id: string | null;
     address_line_1: string;
     address_line_2: string | null;
     city: string;
@@ -65,9 +65,9 @@ export type Owner = {
     postal_code: string;
     id_doc_country: Country;
     id_doc_type: IdentificationDocument;
-    id_doc_front_file: string;
+    id_doc_front_file: string | null;
     id_doc_back_file: string | null;
-    proof_of_address_doc_type: ProofOfAddressDocType;
+    proof_of_address_doc_type: ProofOfAddressDocType | null;
     proof_of_address_doc_file: string | null;
     ownership_percentage: number | null;
     title: string | null;
@@ -78,7 +78,7 @@ export type Owner = {
 
 export type IndividualWithStandardKYC = {
     id: string;
-    is_tos_accepted: boolean;
+    is_tos_accepted: boolean | null;
     type: Extract<AccountClass, "individual">;
     kyc_type: Extract<KycType, "standard">;
     kyc_status: KycStatus;
@@ -89,30 +89,30 @@ export type IndividualWithStandardKYC = {
         warning_id: string | null;
     }> | null;
     email: string;
-    tax_id: string;
-    address_line_1: string;
+    tax_id: string | null;
+    address_line_1: string | null;
     address_line_2?: string | null;
-    city: string;
-    state_province_region: string;
+    city: string | null;
+    state_province_region: string | null;
     country: Country;
-    postal_code: string;
+    postal_code: string | null;
     ip_address: string | null;
     image_url: string | null;
-    phone_number: string;
-    proof_of_address_doc_type: ProofOfAddressDocType;
-    proof_of_address_doc_file: string;
-    first_name: string;
-    last_name: string;
+    phone_number: string | null;
+    proof_of_address_doc_type: ProofOfAddressDocType | null;
+    proof_of_address_doc_file: string | null;
+    first_name: string | null;
+    last_name: string | null;
     date_of_birth: string;
-    id_doc_country: Country;
-    id_doc_type: IdentificationDocument;
-    id_doc_front_file: string;
-    id_doc_back_file: string;
+    id_doc_country: Country | null;
+    id_doc_type: IdentificationDocument | null;
+    id_doc_front_file: string | null;
+    id_doc_back_file: string | null;
     aiprise_validation_key: string;
     instance_id: string;
     tos_id: string | null;
-    created_at: string;
-    updated_at: string;
+    created_at: string | null;
+    updated_at: string | null;
     limit: {
         per_transaction: number;
         daily: number;
@@ -140,7 +140,7 @@ export type IndividualWithStandardKYC = {
 
 export type IndividualWithEnhancedKYC = {
     id: string;
-    is_tos_accepted: boolean;
+    is_tos_accepted: boolean | null;
     type: Extract<AccountClass, "individual">;
     kyc_type: Extract<KycType, "enhanced">;
     kyc_status: KycStatus;
@@ -151,35 +151,35 @@ export type IndividualWithEnhancedKYC = {
         warning_id: string | null;
     }> | null;
     email: string;
-    tax_id: string;
-    address_line_1: string;
+    tax_id: string | null;
+    address_line_1: string | null;
     address_line_2?: string | null;
-    city: string;
-    state_province_region: string;
+    city: string | null;
+    state_province_region: string | null;
     country: Country;
-    postal_code: string;
+    postal_code: string | null;
     ip_address: string | null;
     image_url: string | null;
     phone_number: string | null;
-    proof_of_address_doc_type: ProofOfAddressDocType;
-    proof_of_address_doc_file: string;
-    first_name: string;
-    last_name: string;
+    proof_of_address_doc_type: ProofOfAddressDocType | null;
+    proof_of_address_doc_file: string | null;
+    first_name: string | null;
+    last_name: string | null;
     date_of_birth: string;
-    id_doc_country: Country;
-    id_doc_type: IdentificationDocument;
-    id_doc_front_file: string;
+    id_doc_country: Country | null;
+    id_doc_type: IdentificationDocument | null;
+    id_doc_front_file: string | null;
     id_doc_back_file: string | null;
     aiprise_validation_key: string;
     instance_id: string;
-    source_of_funds_doc_type: string;
-    source_of_funds_doc_file: string;
+    source_of_funds_doc_type: SourceOfFundsDocType | null;
+    source_of_funds_doc_file: string | null;
     individual_holding_doc_front_file: string;
-    purpose_of_transactions: PurposeOfTransactions;
+    purpose_of_transactions: PurposeOfTransactions | null;
     purpose_of_transactions_explanation: string | null;
     tos_id: string | null;
-    created_at: string;
-    updated_at: string;
+    created_at: string | null;
+    updated_at: string | null;
     limit: {
         per_transaction: number;
         daily: number;
@@ -205,8 +205,8 @@ export type IndividualWithEnhancedKYC = {
 
 export type BusinessWithStandardKYB = {
     id: string;
-    is_tos_accepted: boolean;
-    is_fbo: boolean;
+    is_tos_accepted: boolean | null;
+    is_fbo: boolean | null;
     type: Extract<AccountClass, "business">;
     kyc_type: Extract<KycType, "standard">;
     kyc_status: KycStatus;
@@ -217,31 +217,31 @@ export type BusinessWithStandardKYB = {
         warning_id: string | null;
     }> | null;
     email: string;
-    tax_id: string;
-    address_line_1: string;
+    tax_id: string | null;
+    address_line_1: string | null;
     address_line_2?: string | null;
-    city: string;
-    state_province_region: string;
+    city: string | null;
+    state_province_region: string | null;
     country: Country;
-    postal_code: string;
+    postal_code: string | null;
     ip_address: string | null;
     image_url: string | null;
     phone_number: string | null;
-    proof_of_address_doc_type: ProofOfAddressDocType;
-    proof_of_address_doc_file: string;
-    legal_name: string;
+    proof_of_address_doc_type: ProofOfAddressDocType | null;
+    proof_of_address_doc_file: string | null;
+    legal_name: string | null;
     alternate_name: string | null;
     formation_date: string;
     website: string | null;
-    owners: Owner[];
-    incorporation_doc_file: string;
-    proof_of_ownership_doc_file: string;
+    owners: Owner[] | null;
+    incorporation_doc_file: string | null;
+    proof_of_ownership_doc_file: string | null;
     external_id: string | null;
     instance_id: string;
     tos_id: string | null;
     aiprise_validation_key: string;
-    created_at: string;
-    updated_at: string;
+    created_at: string | null;
+    updated_at: string | null;
     limit: {
         per_transaction: number;
         daily: number;
@@ -408,46 +408,46 @@ export type GetCustomerResponse =
 export type UpdateCustomerInput = {
     customer_id: string;
     account_purpose?: AccountPurpose | null;
-    address_line_1?: string;
-    address_line_2?: string;
-    alternate_name?: string;
-    business_description?: string;
+    address_line_1?: string | null;
+    address_line_2?: string | null;
+    alternate_name?: string | null;
+    business_description?: string | null;
     business_industry?: BusinessIndustry | null;
     business_type?: BusinessType | null;
-    city?: string;
+    city?: string | null;
     country?: Country;
     date_of_birth?: string;
     email?: string;
     estimated_annual_revenue?: EstimatedAnnualRevenue | null;
-    external_id?: string;
-    first_name?: string;
+    external_id?: string | null;
+    first_name?: string | null;
     formation_date?: string;
-    id_doc_back_file?: string;
-    id_doc_country?: Country;
-    id_doc_front_file?: string;
-    id_doc_type?: IdentificationDocument;
-    image_url?: string;
-    incorporation_doc_file?: string;
-    ip_address?: string;
-    last_name?: string;
-    legal_name?: string;
-    owners?: Array<StrictOmit<Owner, "id">>;
-    phone_number?: string;
-    postal_code?: string;
-    proof_of_address_doc_file?: string;
-    proof_of_address_doc_type?: ProofOfAddressDocType;
-    proof_of_ownership_doc_file?: string;
+    id_doc_back_file?: string | null;
+    id_doc_country?: Country | null;
+    id_doc_front_file?: string | null;
+    id_doc_type?: IdentificationDocument | null;
+    image_url?: string | null;
+    incorporation_doc_file?: string | null;
+    ip_address?: string | null;
+    last_name?: string | null;
+    legal_name?: string | null;
+    owners?: Array<StrictOmit<Owner, "id">> | null;
+    phone_number?: string | null;
+    postal_code?: string | null;
+    proof_of_address_doc_file?: string | null;
+    proof_of_address_doc_type?: ProofOfAddressDocType | null;
+    proof_of_ownership_doc_file?: string | null;
     publicly_traded?: boolean | null;
-    purpose_of_transactions?: PurposeOfTransactions;
-    purpose_of_transactions_explanation?: string;
-    selfie_file?: string;
-    source_of_funds_doc_file?: string;
-    source_of_funds_doc_type?: SourceOfFundsDocType;
+    purpose_of_transactions?: PurposeOfTransactions | null;
+    purpose_of_transactions_explanation?: string | null;
+    selfie_file?: string | null;
+    source_of_funds_doc_file?: string | null;
+    source_of_funds_doc_type?: SourceOfFundsDocType | null;
     source_of_wealth?: SourceOfWealth | null;
-    state_province_region?: string;
-    tax_id?: string;
-    tos_id?: string;
-    website?: string;
+    state_province_region?: string | null;
+    tax_id?: string | null;
+    tos_id?: string | null;
+    website?: string | null;
     account_purpose_other?: string | null;
     occupation?: string | null;
     recipient_relationship?: RecipientRelationship | null;
@@ -481,19 +481,28 @@ export type LimitIncreaseRequestSupportingDocumentType =
     | "individual_proof_of_income"
     | "business_bank_statement"
     | "business_financial_statements"
+    | "business_accounts_receivable"
+    | "business_contract"
+    | "business_merchant_processor_statement"
+    | "business_shareholder_loan"
+    | "individual_blockchain_wallet_statement"
+    | "individual_crypto_exchange_statement"
+    | "individual_employment_letter"
+    | "individual_investment_statement"
+    | "individual_pay_stub"
     | "business_tax_return";
 
 export type GetLimitIncreaseRequestsResponse = Array<{
     id: string;
     customer_id: string;
     status: LimitIncreaseRequestStatus;
-    daily: number;
-    monthly: number;
-    per_transaction: number;
-    supporting_document_file: string;
-    supporting_document_type: LimitIncreaseRequestSupportingDocumentType;
-    created_at: string;
-    updated_at: string;
+    daily: number | null;
+    monthly: number | null;
+    per_transaction: number | null;
+    supporting_document_file: string | null;
+    supporting_document_type: LimitIncreaseRequestSupportingDocumentType | null;
+    created_at: string | null;
+    updated_at: string | null;
     approved_per_transaction?: number | null;
     approved_daily?: number | null;
     approved_monthly?: number | null;
@@ -501,9 +510,9 @@ export type GetLimitIncreaseRequestsResponse = Array<{
 
 export type RequestLimitIncreaseInput = {
     customer_id: string;
-    daily: number;
-    monthly: number;
-    per_transaction: number;
+    daily: number | null;
+    monthly: number | null;
+    per_transaction: number | null;
     supporting_document_file: string;
     supporting_document_type: LimitIncreaseRequestSupportingDocumentType;
 };

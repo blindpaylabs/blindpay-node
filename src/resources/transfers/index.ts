@@ -34,12 +34,12 @@ export type Transfer = {
     tracking_bridge_swap: TransferTrackingStep;
     tracking_complete: TransferTrackingStep;
     tracking_partner_fee: TransferTrackingStep;
-    created_at: string;
-    updated_at: string;
-    image_url?: string;
-    first_name?: string;
-    last_name?: string;
-    legal_name?: string;
+    created_at: string | null;
+    updated_at: string | null;
+    image_url?: string | null;
+    first_name?: string | null;
+    last_name?: string | null;
+    legal_name?: string | null;
     wallet_id: string;
     sender_token: StablecoinToken;
     sender_amount: number;
@@ -49,7 +49,7 @@ export type Transfer = {
     customer_wallet_address: string;
     partner_fee_amount: number | null;
     customer_id: string;
-    address: string;
+    address: string | null;
     network: Network;
 };
 

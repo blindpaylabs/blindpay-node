@@ -14,16 +14,16 @@ export type GetInstanceMembersResponse = Array<{
     id: string;
     email: string;
     first_name: string;
-    middle_name: string;
+    middle_name: string | null;
     last_name: string;
     image_url: string;
-    created_at: string;
+    created_at: string | null;
     role: InstanceMemberRole;
 }>;
 
 export type UpdateInstanceInput = {
     name: string;
-    customer_invite_redirect_url?: string;
+    customer_invite_redirect_url?: string | null;
     email_notifications?: boolean;
     require_passkey?: boolean;
 };

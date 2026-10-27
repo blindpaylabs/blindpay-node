@@ -1,5 +1,6 @@
 import type {
     AccountClass,
+    AchCopDocument,
     BankAccountType,
     BlindpayApiResponse,
     Country,
@@ -26,66 +27,66 @@ export type Payout = {
     id: string;
     status: TransactionStatus;
     sender_wallet_address: string;
-    signed_transaction: string;
+    signed_transaction: string | null;
     quote_id: string;
     instance_id: string;
     tracking_transaction: PayoutTrackingTransaction;
     tracking_payment: PayoutTrackingPayment;
-    tracking_liquidity: PayoutTrackingLiquidity;
+    tracking_liquidity: PayoutTrackingLiquidity | null;
     tracking_complete: PayoutTrackingComplete;
     tracking_partner_fee: PayoutTrackingPartnerFee;
-    created_at: string;
-    updated_at: string;
-    image_url: string;
-    first_name: string;
-    last_name: string;
-    legal_name: string;
+    created_at: string | null;
+    updated_at: string | null;
+    image_url: string | null;
+    first_name: string | null;
+    last_name: string | null;
+    legal_name: string | null;
     network: Network;
     token: StablecoinToken;
-    description: string;
-    sender_amount: number;
-    receiver_amount: number;
+    description: string | null;
+    sender_amount: number | null;
+    receiver_amount: number | null;
     partner_fee_id?: string | null;
-    partner_fee_amount: number;
-    commercial_quotation: number;
-    blindpay_quotation: number;
-    total_fee_amount: number;
-    customer_local_amount: number;
+    partner_fee_amount: number | null;
+    commercial_quotation: number | null;
+    blindpay_quotation: number | null;
+    total_fee_amount: number | null;
+    customer_local_amount: number | null;
     currency: Exclude<Currency, "USDB" | "USDC" | "USDT">;
-    transaction_document_file: string;
-    transaction_document_type: TransactionDocumentType;
-    transaction_document_id: string;
+    transaction_document_file: string | null;
+    transaction_document_type: TransactionDocumentType | null;
+    transaction_document_id: string | null;
     name: string;
     type: Rail;
-    pix_key?: string;
-    account_number?: string;
-    routing_number?: string;
-    country?: Country;
-    account_class?: AccountClass;
-    address_line_1?: string;
-    address_line_2?: string;
-    city?: string;
-    state_province_region?: string;
-    postal_code?: string;
-    account_type?: BankAccountType;
-    ach_cop_beneficiary_first_name?: string;
-    ach_cop_bank_account?: string;
-    ach_cop_bank_code?: string;
-    ach_cop_beneficiary_last_name?: string;
-    ach_cop_document_id?: string;
-    ach_cop_document_type?: string;
-    ach_cop_email?: string;
-    beneficiary_name?: string;
-    spei_clabe?: string;
-    spei_protocol?: SpeiProtocol;
-    spei_institution_code?: string;
-    swift_beneficiary_country?: Country;
-    swift_code_bic?: string;
-    swift_account_holder_name?: string;
-    swift_account_number_iban?: string;
-    transfers_account?: string;
-    transfers_type: "CVU" | "CBU" | "ALIAS";
-    has_virtual_account: boolean;
+    pix_key?: string | null;
+    account_number?: string | null;
+    routing_number?: string | null;
+    country?: Country | null;
+    account_class?: AccountClass | null;
+    address_line_1?: string | null;
+    address_line_2?: string | null;
+    city?: string | null;
+    state_province_region?: string | null;
+    postal_code?: string | null;
+    account_type?: BankAccountType | null;
+    ach_cop_beneficiary_first_name?: string | null;
+    ach_cop_bank_account?: string | null;
+    ach_cop_bank_code?: string | null;
+    ach_cop_beneficiary_last_name?: string | null;
+    ach_cop_document_id?: string | null;
+    ach_cop_document_type?: AchCopDocument | null;
+    ach_cop_email?: string | null;
+    beneficiary_name?: string | null;
+    spei_clabe?: string | null;
+    spei_protocol?: SpeiProtocol | null;
+    spei_institution_code?: string | null;
+    swift_beneficiary_country?: Country | null;
+    swift_code_bic?: string | null;
+    swift_account_holder_name?: string | null;
+    swift_account_number_iban?: string | null;
+    transfers_account?: string | null;
+    transfers_type: "CVU" | "CBU" | "ALIAS" | null;
+    has_virtual_account: boolean | null;
     billing_fee_amount?: number | null;
     cpn_payment_id?: string | null;
     jpm_track_data?: Record<string, unknown> | string | null;
@@ -146,7 +147,7 @@ export type AuthorizeStellarTokenResponse = {
 export type CreateStellarPayoutInput = {
     quote_id: string;
     sender_wallet_address: string;
-    signed_transaction?: string;
+    signed_transaction?: string | null;
 };
 
 export type CreateStellarPayoutResponse = {
@@ -157,8 +158,8 @@ export type CreateStellarPayoutResponse = {
     tracking_payment?: PayoutTrackingPayment;
     tracking_transaction?: PayoutTrackingTransaction;
     tracking_partner_fee?: PayoutTrackingPartnerFee;
-    tracking_liquidity?: PayoutTrackingLiquidity;
-    customer_id: string;
+    tracking_liquidity?: PayoutTrackingLiquidity | null;
+    customer_id: string | null;
 };
 
 export type CreateEvmPayoutInput = {
@@ -174,8 +175,8 @@ export type CreateEvmPayoutResponse = {
     tracking_payment?: PayoutTrackingPayment;
     tracking_transaction?: PayoutTrackingTransaction;
     tracking_partner_fee?: PayoutTrackingPartnerFee;
-    tracking_liquidity?: PayoutTrackingLiquidity;
-    customer_id: string;
+    tracking_liquidity?: PayoutTrackingLiquidity | null;
+    customer_id: string | null;
 };
 
 export type CreateSolanaPayoutInput = {

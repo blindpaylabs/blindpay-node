@@ -292,8 +292,8 @@ export type PaginationParams = {
 
 export type PaginationMetadata = {
     has_more: boolean;
-    next_page: string;
-    prev_page: string;
+    next_page: string | null;
+    prev_page: string | null;
 }
 
 export type ArgentinaTransfers = "CVU" | "CBU" | "ALIAS";
@@ -509,6 +509,7 @@ export type BusinessIndustry =
     | "other"
     | "saas"
     | "social"
+    | "446120"
     | "wallet";
 
 export type AccountPurpose =
@@ -612,11 +613,11 @@ export type PayerRules = {
 
 export type TrackingStatus = 'processing' | 'on_hold' | 'completed' | 'pending_review';
 
-export type EstimatedTimeOfArrival = '5_min' | '30_min' | '2_hours' | '1_business_day' | '2_business_days' | '5_business_days';
+export type EstimatedTimeOfArrival = '5_min' | '30_min' | '2_hours' | '1_business_day' | '2_business_days' | '5_business_days' | "5_30_min";
 
 export type PayoutTrackingTransaction = {
     step: TrackingStatus
-    status: 'failed' | 'found';
+    status: 'failed' | 'found' | null;
     transaction_hash: string | null
     completed_at: string | null
   };

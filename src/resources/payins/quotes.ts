@@ -9,27 +9,27 @@ import type {
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type CreatePayinQuoteInput = {
-    blockchain_wallet_id: string;
+    blockchain_wallet_id: string | null;
     currency_type: CurrencyType;
     payment_method: PayinPaymentMethod;
     request_amount: number;
     token: StablecoinToken;
     is_otc?: boolean | null;
-    cover_fees: boolean;
+    cover_fees: boolean | null;
     partner_fee_id: string | null;
     payer_rules?: PayerRules | null;
-    wallet_id?: string;
+    wallet_id?: string | null;
 };
 
 export type CreatePayinQuoteResponse = {
     id: string;
-    expires_at: number;
-    commercial_quotation: number;
-    blindpay_quotation: number;
-    receiver_amount: number;
-    sender_amount: number;
+    expires_at: number | null;
+    commercial_quotation: number | null;
+    blindpay_quotation: number | null;
+    receiver_amount: number | null;
+    sender_amount: number | null;
     partner_fee_amount?: number | null;
-    flat_fee: number;
+    flat_fee: number | null;
     is_otc?: boolean | null;
 };
 
@@ -41,10 +41,10 @@ export type GetPayinFxRateInput = {
 };
 
 export type GetPayinFxRateResponse = {
-    commercial_quotation: number;
-    blindpay_quotation: number;
+    commercial_quotation: number | null;
+    blindpay_quotation: number | null;
     result_amount: number;
-    instance_flat_fee: number;
+    instance_flat_fee: number | null;
     instance_percentage_fee: number;
 };
 

@@ -33,23 +33,17 @@ describe("string to integer (base-kind mismatch)", () => {
 });
 
 describe("nullable to non-nullable / non-nullable to nullable", () => {
-    it("flags when spec allows null but the SDK type has no | null (nullability checked)", () => {
+    it("flags when spec allows null but the SDK type has no | null", () => {
         const spec = specTypeSignature({ type: ["string", "null"] });
         const sdk = classifySdkType("string", "/unused", "unused.ts");
-        const problems = compareTypeSignatures(spec, sdk, {
-            skipEnumValues: false,
-            skipNullability: false,
-        });
+        const problems = compareTypeSignatures(spec, sdk, { skipEnumValues: false });
         expect(problems).toEqual(['spec allows null but the SDK type has no "| null"']);
     });
 
-    it("does not flag nullability when the blocking pass explicitly skips it (this repo's own house style)", () => {
+    it("accepts a nullable spec field whose SDK type carries | null", () => {
         const spec = specTypeSignature({ type: ["string", "null"] });
-        const sdk = classifySdkType("string", "/unused", "unused.ts");
-        const problems = compareTypeSignatures(spec, sdk, {
-            skipEnumValues: false,
-            skipNullability: true,
-        });
+        const sdk = classifySdkType("string | null", "/unused", "unused.ts");
+        const problems = compareTypeSignatures(spec, sdk, { skipEnumValues: false });
         expect(problems).toEqual([]);
     });
 });

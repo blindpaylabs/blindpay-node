@@ -247,13 +247,10 @@ export function reconcile(
         // consumer-facing type is exactly the kind of change that needs a human's eyes, so every
         // finding here is either a needs-human failure or (if pre-recorded) a known divergence.
         //
-        // Scoped narrower than the full comparison `auditTypes` runs (see audit.ts):
-        //   - nullability is not enforced here. This codebase does not mirror JSON nullability
-        //     into `| null` on response fields as a matter of pervasive, pre-existing house
-        //     style (hundreds of fields), not oversight; retrofitting that is a separate,
-        //     wholesale, human-reviewed pass, not a Phase A concern. `bun run audit:types`
-        //     reports it in full, non-blocking, for exactly that follow-up.
-        //   - discriminator fields (DISCRIMINATOR_FIELDS) are skipped entirely; see its comment.
+        // Nullability is enforced: a spec-nullable field must carry `| null` on every mapped
+        // site, inputs and responses alike. Making a response field nullable breaks consumers,
+        // so it is a needs-human finding, never an auto-applied change.
+        // Discriminator fields (DISCRIMINATOR_FIELDS) are skipped entirely; see its comment.
         for (const field of specProps) {
             if (missingSet.has(field) || DISCRIMINATOR_FIELDS.has(field)) continue;
             const specSig = specTypeSignature(resolveFieldNode(spec, entry.spec, field));
@@ -265,10 +262,7 @@ export function reconcile(
                 const skipEnumValues =
                     enumCovered.has(`${schemaName} ${field}`) ||
                     (!!sdkSig.namedAs && enumSymbolsCovered.has(sdkSig.namedAs));
-                const problems = compareTypeSignatures(specSig, sdkSig, {
-                    skipEnumValues,
-                    skipNullability: true,
-                });
+                const problems = compareTypeSignatures(specSig, sdkSig, { skipEnumValues });
                 for (const problem of problems) {
                     if (isKnownTypeMismatchDivergence(unmodeled, schemaName, field)) {
                         divergencesHit.push(

@@ -10,7 +10,7 @@ import type { InternalApiClient } from "../../internal/api-client";
 export type CreateQuoteInput = {
     bank_account_id: string;
     currency_type: CurrencyType;
-    cover_fees: boolean;
+    cover_fees: boolean | null;
     request_amount: number;
     network: Network;
     token: StablecoinToken;
@@ -20,11 +20,11 @@ export type CreateQuoteInput = {
 };
 export type CreateQuoteResponse = {
     id: string;
-    expires_at: number;
-    commercial_quotation: number;
-    blindpay_quotation: number;
-    receiver_amount: number;
-    sender_amount: number;
+    expires_at: number | null;
+    commercial_quotation: number | null;
+    blindpay_quotation: number | null;
+    receiver_amount: number | null;
+    sender_amount: number | null;
     partner_fee_amount?: number | null;
     flat_fee?: number | null;
     contract?: {
@@ -50,8 +50,8 @@ export type GetFxRateInput = {
 };
 
 export type GetFxRateResponse = {
-    commercial_quotation: number;
-    blindpay_quotation: number;
+    commercial_quotation: number | null;
+    blindpay_quotation: number | null;
     result_amount: number;
     instance_flat_fee?: number | null;
     instance_percentage_fee: number;

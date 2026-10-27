@@ -322,7 +322,7 @@ export function classifyNewOperation(
     }));
     const queryFields: Field[] = queryParams.map((p) => ({
         name: p.name as string,
-        tsType: synthesizeType(ctx, p.schema, !!p.required),
+        tsType: synthesizeType(ctx, p.schema),
         required: !!p.required,
     }));
 

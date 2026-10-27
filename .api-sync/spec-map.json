@@ -20,6 +20,19 @@
         },
         {
             "spec": {
+                "schema": "BankAccountOut",
+                "property": "status"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/bank-accounts/index.ts",
+                    "symbol": "BankAccountStatus"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
                 "schema": "BankAccountWebhookOut",
                 "property": "account_type"
             },

@@ -11,11 +11,11 @@ export type ListBlockchainWalletsInput = string;
 
 export type ListBlockchainWalletsResponse = Array<{
     id: string;
-    name: string;
-    network: Network;
-    address?: string;
-    signature_tx_hash?: string;
-    is_account_abstraction: boolean;
+    name: string | null;
+    network: Network | null;
+    address?: string | null;
+    signature_tx_hash?: string | null;
+    is_account_abstraction: boolean | null;
     is_self_custody: boolean | null;
     customer_id: string;
 }>;
@@ -24,7 +24,7 @@ export type CreateBlockchainWalletWithAddressInput = {
     customer_id: string;
     name: string;
     network: Network;
-    address: string;
+    address: string | null;
     is_self_custody?: boolean;
 };
 
@@ -32,7 +32,7 @@ export type CreateBlockchainWalletWithHashInput = {
     customer_id: string;
     name: string;
     network: Network;
-    signature_tx_hash: string;
+    signature_tx_hash: string | null;
     is_self_custody?: boolean;
 };
 
@@ -48,22 +48,22 @@ export type DeleteBlockchainWalletInput = {
 
 export type GetBlockchainWalletResponse = {
     id: string;
-    name: string;
-    network: Network;
-    address?: string;
-    signature_tx_hash?: string;
-    is_account_abstraction: boolean;
+    name: string | null;
+    network: Network | null;
+    address?: string | null;
+    signature_tx_hash?: string | null;
+    is_account_abstraction: boolean | null;
     is_self_custody: boolean | null;
     customer_id: string;
 };
 
 export type CreateBlockchainWalletResponse = {
     id: string;
-    name: string;
-    network: Network;
-    address?: string;
-    signature_tx_hash?: string;
-    is_account_abstraction: boolean;
+    name: string | null;
+    network: Network | null;
+    address?: string | null;
+    signature_tx_hash?: string | null;
+    is_account_abstraction: boolean | null;
     is_self_custody: boolean | null;
     customer_id: string;
 };

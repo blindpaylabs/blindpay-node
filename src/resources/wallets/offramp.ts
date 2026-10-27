@@ -16,14 +16,14 @@ export type OfframpWalletNetwork =
 
 export type OfframpWallet = {
     id: string;
-    external_id: string;
+    external_id: string | null;
     instance_id: string;
     customer_id: string;
     bank_account_id: string;
     network: OfframpWalletNetwork;
     address: string;
-    created_at: string;
-    updated_at: string;
+    created_at: string | null;
+    updated_at: string | null;
     circle_wallet_id?: string | null;
 };
 

@@ -180,7 +180,7 @@ function main(): void {
     }
 
     if (args.mode === "audit-types") {
-        // Full STATE-based comparison, including nullability; always non-blocking (see audit.ts).
+        // Full STATE-based comparison, deliberate narrowings included; always non-blocking (see audit.ts).
         const findings = auditTypes(spec, map, REPO_ROOT);
         console.log(
             `[api-sync] audit:types: ${findings.length} finding(s) (non-blocking, informational only).`
