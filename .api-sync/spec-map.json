@@ -2123,7 +2123,7 @@
                     "symbol": "ListPayablesResponse"
                 }
             ],
-            "notes": "inline anyOf body ({data, pagination} | PayableOut[]); the SDK models the paginated object branch, as for the other list endpoints."
+            "notes": "inline anyOf body ({data, pagination} | PayableOut[]); the SDK models both branches, and the type check compares the envelope's keys."
         },
         {
             "spec": {

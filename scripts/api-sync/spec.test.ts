@@ -2,7 +2,14 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { loadSpec, operationKeys, reachableSchemas, type Spec, sdkSurface } from "./spec";
+import {
+    loadSpec,
+    operationKeys,
+    reachableSchemas,
+    resolveProperties,
+    type Spec,
+    sdkSurface,
+} from "./spec";
 
 let dir: string | null = null;
 
@@ -64,5 +71,50 @@ describe("sdkSurface", () => {
         const path = join(dir, "spec.json");
         writeFileSync(path, JSON.stringify(input));
         expect(operationKeys(loadSpec(path)).size).toBe(2);
+    });
+});
+
+describe("resolveProperties", () => {
+    it("reads the object branches of a list body that is either a page envelope or a bare array", () => {
+        const spec: Spec = {
+            paths: {
+                "/v1/instances/{instance_id}/payables": {
+                    get: {
+                        responses: {
+                            "200": {
+                                content: {
+                                    "application/json": {
+                                        schema: {
+                                            anyOf: [
+                                                {
+                                                    type: "object",
+                                                    properties: {
+                                                        data: {
+                                                            type: "array",
+                                                            items: ref("PayableOut"),
+                                                        },
+                                                        pagination: { type: "object" },
+                                                    },
+                                                },
+                                                { type: "array", items: ref("PayableOut") },
+                                            ],
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            components: {
+                schemas: { PayableOut: { type: "object", properties: { id: { type: "string" } } } },
+            },
+        };
+        const loc = {
+            path: "/v1/instances/{instance_id}/payables",
+            method: "get",
+            location: "response:200",
+        };
+        expect([...resolveProperties(spec, loc)].sort()).toEqual(["data", "pagination"]);
     });
 });

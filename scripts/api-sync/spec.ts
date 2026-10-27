@@ -128,6 +128,12 @@ function propsOf(spec: Spec, node: JsonValue): Set<string> {
         const item = resolveRef(spec, node.items);
         return new Set(Object.keys(item?.properties ?? {}));
     }
+    const branches = node?.anyOf ?? node?.oneOf;
+    if (!node?.properties && Array.isArray(branches)) {
+        // A list body is a page envelope or a bare array; the envelope is the shape to compare.
+        const objects = branches.map((b) => resolveRef(spec, b)).filter((b) => !isArrayType(b));
+        return new Set(objects.flatMap((b) => Object.keys(b?.properties ?? {})));
+    }
     return new Set(Object.keys(node?.properties ?? {}));
 }
 

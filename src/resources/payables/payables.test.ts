@@ -81,6 +81,24 @@ describe("Payables", () => {
         },
     };
 
+    describe("List payables without pagination params", () => {
+        it("should return a plain array", async () => {
+            const mockedResponse: ListPayablesResponse = [];
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.payables.list();
+
+            expect(error).toBeNull();
+            expect(data).toEqual([]);
+            expect(fetchMock.mock.calls[0][0]).toBe(
+                "https://api.blindpay.com/v1/instances/in_000000000000/payables"
+            );
+        });
+    });
+
     describe("List payables", () => {
         it("should list payables", async () => {
             const mockedPayables: ListPayablesResponse = {

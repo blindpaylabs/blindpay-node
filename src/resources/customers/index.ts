@@ -435,10 +435,14 @@ export type ListCustomersInput = PaginationParams & {
     country?: Country;
 };
 
-export type ListCustomersResponse = {
-    data: Array<IndividualWithStandardKYC | IndividualWithEnhancedKYC | BusinessWithStandardKYB>;
-    pagination: PaginationMetadata;
-};
+export type ListCustomersResponse =
+    | {
+          data: Array<
+              IndividualWithStandardKYC | IndividualWithEnhancedKYC | BusinessWithStandardKYB
+          >;
+          pagination: PaginationMetadata;
+      }
+    | Array<IndividualWithStandardKYC | IndividualWithEnhancedKYC | BusinessWithStandardKYB>;
 
 export type GetCustomerInput = string;
 

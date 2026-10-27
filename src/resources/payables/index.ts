@@ -74,10 +74,12 @@ export type ListPayablesInput = PaginationParams & {
     beneficiary_name?: string;
 };
 
-export type ListPayablesResponse = {
-    data: Payable[];
-    pagination: PaginationMetadata;
-};
+export type ListPayablesResponse =
+    | {
+          data: Payable[];
+          pagination: PaginationMetadata;
+      }
+    | Payable[];
 
 /**
  * Vendor bank account for an invoice payable: the same body

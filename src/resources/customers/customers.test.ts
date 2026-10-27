@@ -16,6 +16,24 @@ describe("Customers", () => {
 
     const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
+    describe("List customers without pagination params", () => {
+        it("should return a plain array", async () => {
+            const mockedResponse: ListCustomersResponse = [];
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.customers.list();
+
+            expect(error).toBeNull();
+            expect(data).toEqual([]);
+            expect(fetchMock.mock.calls[0][0]).toBe(
+                "https://api.blindpay.com/v1/instances/in_000000000000/customers"
+            );
+        });
+    });
+
     describe("List customers", () => {
         it("should list customers", async () => {
             const mockedCustomers: ListCustomersResponse = {

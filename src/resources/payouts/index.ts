@@ -114,10 +114,12 @@ export type ListPayoutsInput = PaginationParams & {
     customer_id?: string;
 };
 
-export type ListPayoutsResponse = {
-    data: Payout[];
-    pagination: PaginationMetadata;
-};
+export type ListPayoutsResponse =
+    | {
+          data: Payout[];
+          pagination: PaginationMetadata;
+      }
+    | Payout[];
 
 export type CreatePayoutInput = {
     customer_id: string;

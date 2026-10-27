@@ -16,6 +16,24 @@ describe("Payouts", () => {
 
     const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
+    describe("List payouts without pagination params", () => {
+        it("should return a plain array", async () => {
+            const mockedResponse: ListPayoutsResponse = [];
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.payouts.list();
+
+            expect(error).toBeNull();
+            expect(data).toEqual([]);
+            expect(fetchMock.mock.calls[0][0]).toBe(
+                "https://api.blindpay.com/v1/instances/in_000000000000/payouts"
+            );
+        });
+    });
+
     describe("List payouts", () => {
         it("should list payouts", async () => {
             const mockedPayouts: ListPayoutsResponse = {
