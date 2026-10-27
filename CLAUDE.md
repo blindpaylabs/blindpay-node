@@ -295,7 +295,7 @@ describe("Widgets", () => {
 bunx changeset
 ```
 
-Select `@blindpay/node`, choose `minor` for new features, and write a summary.
+Choose `minor` for new features and write a summary. The Changesets CLI needs Node `^22.11 || >=24`.
 
 Alternatively, create a file `.changeset/{random-name}.md` manually:
 

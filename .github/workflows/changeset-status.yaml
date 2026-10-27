@@ -1,0 +1,45 @@
+name: Changeset Status
+
+# Non-blocking (https://changesets.dev/guide/automating): comments on every PR whether it carries
+# a changeset, since a PR merged without one releases nothing. pull_request_target so fork PRs
+# get the comment too; it checks out the base branch only and never runs code from the PR.
+
+on:
+  pull_request_target:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+
+jobs:
+  pr-status:
+    name: Read changeset status
+    # The Version Packages PR consumes changesets, so it never has any.
+    if: ${{ !startsWith(github.head_ref, 'changeset-release/') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      comment-body: ${{ steps.pr-status.outputs.comment-body }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Generate PR status
+        id: pr-status
+        uses: changesets/action/pr-status@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+
+  pr-comment:
+    name: Comment changeset status
+    needs: pr-status
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Comment on PR
+        uses: changesets/action/pr-comment@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          body: ${{ needs.pr-status.outputs.comment-body }}

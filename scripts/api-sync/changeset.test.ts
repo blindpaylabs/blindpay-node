@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { changesetFileName, classifyBump, renderChangeset } from "./version";
+import { changesetFileName, classifyBump, renderChangeset } from "./changeset";
 
 describe("classifyBump", () => {
     it("is minor when any enum member was inserted", () => {

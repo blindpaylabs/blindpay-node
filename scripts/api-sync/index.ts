@@ -11,6 +11,7 @@ import {
     insertTypeDeclarations,
 } from "./apply";
 import { auditTypes } from "./audit";
+import { changesetFileName, classifyBump, renderChangeset } from "./changeset";
 import { computeCoverageGaps } from "./coverage";
 import { detectNewSchemas, detectRemovals } from "./diff";
 import { findUnmappedEnumProperties } from "./enum-coverage";
@@ -27,7 +28,6 @@ import type {
     SpecMap,
     SyncReport,
 } from "./types";
-import { changesetFileName, classifyBump, renderChangeset } from "./version";
 
 /**
  * Every "METHOD path" in the spec with no matching SDK endpoint, classified: STANDARD ones
