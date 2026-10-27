@@ -18,27 +18,31 @@ export function classifyBump(
     return "none";
 }
 
-export function bumpSemver(version: string, bump: BumpType): string {
-    const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(version);
-    if (!match) throw new Error(`cannot parse semver "${version}"`);
-    const major = Number(match[1]);
-    const minor = Number(match[2]);
-    const patch = Number(match[3]);
-    if (bump === "minor") return `${major}.${minor + 1}.0`;
-    if (bump === "patch") return `${major}.${minor}.${patch + 1}`;
-    return version;
+/**
+ * Named after the delivered spec, not a random Changesets name: the determinism proof applies
+ * twice and diffs, and two syncs queued behind one Version Packages PR must not overwrite
+ * each other's changeset.
+ */
+export function changesetFileName(specSha256: string): string {
+    if (!/^[0-9a-f]{64}$/.test(specSha256))
+        throw new Error(`expected a sha256 hex digest, got "${specSha256}"`);
+    return `api-sync-${specSha256.slice(0, 12)}.md`;
 }
 
-/** Targeted regex replace, never a JSON.parse/stringify round trip: preserves every other byte of package.json. */
-export function patchPackageJsonVersion(raw: string, newVersion: string): string {
-    const re = /"version":\s*"\d+\.\d+\.\d+"/;
-    if (!re.test(raw))
-        throw new Error('could not find a plain-semver "version" field in package.json');
-    return raw.replace(re, `"version": "${newVersion}"`);
-}
-
-export function readPackageJsonVersion(raw: string): string {
-    const match = /"version":\s*"(\d+\.\d+\.\d+)"/.exec(raw);
-    if (!match) throw new Error('could not find a plain-semver "version" field in package.json');
-    return match[1];
+/** The bump ships through the Version Packages PR; package.json is never edited here. */
+export function renderChangeset(
+    packageName: string,
+    bump: Exclude<BumpType, "none">,
+    applied: string[]
+): string {
+    return [
+        "---",
+        `"${packageName}": ${bump}`,
+        "---",
+        "",
+        "Sync SDK with API changes:",
+        "",
+        ...applied.map((a) => `- ${a}`),
+        "",
+    ].join("\n");
 }

@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-    bumpSemver,
-    classifyBump,
-    patchPackageJsonVersion,
-    readPackageJsonVersion,
-} from "./version";
+import { changesetFileName, classifyBump, renderChangeset } from "./version";
 
 describe("classifyBump", () => {
     it("is minor when any enum member was inserted", () => {
@@ -21,37 +16,43 @@ describe("classifyBump", () => {
     });
 });
 
-describe("bumpSemver", () => {
-    it("bumps minor and resets patch to 0", () => {
-        expect(bumpSemver("5.0.1", "minor")).toBe("5.1.0");
+describe("changesetFileName", () => {
+    it("derives a stable name from the spec sha256", () => {
+        const sha = "a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90";
+        expect(changesetFileName(sha)).toBe("api-sync-a1b2c3d4e5f6.md");
+        expect(changesetFileName(sha)).toBe(changesetFileName(sha));
     });
 
-    it("bumps patch only", () => {
-        expect(bumpSemver("5.0.1", "patch")).toBe("5.0.2");
-    });
-
-    it("leaves the version unchanged for none", () => {
-        expect(bumpSemver("5.0.1", "none")).toBe("5.0.1");
-    });
-
-    it("throws on an unparseable version", () => {
-        expect(() => bumpSemver("5.0", "minor")).toThrow();
+    it("throws on a value that is not a sha256 hex digest", () => {
+        expect(() => changesetFileName("not-a-sha")).toThrow();
     });
 });
 
-describe("patchPackageJsonVersion", () => {
-    it("replaces only the version field, byte-for-byte elsewhere", () => {
-        const raw =
-            '{\n    "name": "@blindpay/node",\n    "version": "5.0.1",\n    "other": true\n}\n';
-        const patched = patchPackageJsonVersion(raw, "5.1.0");
-        expect(patched).toBe(
-            '{\n    "name": "@blindpay/node",\n    "version": "5.1.0",\n    "other": true\n}\n'
+describe("renderChangeset", () => {
+    it("renders the package bump and every applied change", () => {
+        expect(
+            renderChangeset("@blindpay/node", "minor", [
+                'add enum member "GBP" to types/index.d.ts:Currency (PayinOut.currency)',
+                'add field "foo?: string" to types/index.d.ts:Payin (PayinOut)',
+            ])
+        ).toBe(
+            [
+                "---",
+                '"@blindpay/node": minor',
+                "---",
+                "",
+                "Sync SDK with API changes:",
+                "",
+                '- add enum member "GBP" to types/index.d.ts:Currency (PayinOut.currency)',
+                '- add field "foo?: string" to types/index.d.ts:Payin (PayinOut)',
+                "",
+            ].join("\n")
         );
     });
 
-    it("round-trips through readPackageJsonVersion", () => {
-        const raw = '{"version": "1.2.3"}';
-        expect(readPackageJsonVersion(raw)).toBe("1.2.3");
-        expect(readPackageJsonVersion(patchPackageJsonVersion(raw, "1.3.0"))).toBe("1.3.0");
+    it("renders a patch bump", () => {
+        expect(renderChangeset("@blindpay/node", "patch", ["x"])).toContain(
+            '"@blindpay/node": patch'
+        );
     });
 });

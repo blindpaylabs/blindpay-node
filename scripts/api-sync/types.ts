@@ -178,7 +178,7 @@ export type SyncReport = {
     needsHuman: string[];
     knownDivergences: string[];
     bump: BumpType;
-    previousVersion: string | null;
-    newVersion: string | null;
+    /** Repo-relative path of the changeset written for this run, or null when nothing applied. */
+    changeset: string | null;
     coverageGaps: string[];
 };
