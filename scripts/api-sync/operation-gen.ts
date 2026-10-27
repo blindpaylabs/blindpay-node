@@ -200,6 +200,13 @@ export function classifyNewOperation(
         };
     }
 
+    if (method === "delete" && op.requestBody) {
+        return {
+            standard: false,
+            reason: `"${method} ${path}" has a request body; the client's delete never sends one.`,
+        };
+    }
+
     const requestBodyKind = jsonContentOnly(op.requestBody?.content);
     if (requestBodyKind === "other") {
         return {
@@ -224,9 +231,9 @@ export function classifyNewOperation(
     }
 
     const parameters: JsonValue[] = op.parameters ?? [];
-    // An *optional* header (e.g. every mutation's "Idempotency-Key") is never modeled by this
-    // SDK at all, on any existing hand-written method; only a REQUIRED header/cookie param is
-    // out of the generator's scope, since the template has nowhere to plumb it from.
+    // Optional headers aren't parameters of the generated method: every mutation's
+    // "Idempotency-Key" travels in its trailing RequestOptions. Only a REQUIRED header/cookie
+    // param is out of the generator's scope, since the template has nowhere to plumb it from.
     if (parameters.some((p) => (p.in === "header" || p.in === "cookie") && p.required)) {
         return {
             standard: false,

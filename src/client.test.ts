@@ -41,6 +41,17 @@ describe("BlindPay client", () => {
         });
     });
 
+    it("keeps only the envelope's documented fields, and only when they're well typed", async () => {
+        fetchMock.mockResponseOnce(
+            JSON.stringify({ message: 42, code: "X", errors: ["a", 1], debug: { sql: "..." } }),
+            { status: 500 }
+        );
+
+        const { error } = await blindpay.payouts.get("pa_000000000000");
+
+        expect(error).toStrictEqual({ message: "Unknown error", code: "X" });
+    });
+
     it("keeps only a message when the error body is not an object", async () => {
         fetchMock.mockResponseOnce(JSON.stringify("Bad Gateway"), { status: 502 });
 
@@ -133,6 +144,14 @@ describe("Idempotency-Key", () => {
         await blindpay.customers.delete("cu_000000000000", { idempotencyKey: "retry-1" });
 
         expect(sentKey()).toBe("retry-1");
+    });
+
+    it("is sent even when empty, so the API rejects it instead of the SDK dropping it", async () => {
+        fetchMock.mockResponseOnce(JSON.stringify({ id: "pa_000000000000" }));
+
+        await blindpay.payouts.createEvm(payout, { idempotencyKey: "" });
+
+        expect(sentKey()).toBe("");
     });
 
     it("is not sent when the call has none", async () => {

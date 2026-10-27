@@ -73,6 +73,16 @@ describe("nullability expressed through a reference or a composition", () => {
         ).toBe(true);
     });
 
+    it("stops at a reference cycle instead of recursing forever", () => {
+        const cyclic = {
+            paths: {},
+            components: {
+                schemas: { A: { anyOf: [{ $ref: "#/components/schemas/A" }, { type: "null" }] } },
+            },
+        };
+        expect(specTypeSignature(ref("A"), cyclic).nullable).toBe(true);
+    });
+
     it("reads it from an allOf that wraps a reference in a nullable object", () => {
         const node = { allOf: [ref("FeeOptions"), { type: ["object", "null"] }] };
         expect(specTypeSignature(node, spec).nullable).toBe(true);

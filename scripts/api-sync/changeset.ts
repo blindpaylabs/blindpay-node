@@ -59,8 +59,9 @@ export function mergeChangeset(
     applied: string[]
 ): string {
     if (existing === null) return renderChangeset(packageName, bump, applied);
-    const earlierBump = /^".+": minor$/m.test(existing) ? "minor" : bump;
+    // Both patterns read renderChangeset's own output: the bump line and the "- " bullets.
+    const mergedBump = /^".+": minor$/m.test(existing) ? "minor" : bump;
     const earlierApplied = [...existing.matchAll(/^- (.+)$/gm)].map((match) => match[1]);
     const merged = [...new Set([...earlierApplied, ...applied])].sort();
-    return renderChangeset(packageName, earlierBump, merged);
+    return renderChangeset(packageName, mergedBump, merged);
 }

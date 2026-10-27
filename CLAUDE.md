@@ -28,12 +28,14 @@ blindpay-node/
     internal/
       api-client.ts                     # InternalApiClient interface (get/post/put/patch/delete)
       blindpay-error.ts                 # BlindPayError class
+      error-response.ts                 # toErrorResponse: API error envelope -> ErrorResponse
       helpers/strict-omit.ts            # StrictOmit<T, K> utility type
       vitest-fetch-mock.d.ts            # Type declaration for fetch mock
     resources/
       {resource-name}/
         index.ts                        # Types + factory function for the resource
         {resource-name}.test.ts         # Tests (colocated with resource)
+      request-options.test.ts           # Fails on a mutation that doesn't forward RequestOptions
       wallets/                          # Grouped sub-resources (no index.ts)
         blockchain.ts                   # createBlockchainWalletsResource
         blockchain.test.ts
@@ -46,6 +48,9 @@ blindpay-node/
         quotes.ts                       # createPayinQuotesResource (sub-resource)
         payins.test.ts
         payins-quotes.test.ts
+      webhooks/
+        index.ts                        # Webhook endpoints and the WebhookEvents name union
+        events.ts                       # WebhookEvent: payload union keyed on webhook_event
 ```
 
 ## Conventions

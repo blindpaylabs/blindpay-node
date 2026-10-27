@@ -14,7 +14,7 @@ import type {
     TransactionStatus,
     WalletToken,
 } from "../../../types";
-import type { ListBankAccountsResponse } from "../bank-accounts";
+import type { BankAccount } from "../bank-accounts";
 import type { GetCustomerResponse, GetLimitIncreaseRequestsResponse, KycType } from "../customers";
 import type { Payable } from "../payables";
 import type { BlindpayBankDetails } from "../payins";
@@ -28,7 +28,7 @@ import type { CustodialWallet } from "../wallets/custodial";
 
 export type BankAccountWebhookEvent = {
     webhook_event: "bankAccount.new";
-} & ListBankAccountsResponse[number];
+} & BankAccount;
 
 export type BlockchainWalletWebhookEvent = {
     webhook_event: "blockchainWallet.new" | "blockchainWallet.update";

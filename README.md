@@ -115,11 +115,11 @@ const { data, error } = await blindpay.payouts.createEvm(
 
 ```typescript
 const event = blindpay.constructWebhookEvent({
-  secret: process.env.BLINDPAY_WEBHOOK_SECRET,
+  secret: process.env.BLINDPAY_WEBHOOK_SECRET as string,
   headers: {
-    id: req.headers['svix-id'],
-    timestamp: req.headers['svix-timestamp'],
-    signature: req.headers['svix-signature'],
+    id: req.headers['svix-id'] as string,
+    timestamp: req.headers['svix-timestamp'] as string,
+    signature: req.headers['svix-signature'] as string,
   },
   payload: rawBody,
 });

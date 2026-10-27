@@ -42,12 +42,15 @@ export function specTypeSignature(node: unknown, spec?: Spec): TypeSignature {
  * blindpay-v2 writes a nullable reference as `allOf: [ref, { type: ["object", "null"] }]` or an
  * anyOf with a `{ type: "null" }` branch, so null can sit on any of them.
  */
-function alternatives(node: JsonValue, spec?: Spec): JsonValue[] {
+function alternatives(node: JsonValue, spec?: Spec, seen = new Set<string>()): JsonValue[] {
     if (typeof node?.$ref === "string" && spec) {
-        return alternatives(spec.components.schemas[node.$ref.split("/").pop()], spec);
+        const name = node.$ref.split("/").pop();
+        if (seen.has(name)) return [];
+        seen.add(name);
+        return alternatives(spec.components.schemas[name], spec, seen);
     }
     const branches = node?.anyOf ?? node?.oneOf ?? node?.allOf;
-    if (Array.isArray(branches)) return branches.flatMap((b) => alternatives(b, spec));
+    if (Array.isArray(branches)) return branches.flatMap((b) => alternatives(b, spec, seen));
     return [node];
 }
 

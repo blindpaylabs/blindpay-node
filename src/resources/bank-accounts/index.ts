@@ -12,6 +12,7 @@ import type {
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { SpeiProtocol } from "../payouts";
+import type { OfframpWalletNetwork } from "../wallets/offramp";
 
 export type RecipientRelationship =
     | "first_party"
@@ -101,8 +102,9 @@ export type ListBankAccountsResponse = Array<{
     offramp_wallets?: Array<{
         address: string;
         id: string;
-        network: "tron";
-        external_id: string;
+        network: OfframpWalletNetwork;
+        external_id?: string | null;
+        circle_wallet_id?: string | null;
     }> | null;
     business_industry?: BusinessIndustry | null;
     phone_number?: string | null;

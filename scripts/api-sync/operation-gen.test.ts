@@ -176,6 +176,31 @@ describe("operation-insert classifier", () => {
             );
         });
 
+        it("leaves a DELETE with a body to a human: the client's delete sends none", () => {
+            const spec: Spec = {
+                paths: {
+                    "/v1/instances/{instance_id}/widgets/{id}": {
+                        delete: {
+                            parameters: [{ name: "id", in: "path", required: true }],
+                            requestBody: json(object),
+                            responses: { "200": json(object) },
+                        },
+                    },
+                },
+                components: { schemas: {} },
+            };
+            const repoRoot = makeRepo(baseFiles());
+            const result = classifyNewOperation(
+                spec,
+                "delete",
+                "/v1/instances/{instance_id}/widgets/{id}",
+                emptyMap(),
+                repoRoot,
+                loadCanonicalEnums(repoRoot)
+            );
+            expect(result.standard).toBe(false);
+        });
+
         it("is never added to a GET", () => {
             const change = classify("get", "/v1/instances/{instance_id}/widgets/{id}", {
                 parameters: [{ name: "id", in: "path", required: true }],

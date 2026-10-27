@@ -80,13 +80,6 @@
     ],
     "knownDivergences": [
         {
-            "kind": "property",
-            "schema": "BankAccountOut",
-            "field": "offramp_wallets.[].circle_wallet_id",
-            "reason": "ListBankAccountsResponse's inline offramp_wallets literal (bank-accounts/index.ts:88-93) models {address,id,network,external_id} but spec's BankAccountOut.offramp_wallets item also carries circle_wallet_id; a narrower, independently-named SDK symbol would be needed to track this sub-shape mechanically.",
-            "owner": "eric@blindpay.com"
-        },
-        {
             "kind": "type-mismatch",
             "schema": "BankAccountOut",
             "field": "swift_payment_code",

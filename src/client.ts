@@ -27,6 +27,18 @@ import { createOfframpWalletsResource } from "./resources/wallets/offramp";
 import { createWebhookEndpointsResource } from "./resources/webhooks";
 import type { WebhookEvent } from "./resources/webhooks/events";
 
+/** What `verifyWebhookSignature` and `constructWebhookEvent` check: the svix-* headers. */
+export type WebhookVerificationInput = {
+    secret: string;
+    headers: {
+        id: string;
+        timestamp: string;
+        signature: string;
+    };
+    /** The raw request body: re-serialized JSON changes the bytes and fails verification. */
+    payload: string;
+};
+
 export class BlindPay {
     // Options
     private readonly baseUrl = "https://api.blindpay.com/v1";
@@ -154,9 +166,10 @@ export class BlindPay {
             const idempotencyKey = options?.idempotencyKey;
             const response = await fetch(`${this.baseUrl}${path}`, {
                 method,
-                headers: idempotencyKey
-                    ? { ...this.headers, "Idempotency-Key": idempotencyKey }
-                    : this.headers,
+                headers:
+                    idempotencyKey === undefined
+                        ? this.headers
+                        : { ...this.headers, "Idempotency-Key": idempotencyKey },
                 body: body ? JSON.stringify(body) : undefined,
             });
 
@@ -273,17 +286,6 @@ export class BlindPay {
         }
     }
 }
-
-export type WebhookVerificationInput = {
-    secret: string;
-    headers: {
-        id: string;
-        timestamp: string;
-        signature: string;
-    };
-    /** The raw request body: re-serialized JSON changes the bytes and fails verification. */
-    payload: string;
-};
 
 /** Returns the parsed payload when the Svix signature and timestamp verify, else throws. */
 function verifyWithSvix({ secret, headers, payload }: WebhookVerificationInput): unknown {

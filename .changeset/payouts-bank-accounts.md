@@ -10,6 +10,7 @@ Bank account and payout types now match the API.
 - `bankAccounts.delete` and `payouts.submitDocuments` now resolve to `{ success: boolean }` (`SuccessResponse`). `SubmitPayoutDocumentsResponse` no longer has an `id`.
 - `ListBankAccountsInput.status` only accepts a `BankAccountStatus` (`verifying`, `approved`, `rejected`, `deprecated`) instead of any string.
 - `ListBankAccountsResponse[].swift_intermediary_bank_swift_code_bic` can be `null`.
+- `ListBankAccountsResponse[].offramp_wallets[]` matches the API: `network` is any `OfframpWalletNetwork` (not only `"tron"`), `external_id` is optional and can be `null`, and `circle_wallet_id` is added.
 - `createTed` requires `account_number` and `account_type`, which the API needs to create a TED account.
 - On the payout tracking objects (`PayoutTrackingTransaction`, `PayoutTrackingPayment`, `PayoutTrackingLiquidity`, `PayoutTrackingComplete`, `PayoutTrackingPartnerFee`) only `step` is always present; every other key is now optional, since the API can leave it out.
 
