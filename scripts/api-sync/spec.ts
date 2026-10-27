@@ -11,7 +11,25 @@ export type Spec = {
 };
 
 export function loadSpec(path: string): Spec {
-    return JSON.parse(readFileSync(path, "utf8"));
+    return sdkSurface(JSON.parse(readFileSync(path, "utf8")));
+}
+
+/**
+ * The spec minus operations blindpay-v2 marks `x-sdk: false`. Every route there declares the
+ * flag (enforced by its check-sdk-tags.yml), and `false` means "exclude from the SDKs", so
+ * those operations, and schemas reachable only through them, are never gaps or new schemas.
+ */
+export function sdkSurface(spec: Spec): Spec {
+    const paths: Spec["paths"] = {};
+    for (const [path, item] of Object.entries(spec.paths)) {
+        const kept = Object.fromEntries(
+            Object.entries(item).filter(
+                ([, op]) => !(op && typeof op === "object" && op["x-sdk"] === false)
+            )
+        );
+        if (Object.keys(kept).length > 0) paths[path] = kept;
+    }
+    return { ...spec, paths };
 }
 
 function collectRefs(node: JsonValue, out: Set<string>): void {

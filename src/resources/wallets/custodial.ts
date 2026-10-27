@@ -2,7 +2,6 @@ import type {
     BlindpayApiResponse,
     Network,
     PaginationMetadata,
-    PaginationParams,
     StablecoinToken,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
@@ -113,111 +112,6 @@ export type GetCustodialWalletDepositsResponse = {
     pagination: PaginationMetadata;
 };
 
-export type GetCustodialWalletYieldInput = {
-    customer_id: string;
-    id: string;
-};
-
-export type YieldVault = {
-    address: string;
-    apy: number | null;
-};
-
-export type YieldPosition = {
-    token: StablecoinToken;
-    vault: YieldVault;
-    apy: number | null;
-    gross_amount: number;
-    fee_accrued: number;
-    earning_amount: number;
-    max_withdrawable: number;
-    total_deposited: number;
-    total_withdrawn: number;
-    lifetime_earned_amount: number;
-};
-
-export type GetCustodialWalletYieldResponse = {
-    status: YieldStatus;
-    as_of: string;
-    fee_bps: number;
-    positions: YieldPosition[];
-};
-
-export type GetCustodialWalletYieldHistoryInput = {
-    customer_id: string;
-    id: string;
-    token?: StablecoinToken;
-    from?: string;
-    to?: string;
-};
-
-export type YieldHistoryRow = {
-    date: string;
-    token: StablecoinToken;
-    earning_amount: number;
-    earned_day: number;
-    apy: number | null;
-};
-
-export type GetCustodialWalletYieldHistoryResponse = {
-    data: YieldHistoryRow[];
-};
-
-export type GetCustodialWalletYieldTransactionsInput = PaginationParams & {
-    customer_id: string;
-    id: string;
-    token?: StablecoinToken;
-};
-
-export type YieldTransactionType = "deposit" | "redeem" | "fee";
-
-export type YieldTransactionTrigger =
-    | "sweep"
-    | "payout"
-    | "transfer"
-    | "disable"
-    | "fee_collection";
-
-export type YieldTransactionStatus = "pending" | "confirmed" | "failed";
-
-export type YieldTransactionReferenceType = "payout" | "transfer";
-
-export type YieldTransactionReference = {
-    type: YieldTransactionReferenceType;
-    id: string;
-};
-
-export type YieldTransaction = {
-    id: string;
-    token: StablecoinToken;
-    type: YieldTransactionType;
-    trigger: YieldTransactionTrigger;
-    reference: YieldTransactionReference | null;
-    status: YieldTransactionStatus;
-    amount: number;
-    transaction_hash: string | null;
-    created_at: string;
-};
-
-export type GetCustodialWalletYieldTransactionsResponse = {
-    data: YieldTransaction[];
-    pagination: PaginationMetadata;
-};
-
-export type EnableCustodialWalletYieldInput = {
-    customer_id: string;
-    id: string;
-};
-
-export type EnableCustodialWalletYieldResponse = CustodialWallet;
-
-export type DisableCustodialWalletYieldInput = {
-    customer_id: string;
-    id: string;
-};
-
-export type DisableCustodialWalletYieldResponse = CustodialWallet;
-
 function toQueryString(params: Record<string, string | undefined>): string {
     const query = new URLSearchParams();
     for (const [key, value] of Object.entries(params)) {
@@ -273,60 +167,6 @@ export function createCustodialWalletsResource(instanceId: string, client: Inter
         > {
             return client.get(
                 `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/deposits${toQueryString(params)}`
-            );
-        },
-        getYield({
-            customer_id,
-            id,
-        }: GetCustodialWalletYieldInput): Promise<
-            BlindpayApiResponse<GetCustodialWalletYieldResponse>
-        > {
-            return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/yield`
-            );
-        },
-        getYieldHistory({
-            customer_id,
-            id,
-            ...params
-        }: GetCustodialWalletYieldHistoryInput): Promise<
-            BlindpayApiResponse<GetCustodialWalletYieldHistoryResponse>
-        > {
-            return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/yield/history${toQueryString(params)}`
-            );
-        },
-        getYieldTransactions({
-            customer_id,
-            id,
-            ...params
-        }: GetCustodialWalletYieldTransactionsInput): Promise<
-            BlindpayApiResponse<GetCustodialWalletYieldTransactionsResponse>
-        > {
-            return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/yield/transactions${toQueryString(params)}`
-            );
-        },
-        enableYield({
-            customer_id,
-            id,
-        }: EnableCustodialWalletYieldInput): Promise<
-            BlindpayApiResponse<EnableCustodialWalletYieldResponse>
-        > {
-            return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/yield/enable`,
-                {}
-            );
-        },
-        disableYield({
-            customer_id,
-            id,
-        }: DisableCustodialWalletYieldInput): Promise<
-            BlindpayApiResponse<DisableCustodialWalletYieldResponse>
-        > {
-            return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/yield/disable`,
-                {}
             );
         },
     };

@@ -4,8 +4,6 @@ import type {
     CreateVirtualAccountResponse,
     GetVirtualAccountResponse,
     ListVirtualAccountsResponse,
-    SimulateBrebDepositResponse,
-    SimulateSpeiDepositResponse,
 } from "./index";
 
 describe("Virtual accounts", () => {
@@ -289,76 +287,6 @@ describe("Virtual accounts", () => {
 
             expect(error).toBeNull();
             expect(data).toEqual(null);
-        });
-    });
-
-    describe("Simulate SPEI deposit", () => {
-        it("should simulate a SPEI deposit", async () => {
-            const mockedResponse: SimulateSpeiDepositResponse = { success: true };
-
-            fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
-                headers: { "Content-Type": "application/json" },
-            });
-
-            const { data, error } = await blindpay.virtualAccounts.simulateSpeiDeposit({
-                customer_id: "re_000000000000",
-                id: "va_000000000000",
-                amount: 1000000,
-                sender_name: "Juan Perez",
-                sender_clabe: "012180001234567890",
-                sender_rfc_curp: "PEPJ800101ABC",
-                deposit_id: null,
-            });
-
-            expect(error).toBeNull();
-            expect(data).toEqual(mockedResponse);
-
-            const [url, init] = fetchMock.mock.calls[0];
-            expect(url).toContain(
-                "/instances/in_000000000000/customers/re_000000000000/virtual-accounts/va_000000000000/simulate-spei-deposit"
-            );
-            expect(init?.method).toBe("POST");
-            expect(JSON.parse(init?.body as string)).toEqual({
-                amount: 1000000,
-                sender_name: "Juan Perez",
-                sender_clabe: "012180001234567890",
-                sender_rfc_curp: "PEPJ800101ABC",
-                deposit_id: null,
-            });
-        });
-    });
-
-    describe("Simulate Bre-B deposit", () => {
-        it("should simulate a Bre-B deposit", async () => {
-            const mockedResponse: SimulateBrebDepositResponse = { success: true };
-
-            fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
-                headers: { "Content-Type": "application/json" },
-            });
-
-            const { data, error } = await blindpay.virtualAccounts.simulateBrebDeposit({
-                customer_id: "re_000000000000",
-                id: "va_000000000000",
-                amount: 5000000,
-                sender_name: "Maria Gomez",
-                sender_document_type: "CC",
-                sender_document_id: "1234567890",
-            });
-
-            expect(error).toBeNull();
-            expect(data).toEqual(mockedResponse);
-
-            const [url, init] = fetchMock.mock.calls[0];
-            expect(url).toContain(
-                "/instances/in_000000000000/customers/re_000000000000/virtual-accounts/va_000000000000/simulate-breb-deposit"
-            );
-            expect(init?.method).toBe("POST");
-            expect(JSON.parse(init?.body as string)).toEqual({
-                amount: 5000000,
-                sender_name: "Maria Gomez",
-                sender_document_type: "CC",
-                sender_document_id: "1234567890",
-            });
         });
     });
 });
