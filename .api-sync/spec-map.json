@@ -1857,6 +1857,10 @@
             },
             "sdk": [
                 {
+                    "file": "types/index.d.ts",
+                    "symbol": "SuccessResponse"
+                },
+                {
                     "file": "src/resources/instances/index.ts",
                     "symbol": "MigrateInstanceOwnershipResponse"
                 }

@@ -14,6 +14,11 @@ export type BlindpaySuccessResponse<T> = {
     error: null;
 }
 
+/** Body of every endpoint whose only answer is `{ success: true }` (deletes, most updates). */
+export type SuccessResponse = {
+    success: boolean;
+}
+
 export type CurrencyType = "sender" | "receiver";
 
 export type Network = "base" | "sepolia" | "arbitrum_sepolia" | "base_sepolia" | "arbitrum" | "polygon" | "polygon_amoy" | "ethereum" | "stellar" | "stellar_testnet" | "tron" | "solana" | "solana_devnet" | "arc" | "arc_testnet" | "tempo" | "tempo_testnet";
