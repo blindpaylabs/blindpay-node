@@ -99,5 +99,30 @@ describe("Quotes", () => {
 
             expect(error).toBeNull();
         });
+
+        it("should request a USDC to GBP FX rate", async () => {
+            fetchMock.mockResponseOnce(
+                JSON.stringify({
+                    commercial_quotation: 0.74,
+                    blindpay_quotation: 0.73,
+                    result_amount: 730,
+                    instance_flat_fee: 50,
+                    instance_percentage_fee: 0,
+                }),
+                { headers: { "Content-Type": "application/json" } }
+            );
+
+            const { error } = await blindpay.quotes.getFxRate({
+                currency_type: "sender",
+                from: "USDC",
+                to: "GBP",
+                request_amount: 1000,
+            });
+
+            expect(error).toBeNull();
+            expect(JSON.parse(fetchMock.mock.calls[0][1]?.body as string)).toMatchObject({
+                to: "GBP",
+            });
+        });
     });
 });
