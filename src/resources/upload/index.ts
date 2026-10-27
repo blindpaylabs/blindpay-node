@@ -1,7 +1,7 @@
 import type { BlindpayApiResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
-export type UploadBucket = "avatar" | "onboarding" | "limit_increase";
+export type UploadBucket = "avatar" | "onboarding" | "limit_increase" | "documents";
 
 export type UploadInput = {
     file: File | Blob;

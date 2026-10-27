@@ -25,6 +25,10 @@ export type WebhookEvents =
     | "wallet.inbound"
     | "customer.new"
     | "customer.update"
+    | "payable.complete"
+    | "payable.new"
+    | "payable.update"
+    | "wallet.update"
     | "customer.delete";
 
 export type CreateWebhookEndpointInput = {

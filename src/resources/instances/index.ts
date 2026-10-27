@@ -46,6 +46,11 @@ export type UpdateInstanceInput = {
     customer_invite_redirect_url?: string | null;
     email_notifications?: boolean;
     require_passkey?: boolean;
+    accent_color?: string | null;
+    logo_url?: string | null;
+    partner_tos_link?: string | null;
+    partner_tos_screenshot?: string | null;
+    partner_tos_terms_accepted?: boolean;
 };
 
 export type DeleteInstanceMemberInput = string;

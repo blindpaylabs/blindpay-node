@@ -43,6 +43,8 @@ export type WalletTokenBalance = {
     id: string;
     symbol: StablecoinToken;
     amount: number;
+    earning_amount?: number;
+    total_amount?: number;
 };
 
 export type GetCustodialWalletBalanceInput = {
@@ -54,6 +56,8 @@ export type GetCustodialWalletBalanceResponse = {
     USDC: WalletTokenBalance;
     USDT: WalletTokenBalance;
     USDB: WalletTokenBalance;
+    EURB?: string;
+    EURC?: string;
 };
 
 export type DeleteCustodialWalletInput = {

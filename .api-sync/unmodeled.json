@@ -219,6 +219,13 @@
         },
         {
             "kind": "property",
+            "schema": "GetFeesOut",
+            "field": "yield",
+            "reason": "Optional, nullable yield performance-fee split (YieldFee: blindpay_share_bps, partner_share_bps, partner_wallet_address) added to the billing fees response; GetFeesResponse in src/resources/fees/index.ts does not model it. Belongs to the fees resource, not the custodial wallets yield work.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "kind": "property",
             "schema": "PayinOut",
             "field": "approved_risk_sources",
             "reason": "See tracking_payment.review_source: same pending PR.",
@@ -698,14 +705,6 @@
             "owner": "eric@blindpay.com"
         },
         {
-            "kind": "enum",
-            "schema": "CustomerOut",
-            "enumProperty": "kyc_status",
-            "reason": "Spec's kyc_status has 8 values (verifying, approved, rejected, deprecated, pending_review, awaiting_contract, compliance_request, approved_rfi); this SDK's KycStatus models 7, missing approved_rfi. approved_rfi is reached only through the RFI resource, which this SDK does not implement (see ignore.schemas); adding the enum member without the resource would be misleading.",
-            "owner": "eric@blindpay.com",
-            "member": "approved_rfi"
-        },
-        {
             "kind": "property",
             "schema": "CustomerOut",
             "field": "recipient_relationship",
@@ -804,7 +803,20 @@
             "owner": "eric@blindpay.com"
         }
     ],
-    "enumPropertyOmissions": [],
+    "enumPropertyOmissions": [
+        {
+            "schema": "BankAccountOut",
+            "property": "swift_intermediary_bank_routing_number",
+            "reason": "anyOf of {enum: [\"\"]}, {pattern: ^\\d{9}$}, null: the only enum member is the empty-string sentinel that allows a blank value next to a free-form 9-digit ABA routing number, so there is no closed value set to map to a union (\"\" | string collapses to string). Modeled as `swift_intermediary_bank_routing_number?: string | null` on ListBankAccountsResponse and CreateInternationalSwiftResponse.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "CreateBankAccountIn",
+            "property": "swift_intermediary_bank_routing_number",
+            "reason": "anyOf of {enum: [\"\"]}, {pattern: ^\\d{9}$}, null: the only enum member is the empty-string sentinel that allows a blank value next to a free-form 9-digit ABA routing number, so there is no closed value set to map to a union (\"\" | string collapses to string). Modeled as `swift_intermediary_bank_routing_number?: string | null` on CreateInternationalSwiftInput.",
+            "owner": "thayto@blindpay.com"
+        }
+    ],
     "nestedShapeOmissions": [
         {
             "schema": "BankAccountOut",
@@ -1249,6 +1261,150 @@
             "path": "tracking_payment.review_contexts",
             "reason": "Inline nested shape added to the payin tracking_payment step alongside review_source/review_context; the SDK does not model it yet (same pending tracking_payment PR). Recorded so main's test suite goes green again.",
             "owner": "darlan@blindpay.com"
+        },
+        {
+            "schema": "Rfi",
+            "path": "response",
+            "reason": "Free-form map (additionalProperties: string | uri[]), no fixed properties to map. Modeled as RfiResponse = Record<string, string | string[]> on CustomerRfi.response; recorded because nested-coverage only accepts omissions.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "InstanceRfi",
+            "path": "response",
+            "reason": "Free-form map (additionalProperties: string | uri[]), no fixed properties to map. Modeled as RfiResponse = Record<string, string | string[]> on InstanceRfi.response; recorded because nested-coverage only accepts omissions.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "RfiField",
+            "path": "items[]",
+            "reason": "Modeled inline on RfiField.items as Array<{ label: string; value: string }>; recorded because nested-coverage has no nested map-entry kind and only accepts omissions.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "CreateVirtualAccountIn",
+            "path": "bre_b",
+            "reason": "Typed inline by the api-sync field-insert, compiled from the spec property's own properties. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "VirtualAccountOut",
+            "path": "co",
+            "reason": "Typed inline by the api-sync field-insert, compiled from the spec property's own properties. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "VirtualAccountOut",
+            "path": "co.bre_b",
+            "reason": "Typed inline by the api-sync field-insert, compiled from the spec property's own properties. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "VirtualAccountOut",
+            "path": "co.beneficiary",
+            "reason": "Typed inline by the api-sync field-insert, compiled from the spec property's own properties. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "VirtualAccountOut",
+            "path": "mx",
+            "reason": "Typed inline by the api-sync field-insert, compiled from the spec property's own properties. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "VirtualAccountOut",
+            "path": "mx.spei",
+            "reason": "Typed inline by the api-sync field-insert, compiled from the spec property's own properties. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "VirtualAccountOut",
+            "path": "mx.beneficiary",
+            "reason": "Typed inline by the api-sync field-insert, compiled from the spec property's own properties. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "PayoutOut",
+            "path": "tracking_payment.review_context",
+            "reason": "Free-form map in the spec (additionalProperties only, no fixed properties); typed Record<string, unknown> | null. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "PayoutOnEvmOut",
+            "path": "tracking_payment.review_context",
+            "reason": "Free-form map in the spec (additionalProperties only, no fixed properties); typed Record<string, unknown> | null. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "tracking_transaction.card_instruction",
+            "reason": "Typed inline by the api-sync field-insert, compiled from the spec property's own properties. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "PayinOut",
+            "path": "tracking_transaction.card_evidence",
+            "reason": "Typed inline by the api-sync field-insert, compiled from the spec property's own properties. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "tracking_transaction.card_instruction",
+            "reason": "Typed inline by the api-sync field-insert, compiled from the spec property's own properties. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "CreatePayinOut",
+            "path": "tracking_transaction.card_evidence",
+            "reason": "Typed inline by the api-sync field-insert, compiled from the spec property's own properties. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "TransferOut",
+            "path": "tracking_partner_fee",
+            "reason": "Modeled as TransferTrackingStep | null (src/resources/transfers/index.ts), the same five fields. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "CreateTransferOut",
+            "path": "tracking_partner_fee",
+            "reason": "Modeled as TransferTrackingStep | null (src/resources/transfers/index.ts), the same five fields. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "CustomerCnaeCondition",
+            "path": "cnae_at_approval",
+            "reason": "Modeled as CnaeSet / Cnae in src/resources/customers/index.ts. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "CustomerCnaeCondition",
+            "path": "cnae_at_approval.primary",
+            "reason": "Modeled as CnaeSet / Cnae in src/resources/customers/index.ts. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "CustomerCnaeCondition",
+            "path": "cnae_at_approval.secondary[]",
+            "reason": "Modeled as CnaeSet / Cnae in src/resources/customers/index.ts. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "CustomerCnaeCondition",
+            "path": "result_cnae",
+            "reason": "Modeled as CnaeSet / Cnae in src/resources/customers/index.ts. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "CustomerCnaeCondition",
+            "path": "result_cnae.primary",
+            "reason": "Modeled as CnaeSet / Cnae in src/resources/customers/index.ts. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
+        },
+        {
+            "schema": "CustomerCnaeCondition",
+            "path": "result_cnae.secondary[]",
+            "reason": "Modeled as CnaeSet / Cnae in src/resources/customers/index.ts. Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
         }
     ]
 }

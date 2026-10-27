@@ -105,6 +105,16 @@ export type ListBankAccountsResponse = Array<{
     ted_branch_code?: string | null;
     ted_cpf_cnpj?: string | null;
     created_at: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
+    plaid_connected_at?: string | null;
 }>;
 
 export type GetBankAccountInput = {
@@ -126,6 +136,16 @@ export type GetBankAccountResponse = {
     is_primary: boolean;
     created_at: string | null;
     updated_at: string;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
+    plaid_connected_at?: string | null;
 };
 
 export type DeleteBankAccountInput = {
@@ -137,6 +157,15 @@ export type CreatePixInput = {
     customer_id: string;
     name: string;
     pix_key: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
 };
 
 export type CreatePixResponse = {
@@ -145,6 +174,16 @@ export type CreatePixResponse = {
     name: string;
     pix_key: string | null;
     created_at: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
+    plaid_connected_at?: string | null;
 };
 
 export type CreatePixSafeInput = {
@@ -156,6 +195,15 @@ export type CreatePixSafeInput = {
     pix_safe_bank_code: string | null;
     pix_safe_branch_code: string | null;
     pix_safe_cpf_cnpj: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
 };
 
 export type CreatePixSafeResponse = {
@@ -169,6 +217,16 @@ export type CreatePixSafeResponse = {
     pix_safe_branch_code: string | null;
     pix_safe_cpf_cnpj: string | null;
     created_at: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
+    plaid_connected_at?: string | null;
 };
 
 export type CreateArgentinaTransfersInput = {
@@ -177,6 +235,15 @@ export type CreateArgentinaTransfersInput = {
     beneficiary_name: string | null;
     transfers_account: string | null;
     transfers_type: ArgentinaTransfers | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
 };
 
 export type CreateArgentinaTransfersResponse = {
@@ -187,6 +254,16 @@ export type CreateArgentinaTransfersResponse = {
     transfers_type: ArgentinaTransfers | null;
     transfers_account: string | null;
     created_at: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
+    plaid_connected_at?: string | null;
 };
 
 export type CreateSpeiInput = {
@@ -196,6 +273,15 @@ export type CreateSpeiInput = {
     spei_clabe: string | null;
     spei_institution_code: string | null;
     spei_protocol: SpeiProtocol | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
 };
 
 export type CreateSpeiResponse = {
@@ -207,6 +293,16 @@ export type CreateSpeiResponse = {
     spei_institution_code: string | null;
     spei_clabe: string | null;
     created_at: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
+    plaid_connected_at?: string | null;
 };
 
 export type CreateColombiaAchInput = {
@@ -220,6 +316,15 @@ export type CreateColombiaAchInput = {
     ach_cop_email: string | null;
     ach_cop_bank_code: string | null;
     ach_cop_bank_account: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
 };
 
 export type CreateColombiaAchResponse = {
@@ -235,6 +340,16 @@ export type CreateColombiaAchResponse = {
     ach_cop_bank_code: string | null;
     ach_cop_bank_account: string | null;
     created_at: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
+    plaid_connected_at?: string | null;
 };
 
 export type CreateAchInput = {
@@ -256,6 +371,15 @@ export type CreateAchInput = {
     phone_number?: string | null;
     tax_id?: string | null;
     date_of_birth?: string;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
 };
 
 export type CreateAchResponse = {
@@ -282,6 +406,16 @@ export type CreateAchResponse = {
     ach_cop_bank_code: string | null;
     ach_cop_bank_account: string | null;
     created_at: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
+    plaid_connected_at?: string | null;
 };
 
 export type CreateWireInput = {
@@ -302,6 +436,15 @@ export type CreateWireInput = {
     phone_number?: string | null;
     tax_id?: string | null;
     date_of_birth?: string;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
 };
 
 export type CreateWireResponse = {
@@ -320,6 +463,16 @@ export type CreateWireResponse = {
     country: Country | null;
     postal_code: string | null;
     created_at: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
+    plaid_connected_at?: string | null;
 };
 
 export type CreateInternationalSwiftInput = {
@@ -353,6 +506,15 @@ export type CreateInternationalSwiftInput = {
     phone_number?: string | null;
     tax_id?: string | null;
     date_of_birth?: string;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
 };
 
 export type CreateInternationalSwiftResponse = {
@@ -391,6 +553,16 @@ export type CreateInternationalSwiftResponse = {
     swift_intermediary_bank_routing_number?: string | null;
     swift_payment_code: string | null;
     created_at: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
+    plaid_connected_at?: string | null;
 };
 
 export type CreateRtpInput = {
@@ -411,6 +583,15 @@ export type CreateRtpInput = {
     phone_number?: string | null;
     tax_id?: string | null;
     date_of_birth?: string;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
 };
 
 export type CreateRtpResponse = {
@@ -429,6 +610,16 @@ export type CreateRtpResponse = {
     country: Country | null;
     postal_code: string | null;
     created_at: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
+    plaid_connected_at?: string | null;
 };
 
 export type CreateSepaInput = {
@@ -444,6 +635,15 @@ export type CreateSepaInput = {
     sepa_beneficiary_state_province_region?: string | null;
     sepa_beneficiary_postal_code: string | null;
     sepa_beneficiary_country: Country | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
 };
 
 export type CreateSepaResponse = {
@@ -462,6 +662,16 @@ export type CreateSepaResponse = {
     sepa_beneficiary_postal_code: string | null;
     sepa_beneficiary_country: Country | null;
     created_at: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
+    plaid_connected_at?: string | null;
 };
 
 export type CreateTedInput = {
@@ -471,6 +681,15 @@ export type CreateTedInput = {
     ted_bank_code: string | null;
     ted_branch_code: string | null;
     ted_cpf_cnpj: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
 };
 
 export type CreateTedResponse = {
@@ -482,6 +701,25 @@ export type CreateTedResponse = {
     ted_branch_code: string | null;
     ted_cpf_cnpj: string | null;
     created_at: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_address_line_2?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_beneficiary_state_province_region?: string | null;
+    faster_payments_sort_code?: string | null;
+    plaid_connected_at?: string | null;
+};
+
+export type CreatePlaidBankAccountInput = {
+    customer_id: string;
+    redirect_url?: string | null;
+};
+
+export type CreatePlaidBankAccountResponse = {
+    url: string;
 };
 
 export function createBankAccountsResource(instanceId: string, client: InternalApiClient) {
@@ -612,6 +850,18 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
                 type: "sepa",
                 ...data,
             });
+        },
+
+        createPlaid({
+            customer_id,
+            ...data
+        }: CreatePlaidBankAccountInput): Promise<
+            BlindpayApiResponse<CreatePlaidBankAccountResponse>
+        > {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/plaid`,
+                data
+            );
         },
     };
 }

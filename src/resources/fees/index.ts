@@ -30,6 +30,7 @@ export type GetFeesResponse = {
     ted: FeeOptions;
     created_at: string | null;
     updated_at: string | null;
+    faster_payments?: string;
 };
 
 export function createFeesResource(instanceId: string, client: InternalApiClient) {

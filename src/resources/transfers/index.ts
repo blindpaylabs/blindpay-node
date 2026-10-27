@@ -51,6 +51,8 @@ export type Transfer = {
     customer_id: string;
     address: string | null;
     network: Network;
+    partner_flat_fee?: number;
+    partner_percentage_fee?: number;
 };
 
 export type CreateTransferQuoteInput = {
@@ -63,6 +65,8 @@ export type CreateTransferQuoteInput = {
     cover_fees?: boolean | null;
     amount_reference: "sender" | "receiver";
     partner_fee_id?: string | null;
+    partner_flat_fee?: number;
+    partner_percentage_fee?: number;
 };
 
 export type CreateTransferQuoteResponse = {
@@ -74,6 +78,8 @@ export type CreateTransferQuoteResponse = {
     sender_amount: number;
     partner_fee_amount: number | null;
     flat_fee: number;
+    partner_flat_fee?: number;
+    partner_percentage_fee?: number;
 };
 
 export type CreateTransferInput = {

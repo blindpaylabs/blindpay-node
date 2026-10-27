@@ -16,7 +16,7 @@ export type BlindpaySuccessResponse<T> = {
 
 export type CurrencyType = "sender" | "receiver";
 
-export type Network = "base" | "sepolia" | "arbitrum_sepolia" | "base_sepolia" | "arbitrum" | "polygon" | "polygon_amoy" | "ethereum" | "stellar" | "stellar_testnet" | "tron" | "solana" | "solana_devnet";
+export type Network = "base" | "sepolia" | "arbitrum_sepolia" | "base_sepolia" | "arbitrum" | "polygon" | "polygon_amoy" | "ethereum" | "stellar" | "stellar_testnet" | "tron" | "solana" | "solana_devnet" | "arc" | "arc_testnet" | "tempo" | "tempo_testnet";
 
 export type StablecoinToken = "USDC" | "USDT" | "USDB";
 
@@ -26,7 +26,7 @@ export type BankAccountType = "checking" | "saving";
 
 export type Currency = "USDC" | "USDT" | "USDB" | "BRL" | "USD" | "MXN" | "COP" | "ARS" | "EUR" | "GBP";
 
-export type Rail = "wire" | "ach" | "pix" | "pix_safe" | "spei_bitso" | "transfers_bitso" | "ach_cop_bitso" | "international_swift" | "rtp" | "ted" | "sepa";
+export type Rail = "wire" | "ach" | "pix" | "pix_safe" | "spei_bitso" | "transfers_bitso" | "ach_cop_bitso" | "international_swift" | "rtp" | "ted" | "sepa" | "faster_payments";
     
 export type AccountClass = "individual" | "business";
     
@@ -327,6 +327,22 @@ export type PayinTrackingTransaction = {
       type: ArgentinaTransfers;
       tax_id?: string | null;
     } | null
+    card_claim_at?: string | null;
+    card_evidence?: {
+        eci?: string | null;
+        cavv?: string | null;
+        avs_response?: string | null;
+        cvv_response?: string | null;
+        auth_code?: string | null;
+        cardholder_name?: string | null;
+        three_ds_version?: string | null;
+    } | null;
+    card_failed_attempts?: number | null;
+    card_gates_failed_at?: string | null;
+    card_instruction?: {
+        provider: string;
+        tokenization_key: string;
+    } | null;
   };
   
 export type PayinTrackingPayment = {
@@ -349,7 +365,7 @@ export type PayinTrackingPartnerFee = {
     completed_at?: string | null
   } 
 
-export type PayinPaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse" | "international_swift" | "rtp" | "ted"
+export type PayinPaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse" | "international_swift" | "rtp" | "ted" | "ach_pull" | "card"
 
 export type BusinessIndustry =
     | "111998"
@@ -510,6 +526,251 @@ export type BusinessIndustry =
     | "saas"
     | "social"
     | "446120"
+    | "111120"
+    | "111219"
+    | "111336"
+    | "111421"
+    | "112111"
+    | "112210"
+    | "112310"
+    | "112410"
+    | "112519"
+    | "112990"
+    | "113110"
+    | "113210"
+    | "114119"
+    | "114210"
+    | "115113"
+    | "115210"
+    | "115310"
+    | "211130"
+    | "212290"
+    | "212390"
+    | "213113"
+    | "221122"
+    | "221210"
+    | "221320"
+    | "236118"
+    | "236210"
+    | "237130"
+    | "237210"
+    | "237990"
+    | "238191"
+    | "238391"
+    | "238991"
+    | "311119"
+    | "311212"
+    | "311314"
+    | "311422"
+    | "311511"
+    | "311612"
+    | "311710"
+    | "311811"
+    | "311999"
+    | "312111"
+    | "312230"
+    | "313240"
+    | "313310"
+    | "314120"
+    | "314999"
+    | "315120"
+    | "315250"
+    | "316110"
+    | "316210"
+    | "316990"
+    | "321113"
+    | "321211"
+    | "321918"
+    | "322120"
+    | "322299"
+    | "323120"
+    | "324110"
+    | "325180"
+    | "325220"
+    | "325320"
+    | "325510"
+    | "325611"
+    | "325998"
+    | "326111"
+    | "326220"
+    | "327120"
+    | "327212"
+    | "327310"
+    | "327410"
+    | "327999"
+    | "331110"
+    | "331210"
+    | "331313"
+    | "331410"
+    | "331511"
+    | "332111"
+    | "332215"
+    | "332311"
+    | "332410"
+    | "332510"
+    | "332613"
+    | "332710"
+    | "332812"
+    | "332999"
+    | "333111"
+    | "333248"
+    | "333310"
+    | "333413"
+    | "333517"
+    | "333611"
+    | "333618"
+    | "334310"
+    | "334413"
+    | "334511"
+    | "334610"
+    | "335131"
+    | "335220"
+    | "335311"
+    | "335999"
+    | "336211"
+    | "336412"
+    | "336510"
+    | "336611"
+    | "336999"
+    | "337122"
+    | "337214"
+    | "337920"
+    | "339999"
+    | "423120"
+    | "423220"
+    | "423310"
+    | "423490"
+    | "423520"
+    | "423620"
+    | "423710"
+    | "423990"
+    | "424110"
+    | "424310"
+    | "424490"
+    | "424590"
+    | "424720"
+    | "424820"
+    | "425120"
+    | "441110"
+    | "441227"
+    | "441330"
+    | "444180"
+    | "444240"
+    | "445132"
+    | "445298"
+    | "449110"
+    | "449129"
+    | "454390"
+    | "456120"
+    | "458320"
+    | "459310"
+    | "459410"
+    | "459510"
+    | "459999"
+    | "481211"
+    | "482111"
+    | "483112"
+    | "483212"
+    | "484110"
+    | "484220"
+    | "485119"
+    | "485310"
+    | "485410"
+    | "485510"
+    | "485999"
+    | "486110"
+    | "486210"
+    | "486990"
+    | "487110"
+    | "487210"
+    | "487990"
+    | "488190"
+    | "488210"
+    | "488390"
+    | "488490"
+    | "488999"
+    | "492110"
+    | "492210"
+    | "493190"
+    | "512199"
+    | "512290"
+    | "513210"
+    | "515210"
+    | "517810"
+    | "519290"
+    | "521110"
+    | "522130"
+    | "522298"
+    | "522390"
+    | "523210"
+    | "524128"
+    | "524298"
+    | "525190"
+    | "525910"
+    | "532289"
+    | "532310"
+    | "532490"
+    | "533110"
+    | "541199"
+    | "541213"
+    | "541219"
+    | "541310"
+    | "541490"
+    | "541690"
+    | "541720"
+    | "551114"
+    | "561110"
+    | "561210"
+    | "561599"
+    | "561611"
+    | "561790"
+    | "561990"
+    | "562211"
+    | "562998"
+    | "611210"
+    | "611420"
+    | "611519"
+    | "611699"
+    | "621498"
+    | "621610"
+    | "621999"
+    | "622210"
+    | "622310"
+    | "623210"
+    | "623311"
+    | "623990"
+    | "624190"
+    | "624230"
+    | "624310"
+    | "711190"
+    | "711219"
+    | "711310"
+    | "712120"
+    | "713290"
+    | "713990"
+    | "721199"
+    | "721211"
+    | "721310"
+    | "722310"
+    | "722410"
+    | "811198"
+    | "811310"
+    | "811411"
+    | "812210"
+    | "812320"
+    | "812990"
+    | "813319"
+    | "813410"
+    | "813930"
+    | "814110"
+    | "921140"
+    | "922190"
+    | "923130"
+    | "924110"
+    | "925120"
+    | "926110"
+    | "927110"
+    | "928110"
     | "wallet";
 
 export type AccountPurpose =
@@ -552,9 +813,11 @@ export type SourceOfWealth =
     | "gambling"
     | "charitable_contributions"
     | "inheritance"
+    | "salary_or_wages"
+    | "savings"
     | "affiliate_or_royalty_income";
 
-export type BankingPartner = "jpmorgan" | "citi" | "hsbc" | "cfsb" | "portage" | "ssb";
+export type BankingPartner = "jpmorgan" | "citi" | "hsbc" | "cfsb" | "portage" | "bre_b" | "portage_g" | "spei";
 
 export type SoleProprietorDocType = "master_service_agreement" | "salary_slip" | "bank_statement";
 
@@ -597,7 +860,7 @@ export type SourceOfFundsDocType =
     | "savings"
     | "someone_else_funds";
 
-export type PaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse" | "international_swift" | "rtp" | "ted";
+export type PaymentMethod = "ach" | "wire" | "pix" | "spei" | "transfers" | "pse" | "international_swift" | "rtp" | "ted" | "ach_pull" | "card";
 
 export type PayerRules = {
     pix_allowed_tax_ids?: string[] | null;
@@ -611,7 +874,7 @@ export type PayerRules = {
     pse_bank_code?: string | null;
 }
 
-export type TrackingStatus = 'processing' | 'on_hold' | 'completed' | 'pending_review';
+export type TrackingStatus = 'processing' | 'on_hold' | 'completed' | 'pending_review' | "pending_refund_review";
 
 export type EstimatedTimeOfArrival = '5_min' | '30_min' | '2_hours' | '1_business_day' | '2_business_days' | '5_business_days' | "5_30_min";
 
@@ -635,6 +898,14 @@ export type PayoutTrackingPayment = {
     recipient_account_type: string | null ;
     estimated_time_of_arrival: EstimatedTimeOfArrival | null ;
     completed_at: string | null ;
+    forced_provider?: "zenus" | "veem" | null;
+    refund_review_actioned_at?: string | null;
+    refund_review_detected_at?: string | null;
+    refund_review_reason?: "amount_threshold" | "time_window" | "late_cancellation_no_live_run" | "master_account_return" | "policy_always_review" | "operator_requested" | "partial_return" | null;
+    returned_amount?: number | null;
+    review_context?: Record<string, unknown> | null;
+    review_source?: string | null;
+    review_sources?: unknown[] | null;
   };
   
 export type PayoutTrackingLiquidity = {
@@ -658,4 +929,4 @@ export type PayoutTrackingPartnerFee = {
     completed_at: string | null;
   }
 
-export type KycStatus = "awaiting_contract" | "compliance_request" | "verifying" | "approved" | "rejected" | "deprecated" | "pending_review";
+export type KycStatus = "awaiting_contract" | "compliance_request" | "verifying" | "approved" | "rejected" | "deprecated" | "pending_review" | "approved_rfi";

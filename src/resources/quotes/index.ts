@@ -8,15 +8,16 @@ import type {
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type CreateQuoteInput = {
-    bank_account_id: string | null;
-    currency_type: CurrencyType;
-    cover_fees: boolean | null;
-    request_amount: number | null;
+    bank_account_id?: string | null;
+    currency_type?: CurrencyType;
+    cover_fees?: boolean | null;
+    request_amount?: number | null;
     network: Network;
     token: StablecoinToken;
     description?: string | null;
     partner_fee_id?: string | null;
     refund_wallet_address?: string | null;
+    payable_id?: string | null;
 };
 export type CreateQuoteResponse = {
     id: string;

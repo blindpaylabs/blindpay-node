@@ -74,6 +74,16 @@ export type BankDetailKey =
     | "ted_bank_code"
     | "ted_branch_code"
     | "ted_cpf_cnpj"
+    | "faster_payments_account_number"
+    | "faster_payments_beneficiary_address_line_1"
+    | "faster_payments_beneficiary_address_line_2"
+    | "faster_payments_beneficiary_city"
+    | "faster_payments_beneficiary_country"
+    | "faster_payments_beneficiary_legal_name"
+    | "faster_payments_beneficiary_postal_code"
+    | "faster_payments_beneficiary_state_province_region"
+    | "faster_payments_sort_code"
+    | "swift_intermediary_bank_routing_number"
     | "swift_intermediary_bank_country";
 
 export type GetBankDetailsResponse = Array<{

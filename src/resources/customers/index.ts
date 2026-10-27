@@ -171,6 +171,7 @@ export type IndividualWithStandardKYC = {
     publicly_traded?: boolean | null;
     cnae_condition?: CustomerCnaeCondition;
     virtual_account_preapproval?: CustomerVirtualAccountPreapproval;
+    is_nested?: boolean | null;
 };
 
 export type IndividualWithEnhancedKYC = {
@@ -238,6 +239,7 @@ export type IndividualWithEnhancedKYC = {
     publicly_traded?: boolean | null;
     cnae_condition?: CustomerCnaeCondition;
     virtual_account_preapproval?: CustomerVirtualAccountPreapproval;
+    is_nested?: boolean | null;
 };
 
 export type BusinessWithStandardKYB = {
@@ -301,6 +303,7 @@ export type BusinessWithStandardKYB = {
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
     cnae_condition?: CustomerCnaeCondition;
     virtual_account_preapproval?: CustomerVirtualAccountPreapproval;
+    is_nested?: boolean | null;
 };
 
 export type CreateIndividualWithStandardKYCInput = {

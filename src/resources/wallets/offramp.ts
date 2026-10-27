@@ -12,6 +12,10 @@ export type OfframpWalletNetwork =
     | "polygon"
     | "polygon_amoy"
     | "sepolia"
+    | "arc"
+    | "arc_testnet"
+    | "tempo"
+    | "tempo_testnet"
     | "solana_devnet";
 
 export type OfframpWallet = {

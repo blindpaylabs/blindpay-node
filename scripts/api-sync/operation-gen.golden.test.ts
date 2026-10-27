@@ -102,9 +102,9 @@ describe("operation-insert golden self-test", () => {
         );
 
         const quotes = readFileSync(join(dir, "src/resources/quotes/index.ts"), "utf8");
-        expect(quotes).toContain("bank_account_id: string;");
-        expect(quotes).toContain("currency_type:");
-        expect(quotes).toContain("request_amount: number;");
+        expect(quotes).toContain("bank_account_id?: string | null;");
+        expect(quotes).toContain("currency_type?:");
+        expect(quotes).toContain("request_amount?: number | null;");
         expect(quotes).toContain(
             "create({ ...data }: CreateQuoteInput): Promise<BlindpayApiResponse<CreateQuoteResponse>> {"
         );

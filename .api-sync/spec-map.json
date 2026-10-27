@@ -128,6 +128,19 @@
         },
         {
             "spec": {
+                "schema": "CreatePayableIn",
+                "property": "currency"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "PayableCurrency"
+                }
+            ],
+            "notes": "Same value set as PayableOut.currency."
+        },
+        {
+            "spec": {
                 "schema": "CreatePayinQuoteIn",
                 "property": "currency_type"
             },
@@ -175,6 +188,19 @@
         },
         {
             "spec": {
+                "schema": "CustomerCnaeCondition",
+                "property": "status"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "CnaeConditionStatus"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
                 "schema": "CustomerLimitIncreaseIn",
                 "property": "supporting_document_type"
             },
@@ -214,6 +240,59 @@
         },
         {
             "spec": {
+                "schema": "CustomerVirtualAccountPreapproval",
+                "property": "banking_partners",
+                "itemsEnum": true
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "VirtualAccountPreapprovalBankingPartner"
+                }
+            ],
+            "notes": "Array-of-enum (values on properties.banking_partners.items.enum). A strict subset of BankingPartner, so declared as its own union instead of reusing the shared one."
+        },
+        {
+            "spec": {
+                "schema": "CustomerVirtualAccountPreapproval",
+                "property": "status"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "VirtualAccountPreapprovalStatus"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "InstanceRfi",
+                "property": "status"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/rfi/index.ts",
+                    "symbol": "RfiStatus"
+                }
+            ],
+            "notes": "Shared with Rfi.status (same member set)."
+        },
+        {
+            "spec": {
+                "schema": "LimitIncreaseSupportingDocument",
+                "property": "type"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "LimitIncreaseRequestSupportingDocumentType"
+                }
+            ],
+            "notes": "Same 15-value set as CustomerLimitIncreaseIn.supporting_document_type."
+        },
+        {
+            "spec": {
                 "schema": "LimitIncreaseUpdateWebhookOut",
                 "property": "status"
             },
@@ -224,6 +303,58 @@
                 }
             ],
             "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PayableBankAccount",
+                "property": "type"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "PayableBankAccountType"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PayableOut",
+                "property": "currency"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "PayableCurrency"
+                }
+            ],
+            "notes": "Fiat-only subset of the shared Currency union (no USDC/USDT/USDB), so declared locally rather than reusing Currency."
+        },
+        {
+            "spec": {
+                "schema": "PayableOut",
+                "property": "last_attempt_status"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "PayableLastAttemptStatus"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PayableOut",
+                "property": "status"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "PayableStatus"
+                }
+            ],
+            "notes": "Also the value set of the list endpoint's `status` query parameter (ListPayablesInput.status)."
         },
         {
             "spec": {
@@ -312,6 +443,58 @@
                 {
                     "file": "types/index.d.ts",
                     "symbol": "TransactionStatus"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "RetrieveInstanceOut",
+                "property": "onboarding_step"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/instances/index.ts",
+                    "symbol": "InstanceOnboardingStep"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "RetrieveInstanceOut",
+                "property": "type"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/instances/index.ts",
+                    "symbol": "InstanceType"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "Rfi",
+                "property": "status"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/rfi/index.ts",
+                    "symbol": "RfiStatus"
+                }
+            ],
+            "notes": "Shared with InstanceRfi.status (same member set)."
+        },
+        {
+            "spec": {
+                "schema": "RfiField",
+                "property": "aiprise_document_type"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/rfi/index.ts",
+                    "symbol": "RfiDocumentType"
                 }
             ],
             "notes": null
@@ -487,6 +670,32 @@
         },
         {
             "spec": {
+                "schema": "UploadAnalyzeIn",
+                "property": "type"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/upload/index.ts",
+                    "symbol": "UploadAnalyzeDocumentType"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "UploadAnalyzeOut",
+                "property": "approval_rate"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/upload/index.ts",
+                    "symbol": "UploadAnalyzeApprovalRate"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
                 "schema": "UploadIn",
                 "property": "bucket"
             },
@@ -543,6 +752,45 @@
         },
         {
             "spec": {
+                "schema": "WalletDepositOut",
+                "property": "network"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/wallets/custodial.ts",
+                    "symbol": "WalletDepositNetwork"
+                }
+            ],
+            "notes": "17-member set (adds tempo, tempo_testnet, arc, arc_testnet); shared Network in types/index.d.ts has only 13, so a local union is declared instead of reusing it."
+        },
+        {
+            "spec": {
+                "schema": "WalletDepositOut",
+                "property": "status"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/wallets/custodial.ts",
+                    "symbol": "WalletDepositStatus"
+                }
+            ],
+            "notes": "No `failed` member, so not identical to shared TransactionStatus. Also used for the deposits list `status` query filter."
+        },
+        {
+            "spec": {
+                "schema": "WalletDepositOut",
+                "property": "token"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/wallets/custodial.ts",
+                    "symbol": "WalletDepositToken"
+                }
+            ],
+            "notes": "5-member set (adds EURC, EURB); not identical to shared StablecoinToken. Also used for the deposits list `token` query filter."
+        },
+        {
+            "spec": {
                 "schema": "WebhookEndpointIn",
                 "property": "events",
                 "itemsEnum": true
@@ -554,6 +802,18 @@
                 }
             ],
             "notes": "Array-of-enum: values live on properties.events.items.enum, not a top-level schema enum. This is also contract-check.mjs's own hard-fail anchor (regex-parsed)."
+        },
+        {
+            "spec": {
+                "schema": "YieldStatus"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/wallets/custodial.ts",
+                    "symbol": "YieldStatus"
+                }
+            ],
+            "notes": "Standalone enum schema, referenced by WalletOut.yield_status and YieldOut.status."
         }
     ],
     "types": [
@@ -1768,6 +2028,326 @@
                 }
             ],
             "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PayableOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "Payable"
+                }
+            ],
+            "notes": "Create/get/delete responses and list items alias Payable (CreatePayableResponse, GetPayableResponse, DeletePayableResponse, ListPayablesResponse.data[])."
+        },
+        {
+            "spec": {
+                "schema": "CreatePayableIn"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "CreatePayableInput"
+                }
+            ],
+            "notes": "bank_account ($ref CreateBankAccountIn) is typed as CreatePayableBankAccountInput: the existing CreateAchInput/CreateWireInput minus customer_id plus the `type` discriminator, since payables only accept ach or wire (payable-invoice docs)."
+        },
+        {
+            "spec": {
+                "schema": "PayableParty"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "PayableParty"
+                }
+            ],
+            "notes": "Used for both `from` and `to` (to is allOf[PayableParty] with a description only)."
+        },
+        {
+            "spec": {
+                "schema": "PayableLineItem"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "PayableLineItem"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PayableBankAccount"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "PayableBankAccount"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "path": "/v1/instances/{instance_id}/payables",
+                "method": "get",
+                "location": "response:200"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "ListPayablesResponse"
+                }
+            ],
+            "notes": "inline anyOf body ({data, pagination} | PayableOut[]); the SDK models the paginated object branch, as for the other list endpoints."
+        },
+        {
+            "spec": {
+                "schema": "WalletDepositOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/wallets/custodial.ts",
+                    "symbol": "WalletDeposit"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "WalletDepositsOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/wallets/custodial.ts",
+                    "symbol": "GetCustodialWalletDepositsResponse"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "CustomerVirtualAccountPreapproval"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "CustomerVirtualAccountPreapproval"
+                }
+            ],
+            "notes": "Nested at CustomerOut.virtual_account_preapproval on all 3 KYC/KYB response types."
+        },
+        {
+            "spec": {
+                "schema": "CustomerCnaeCondition"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "CustomerCnaeCondition"
+                }
+            ],
+            "notes": "Nested at CustomerOut.cnae_condition on all 3 KYC/KYB response types."
+        },
+        {
+            "spec": {
+                "schema": "LimitIncreaseSupportingDocument"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "LimitIncreaseSupportingDocument"
+                }
+            ],
+            "notes": "Item of CustomerLimitIncreaseIn.supporting_documents and GetCustomerLimitIncreaseOut.supporting_documents."
+        },
+        {
+            "spec": {
+                "schema": "Rfi"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/rfi/index.ts",
+                    "symbol": "CustomerRfi"
+                }
+            ],
+            "notes": "Customer-scoped RFI, exposed as blindpay.customers.rfi. Spec type is [object, null]: GetCustomerRfiResponse = CustomerRfi | null. customer_type reuses the shared AccountClass (exact member set); customer_kyc_status is a bare string in the spec and is kept as string."
+        },
+        {
+            "spec": {
+                "schema": "InstanceRfi"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/rfi/index.ts",
+                    "symbol": "InstanceRfi"
+                }
+            ],
+            "notes": "Exposed as blindpay.instances.rfi. Spec type is [object, null]: GetInstanceRfiResponse = InstanceRfi | null."
+        },
+        {
+            "spec": {
+                "schema": "RfiSection"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/rfi/index.ts",
+                    "symbol": "RfiSection"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "RfiField"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/rfi/index.ts",
+                    "symbol": "RfiField"
+                }
+            ],
+            "notes": "items[] ({label, value}) is modeled inline."
+        },
+        {
+            "spec": {
+                "schema": "RetrieveInstanceOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/instances/index.ts",
+                    "symbol": "Instance"
+                }
+            ],
+            "notes": "Response of GET /v1/instances/{id}, exposed as instances.get(); GetInstanceResponse is an alias of Instance."
+        },
+        {
+            "spec": {
+                "path": "/v1/instances/{instance_id}/onboarding/business_details",
+                "method": "get",
+                "location": "response:200"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/instances/onboarding.ts",
+                    "symbol": "GetInstanceBusinessDetailsResponse"
+                }
+            ],
+            "notes": "inline object response, not a named schema. The spec has no required list, so every field is optional."
+        },
+        {
+            "spec": {
+                "path": "/v1/instances/{instance_id}/onboarding/business_profile",
+                "method": "get",
+                "location": "response:200"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/instances/onboarding.ts",
+                    "symbol": "GetInstanceBusinessProfileResponse"
+                }
+            ],
+            "notes": "inline object response, not a named schema. The spec has no required list, so every field is optional."
+        },
+        {
+            "spec": {
+                "path": "/v1/instances/{instance_id}/onboarding/ownership_documents",
+                "method": "get",
+                "location": "response:200"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/instances/onboarding.ts",
+                    "symbol": "GetInstanceOwnershipDocumentsResponse"
+                }
+            ],
+            "notes": "inline object response, not a named schema. owners[] items are InstanceOnboardingOwner. The spec has no required list, so every field is optional."
+        },
+        {
+            "spec": {
+                "schema": "UpdateBlockchainWalletIn"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/wallets/blockchain.ts",
+                    "symbol": "SetBlockchainWalletSelfCustodyInput"
+                }
+            ],
+            "notes": "PATCH body of blockchain-wallets/{id}, exposed as wallets.blockchain.setSelfCustody(). customer_id and id on the SDK input are path params, not body fields."
+        },
+        {
+            "spec": {
+                "schema": "PresignIn"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/upload/index.ts",
+                    "symbol": "PresignInput"
+                }
+            ],
+            "notes": "JSON request of POST /v1/presign, exposed as upload.presign(). instance_id is a required query param, not part of PresignIn; the upload factory has no instanceId, so the caller passes it."
+        },
+        {
+            "spec": {
+                "schema": "PresignOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/upload/index.ts",
+                    "symbol": "PresignResponse"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "UploadAnalyzeIn"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/upload/index.ts",
+                    "symbol": "UploadAnalyzeInput"
+                }
+            ],
+            "notes": "multipart/form-data request of POST /v1/upload/analyze, exposed as upload.analyze(); instance_id is an optional query param, not part of UploadAnalyzeIn."
+        },
+        {
+            "spec": {
+                "schema": "UploadAnalyzeOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/upload/index.ts",
+                    "symbol": "UploadAnalyzeResponse"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "CreatePlaidLinkIn"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/bank-accounts/index.ts",
+                    "symbol": "CreatePlaidBankAccountInput"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PlaidLinkOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/bank-accounts/index.ts",
+                    "symbol": "CreatePlaidBankAccountResponse"
+                }
+            ],
+            "notes": null
         }
     ],
     "ignore": {
@@ -1779,6 +2359,10 @@
             {
                 "name": "BankAccountWebhookOut",
                 "reason": "Webhook payload body for bankAccount.new. This SDK does not model webhook payload shapes as typed symbols anywhere; verifyWebhookSignature only verifies the signature and returns a boolean, consumers parse the JSON body themselves."
+            },
+            {
+                "name": "BlockchainWalletUpdateWebhookOut",
+                "reason": "Webhook payload body for blockchainWallet.update; same reasoning as BankAccountWebhookOut."
             },
             {
                 "name": "BlockchainWalletWebhookOut",
@@ -1797,16 +2381,24 @@
                 "reason": "Webhook payload body for customer.update; same reasoning as BankAccountWebhookOut."
             },
             {
-                "name": "InstanceRfi",
-                "reason": "Instance-level RFI variant; not modeled, same as Rfi."
-            },
-            {
                 "name": "LimitIncreaseNewWebhookOut",
                 "reason": "Webhook payload body for limitIncrease.new; same reasoning as BankAccountWebhookOut."
             },
             {
                 "name": "LimitIncreaseUpdateWebhookOut",
                 "reason": "Webhook payload body for limitIncrease.update; same reasoning as BankAccountWebhookOut (still used above as the reachable anchor for the LimitIncreaseRequestStatus enum, which is otherwise identical to GetCustomerLimitIncreaseOut.status)."
+            },
+            {
+                "name": "PayableCompleteWebhookOut",
+                "reason": "Webhook payload body for payable.complete; same reasoning as BankAccountWebhookOut: this SDK does not model webhook payload shapes as typed symbols."
+            },
+            {
+                "name": "PayableNewWebhookOut",
+                "reason": "Webhook payload body for payable.new; same reasoning as BankAccountWebhookOut: this SDK does not model webhook payload shapes as typed symbols."
+            },
+            {
+                "name": "PayableUpdateWebhookOut",
+                "reason": "Webhook payload body for payable.update; same reasoning as BankAccountWebhookOut: this SDK does not model webhook payload shapes as typed symbols."
             },
             {
                 "name": "PayinCompleteWebhookOut",
@@ -1841,18 +2433,6 @@
                 "reason": "Webhook payload body for payout.update; same reasoning as BankAccountWebhookOut (still used above as the reachable anchor for the TransactionStatus enum)."
             },
             {
-                "name": "Rfi",
-                "reason": "RFI resource (GET/POST /v1/instances/{instance_id}/rfi and .../customers/{customer_id}/rfi) is not modeled by this SDK. Known coverage gap, tracked for Phase C."
-            },
-            {
-                "name": "RfiField",
-                "reason": "Nested under Rfi.request/response; not modeled, same as Rfi."
-            },
-            {
-                "name": "RfiSection",
-                "reason": "Nested under Rfi.request/response; not modeled, same as Rfi."
-            },
-            {
                 "name": "SwiftCodeResponse",
                 "reason": "Array-wrapper alias for SwiftCodeItem[]; the item shape itself is mapped via GetSwiftCodeBankDetailsResponse -> SwiftCodeItem."
             },
@@ -1861,39 +2441,46 @@
                 "reason": "Webhook payload body for tos.accept; same reasoning as BankAccountWebhookOut."
             },
             {
-                "name": "UploadAnalyzeIn",
-                "reason": "POST /v1/upload/analyze is not modeled by this SDK. Known coverage gap, tracked for Phase C."
+                "name": "TransferCompleteWebhookOut",
+                "reason": "Webhook payload body for transfer.complete; same reasoning as BankAccountWebhookOut."
             },
             {
-                "name": "UploadAnalyzeOut",
-                "reason": "Response of POST /v1/upload/analyze; not modeled, same as UploadAnalyzeIn."
+                "name": "TransferNewWebhookOut",
+                "reason": "Webhook payload body for transfer.new; same reasoning as BankAccountWebhookOut."
             },
             {
-                "name": "WalletInboundSchemaOut",
-                "reason": "Webhook payload body for wallet.inbound; same reasoning as BankAccountWebhookOut."
+                "name": "TransferUpdateWebhookOut",
+                "reason": "Webhook payload body for transfer.update; same reasoning as BankAccountWebhookOut."
+            },
+            {
+                "name": "VirtualAccountCompleteWebhookOut",
+                "reason": "Webhook payload body for virtualAccount.complete. This SDK does not model webhook payload shapes as typed symbols anywhere; verifyWebhookSignature only verifies the signature and returns a boolean, consumers parse the JSON body themselves."
+            },
+            {
+                "name": "VirtualAccountNewWebhookOut",
+                "reason": "Webhook payload body for virtualAccount.new. This SDK does not model webhook payload shapes as typed symbols anywhere; verifyWebhookSignature only verifies the signature and returns a boolean, consumers parse the JSON body themselves."
+            },
+            {
+                "name": "WalletInboundTokenOut",
+                "reason": "Only referenced by WalletInboundWebhookOut.token (the wallet.inbound webhook payload), which is itself ignored because webhook payloads are not modeled as SDK types."
+            },
+            {
+                "name": "WalletInboundWebhookOut",
+                "reason": "Webhook payload body for wallet.inbound. This SDK does not model webhook payload shapes as typed symbols anywhere; verifyWebhookSignature only verifies the signature and returns a boolean, consumers parse the JSON body themselves."
+            },
+            {
+                "name": "WalletNewWebhookOut",
+                "reason": "Webhook payload body for wallet.new. This SDK does not model webhook payload shapes as typed symbols anywhere; verifyWebhookSignature only verifies the signature and returns a boolean, consumers parse the JSON body themselves."
+            },
+            {
+                "name": "WalletUpdateWebhookOut",
+                "reason": "Webhook payload body for wallet.update. This SDK does not model webhook payload shapes as typed symbols anywhere; verifyWebhookSignature only verifies the signature and returns a boolean, consumers parse the JSON body themselves."
+            },
+            {
+                "name": "YieldFee",
+                "reason": "Only referenced by GetFeesOut.yield (billing fees resource, src/resources/fees/index.ts). GetFeesResponse does not model the yield fee split yet; see the GetFeesOut.yield entry in unmodeled.json properties."
             }
         ],
-        "operations": [
-            {
-                "name": "GET /v1/instances/{instance_id}/customers/{customer_id}/rfi",
-                "reason": "Rfi (request-for-information) family has no existing SDK resource; a human must design it, the generator will not guess a brand-new resource."
-            },
-            {
-                "name": "GET /v1/instances/{instance_id}/rfi",
-                "reason": "Rfi family, same as the customer-scoped variant."
-            },
-            {
-                "name": "POST /v1/instances/{instance_id}/customers/{customer_id}/rfi",
-                "reason": "Rfi family, same as the customer-scoped GET."
-            },
-            {
-                "name": "POST /v1/instances/{instance_id}/rfi",
-                "reason": "Rfi family, same as the customer-scoped GET."
-            },
-            {
-                "name": "POST /v1/upload/analyze",
-                "reason": "Multipart/binary upload, not instance-scoped and not JSON in/out; classifier never guesses this shape."
-            }
-        ]
+        "operations": []
     }
 }

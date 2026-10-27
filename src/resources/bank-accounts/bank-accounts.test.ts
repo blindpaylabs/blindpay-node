@@ -7,6 +7,7 @@ import type {
     CreateInternationalSwiftResponse,
     CreatePixResponse,
     CreatePixSafeResponse,
+    CreatePlaidBankAccountResponse,
     CreateRtpResponse,
     CreateSepaResponse,
     CreateSpeiResponse,
@@ -576,6 +577,33 @@ describe("Bank accounts", () => {
 
             expect(error).toBeNull();
             expect(data).toEqual({ data: null });
+        });
+    });
+    describe("Create Plaid bank account link", () => {
+        it("should create a Plaid link for the customer", async () => {
+            const mockedLink: CreatePlaidBankAccountResponse = {
+                url: "https://link.plaid.com/xyz",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedLink), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.customers.bankAccounts.createPlaid({
+                customer_id: "re_000000000000",
+                redirect_url: "https://example.com/done",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedLink);
+            const [url, init] = fetchMock.mock.calls[0];
+            expect(url).toBe(
+                "https://api.blindpay.com/v1/instances/in_000000000000/customers/re_000000000000/bank-accounts/plaid"
+            );
+            expect(init?.method).toBe("POST");
+            expect(JSON.parse(init?.body as string)).toEqual({
+                redirect_url: "https://example.com/done",
+            });
         });
     });
 });

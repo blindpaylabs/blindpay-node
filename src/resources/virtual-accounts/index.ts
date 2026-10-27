@@ -1,7 +1,15 @@
 import type { BlindpayApiResponse, KycStatus, Network, StablecoinToken } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
-export type BankingPartner = "jpmorgan" | "citi" | "hsbc" | "cfsb" | "portage" | "ssb";
+export type BankingPartner =
+    | "jpmorgan"
+    | "citi"
+    | "hsbc"
+    | "cfsb"
+    | "portage"
+    | "bre_b"
+    | "portage_g"
+    | "spei";
 
 export type SoleProprietorDocType = "master_service_agreement" | "salary_slip" | "bank_statement";
 
@@ -44,6 +52,23 @@ export type VirtualAccount = {
     token: StablecoinToken;
     blockchain_wallet_id: string | null;
     blockchain_wallet: { network: Network; address: string } | null;
+    co?: {
+        bre_b: {
+            key: string;
+        };
+        beneficiary?: {
+            name: string;
+        } | null;
+    } | null;
+    mx?: {
+        spei: {
+            clabe: string;
+        };
+        beneficiary?: {
+            name: string;
+        } | null;
+    } | null;
+    partner_fee_id?: string | null;
 };
 
 export type ListVirtualAccountsInput = string;
@@ -57,6 +82,10 @@ export type CreateVirtualAccountInput = {
     blockchain_wallet_id: string;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
     sole_proprietor_doc_file?: string | null;
+    bre_b?: {
+        gender: "male" | "female";
+    } | null;
+    partner_fee_id?: string | null;
 };
 
 export type CreateVirtualAccountResponse = VirtualAccount;
@@ -73,6 +102,7 @@ export type UpdateVirtualAccountInput = {
     id: string;
     token: StablecoinToken;
     blockchain_wallet_id: string;
+    partner_fee_id?: string | null;
 };
 
 export function createVirtualAccountsResource(instanceId: string, client: InternalApiClient) {

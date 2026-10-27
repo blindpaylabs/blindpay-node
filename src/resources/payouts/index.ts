@@ -93,6 +93,21 @@ export type Payout = {
     ted_bank_code?: string | null;
     ted_branch_code?: string | null;
     ted_cpf_cnpj?: string | null;
+    bank_account_id?: string | null;
+    faster_payments_account_number?: string | null;
+    faster_payments_beneficiary_address_line_1?: string | null;
+    faster_payments_beneficiary_city?: string | null;
+    faster_payments_beneficiary_country?: Country | null;
+    faster_payments_beneficiary_legal_name?: string | null;
+    faster_payments_beneficiary_postal_code?: string | null;
+    faster_payments_sort_code?: string | null;
+    payable_id?: string | null;
+    sepa_beneficiary_address_line_1?: string | null;
+    sepa_beneficiary_city?: string | null;
+    sepa_beneficiary_country?: Country | null;
+    sepa_beneficiary_legal_name?: string | null;
+    sepa_beneficiary_postal_code?: string | null;
+    sepa_iban?: string | null;
 };
 
 export type ListPayoutsInput = PaginationParams & {
@@ -138,6 +153,7 @@ export type GetPayoutTrackResponse = Payout;
 export type AuthorizeStellarTokenInput = {
     quote_id: string;
     sender_wallet_address: string;
+    wallet_id?: string;
 };
 
 export type AuthorizeStellarTokenResponse = {
@@ -148,6 +164,7 @@ export type CreateStellarPayoutInput = {
     quote_id: string;
     sender_wallet_address: string;
     signed_transaction?: string | null;
+    wallet_id?: string;
 };
 
 export type CreateStellarPayoutResponse = {
@@ -160,11 +177,13 @@ export type CreateStellarPayoutResponse = {
     tracking_partner_fee?: PayoutTrackingPartnerFee;
     tracking_liquidity?: PayoutTrackingLiquidity | null;
     customer_id: string | null;
+    payable_id?: string | null;
 };
 
 export type CreateEvmPayoutInput = {
     quote_id: string;
     sender_wallet_address: string;
+    wallet_id?: string;
 };
 
 export type CreateEvmPayoutResponse = {
@@ -177,12 +196,14 @@ export type CreateEvmPayoutResponse = {
     tracking_partner_fee?: PayoutTrackingPartnerFee;
     tracking_liquidity?: PayoutTrackingLiquidity | null;
     customer_id: string | null;
+    payable_id?: string | null;
 };
 
 export type CreateSolanaPayoutInput = {
     quote_id: string;
     sender_wallet_address: string;
     signed_transaction: string | null;
+    wallet_id?: string;
 };
 
 export type CreateSolanaPayoutResponse = {
@@ -195,6 +216,7 @@ export type CreateSolanaPayoutResponse = {
     tracking_partner_fee?: PayoutTrackingPartnerFee | null;
     tracking_liquidity?: PayoutTrackingLiquidity | null;
     customer_id: string | null;
+    payable_id?: string | null;
 };
 
 export function createPayoutsResource(instanceId: string, client: InternalApiClient) {

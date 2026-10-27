@@ -19,6 +19,7 @@ export type CreatePayinQuoteInput = {
     partner_fee_id: string | null;
     payer_rules?: PayerRules | null;
     wallet_id?: string | null;
+    funding_bank_account_id?: string | null;
 };
 
 export type CreatePayinQuoteResponse = {
