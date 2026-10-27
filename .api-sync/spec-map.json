@@ -161,13 +161,22 @@
                 {
                     "file": "types/index.d.ts",
                     "symbol": "PaymentMethod"
-                },
+                }
+            ],
+            "notes": "Methods a payin quote accepts. PayinPaymentMethod (PayinOut.payment_method) is the wider set a created payin can report."
+        },
+        {
+            "spec": {
+                "schema": "PayinOut",
+                "property": "payment_method"
+            },
+            "sdk": [
                 {
                     "file": "types/index.d.ts",
                     "symbol": "PayinPaymentMethod"
                 }
             ],
-            "notes": "Declared twice with identical values (PaymentMethod and PayinPaymentMethod, both in types/index.d.ts); both used across payins/transfers/bank-accounts. Verified: spec has exactly these 9 values (ach, wire, pix, spei, transfers, pse, international_swift, rtp, ted), matching both SDK unions exactly."
+            "notes": null
         },
         {
             "spec": {
@@ -796,11 +805,11 @@
             },
             "sdk": [
                 {
-                    "file": "src/resources/wallets/custodial.ts",
-                    "symbol": "WalletDepositToken"
+                    "file": "types/index.d.ts",
+                    "symbol": "WalletToken"
                 }
             ],
-            "notes": "5-member set (adds EURC, EURB); not identical to shared StablecoinToken. Also used for the deposits list `token` query filter."
+            "notes": "Tokens a custodial wallet holds or moves: balances, deposits and transfers. StablecoinToken stays the payin/payout set, which has no EUR stablecoins."
         },
         {
             "spec": {

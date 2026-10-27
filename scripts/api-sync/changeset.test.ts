@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { changesetFileName, classifyBump, renderChangeset } from "./changeset";
+import { changesetFileName, classifyBump, mergeChangeset, renderChangeset } from "./changeset";
 
 describe("classifyBump", () => {
     it("is minor when any enum member was inserted", () => {
@@ -53,6 +53,31 @@ describe("renderChangeset", () => {
     it("renders a patch bump", () => {
         expect(renderChangeset("@blindpay/node", "patch", ["x"])).toContain(
             '"@blindpay/node": patch'
+        );
+    });
+});
+
+describe("mergeChangeset", () => {
+    const earlier = renderChangeset("@blindpay/node", "patch", ["add field b", "add field a"]);
+
+    it("renders a fresh changeset when none exists for this spec", () => {
+        expect(mergeChangeset(null, "@blindpay/node", "minor", ["x"])).toBe(
+            renderChangeset("@blindpay/node", "minor", ["x"])
+        );
+    });
+
+    it("keeps the earlier run's changes when the same spec is applied again", () => {
+        expect(
+            mergeChangeset(earlier, "@blindpay/node", "minor", ["add enum c", "add field a"])
+        ).toBe(
+            renderChangeset("@blindpay/node", "minor", ["add enum c", "add field a", "add field b"])
+        );
+    });
+
+    it("never lowers the earlier bump", () => {
+        const minor = renderChangeset("@blindpay/node", "minor", ["add enum c"]);
+        expect(mergeChangeset(minor, "@blindpay/node", "patch", ["add field a"])).toContain(
+            '"@blindpay/node": minor'
         );
     });
 });

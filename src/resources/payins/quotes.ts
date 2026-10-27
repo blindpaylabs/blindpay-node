@@ -3,7 +3,7 @@ import type {
     Currency,
     CurrencyType,
     PayerRules,
-    PayinPaymentMethod,
+    PaymentMethod,
     StablecoinToken,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
@@ -11,7 +11,7 @@ import type { InternalApiClient } from "../../internal/api-client";
 export type CreatePayinQuoteInput = {
     blockchain_wallet_id: string | null;
     currency_type: CurrencyType;
-    payment_method: PayinPaymentMethod;
+    payment_method: PaymentMethod;
     request_amount: number;
     token: StablecoinToken;
     is_otc?: boolean | null;

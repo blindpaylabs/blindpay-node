@@ -3,9 +3,9 @@ import type {
     Network,
     PaginationMetadata,
     PaginationParams,
-    StablecoinToken,
     TrackingStatus,
     TransactionStatus,
+    WalletToken,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
@@ -41,11 +41,11 @@ export type Transfer = {
     last_name?: string | null;
     legal_name?: string | null;
     wallet_id: string;
-    sender_token: StablecoinToken;
+    sender_token: WalletToken;
     sender_amount: number;
     receiver_amount: number;
     customer_network: Network;
-    customer_token: StablecoinToken;
+    customer_token: WalletToken;
     customer_wallet_address: string;
     partner_fee_amount: number | null;
     customer_id: string;
@@ -57,9 +57,9 @@ export type Transfer = {
 
 export type CreateTransferQuoteInput = {
     wallet_id: string;
-    sender_token: StablecoinToken;
+    sender_token: WalletToken;
     customer_wallet_address: string;
-    customer_token: StablecoinToken;
+    customer_token: WalletToken;
     customer_network: Network;
     request_amount: number;
     cover_fees?: boolean | null;

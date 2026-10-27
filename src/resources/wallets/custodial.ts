@@ -1,9 +1,4 @@
-import type {
-    BlindpayApiResponse,
-    Network,
-    PaginationMetadata,
-    StablecoinToken,
-} from "../../../types";
+import type { BlindpayApiResponse, Network, PaginationMetadata, WalletToken } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type YieldStatus = "disabled" | "enabled" | "disabling";
@@ -41,7 +36,7 @@ export type GetCustodialWalletResponse = CustodialWallet;
 export type WalletTokenBalance = {
     address: string;
     id: string;
-    symbol: StablecoinToken;
+    symbol: WalletToken;
     amount: number;
     earning_amount?: number;
     total_amount?: number;
@@ -65,15 +60,13 @@ export type DeleteCustodialWalletInput = {
     id: string;
 };
 
-export type WalletDepositToken = "USDC" | "USDT" | "USDB" | "EURC" | "EURB";
-
 export type WalletDepositStatus = "processing" | "completed" | "on_hold" | "refunded";
 
 export type WalletDeposit = {
     id: string;
     wallet_id: string;
     network: Network;
-    token: WalletDepositToken;
+    token: WalletToken;
     amount: number;
     token_amount: string | null;
     status: WalletDepositStatus;
@@ -88,7 +81,7 @@ export type GetCustodialWalletDepositsInput = {
     limit?: "5" | "10" | "50" | "100" | "200";
     starting_after?: string;
     ending_before?: string;
-    token?: WalletDepositToken;
+    token?: WalletToken;
     status?: WalletDepositStatus;
 };
 

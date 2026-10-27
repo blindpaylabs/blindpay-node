@@ -11,7 +11,7 @@ import {
     insertTypeDeclarations,
 } from "./apply";
 import { auditTypes } from "./audit";
-import { changesetFileName, classifyBump, renderChangeset } from "./changeset";
+import { changesetFileName, classifyBump, mergeChangeset } from "./changeset";
 import { computeCoverageGaps } from "./coverage";
 import { detectNewSchemas, detectRemovals } from "./diff";
 import { findUnmappedEnumProperties } from "./enum-coverage";
@@ -293,7 +293,9 @@ function main(): void {
         const { name } = JSON.parse(readFileSync(packageJsonPath, "utf8")) as { name: string };
         const specSha256 = createHash("sha256").update(readFileSync(args.specPath)).digest("hex");
         changeset = `.changeset/${changesetFileName(specSha256)}`;
-        writeFileSync(resolve(REPO_ROOT, changeset), renderChangeset(name, bump, applied));
+        const changesetPath = resolve(REPO_ROOT, changeset);
+        const existing = existsSync(changesetPath) ? readFileSync(changesetPath, "utf8") : null;
+        writeFileSync(changesetPath, mergeChangeset(existing, name, bump, applied));
     }
 
     const report: SyncReport = {
