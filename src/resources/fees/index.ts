@@ -20,6 +20,8 @@ export type GetFeesResponse = {
     ach_colombia: FeeOptions;
     transfers_3: FeeOptions;
     spei: FeeOptions;
+    sepa: FeeOptions;
+    faster_payments: FeeOptions;
     tron: FeeOptions;
     ethereum: FeeOptions;
     polygon: FeeOptions;
@@ -27,11 +29,9 @@ export type GetFeesResponse = {
     arbitrum: FeeOptions;
     stellar: FeeOptions;
     solana: FeeOptions;
-    ted: FeeOptions;
+    ted?: FeeOptions | null;
     created_at: string | null;
     updated_at: string | null;
-    faster_payments?: string;
-    sepa?: FeeOptions;
     yield?: {
         blindpay_share_bps: number;
         partner_share_bps: number;

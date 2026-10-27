@@ -42,8 +42,8 @@ export type Payable = {
     id: string;
     instance_id: string;
     customer_id: string;
-    from?: PayableParty;
-    to?: PayableParty;
+    from?: PayableParty | null;
+    to?: PayableParty | null;
     currency: PayableCurrency;
     line_items?: PayableLineItem[];
     note?: string | null;
@@ -93,8 +93,8 @@ export type CreatePayableBankAccountInput =
 export type CreatePayableInput = {
     customer_id: string;
     currency: PayableCurrency;
-    from?: PayableParty;
-    to?: PayableParty;
+    from?: PayableParty | null;
+    to?: PayableParty | null;
     line_items?: PayableLineItem[];
     note?: string | null;
     discount?: number | null;

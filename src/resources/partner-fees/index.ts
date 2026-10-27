@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse } from "../../../types";
+import type { BlindpayApiResponse, SuccessResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type ListPartnerFeesResponse = Array<{
@@ -9,19 +9,15 @@ export type ListPartnerFeesResponse = Array<{
     payout_flat_fee: number;
     payin_percentage_fee: number;
     payin_flat_fee: number;
-    evm_wallet_address: string;
-    stellar_wallet_address: string;
 }>;
 
 export type CreatePartnerFeeInput = {
     virtual_account_set?: boolean | null;
-    evm_wallet_address: string;
     name: string;
     payin_flat_fee: number;
     payin_percentage_fee: number;
     payout_flat_fee: number;
     payout_percentage_fee: number;
-    stellar_wallet_address?: string | null;
 };
 
 export type CreatePartnerFeeResponse = {
@@ -32,8 +28,6 @@ export type CreatePartnerFeeResponse = {
     payout_flat_fee: number;
     payin_percentage_fee: number;
     payin_flat_fee: number;
-    evm_wallet_address?: string;
-    stellar_wallet_address?: string;
 };
 
 export type GetPartnerFeeInput = string;
@@ -41,13 +35,11 @@ export type GetPartnerFeeInput = string;
 export type GetPartnerFeeResponse = {
     id: string;
     instance_id: string;
-    evm_wallet_address: string;
     name: string;
     payin_flat_fee: number;
     payin_percentage_fee: number;
     payout_flat_fee: number;
     payout_percentage_fee: number;
-    stellar_wallet_address?: string | null;
 };
 
 export type DeletePartnerFeeInput = string;
@@ -65,7 +57,7 @@ export function createPartnerFeesResource(instanceId: string, client: InternalAp
         get(id: GetPartnerFeeInput): Promise<BlindpayApiResponse<GetPartnerFeeResponse>> {
             return client.get(`/instances/${instanceId}/partner-fees/${id}`);
         },
-        delete(id: DeletePartnerFeeInput): Promise<BlindpayApiResponse<void>> {
+        delete(id: DeletePartnerFeeInput): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.delete(`/instances/${instanceId}/partner-fees/${id}`);
         },
     };

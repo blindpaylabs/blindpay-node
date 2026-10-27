@@ -97,7 +97,13 @@ export type CreateTransferResponse = {
     tracking_partner_fee: TransferTrackingStep | null;
 };
 
-export type ListTransfersInput = PaginationParams;
+export type ListTransfersInput = PaginationParams & {
+    customer_id?: string;
+    wallet_id?: string;
+    status?: "processing" | "failed" | "refunded" | "completed";
+    network?: Network;
+    token?: WalletToken;
+};
 
 export type ListTransfersResponse = {
     data: Transfer[];

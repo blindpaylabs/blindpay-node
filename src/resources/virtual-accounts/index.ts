@@ -1,4 +1,10 @@
-import type { BlindpayApiResponse, KycStatus, Network, StablecoinToken } from "../../../types";
+import type {
+    BlindpayApiResponse,
+    KycStatus,
+    Network,
+    StablecoinToken,
+    SuccessResponse,
+} from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type BankingPartner =
@@ -13,45 +19,54 @@ export type BankingPartner =
 
 export type SoleProprietorDocType = "master_service_agreement" | "salary_slip" | "bank_statement";
 
+export type VirtualAccountUsAccountType = "Personal checking" | "Business checking";
+
 export type VirtualAccount = {
     id: string;
     banking_partner: BankingPartner | null;
     kyc_status: KycStatus | null;
-    us: {
-        ach: {
+    us?: {
+        ach?: {
             routing_number: string;
             account_number: string;
-        };
+        } | null;
         wire: {
             routing_number: string;
             account_number: string;
         };
-        rtp: {
+        rtp?: {
             routing_number: string;
             account_number: string;
-        };
-        swift_bic_code: string;
-        swift_account_number?: string | null;
-        account_type: string;
-        beneficiary: {
-            name: string;
-            address_line_1: string;
-            address_line_2: string;
-        };
-        receiving_bank: {
-            name: string;
-            address_line_1: string;
-            address_line_2: string;
-        };
-        swift_receiving_bank?: {
-            name: string | null;
-            address_line_1: string | null;
-            address_line_2: string | null;
         } | null;
-    };
+        swift_bic_code?: string | null;
+        swift_account_number?: string | null;
+        account_type?: VirtualAccountUsAccountType | null;
+        beneficiary?: {
+            name: string;
+            address_line_1: string;
+            address_line_2: string;
+        } | null;
+        receiving_bank?: {
+            name: string;
+            address_line_1: string;
+            address_line_2?: string | null;
+        } | null;
+        swift_receiving_bank?: {
+            name?: string | null;
+            address_line_1?: string | null;
+            address_line_2?: string | null;
+        } | null;
+        swift_intermediary_bank?: {
+            name?: string | null;
+            swift_code_bic?: string | null;
+            routing_number?: string | null;
+            address_line_1?: string | null;
+            address_line_2?: string | null;
+        } | null;
+    } | null;
     token: StablecoinToken;
     blockchain_wallet_id: string | null;
-    blockchain_wallet: { network: Network; address: string } | null;
+    blockchain_wallet: { network: Network; address?: string | null } | null;
     co?: {
         bre_b: {
             key: string;
@@ -134,7 +149,7 @@ export function createVirtualAccountsResource(instanceId: string, client: Intern
             customer_id,
             id,
             ...data
-        }: UpdateVirtualAccountInput): Promise<BlindpayApiResponse<void>> {
+        }: UpdateVirtualAccountInput): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.put(
                 `/instances/${instanceId}/customers/${customer_id}/virtual-accounts/${id}`,
                 data

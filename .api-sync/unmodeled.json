@@ -137,34 +137,6 @@
         },
         {
             "kind": "property",
-            "schema": "CreatePartnerFeeInput",
-            "field": "evm_wallet_address",
-            "reason": "Already tracked in .api-sync/contract-check-allowlist.json; mirrored here so this repo's own reconciliation state does not depend on that file staying in sync.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "property",
-            "schema": "CreatePartnerFeeInput",
-            "field": "stellar_wallet_address",
-            "reason": "See CreatePartnerFeeInput.evm_wallet_address.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "property",
-            "schema": "CreatePartnerFeeResponse",
-            "field": "evm_wallet_address",
-            "reason": "See CreatePartnerFeeInput.evm_wallet_address.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "property",
-            "schema": "CreatePartnerFeeResponse",
-            "field": "stellar_wallet_address",
-            "reason": "See CreatePartnerFeeInput.evm_wallet_address.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "property",
             "schema": "CreatePayinOut",
             "field": "billing_fee",
             "reason": "Already tracked in .api-sync/contract-check-allowlist.json as CreateEvmPayinResponse.billing_fee; mirrored here.",
@@ -189,34 +161,6 @@
             "schema": "CustomerOut",
             "field": "sole_proprietor_doc_type",
             "reason": "Pre-existing SDK-only field on all 3 KYC/KYB response types with no matching property on CustomerOut in the spec.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "property",
-            "schema": "GetPartnerFeeResponse",
-            "field": "evm_wallet_address",
-            "reason": "See CreatePartnerFeeInput.evm_wallet_address.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "property",
-            "schema": "GetPartnerFeeResponse",
-            "field": "stellar_wallet_address",
-            "reason": "See CreatePartnerFeeInput.evm_wallet_address.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "property",
-            "schema": "ListPartnerFeesResponse",
-            "field": "evm_wallet_address",
-            "reason": "See CreatePartnerFeeInput.evm_wallet_address.",
-            "owner": "eric@blindpay.com"
-        },
-        {
-            "kind": "property",
-            "schema": "ListPartnerFeesResponse",
-            "field": "stellar_wallet_address",
-            "reason": "See CreatePartnerFeeInput.evm_wallet_address.",
             "owner": "eric@blindpay.com"
         },
         {
@@ -679,56 +623,56 @@
         {
             "schema": "VirtualAccountOut",
             "path": "blockchain_wallet",
-            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
-            "owner": "eric@blindpay.com"
+            "reason": "Typed inline on VirtualAccount from the spec property's own properties (required/nullable per the spec). Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
         },
         {
             "schema": "VirtualAccountOut",
             "path": "us",
-            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
-            "owner": "eric@blindpay.com"
+            "reason": "Typed inline on VirtualAccount from the spec property's own properties (required/nullable per the spec). Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
         },
         {
             "schema": "VirtualAccountOut",
             "path": "us.ach",
-            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
-            "owner": "eric@blindpay.com"
+            "reason": "Typed inline on VirtualAccount from the spec property's own properties (required/nullable per the spec). Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
         },
         {
             "schema": "VirtualAccountOut",
             "path": "us.beneficiary",
-            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
-            "owner": "eric@blindpay.com"
+            "reason": "Typed inline on VirtualAccount from the spec property's own properties (required/nullable per the spec). Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
         },
         {
             "schema": "VirtualAccountOut",
             "path": "us.receiving_bank",
-            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
-            "owner": "eric@blindpay.com"
+            "reason": "Typed inline on VirtualAccount from the spec property's own properties (required/nullable per the spec). Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
         },
         {
             "schema": "VirtualAccountOut",
             "path": "us.rtp",
-            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
-            "owner": "eric@blindpay.com"
+            "reason": "Typed inline on VirtualAccount from the spec property's own properties (required/nullable per the spec). Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
         },
         {
             "schema": "VirtualAccountOut",
             "path": "us.swift_intermediary_bank",
-            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
-            "owner": "eric@blindpay.com"
+            "reason": "Typed inline on VirtualAccount from the spec property's own properties (required/nullable per the spec). Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
         },
         {
             "schema": "VirtualAccountOut",
             "path": "us.swift_receiving_bank",
-            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
-            "owner": "eric@blindpay.com"
+            "reason": "Typed inline on VirtualAccount from the spec property's own properties (required/nullable per the spec). Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
         },
         {
             "schema": "VirtualAccountOut",
             "path": "us.wire",
-            "reason": "Pre-existing inline nested shape from before the api-sync-hardening pass introduced nested-object coverage checking; recorded intentionally (not modeled) so newly introduced unmapped nested shapes fail loudly instead of silently. Needs a human pass to either model or drop.",
-            "owner": "eric@blindpay.com"
+            "reason": "Typed inline on VirtualAccount from the spec property's own properties (required/nullable per the spec). Recorded because spec-map.json has no nested entries; the type check covers the parent field.",
+            "owner": "thayto@blindpay.com"
         },
         {
             "schema": "PayinOut",

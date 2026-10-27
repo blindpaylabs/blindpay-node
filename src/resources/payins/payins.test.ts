@@ -148,6 +148,39 @@ describe("Payins", () => {
             expect(error).toBeNull();
             expect(data).toEqual(mockedPayins);
         });
+
+        it("should send every list filter as a query parameter", async () => {
+            fetchMock.mockResponseOnce(JSON.stringify([]), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { error } = await blindpay.payins.list({
+                limit: "10",
+                status: "completed",
+                customer_id: "cu_000000000000",
+                customer_name: "Jane Doe",
+                bank_account_id: "ba_000000000000",
+                country: "BR",
+                payment_method: "pix",
+                network: "polygon",
+                token: "USDC",
+            });
+
+            expect(error).toBeNull();
+            const url = new URL(fetchMock.mock.calls[0][0] as string);
+            expect(url.pathname).toBe("/v1/instances/in_000000000000/payins");
+            expect(Object.fromEntries(url.searchParams)).toEqual({
+                limit: "10",
+                status: "completed",
+                customer_id: "cu_000000000000",
+                customer_name: "Jane Doe",
+                bank_account_id: "ba_000000000000",
+                country: "BR",
+                payment_method: "pix",
+                network: "polygon",
+                token: "USDC",
+            });
+        });
     });
 
     describe("Get payin", () => {

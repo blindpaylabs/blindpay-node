@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse, Network } from "../../../types";
+import type { BlindpayApiResponse, Network, SuccessResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type GetBlockchainWalletMessage = string;
@@ -85,13 +85,14 @@ export type CreateAssetTrustlineResponse = {
 export type MintUsdbStellarInput = {
     address: string;
     amount: string;
-    signedXdr: string;
+    signedXdr?: string;
 };
 
 export type PrepareSolanaDelegationTransactionInput = {
-    token_address: string;
-    amount: string;
     owner_address: string;
+    quote_id?: string;
+    token_address?: string;
+    amount?: string;
 };
 
 export type PrepareSolanaDelegationTransactionResponse = {
@@ -106,8 +107,8 @@ export type MintUsdbSolanaInput = {
 
 export type MintUsdbSolanaResponse = {
     success: boolean;
-    signature: string;
-    error: string;
+    signature?: string;
+    error?: string;
 };
 
 export function createBlockchainWalletsResource(instanceId: string, client: InternalApiClient) {
@@ -165,7 +166,7 @@ export function createBlockchainWalletsResource(instanceId: string, client: Inte
         delete({
             customer_id,
             id,
-        }: DeleteBlockchainWalletInput): Promise<BlindpayApiResponse<void>> {
+        }: DeleteBlockchainWalletInput): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.delete(
                 `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets/${id}`
             );
@@ -189,10 +190,14 @@ export function createBlockchainWalletsResource(instanceId: string, client: Inte
                 address,
             });
         },
-        mintUsdbStellar({ ...data }: MintUsdbStellarInput): Promise<BlindpayApiResponse<void>> {
+        mintUsdbStellar({
+            ...data
+        }: MintUsdbStellarInput): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.post(`/instances/${instanceId}/mint-usdb-stellar`, data);
         },
-        mintUsdbSolana({ ...data }: MintUsdbSolanaInput): Promise<BlindpayApiResponse<void>> {
+        mintUsdbSolana({
+            ...data
+        }: MintUsdbSolanaInput): Promise<BlindpayApiResponse<MintUsdbSolanaResponse>> {
             return client.post(`/instances/${instanceId}/mint-usdb-solana`, data);
         },
         prepareSolanaDelegationTransaction({

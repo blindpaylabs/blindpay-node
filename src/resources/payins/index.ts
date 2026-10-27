@@ -104,6 +104,12 @@ export type Payin = {
 export type ListPayinsInput = PaginationParams & {
     status?: TransactionStatus;
     customer_id?: string;
+    customer_name?: string;
+    bank_account_id?: string;
+    country?: string;
+    payment_method?: PayinPaymentMethod;
+    network?: string;
+    token?: string;
 };
 
 export type ListPayinsResponse =
@@ -112,10 +118,6 @@ export type ListPayinsResponse =
           pagination: PaginationMetadata;
       }
     | Payin[];
-
-export type CreatePayinInput = {
-    quote_id: string;
-};
 
 export type GetPayinInput = string;
 

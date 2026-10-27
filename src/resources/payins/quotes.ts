@@ -9,14 +9,14 @@ import type {
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type CreatePayinQuoteInput = {
-    blockchain_wallet_id: string | null;
+    blockchain_wallet_id?: string | null;
     currency_type: CurrencyType;
     payment_method: PaymentMethod;
     request_amount: number;
     token: StablecoinToken;
     is_otc?: boolean | null;
-    cover_fees: boolean | null;
-    partner_fee_id: string | null;
+    cover_fees?: boolean | null;
+    partner_fee_id?: string | null;
     payer_rules?: PayerRules | null;
     wallet_id?: string | null;
     funding_bank_account_id?: string | null;

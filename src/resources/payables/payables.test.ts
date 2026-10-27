@@ -21,16 +21,7 @@ describe("Payables", () => {
         currency: "BRL",
         status: "draft",
         amount: 15000,
-        from: {
-            legal_name: null,
-            address_line_1: null,
-            address_line_2: null,
-            city: null,
-            state_province_region: null,
-            postal_code: null,
-            country: null,
-            tax_id: null,
-        },
+        from: null,
         to: {
             legal_name: "Companhia de Energia SA",
             address_line_1: null,

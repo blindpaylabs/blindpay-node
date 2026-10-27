@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import type { SuccessResponse } from "../../../types";
 import { BlindPay } from "../../client";
 import type { CreatePartnerFeeResponse, GetPartnerFeeResponse, ListPartnerFeesResponse } from ".";
 
@@ -18,9 +19,6 @@ describe("Partner fees", () => {
                     payout_flat_fee: 0,
                     payin_percentage_fee: 0,
                     payin_flat_fee: 0,
-                    evm_wallet_address: "0x1234567890123456789012345678901234567890",
-                    stellar_wallet_address:
-                        "GAB22222222222222222222222222222222222222222222222222222222222222",
                 },
             ];
 
@@ -45,9 +43,6 @@ describe("Partner fees", () => {
                 payout_flat_fee: 0,
                 payin_percentage_fee: 0,
                 payin_flat_fee: 0,
-                evm_wallet_address: "0x1234567890123456789012345678901234567890",
-                stellar_wallet_address:
-                    "GAB22222222222222222222222222222222222222222222222222222222222222",
             };
 
             fetchMock.mockResponseOnce(JSON.stringify(mockPartnerFee), {
@@ -60,9 +55,6 @@ describe("Partner fees", () => {
                 payout_flat_fee: 0,
                 payin_percentage_fee: 0,
                 payin_flat_fee: 0,
-                evm_wallet_address: "0x1234567890123456789012345678901234567890",
-                stellar_wallet_address:
-                    "GAB22222222222222222222222222222222222222222222222222222222222222",
             });
 
             expect(error).toBeNull();
@@ -80,9 +72,6 @@ describe("Partner fees", () => {
                 payout_flat_fee: 0,
                 payin_percentage_fee: 0,
                 payin_flat_fee: 0,
-                evm_wallet_address: "0x1234567890123456789012345678901234567890",
-                stellar_wallet_address:
-                    "GAB22222222222222222222222222222222222222222222222222222222222222",
             };
 
             fetchMock.mockResponseOnce(JSON.stringify(mockedFee), {
@@ -98,14 +87,16 @@ describe("Partner fees", () => {
 
     describe("Delete partner fee", () => {
         it("should delete a partner fee", async () => {
-            fetchMock.mockResponseOnce(JSON.stringify({ data: null }), {
+            const mockedResponse: SuccessResponse = { success: true };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
                 headers: { "Content-Type": "application/json" },
             });
 
             const { data, error } = await blindpay.partnerFees.delete("fe_000000000000");
 
             expect(error).toBeNull();
-            expect(data).toEqual({ data: null });
+            expect(data).toEqual(mockedResponse);
         });
     });
 });

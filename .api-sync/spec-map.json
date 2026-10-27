@@ -1287,7 +1287,7 @@
                     "symbol": "CreateEvmPayinInput"
                 }
             ],
-            "notes": "createEvm(payin_quote_id) posts {payin_quote_id}, matching this schema's one field exactly. CreatePayinInput (payins/index.ts:111, `{quote_id: string}`) is dead code: never referenced by the factory, and its field name does not even match the spec (payin_quote_id). Orphaned, same situation as CreatePayoutInput (payouts/index.ts:106) noted separately."
+            "notes": "createEvm(payin_quote_id) posts {payin_quote_id}, matching this schema's one field exactly."
         },
         {
             "spec": {

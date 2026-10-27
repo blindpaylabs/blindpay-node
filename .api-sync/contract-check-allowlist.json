@@ -36,54 +36,6 @@
         "owner": "eric@blindpay.com"
     },
     {
-        "schema": "ListPartnerFeesResponse",
-        "field": "evm_wallet_address",
-        "reason": "Pre-existing SDK field with no matching property on the partner-fees create/list/get schemas in the spec. Unrelated to wave 2; needs its own follow-up.",
-        "owner": "eric@blindpay.com"
-    },
-    {
-        "schema": "ListPartnerFeesResponse",
-        "field": "stellar_wallet_address",
-        "reason": "Pre-existing SDK field with no matching property on the partner-fees create/list/get schemas in the spec. Unrelated to wave 2; needs its own follow-up.",
-        "owner": "eric@blindpay.com"
-    },
-    {
-        "schema": "CreatePartnerFeeInput",
-        "field": "evm_wallet_address",
-        "reason": "Pre-existing SDK field with no matching property on the partner-fees create/list/get schemas in the spec. Unrelated to wave 2; needs its own follow-up.",
-        "owner": "eric@blindpay.com"
-    },
-    {
-        "schema": "CreatePartnerFeeInput",
-        "field": "stellar_wallet_address",
-        "reason": "Pre-existing SDK field with no matching property on the partner-fees create/list/get schemas in the spec. Unrelated to wave 2; needs its own follow-up.",
-        "owner": "eric@blindpay.com"
-    },
-    {
-        "schema": "CreatePartnerFeeResponse",
-        "field": "evm_wallet_address",
-        "reason": "Pre-existing SDK field with no matching property on the partner-fees create/list/get schemas in the spec. Unrelated to wave 2; needs its own follow-up.",
-        "owner": "eric@blindpay.com"
-    },
-    {
-        "schema": "CreatePartnerFeeResponse",
-        "field": "stellar_wallet_address",
-        "reason": "Pre-existing SDK field with no matching property on the partner-fees create/list/get schemas in the spec. Unrelated to wave 2; needs its own follow-up.",
-        "owner": "eric@blindpay.com"
-    },
-    {
-        "schema": "GetPartnerFeeResponse",
-        "field": "evm_wallet_address",
-        "reason": "Pre-existing SDK field with no matching property on the partner-fees create/list/get schemas in the spec. Unrelated to wave 2; needs its own follow-up.",
-        "owner": "eric@blindpay.com"
-    },
-    {
-        "schema": "GetPartnerFeeResponse",
-        "field": "stellar_wallet_address",
-        "reason": "Pre-existing SDK field with no matching property on the partner-fees create/list/get schemas in the spec. Unrelated to wave 2; needs its own follow-up.",
-        "owner": "eric@blindpay.com"
-    },
-    {
         "schema": "Payin",
         "field": "tracking_partner_fee",
         "reason": "Pre-existing tracking step modeled by the SDK that no longer exists on PayinOut in the spec. Unrelated to wave 2; needs its own follow-up.",

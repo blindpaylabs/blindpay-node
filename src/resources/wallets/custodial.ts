@@ -1,4 +1,10 @@
-import type { BlindpayApiResponse, Network, PaginationMetadata, WalletToken } from "../../../types";
+import type {
+    BlindpayApiResponse,
+    Network,
+    PaginationMetadata,
+    SuccessResponse,
+    WalletToken,
+} from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type YieldStatus = "disabled" | "enabled" | "disabling";
@@ -38,8 +44,8 @@ export type WalletTokenBalance = {
     id: string;
     symbol: WalletToken;
     amount: number;
-    earning_amount?: number;
-    total_amount?: number;
+    earning_amount: number;
+    total_amount: number;
 };
 
 export type GetCustodialWalletBalanceInput = {
@@ -133,7 +139,7 @@ export function createCustodialWalletsResource(instanceId: string, client: Inter
         delete({
             customer_id,
             id,
-        }: DeleteCustodialWalletInput): Promise<BlindpayApiResponse<{ success: boolean }>> {
+        }: DeleteCustodialWalletInput): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.delete(`/instances/${instanceId}/customers/${customer_id}/wallets/${id}`);
         },
         getDeposits({

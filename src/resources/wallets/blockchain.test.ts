@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import type { SuccessResponse } from "../../../types";
 import { BlindPay } from "../../client";
 import type {
     CreateAssetTrustlineResponse,
@@ -184,7 +185,9 @@ describe("Blockchain wallets", () => {
 
     describe("Delete blockchain wallet", () => {
         it("should delete a blockchain wallet", async () => {
-            fetchMock.mockResponseOnce(JSON.stringify({ data: null }), {
+            const mockedResponse: SuccessResponse = { success: true };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
                 headers: { "Content-Type": "application/json" },
             });
 
@@ -194,7 +197,7 @@ describe("Blockchain wallets", () => {
             });
 
             expect(error).toBeNull();
-            expect(data).toEqual({ data: null });
+            expect(data).toEqual(mockedResponse);
         });
     });
 
@@ -219,7 +222,9 @@ describe("Blockchain wallets", () => {
 
     describe("Mint USDB Stellar", () => {
         it("should mint usdb on stellar", async () => {
-            fetchMock.mockResponseOnce(JSON.stringify({}), {
+            const mockedResponse: SuccessResponse = { success: true };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
                 headers: { "Content-Type": "application/json" },
             });
 
@@ -231,7 +236,27 @@ describe("Blockchain wallets", () => {
             });
 
             expect(error).toBeNull();
-            expect(data).toBeDefined();
+            expect(data).toEqual(mockedResponse);
+        });
+
+        it("should mint usdb on stellar without a signed xdr", async () => {
+            const mockedResponse: SuccessResponse = { success: true };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.wallets.blockchain.mintUsdbStellar({
+                address: "GCDNJUBQSX7AJWLJACMJ7I4BC3Z47BQUTMHEICZLE6MU4KQBRYG5JY6B",
+                amount: "1000000",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedResponse);
+            expect(JSON.parse(fetchMock.mock.calls[0][1]?.body as string)).toEqual({
+                address: "GCDNJUBQSX7AJWLJACMJ7I4BC3Z47BQUTMHEICZLE6MU4KQBRYG5JY6B",
+                amount: "1000000",
+            });
         });
     });
 
@@ -241,7 +266,6 @@ describe("Blockchain wallets", () => {
                 success: true,
                 signature:
                     "4wceVEQeJG4vpS4k2o1dHU5cFWeWTQU8iaCEpRaV5KkqSxPfbdAc8hzXa7nNYG6rvqgAmDkzBycbcXkKKAeK8Jtu",
-                error: "",
             };
 
             fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
@@ -279,6 +303,31 @@ describe("Blockchain wallets", () => {
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedResponse);
+        });
+
+        it("should prepare a solana delegation transaction from a quote", async () => {
+            const mockedResponse: PrepareSolanaDelegationTransactionResponse = {
+                success: true,
+                transaction:
+                    "AAGBf4K95Gp5i6f0BAEYAgABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIw==",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } =
+                await blindpay.wallets.blockchain.prepareSolanaDelegationTransaction({
+                    owner_address: "7YttLkHDoNj9wyDur5pM1ejNaAvT9X4eqaYcHQqtj2G5",
+                    quote_id: "qu_000000000000",
+                });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedResponse);
+            expect(JSON.parse(fetchMock.mock.calls[0][1]?.body as string)).toEqual({
+                owner_address: "7YttLkHDoNj9wyDur5pM1ejNaAvT9X4eqaYcHQqtj2G5",
+                quote_id: "qu_000000000000",
+            });
         });
     });
 });
