@@ -48,6 +48,45 @@ describe("nullable to non-nullable / non-nullable to nullable", () => {
     });
 });
 
+describe("nullability expressed through a reference or a composition", () => {
+    const spec = {
+        paths: {},
+        components: {
+            schemas: {
+                PayableParty: { type: ["object", "null"], properties: {} },
+                FeeOptions: { type: "object", properties: {} },
+            },
+        },
+    };
+    const ref = (name: string) => ({ $ref: `#/components/schemas/${name}` });
+
+    it("reads it from the referenced schema", () => {
+        expect(specTypeSignature(ref("PayableParty"), spec).nullable).toBe(true);
+        expect(specTypeSignature(ref("FeeOptions"), spec).nullable).toBe(false);
+    });
+
+    it("reads it from an anyOf/oneOf null branch", () => {
+        const node = { anyOf: [{ type: "string", format: "date-time" }, { type: "null" }] };
+        expect(specTypeSignature(node, spec).nullable).toBe(true);
+        expect(
+            specTypeSignature({ oneOf: [ref("FeeOptions"), { type: "null" }] }, spec).nullable
+        ).toBe(true);
+    });
+
+    it("reads it from an allOf that wraps a reference in a nullable object", () => {
+        const node = { allOf: [ref("FeeOptions"), { type: ["object", "null"] }] };
+        expect(specTypeSignature(node, spec).nullable).toBe(true);
+    });
+
+    it("flags the SDK type that drops it", () => {
+        const sdk = classifySdkType("PayableParty", "/unused", "unused.ts");
+        const problems = compareTypeSignatures(specTypeSignature(ref("PayableParty"), spec), sdk, {
+            skipEnumValues: false,
+        });
+        expect(problems).toContain('spec allows null but the SDK type has no "| null"');
+    });
+});
+
 describe("enum-typed property degrading to a bare string", () => {
     it("flags when spec constrains the field but the SDK declares a bare string", () => {
         const spec = specTypeSignature({

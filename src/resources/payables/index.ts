@@ -59,7 +59,7 @@ export type Payable = {
     updated_at?: string | null;
     amount: number | null;
     payout_id?: string | null;
-    bank_account?: PayableBankAccount;
+    bank_account?: PayableBankAccount | null;
     last_attempt_status?: PayableLastAttemptStatus | null;
     first_name?: string | null;
     last_name?: string | null;

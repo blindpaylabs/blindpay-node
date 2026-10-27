@@ -7,6 +7,7 @@ import {
     QUOTED_UNION_LIST_SOURCE,
     readSource,
 } from "./sdk-scan";
+import type { JsonValue, Spec } from "./spec";
 
 export { extractTopLevelFields, type FieldInfo } from "./sdk-scan";
 
@@ -19,12 +20,12 @@ export type TypeSignature = {
     namedAs?: string;
 };
 
-export function specTypeSignature(node: unknown): TypeSignature {
+export function specTypeSignature(node: unknown, spec?: Spec): TypeSignature {
     // biome-ignore lint/suspicious/noExplicitAny: raw OpenAPI schema node
     const n = node as any;
     const raw = n?.type;
     const types: string[] = Array.isArray(raw) ? raw : raw ? [raw] : [];
-    const nullable = types.includes("null");
+    const nullable = types.includes("null") || alternatives(n, spec).some(allowsNull);
     const nonNull = types.filter((t) => t !== "null");
     let baseKind: TypeSignature["baseKind"] = "unknown";
     if (nonNull.includes("string")) baseKind = "string";
@@ -34,6 +35,25 @@ export function specTypeSignature(node: unknown): TypeSignature {
     else if (nonNull.includes("object")) baseKind = "object";
     const enumValues: string[] | null = Array.isArray(n?.enum) ? n.enum : (n?.items?.enum ?? null);
     return { baseKind, nullable, enumValues };
+}
+
+/**
+ * The schemas a property node stands for, through a $ref and across anyOf/oneOf/allOf branches.
+ * blindpay-v2 writes a nullable reference as `allOf: [ref, { type: ["object", "null"] }]` or an
+ * anyOf with a `{ type: "null" }` branch, so null can sit on any of them.
+ */
+function alternatives(node: JsonValue, spec?: Spec): JsonValue[] {
+    if (typeof node?.$ref === "string" && spec) {
+        return alternatives(spec.components.schemas[node.$ref.split("/").pop()], spec);
+    }
+    const branches = node?.anyOf ?? node?.oneOf ?? node?.allOf;
+    if (Array.isArray(branches)) return branches.flatMap((b) => alternatives(b, spec));
+    return [node];
+}
+
+function allowsNull(node: JsonValue): boolean {
+    const type = node?.type;
+    return type === "null" || (Array.isArray(type) && type.includes("null"));
 }
 
 /** Resolves `name` as a string-literal union: same file first, then types/index.d.ts, then any resource file. */

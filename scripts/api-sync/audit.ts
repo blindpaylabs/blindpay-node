@@ -83,7 +83,7 @@ export function auditTypes(spec: Spec, map: SpecMap, repoRoot: string): AuditFin
             for (const field of specProps) {
                 const info = fields.get(field);
                 if (!info) continue;
-                const specSig = specTypeSignature(resolveFieldNode(spec, entry.spec, field));
+                const specSig = specTypeSignature(resolveFieldNode(spec, entry.spec, field), spec);
                 const sdkSig = classifySdkType(info.typeExpr, repoRoot, site.file);
                 const problems = compareTypeSignatures(specSig, sdkSig, { skipEnumValues: false });
                 for (const problem of problems) {

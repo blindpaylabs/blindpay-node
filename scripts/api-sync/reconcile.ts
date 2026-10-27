@@ -336,7 +336,7 @@ export function reconcile(
         // Discriminator fields (DISCRIMINATOR_FIELDS) are skipped entirely; see its comment.
         for (const field of specProps) {
             if (missingSet.has(field) || DISCRIMINATOR_FIELDS.has(field)) continue;
-            const specSig = specTypeSignature(resolveFieldNode(spec, entry.spec, field));
+            const specSig = specTypeSignature(resolveFieldNode(spec, entry.spec, field), spec);
             for (const [siteKey, fields] of fieldsBySite) {
                 const info = fields.get(field);
                 if (!info) continue; // this particular site doesn't carry the field (a fan-out variant)

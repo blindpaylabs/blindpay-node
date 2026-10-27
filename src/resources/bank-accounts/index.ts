@@ -373,7 +373,7 @@ export type CreateAchInput = {
     business_industry?: BusinessIndustry | null;
     phone_number?: string | null;
     tax_id?: string | null;
-    date_of_birth?: string;
+    date_of_birth?: string | null;
     faster_payments_account_number?: string | null;
     faster_payments_beneficiary_address_line_1?: string | null;
     faster_payments_beneficiary_address_line_2?: string | null;
@@ -441,7 +441,7 @@ export type CreateWireInput = {
     business_industry?: BusinessIndustry | null;
     phone_number?: string | null;
     tax_id?: string | null;
-    date_of_birth?: string;
+    date_of_birth?: string | null;
     faster_payments_account_number?: string | null;
     faster_payments_beneficiary_address_line_1?: string | null;
     faster_payments_beneficiary_address_line_2?: string | null;
@@ -514,7 +514,7 @@ export type CreateInternationalSwiftInput = {
     business_industry?: BusinessIndustry | null;
     phone_number?: string | null;
     tax_id?: string | null;
-    date_of_birth?: string;
+    date_of_birth?: string | null;
     faster_payments_account_number?: string | null;
     faster_payments_beneficiary_address_line_1?: string | null;
     faster_payments_beneficiary_address_line_2?: string | null;
@@ -594,7 +594,7 @@ export type CreateRtpInput = {
     business_industry?: BusinessIndustry | null;
     phone_number?: string | null;
     tax_id?: string | null;
-    date_of_birth?: string;
+    date_of_birth?: string | null;
     faster_payments_account_number?: string | null;
     faster_payments_beneficiary_address_line_1?: string | null;
     faster_payments_beneficiary_address_line_2?: string | null;

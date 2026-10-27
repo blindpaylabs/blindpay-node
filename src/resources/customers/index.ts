@@ -245,8 +245,8 @@ export type IndividualWithStandardKYC = {
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
     publicly_traded?: boolean | null;
-    cnae_condition?: CustomerCnaeCondition;
-    virtual_account_preapproval?: CustomerVirtualAccountPreapproval;
+    cnae_condition?: CustomerCnaeCondition | null;
+    virtual_account_preapproval?: CustomerVirtualAccountPreapproval | null;
     is_nested?: boolean | null;
     additional_info?: AdditionalInfoItem[] | null;
     business_type?: BusinessType | null;
@@ -316,8 +316,8 @@ export type IndividualWithEnhancedKYC = {
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
     publicly_traded?: boolean | null;
-    cnae_condition?: CustomerCnaeCondition;
-    virtual_account_preapproval?: CustomerVirtualAccountPreapproval;
+    cnae_condition?: CustomerCnaeCondition | null;
+    virtual_account_preapproval?: CustomerVirtualAccountPreapproval | null;
     is_nested?: boolean | null;
     additional_info?: AdditionalInfoItem[] | null;
     business_type?: BusinessType | null;
@@ -385,8 +385,8 @@ export type BusinessWithStandardKYB = {
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
     publicly_traded?: boolean | null;
-    cnae_condition?: CustomerCnaeCondition;
-    virtual_account_preapproval?: CustomerVirtualAccountPreapproval;
+    cnae_condition?: CustomerCnaeCondition | null;
+    virtual_account_preapproval?: CustomerVirtualAccountPreapproval | null;
     is_nested?: boolean | null;
     additional_info?: AdditionalInfoItem[] | null;
     business_type?: BusinessType | null;
@@ -575,12 +575,12 @@ export type UpdateCustomerInput = {
     business_type?: BusinessType | null;
     city?: string | null;
     country: Country;
-    date_of_birth?: string;
+    date_of_birth?: string | null;
     email: string;
     estimated_annual_revenue?: EstimatedAnnualRevenue | null;
     external_id?: string | null;
     first_name?: string | null;
-    formation_date?: string;
+    formation_date?: string | null;
     id_doc_back_file?: string | null;
     id_doc_country?: Country | null;
     id_doc_front_file?: string | null;
