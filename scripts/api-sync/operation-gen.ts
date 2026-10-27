@@ -36,7 +36,11 @@ function camelCase(segment: string): string {
     return p ? p[0].toLowerCase() + p.slice(1) : p;
 }
 
+/** Path segments that end in "s" without being plurals (`tos` is terms of service). */
+const UNCOUNTABLE_SEGMENTS = new Set(["tos"]);
+
 function singularize(segment: string): string {
+    if (UNCOUNTABLE_SEGMENTS.has(segment)) return segment;
     if (segment.endsWith("ies")) return `${segment.slice(0, -3)}y`;
     if (segment.endsWith("ss")) return segment;
     if (segment.endsWith("s")) return segment.slice(0, -1);

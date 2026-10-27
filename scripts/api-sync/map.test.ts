@@ -1,7 +1,13 @@
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { findUnmappedEnumProperties } from "./enum-coverage";
-import { isKnownEnumDivergence, isUnmodeledProperty, loadSpecMap, loadUnmodeled } from "./map";
+import {
+    isKnownEnumDivergence,
+    isUnmodeledProperty,
+    loadSpecMap,
+    loadUnmodeled,
+    withPendingMapEntries,
+} from "./map";
 import { findUnmappedNestedShapes } from "./nested-coverage";
 import { findDeclarationSpan, readSource } from "./sdk-scan";
 import {
@@ -11,7 +17,7 @@ import {
     resolveProperties,
     type Spec,
 } from "./spec";
-import { isPathLocator } from "./types";
+import { isPathLocator, type SpecMap } from "./types";
 
 const REPO_ROOT = resolve(import.meta.dirname, "../..");
 const map = loadSpecMap(resolve(REPO_ROOT, ".api-sync/spec-map.json"));
@@ -97,5 +103,62 @@ describe("unmodeled.json validity", () => {
                 )
             ).toBe(true);
         }
+    });
+});
+
+describe("withPendingMapEntries", () => {
+    const base: SpecMap = {
+        enums: [],
+        types: [
+            {
+                spec: { schema: "PayinOut" },
+                sdk: [{ file: "src/resources/payins/index.ts", symbol: "Payin" }],
+            },
+        ],
+        ignore: { schemas: [] },
+    };
+
+    it("adds a schema mapping and an inline-body path mapping the run is about to persist", () => {
+        const merged = withPendingMapEntries(base, [
+            {
+                kind: "schema",
+                schema: "PlaidLinkOut",
+                file: "src/resources/bank-accounts/index.ts",
+                symbol: "CreatePlaidBankAccountResponse",
+                notes: null,
+            },
+            {
+                kind: "path",
+                path: "/v1/instances/{instance_id}/widgets",
+                method: "get",
+                location: "response:200",
+                file: "src/resources/widgets/index.ts",
+                symbol: "ListWidgetsResponse",
+                notes: "inline",
+            },
+        ]);
+        expect(merged.types.map((t) => t.spec)).toEqual([
+            { schema: "PayinOut" },
+            { schema: "PlaidLinkOut" },
+            {
+                path: "/v1/instances/{instance_id}/widgets",
+                method: "get",
+                location: "response:200",
+            },
+        ]);
+    });
+
+    it("adds a new SDK site to an existing locator once, and leaves the input untouched", () => {
+        const entry = {
+            kind: "schema" as const,
+            schema: "PayinOut",
+            file: "src/resources/payins/index.ts",
+            symbol: "GetPayinResponse",
+            notes: null,
+        };
+        const merged = withPendingMapEntries(base, [entry, entry]);
+        expect(merged.types).toHaveLength(1);
+        expect(merged.types[0].sdk.map((s) => s.symbol)).toEqual(["Payin", "GetPayinResponse"]);
+        expect(base.types[0].sdk).toHaveLength(1);
     });
 });

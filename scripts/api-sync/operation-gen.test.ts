@@ -99,6 +99,45 @@ describe("operation-insert classifier", () => {
         );
     });
 
+    it("keeps an acronym path segment like `tos` whole when naming the generated types", () => {
+        const repoRoot = makeRepo({
+            ...baseFiles(),
+            "src/resources/terms-of-service/index.ts": `import type { BlindpayApiResponse } from "../../../types";
+import type { InternalApiClient } from "../../internal/api-client";
+
+export function createTermsOfServiceResource(instanceId: string, client: InternalApiClient) {
+    return {
+        initiate(): Promise<BlindpayApiResponse<{ url: string }>> {
+            return client.post(\`/e/instances/\${instanceId}/tos\`, {});
+        },
+    };
+}
+`,
+        });
+        const json = (schema: unknown) => ({ content: { "application/json": { schema } } });
+        const object = { type: "object", properties: { tos_id: { type: "string" } } };
+        const spec: Spec = {
+            paths: {
+                "/v1/instances/{instance_id}/tos/passthrough": {
+                    post: { requestBody: json(object), responses: { "200": json(object) } },
+                },
+            },
+            components: { schemas: {} },
+        };
+        const result = classifyNewOperation(
+            spec,
+            "post",
+            "/v1/instances/{instance_id}/tos/passthrough",
+            emptyMap(),
+            repoRoot,
+            loadCanonicalEnums(repoRoot)
+        );
+        expect(result.standard).toBe(true);
+        if (!result.standard) throw new Error("unreachable");
+        expect(result.change.typeDecls).toContain("export type CreatePassthroughTosInput");
+        expect(result.change.typeDecls).toContain("export type CreatePassthroughTosResponse");
+    });
+
     it("classifies a multipart/form-data request body as NON-STANDARD, never generated", () => {
         const repoRoot = makeRepo(baseFiles());
         const spec: Spec = {

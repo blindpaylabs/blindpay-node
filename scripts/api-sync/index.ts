@@ -15,7 +15,7 @@ import { changesetFileName, classifyBump, renderChangeset } from "./changeset";
 import { computeCoverageGaps } from "./coverage";
 import { detectNewSchemas, detectRemovals } from "./diff";
 import { findUnmappedEnumProperties } from "./enum-coverage";
-import { isIgnoredOperation, loadSpecMap, loadUnmodeled } from "./map";
+import { isIgnoredOperation, loadSpecMap, loadUnmodeled, withPendingMapEntries } from "./map";
 import { classifyNewOperation, HTTP_METHODS, loadCanonicalEnums } from "./operation-gen";
 import { reconcile } from "./reconcile";
 import { readSource } from "./sdk-scan";
@@ -126,30 +126,8 @@ function writeReport(reportPath: string | null, report: SyncReport): void {
  * same schema/path locator so a second --apply against unchanged state stays byte-identical. */
 function persistNewMapEntries(specMapPath: string, entries: NewSchemaMapEntry[]): void {
     if (entries.length === 0) return;
-    // biome-ignore lint/suspicious/noExplicitAny: raw spec-map.json JSON
-    const raw: any = JSON.parse(readFileSync(specMapPath, "utf8"));
-    for (const entry of entries) {
-        const locator =
-            entry.kind === "schema"
-                ? { schema: entry.schema }
-                : { path: entry.path, method: entry.method, location: entry.location };
-        const existing = raw.types.find(
-            (t: { spec: Record<string, unknown> }) =>
-                JSON.stringify(t.spec) === JSON.stringify(locator)
-        );
-        if (existing) {
-            if (!existing.sdk.some((s: { symbol: string }) => s.symbol === entry.symbol)) {
-                existing.sdk.push({ file: entry.file, symbol: entry.symbol });
-            }
-            continue;
-        }
-        raw.types.push({
-            spec: locator,
-            sdk: [{ file: entry.file, symbol: entry.symbol }],
-            notes: entry.notes,
-        });
-    }
-    writeFileSync(specMapPath, `${JSON.stringify(raw, null, 4)}\n`);
+    const raw: SpecMap = JSON.parse(readFileSync(specMapPath, "utf8"));
+    writeFileSync(specMapPath, `${JSON.stringify(withPendingMapEntries(raw, entries), null, 4)}\n`);
 }
 
 function main(): void {
@@ -219,12 +197,18 @@ function main(): void {
     );
 
     const removalMessages = detectRemovals(snapshot, spec, map);
-    const newSchemaMessages = detectNewSchemas(snapshot, spec, map);
+    // Judged against the map as this run will leave it, so schemas the operation-inserts above
+    // are about to map are not reported as needing a human.
+    const mapAfterInserts = withPendingMapEntries(
+        map,
+        operationGaps.applicable.flatMap((c) => c.newMapEntries)
+    );
+    const newSchemaMessages = detectNewSchemas(snapshot, spec, mapAfterInserts);
     // Enum-constrained properties invisible to both the enum-insert patcher and the ordinary
     // field-type audit (chiefly anyOf/oneOf-wrapped enums): the exact bug class this system
     // exists to kill, so a new one hard-fails --check/--apply immediately instead of shipping
     // silently. See enum-coverage.ts.
-    const enumCoverageMessages = findUnmappedEnumProperties(spec, map, unmodeled).map(
+    const enumCoverageMessages = findUnmappedEnumProperties(spec, mapAfterInserts, unmodeled).map(
         (g) =>
             `enum-constrained property "${g.schema}.${g.property}" (${g.kind}) is not mapped in spec-map.json's enums[], not covered by the ordinary field-type audit, and has no recorded omission in .api-sync/unmodeled.json's enumPropertyOmissions.`
     );
