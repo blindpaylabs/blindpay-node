@@ -133,6 +133,59 @@ describe("operation-insert classifier", () => {
         );
     });
 
+    describe("RequestOptions (the Idempotency-Key header)", () => {
+        const json = (schema: unknown) => ({ content: { "application/json": { schema } } });
+        const object = { type: "object", properties: { url: { type: "string" } } };
+        const classify = (method: string, path: string, op: Record<string, unknown>) => {
+            const spec: Spec = { paths: { [path]: { [method]: op } }, components: { schemas: {} } };
+            const repoRoot = makeRepo(baseFiles());
+            const result = classifyNewOperation(
+                spec,
+                method,
+                path,
+                emptyMap(),
+                repoRoot,
+                loadCanonicalEnums(repoRoot)
+            );
+            if (!result.standard) throw new Error(result.reason);
+            return result.change;
+        };
+
+        it("is the last parameter of a mutating method, forwarded to the client and imported", () => {
+            const change = classify("post", "/v1/instances/{instance_id}/widgets", {
+                requestBody: json(object),
+                responses: { "200": json(object) },
+            });
+            expect(change.methodSource).toContain(
+                "create({ ...data }: CreateWidgetInput, options?: RequestOptions)"
+            );
+            expect(change.methodSource).toContain(
+                "return client.post(`/instances/${instanceId}/widgets`, data, options);"
+            );
+            expect(change.importsNeeded).toContain("RequestOptions");
+        });
+
+        it("is the only argument a DELETE by scalar id passes after its path", () => {
+            const change = classify("delete", "/v1/instances/{instance_id}/widgets/{id}", {
+                parameters: [{ name: "id", in: "path", required: true }],
+                responses: { "200": json(object) },
+            });
+            expect(change.methodSource).toContain(", options?: RequestOptions)");
+            expect(change.methodSource).toContain(
+                "client.delete(`/instances/${instanceId}/widgets/${widgetId}`, options);"
+            );
+        });
+
+        it("is never added to a GET", () => {
+            const change = classify("get", "/v1/instances/{instance_id}/widgets/{id}", {
+                parameters: [{ name: "id", in: "path", required: true }],
+                responses: { "200": json(object) },
+            });
+            expect(change.methodSource).not.toContain("RequestOptions");
+            expect(change.importsNeeded).not.toContain("RequestOptions");
+        });
+    });
+
     it("names a lone parent-ID scalar after its own parameter, not after the resource", () => {
         const repoRoot = makeRepo(baseFiles());
         const path = "/v1/instances/{instance_id}/customers/{customer_id}/widgets";

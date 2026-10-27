@@ -1,5 +1,11 @@
 [
     {
+        "schema": "RequestOptions",
+        "field": "idempotencyKey",
+        "reason": "Client-side per-call option, not a body field: the SDK sends it as the spec's optional Idempotency-Key header parameter on mutations.",
+        "owner": "thayto@blindpay.com"
+    },
+    {
         "schema": "CreatePayoutInput",
         "field": "reference",
         "reason": "Stale surface: v2 PR #1925 prunes unreachable schemas from the public spec and this field no longer appears anywhere in it, but the SDK still exposes it on CreatePayoutInput. Remove in next major.",

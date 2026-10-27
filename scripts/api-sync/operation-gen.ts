@@ -421,7 +421,10 @@ export function classifyNewOperation(
             methodName,
             typeDecls: typeDecls.trimEnd(),
             methodSource,
-            importsNeeded: [...ctx.importsNeeded].sort(),
+            importsNeeded: [
+                ...ctx.importsNeeded,
+                ...(method === "get" ? [] : ["RequestOptions"]),
+            ].sort(),
             newMapEntries,
         },
     };
@@ -471,15 +474,23 @@ function buildMethodSource(args: {
         pathTemplate,
     } = args;
     const returnType = `Promise<BlindpayApiResponse<${outputSymbol}>>`;
+    // Every mutation takes RequestOptions last (its Idempotency-Key header); a GET never does.
+    const params = (input: string) =>
+        method === "get" ? input : [input, "options?: RequestOptions"].filter(Boolean).join(", ");
+    const call = (body: "data" | "{}") => {
+        if (method === "get") return `client.get(\`${pathTemplate}\`)`;
+        if (method === "delete") return `client.delete(\`${pathTemplate}\`, options)`;
+        return `client.${method}(\`${pathTemplate}\`, ${body}, options)`;
+    };
 
     if (inputKind === "none") {
-        return `${methodName}(): ${returnType} {\n            return client.${method}(\`${pathTemplate}\`);\n        },`;
+        return `${methodName}(${params("")}): ${returnType} {\n            return ${call("{}")};\n        },`;
     }
 
     if (inputKind === "scalar") {
         return (
-            `${methodName}(${scalarArgName}: ${inputSymbol}): ${returnType} {\n` +
-            `            return client.${method}(\`${pathTemplate}\`);\n` +
+            `${methodName}(${params(`${scalarArgName}: ${inputSymbol}`)}): ${returnType} {\n` +
+            `            return ${call("{}")};\n` +
             `        },`
         );
     }
@@ -505,22 +516,22 @@ function buildMethodSource(args: {
     }
     if (pathFieldNames.length > 0 && hasBody) {
         return (
-            `${methodName}({ ${pathFieldNames.join(", ")}, ...data }: ${inputSymbol}): ${returnType} {\n` +
-            `            return client.${method}(\`${pathTemplate}\`, data);\n` +
+            `${methodName}(${params(`{ ${pathFieldNames.join(", ")}, ...data }: ${inputSymbol}`)}): ${returnType} {\n` +
+            `            return ${call("data")};\n` +
             `        },`
         );
     }
     if (pathFieldNames.length > 0 && !hasBody) {
         return (
-            `${methodName}({ ${pathFieldNames.join(", ")} }: ${inputSymbol}): ${returnType} {\n` +
-            `            return client.${method}(\`${pathTemplate}\`);\n` +
+            `${methodName}(${params(`{ ${pathFieldNames.join(", ")} }: ${inputSymbol}`)}): ${returnType} {\n` +
+            `            return ${call("{}")};\n` +
             `        },`
         );
     }
     // pathFieldNames.length === 0 && hasBody
     return (
-        `${methodName}({ ...data }: ${inputSymbol}): ${returnType} {\n` +
-        `            return client.${method}(\`${pathTemplate}\`, data);\n` +
+        `${methodName}(${params(`{ ...data }: ${inputSymbol}`)}): ${returnType} {\n` +
+        `            return ${call("data")};\n` +
         `        },`
     );
 }

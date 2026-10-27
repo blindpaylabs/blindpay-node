@@ -106,9 +106,11 @@ describe("operation-insert golden self-test", () => {
         expect(quotes).toContain("currency_type?:");
         expect(quotes).toContain("request_amount?: number | null;");
         expect(quotes).toContain(
-            "create({ ...data }: CreateQuoteInput): Promise<BlindpayApiResponse<CreateQuoteResponse>> {"
+            "create({ ...data }: CreateQuoteInput, options?: RequestOptions): Promise<BlindpayApiResponse<CreateQuoteResponse>> {"
         );
-        expect(quotes).toContain("return client.post(`/instances/${instanceId}/quotes`, data);");
+        expect(quotes).toContain(
+            "return client.post(`/instances/${instanceId}/quotes`, data, options);"
+        );
 
         execFileSync("bun", ["run", "check-types"], { cwd: dir, stdio: "pipe" });
         execFileSync("bun", ["run", "test"], { cwd: dir, stdio: "pipe" });

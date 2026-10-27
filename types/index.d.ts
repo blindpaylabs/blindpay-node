@@ -22,6 +22,16 @@ export type BlindpaySuccessResponse<T> = {
     error: null;
 }
 
+/** Per-call options for methods that change something (POST, PUT, PATCH, DELETE). */
+export type RequestOptions = {
+    /**
+     * Sent as the `Idempotency-Key` header (up to 255 characters, a UUID is a good default).
+     * Retrying with the same key and the exact same body replays the original response
+     * instead of acting twice; keys are kept for 24 hours. Ignored on file uploads.
+     */
+    idempotencyKey?: string;
+}
+
 /** Body of every endpoint whose only answer is `{ success: true }` (deletes, most updates). */
 export type SuccessResponse = {
     success: boolean;

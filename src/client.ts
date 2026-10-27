@@ -1,6 +1,6 @@
 import { Webhook } from "svix";
 import { version } from "../package.json";
-import type { BlindpayApiResponse } from "../types";
+import type { BlindpayApiResponse, RequestOptions } from "../types";
 import type { InternalApiClient } from "./internal/api-client";
 import { BlindPayError } from "./internal/blindpay-error";
 import { toErrorResponse } from "./internal/error-response";
@@ -146,12 +146,16 @@ export class BlindPay {
     private async request<T>(
         method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
         path: string,
-        body?: Record<string, unknown>
+        body?: Record<string, unknown>,
+        options?: RequestOptions
     ): Promise<BlindpayApiResponse<T>> {
         try {
+            const idempotencyKey = options?.idempotencyKey;
             const response = await fetch(`${this.baseUrl}${path}`, {
                 method,
-                headers: this.headers,
+                headers: idempotencyKey
+                    ? { ...this.headers, "Idempotency-Key": idempotencyKey }
+                    : this.headers,
                 body: body ? JSON.stringify(body) : undefined,
             });
 
@@ -206,30 +210,33 @@ export class BlindPay {
 
     private async post<T>(
         path: string,
-        body: Record<string, unknown>
+        body: Record<string, unknown>,
+        options?: RequestOptions
     ): Promise<BlindpayApiResponse<T>> {
-        return this.request<T>("POST", path, body);
+        return this.request<T>("POST", path, body, options);
     }
 
     private async put<T>(
         path: string,
-        body: Record<string, unknown>
+        body: Record<string, unknown>,
+        options?: RequestOptions
     ): Promise<BlindpayApiResponse<T>> {
-        return this.request<T>("PUT", path, body);
+        return this.request<T>("PUT", path, body, options);
     }
 
     private async patch<T>(
         path: string,
-        body: Record<string, unknown>
+        body: Record<string, unknown>,
+        options?: RequestOptions
     ): Promise<BlindpayApiResponse<T>> {
-        return this.request<T>("PATCH", path, body);
+        return this.request<T>("PATCH", path, body, options);
     }
 
     private async delete<T>(
         path: string,
-        body?: Record<string, unknown>
+        options?: RequestOptions
     ): Promise<BlindpayApiResponse<T>> {
-        return this.request<T>("DELETE", path, body);
+        return this.request<T>("DELETE", path, undefined, options);
     }
 
     /**
