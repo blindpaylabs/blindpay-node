@@ -8,11 +8,14 @@ import { createBankAccountsResource } from "./resources/bank-accounts";
 import { createCustomersResource } from "./resources/customers";
 import { createFeesResource } from "./resources/fees";
 import { createInstancesResource } from "./resources/instances";
+import { createInstanceOnboardingResource } from "./resources/instances/onboarding";
 import { createPartnerFeesResource } from "./resources/partner-fees";
+import { createPayablesResource } from "./resources/payables";
 import { createPayinsResource } from "./resources/payins";
 import { createPayinQuotesResource } from "./resources/payins/quotes";
 import { createPayoutsResource } from "./resources/payouts";
 import { createQuotesResource } from "./resources/quotes";
+import { createCustomerRfiResource, createInstanceRfiResource } from "./resources/rfi";
 import { createTermsOfServiceResource } from "./resources/terms-of-service";
 import { createTransfersResource } from "./resources/transfers";
 import { createUploadResource } from "./resources/upload";
@@ -33,6 +36,7 @@ export class BlindPay {
     // Resources
     readonly available: ReturnType<typeof createAvailableResource>;
     readonly partnerFees: ReturnType<typeof createPartnerFeesResource>;
+    readonly payables: ReturnType<typeof createPayablesResource>;
     readonly payins: ReturnType<typeof createPayinsResource> & {
         quotes: ReturnType<typeof createPayinQuotesResource>;
     };
@@ -44,10 +48,13 @@ export class BlindPay {
     readonly virtualAccounts: ReturnType<typeof createVirtualAccountsResource>;
     readonly customers: ReturnType<typeof createCustomersResource> & {
         bankAccounts: ReturnType<typeof createBankAccountsResource>;
+        rfi: ReturnType<typeof createCustomerRfiResource>;
     };
     readonly instances: ReturnType<typeof createInstancesResource> & {
         webhookEndpoints: ReturnType<typeof createWebhookEndpointsResource>;
         tos: ReturnType<typeof createTermsOfServiceResource>;
+        onboarding: ReturnType<typeof createInstanceOnboardingResource>;
+        rfi: ReturnType<typeof createInstanceRfiResource>;
     };
     readonly wallets: {
         blockchain: ReturnType<typeof createBlockchainWalletsResource>;
@@ -97,9 +104,13 @@ export class BlindPay {
             ...createInstancesResource(this.instanceId, this.api),
             webhookEndpoints: createWebhookEndpointsResource(this.instanceId, this.api),
             tos: createTermsOfServiceResource(this.instanceId, this.api),
+            onboarding: createInstanceOnboardingResource(this.instanceId, this.api),
+            rfi: createInstanceRfiResource(this.instanceId, this.api),
         };
 
         this.partnerFees = createPartnerFeesResource(this.instanceId, this.api);
+
+        this.payables = createPayablesResource(this.instanceId, this.api);
 
         this.payins = {
             ...createPayinsResource(this.instanceId, this.api),
@@ -114,11 +125,12 @@ export class BlindPay {
 
         this.fees = createFeesResource(this.instanceId, this.api);
 
-        this.upload = createUploadResource(this.baseUrl, this.headers);
+        this.upload = createUploadResource(this.baseUrl, this.headers, this.api);
 
         this.customers = {
             ...createCustomersResource(this.instanceId, this.api),
             bankAccounts: createBankAccountsResource(this.instanceId, this.api),
+            rfi: createCustomerRfiResource(this.instanceId, this.api),
         };
 
         this.virtualAccounts = createVirtualAccountsResource(this.instanceId, this.api);

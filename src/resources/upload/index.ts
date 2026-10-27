@@ -1,4 +1,5 @@
 import type { BlindpayApiResponse } from "../../../types";
+import type { InternalApiClient } from "../../internal/api-client";
 
 export type UploadBucket = "avatar" | "onboarding" | "limit_increase";
 
@@ -12,7 +13,11 @@ export type UploadResponse = {
     file_url: string;
 };
 
-export function createUploadResource(baseUrl: string, headers: Record<string, string>) {
+export function createUploadResource(
+    baseUrl: string,
+    headers: Record<string, string>,
+    _client: InternalApiClient
+) {
     return {
         async upload({
             file,
