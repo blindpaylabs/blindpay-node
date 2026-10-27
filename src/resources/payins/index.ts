@@ -81,7 +81,7 @@ export type Payin = {
     total_fee_amount?: number | null;
     commercial_quotation: number;
     blindpay_quotation: number;
-    currency: Extract<Currency, "BRL" | "USD" | "MXN" | "COP" | "ARS">;
+    currency: Extract<Currency, "BRL" | "USD" | "MXN" | "COP" | "ARS" | "EUR">;
     billing_fee?: number | null;
     billing_fee_amount?: number | null;
     is_otc?: boolean | null;
