@@ -93,6 +93,33 @@ if (error) {
 console.log('Success:', data); // fully typed
 ```
 
+## Webhooks
+
+`constructWebhookEvent` verifies the Svix signature and returns the payload typed by its `webhook_event`. It throws a `BlindPayError` when verification fails. Pass the raw request body, not a re-serialized object.
+
+```typescript
+const event = blindpay.constructWebhookEvent({
+  secret: process.env.BLINDPAY_WEBHOOK_SECRET,
+  headers: {
+    id: req.headers['svix-id'],
+    timestamp: req.headers['svix-timestamp'],
+    signature: req.headers['svix-signature'],
+  },
+  payload: rawBody,
+});
+
+switch (event.webhook_event) {
+  case 'tos.accept':
+    console.log('ToS accepted:', event.tos_id);
+    break;
+  case 'customer.update':
+    console.log('KYC status:', event.kyc_status);
+    break;
+}
+```
+
+`verifyWebhookSignature` is still available when you only need a boolean.
+
 For detailed API documentation, visit:
 - [BlindPay API documentation](https://blindpay.com/docs/getting-started/overview)
 - [API Reference](https://api.blindpay.com/reference)

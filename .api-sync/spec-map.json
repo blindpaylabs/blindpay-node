@@ -2464,6 +2464,186 @@
                 }
             ],
             "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PayinNewWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "PayinWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "PayinUpdateWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "PayinWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "PayinCompleteWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "PayinWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "PayinPartnerFeeWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "PayinWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "PayoutNewWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "PayoutWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "PayoutUpdateWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "PayoutWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "PayoutCompleteWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "PayoutWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "PayoutPartnerFeeWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "PayoutWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "TransferNewWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "TransferWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "TransferUpdateWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "TransferWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "TransferCompleteWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "TransferWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "TosAcceptWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "TosAcceptWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "CustomerDeleteWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "CustomerDeleteWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "WalletInboundWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "WalletInboundWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "WalletInboundTokenOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "WalletInboundToken"
+                }
+            ],
+            "notes": "wallet.inbound payload's token object"
         }
     ],
     "ignore": {
@@ -2474,123 +2654,107 @@
             },
             {
                 "name": "BankAccountWebhookOut",
-                "reason": "Webhook payload body for bankAccount.new. This SDK does not model webhook payload shapes as typed symbols anywhere; verifyWebhookSignature only verifies the signature and returns a boolean, consumers parse the JSON body themselves."
+                "reason": "Webhook payload body for bankAccount.new. Typed as BankAccountWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & ListBankAccountsResponse[number]: the payload has the same property set as BankAccountOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "BlockchainWalletUpdateWebhookOut",
-                "reason": "Webhook payload body for blockchainWallet.update; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for blockchainWallet.update. Typed as BlockchainWalletWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetBlockchainWalletResponse: the payload has the same property set as BlockchainWalletOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "BlockchainWalletWebhookOut",
-                "reason": "Webhook payload body for blockchainWallet.new; same reasoning as BankAccountWebhookOut."
-            },
-            {
-                "name": "CustomerDeleteWebhookOut",
-                "reason": "Webhook payload body for customer.delete; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for blockchainWallet.new. Typed as BlockchainWalletWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetBlockchainWalletResponse: the payload has the same property set as BlockchainWalletOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "CustomerNewWebhookOut",
-                "reason": "Webhook payload body for customer.new; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for customer.new. Typed as CustomerWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetCustomerResponse: the payload has the same property set as CustomerOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "CustomerUpdateWebhookOut",
-                "reason": "Webhook payload body for customer.update; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for customer.update. Typed as CustomerWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetCustomerResponse: the payload has the same property set as CustomerOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "LimitIncreaseNewWebhookOut",
-                "reason": "Webhook payload body for limitIncrease.new; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for limitIncrease.new. Typed as LimitIncreaseWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetLimitIncreaseRequestsResponse[number]: the payload has the same property set as GetCustomerLimitIncreaseOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "LimitIncreaseUpdateWebhookOut",
-                "reason": "Webhook payload body for limitIncrease.update; same reasoning as BankAccountWebhookOut (still used above as the reachable anchor for the LimitIncreaseRequestStatus enum, which is otherwise identical to GetCustomerLimitIncreaseOut.status)."
+                "reason": "Webhook payload body for limitIncrease.update. Typed as LimitIncreaseWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetLimitIncreaseRequestsResponse[number]: the payload has the same property set as GetCustomerLimitIncreaseOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection. Still the reachable anchor for the LimitIncreaseRequestStatus enum above."
             },
             {
                 "name": "PayableCompleteWebhookOut",
-                "reason": "Webhook payload body for payable.complete; same reasoning as BankAccountWebhookOut: this SDK does not model webhook payload shapes as typed symbols."
+                "reason": "Webhook payload body for payable.complete. Typed as PayableWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & Payable: the payload has the same property set as PayableOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "PayableNewWebhookOut",
-                "reason": "Webhook payload body for payable.new; same reasoning as BankAccountWebhookOut: this SDK does not model webhook payload shapes as typed symbols."
+                "reason": "Webhook payload body for payable.new. Typed as PayableWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & Payable: the payload has the same property set as PayableOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "PayableUpdateWebhookOut",
-                "reason": "Webhook payload body for payable.update; same reasoning as BankAccountWebhookOut: this SDK does not model webhook payload shapes as typed symbols."
+                "reason": "Webhook payload body for payable.update. Typed as PayableWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & Payable: the payload has the same property set as PayableOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "PayinCompleteWebhookOut",
-                "reason": "Webhook payload body for payin.complete; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for payin.complete. Its top-level fields are checked through the types[] mapping to PayinWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to PayinOut's, which are covered there."
             },
             {
                 "name": "PayinNewWebhookOut",
-                "reason": "Webhook payload body for payin.new; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for payin.new. Its top-level fields are checked through the types[] mapping to PayinWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to PayinOut's, which are covered there."
             },
             {
                 "name": "PayinPartnerFeeWebhookOut",
-                "reason": "Webhook payload body for payin.partnerFee; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for payin.partnerFee. Its top-level fields are checked through the types[] mapping to PayinWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to PayinOut's, which are covered there."
             },
             {
                 "name": "PayinUpdateWebhookOut",
-                "reason": "Webhook payload body for payin.update; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for payin.update. Its top-level fields are checked through the types[] mapping to PayinWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to PayinOut's, which are covered there."
             },
             {
                 "name": "PayoutCompleteWebhookOut",
-                "reason": "Webhook payload body for payout.complete; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for payout.complete. Its top-level fields are checked through the types[] mapping to PayoutWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to PayoutOut's, which are covered there."
             },
             {
                 "name": "PayoutNewWebhookOut",
-                "reason": "Webhook payload body for payout.new; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for payout.new. Its top-level fields are checked through the types[] mapping to PayoutWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to PayoutOut's, which are covered there."
             },
             {
                 "name": "PayoutPartnerFeeWebhookOut",
-                "reason": "Webhook payload body for payout.partnerFee; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for payout.partnerFee. Its top-level fields are checked through the types[] mapping to PayoutWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to PayoutOut's, which are covered there."
             },
             {
                 "name": "PayoutUpdateWebhookOut",
-                "reason": "Webhook payload body for payout.update; same reasoning as BankAccountWebhookOut (still used above as the reachable anchor for the TransactionStatus enum)."
+                "reason": "Webhook payload body for payout.update. Its top-level fields are checked through the types[] mapping to PayoutWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to PayoutOut's, which are covered there. Still the reachable anchor for the TransactionStatus enum above."
             },
             {
                 "name": "SwiftCodeResponse",
                 "reason": "Array-wrapper alias for SwiftCodeItem[]; the item shape itself is mapped via GetSwiftCodeBankDetailsResponse -> SwiftCodeItem."
             },
             {
-                "name": "TosAcceptWebhookOut",
-                "reason": "Webhook payload body for tos.accept; same reasoning as BankAccountWebhookOut."
-            },
-            {
                 "name": "TransferCompleteWebhookOut",
-                "reason": "Webhook payload body for transfer.complete; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for transfer.complete. Its top-level fields are checked through the types[] mapping to TransferWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to TransferOut's, which are covered there."
             },
             {
                 "name": "TransferNewWebhookOut",
-                "reason": "Webhook payload body for transfer.new; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for transfer.new. Its top-level fields are checked through the types[] mapping to TransferWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to TransferOut's, which are covered there."
             },
             {
                 "name": "TransferUpdateWebhookOut",
-                "reason": "Webhook payload body for transfer.update; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for transfer.update. Its top-level fields are checked through the types[] mapping to TransferWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to TransferOut's, which are covered there."
             },
             {
                 "name": "VirtualAccountCompleteWebhookOut",
-                "reason": "Webhook payload body for virtualAccount.complete. This SDK does not model webhook payload shapes as typed symbols anywhere; verifyWebhookSignature only verifies the signature and returns a boolean, consumers parse the JSON body themselves."
+                "reason": "Webhook payload body for virtualAccount.complete. Typed as VirtualAccountWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & VirtualAccount: the payload has the same property set as VirtualAccountOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "VirtualAccountNewWebhookOut",
-                "reason": "Webhook payload body for virtualAccount.new. This SDK does not model webhook payload shapes as typed symbols anywhere; verifyWebhookSignature only verifies the signature and returns a boolean, consumers parse the JSON body themselves."
-            },
-            {
-                "name": "WalletInboundTokenOut",
-                "reason": "Only referenced by WalletInboundWebhookOut.token (the wallet.inbound webhook payload), which is itself ignored because webhook payloads are not modeled as SDK types."
-            },
-            {
-                "name": "WalletInboundWebhookOut",
-                "reason": "Webhook payload body for wallet.inbound. This SDK does not model webhook payload shapes as typed symbols anywhere; verifyWebhookSignature only verifies the signature and returns a boolean, consumers parse the JSON body themselves."
+                "reason": "Webhook payload body for virtualAccount.new. Typed as VirtualAccountWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & VirtualAccount: the payload has the same property set as VirtualAccountOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "WalletNewWebhookOut",
-                "reason": "Webhook payload body for wallet.new. This SDK does not model webhook payload shapes as typed symbols anywhere; verifyWebhookSignature only verifies the signature and returns a boolean, consumers parse the JSON body themselves."
+                "reason": "Webhook payload body for wallet.new. Typed as WalletWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & CustodialWallet: the payload has the same property set as WalletOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "WalletUpdateWebhookOut",
-                "reason": "Webhook payload body for wallet.update. This SDK does not model webhook payload shapes as typed symbols anywhere; verifyWebhookSignature only verifies the signature and returns a boolean, consumers parse the JSON body themselves."
+                "reason": "Webhook payload body for wallet.update. Typed as WalletWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & CustodialWallet: the payload has the same property set as WalletOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "YieldFee",

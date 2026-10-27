@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import type { SuccessResponse } from "../../../types";
 import { BlindPay } from "../../client";
 import type { CreateWebhookEndpointResponse, ListWebhookEndpointsResponse } from "./index";
 
@@ -38,6 +39,15 @@ describe("Webhooks", () => {
                     created_at: "2021-01-01T00:00:00Z",
                     updated_at: "2021-01-01T00:00:00Z",
                 },
+                {
+                    id: "we_000000000001",
+                    url: "https://example.com/webhook",
+                    events: ["tos.accept"],
+                    last_event_at: null,
+                    instance_id: "in_000000000000",
+                    created_at: null,
+                    updated_at: null,
+                },
             ];
             fetchMock.mockResponseOnce(JSON.stringify(mockedWebhookEndpoints), {
                 headers: { "Content-Type": "application/json" },
@@ -52,7 +62,7 @@ describe("Webhooks", () => {
 
     describe("Delete webhook endpoint", () => {
         it("should delete a webhook endpoint", async () => {
-            const mockedResponse = { data: null };
+            const mockedResponse: SuccessResponse = { success: true };
             fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
                 headers: { "Content-Type": "application/json" },
             });

@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse } from "../../../types";
+import type { BlindpayApiResponse, SuccessResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type WebhookEvents =
@@ -46,7 +46,7 @@ export type ListWebhookEndpointsResponse = Array<{
     id: string;
     url: string;
     events: WebhookEvents[];
-    last_event_at: string;
+    last_event_at?: string | null;
     instance_id: string;
     created_at: string | null;
     updated_at: string | null;
@@ -74,7 +74,7 @@ export function createWebhookEndpointsResource(instanceId: string, client: Inter
         > {
             return client.post(`/instances/${instanceId}/webhook-endpoints`, data);
         },
-        delete(id: DeleteWebhookEndpointInput): Promise<BlindpayApiResponse<void>> {
+        delete(id: DeleteWebhookEndpointInput): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.delete(`/instances/${instanceId}/webhook-endpoints/${id}`);
         },
         getSecret(

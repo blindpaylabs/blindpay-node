@@ -274,4 +274,41 @@ export class BlindPay {
             return false;
         }
     }
+
+    /**
+     * Verifies a BlindPay webhook with Svix and returns its payload, typed by `webhook_event`.
+     *
+     * @param params.secret The webhook secret from BlindPay dashboard
+     * @param params.headers The webhook headers object containing svix-id, svix-timestamp, and svix-signature
+     * @param params.payload The raw request body as a string
+     * @returns The verified payload; narrow it with a `switch` on `event.webhook_event`
+     * @throws {BlindPayError} When the signature or timestamp does not verify
+     */
+    constructWebhookEvent({
+        secret,
+        headers,
+        payload,
+    }: {
+        secret: string;
+        headers: {
+            id: string;
+            timestamp: string;
+            signature: string;
+        };
+        payload: string;
+    }): import("./resources/webhooks/events").WebhookEvent {
+        try {
+            const webhook = new Webhook(secret);
+
+            return webhook.verify(payload, {
+                "svix-id": headers.id,
+                "svix-timestamp": headers.timestamp,
+                "svix-signature": headers.signature,
+            }) as import("./resources/webhooks/events").WebhookEvent;
+        } catch (error) {
+            throw new BlindPayError(
+                `Webhook verification failed: ${error instanceof Error ? error.message : String(error)}`
+            );
+        }
+    }
 }
