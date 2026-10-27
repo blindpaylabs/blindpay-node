@@ -33,7 +33,7 @@ export type Transfer = {
     tracking_paymaster: TransferTrackingStep;
     tracking_bridge_swap: TransferTrackingStep;
     tracking_complete: TransferTrackingStep;
-    tracking_partner_fee: TransferTrackingStep;
+    tracking_partner_fee: TransferTrackingStep | null;
     created_at: string | null;
     updated_at: string | null;
     image_url?: string | null;
@@ -87,7 +87,7 @@ export type CreateTransferResponse = {
     tracking_complete: TransferTrackingStep;
     tracking_paymaster: TransferTrackingStep;
     tracking_transaction_monitoring: TransferTrackingTransactionMonitoring;
-    tracking_partner_fee: TransferTrackingStep;
+    tracking_partner_fee: TransferTrackingStep | null;
 };
 
 export type ListTransfersInput = PaginationParams;

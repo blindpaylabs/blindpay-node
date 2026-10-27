@@ -56,8 +56,8 @@ export type Payout = {
     transaction_document_file: string | null;
     transaction_document_type: TransactionDocumentType | null;
     transaction_document_id: string | null;
-    name: string;
-    type: Rail;
+    name: string | null;
+    type: Rail | null;
     pix_key?: string | null;
     account_number?: string | null;
     routing_number?: string | null;

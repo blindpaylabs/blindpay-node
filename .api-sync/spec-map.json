@@ -267,6 +267,19 @@
         {
             "spec": {
                 "schema": "PayoutOut",
+                "property": "tracking_complete.step"
+            },
+            "sdk": [
+                {
+                    "file": "types/index.d.ts",
+                    "symbol": "TrackingStatus"
+                }
+            ],
+            "notes": "Shared step union of every payin, payout and transfer tracking object; anchored on one of them."
+        },
+        {
+            "spec": {
+                "schema": "PayoutOut",
                 "property": "tracking_payment.estimated_time_of_arrival"
             },
             "sdk": [
