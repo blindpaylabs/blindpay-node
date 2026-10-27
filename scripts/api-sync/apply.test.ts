@@ -10,6 +10,14 @@ describe("insertEnumMember", () => {
         );
     });
 
+    it("inserts into a single-line union that has no trailing semicolon (valid in a .d.ts)", () => {
+        const src = 'export type PayinPaymentMethod = "ach" | "wire"\n\nexport type Other = "x";\n';
+        const result = insertEnumMember(src, "PayinPaymentMethod", "pix");
+        expect(result).toBe(
+            'export type PayinPaymentMethod = "ach" | "wire" | "pix"\n\nexport type Other = "x";\n'
+        );
+    });
+
     it("inserts into a one-member-per-line union, keeping the final `;` on the true last member", () => {
         const src = [
             "export type WebhookEvents =",
@@ -76,6 +84,14 @@ describe("insertOptionalField", () => {
                 "};",
                 "",
             ].join("\n")
+        );
+    });
+
+    it("indents a multi-line object type under the field it is inserted as", () => {
+        const src = "export type Account = {\n    id: string;\n};\n";
+        const result = insertOptionalField(src, "Account", "co", "{\n    key: string;\n} | null");
+        expect(result).toBe(
+            "export type Account = {\n    id: string;\n    co?: {\n        key: string;\n    } | null;\n};\n"
         );
     });
 

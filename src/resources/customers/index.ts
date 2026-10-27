@@ -11,9 +11,11 @@ import type {
     PaginationParams,
     PurposeOfTransactions,
     RecipientRelationship,
+    RequestOptions,
     SoleProprietorDocType,
     SourceOfFundsDocType,
     SourceOfWealth,
+    SuccessResponse,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { StrictOmit } from "../../internal/helpers/strict-omit";
@@ -56,7 +58,7 @@ export type Owner = {
     first_name: string;
     last_name: string;
     date_of_birth: string;
-    tax_id: string;
+    tax_id: string | null;
     address_line_1: string;
     address_line_2: string | null;
     city: string;
@@ -65,9 +67,9 @@ export type Owner = {
     postal_code: string;
     id_doc_country: Country;
     id_doc_type: IdentificationDocument;
-    id_doc_front_file: string;
+    id_doc_front_file: string | null;
     id_doc_back_file: string | null;
-    proof_of_address_doc_type: ProofOfAddressDocType;
+    proof_of_address_doc_type: ProofOfAddressDocType | null;
     proof_of_address_doc_file: string | null;
     ownership_percentage: number | null;
     title: string | null;
@@ -76,9 +78,118 @@ export type Owner = {
     customer_id?: string;
 };
 
+/** An owner sent when creating a business customer. */
+export type CreateCustomerOwnerInput = {
+    role: OwnerRole;
+    first_name: string;
+    last_name: string;
+    date_of_birth: string;
+    tax_id: string;
+    address_line_1: string;
+    address_line_2?: string | null;
+    city: string;
+    state_province_region: string;
+    country: Country;
+    postal_code: string;
+    id_doc_country: Country;
+    id_doc_type: IdentificationDocument;
+    id_doc_front_file: string;
+    id_doc_back_file?: string | null;
+    proof_of_address_doc_type?: ProofOfAddressDocType | null;
+    proof_of_address_doc_file?: string | null;
+    ownership_percentage?: number | null;
+    title?: string | null;
+    tax_type?: OwnerTaxType | null;
+};
+
+/** An existing owner to update. `id` must match one of the customer's owners. */
+export type UpdateCustomerOwnerInput = {
+    id: string;
+    role?: OwnerRole;
+    first_name?: string;
+    last_name?: string;
+    date_of_birth?: string;
+    tax_id?: string;
+    address_line_1?: string;
+    address_line_2?: string | null;
+    city?: string;
+    state_province_region?: string;
+    country?: Country;
+    postal_code?: string;
+    id_doc_country?: Country;
+    id_doc_type?: IdentificationDocument;
+    id_doc_front_file?: string;
+    id_doc_back_file?: string | null;
+    proof_of_address_doc_type?: ProofOfAddressDocType | null;
+    proof_of_address_doc_file?: string | null;
+    ownership_percentage?: number | null;
+    title?: string | null;
+    tax_type?: OwnerTaxType | null;
+};
+
+export type VirtualAccountPreapprovalStatus = "in_review" | "approved" | "rejected";
+
+export type VirtualAccountPreapprovalBankingPartner = "jpmorgan" | "portage";
+
+export type CustomerVirtualAccountPreapproval = {
+    status: VirtualAccountPreapprovalStatus;
+    banking_partners: VirtualAccountPreapprovalBankingPartner[];
+    rejection_reason: string | null;
+    reviewed_at: string | null;
+};
+
+export type CnaeConditionStatus = "pending" | "passed" | "failed" | "cancelled";
+
+export type Cnae = {
+    code: string;
+    description: string;
+};
+
+export type CnaeSet = {
+    primary: Cnae;
+    secondary: Cnae[];
+};
+
+export type CustomerCnaeCondition = {
+    status: CnaeConditionStatus;
+    expected_cnaes: string[];
+    cnae_at_approval: CnaeSet;
+    result_cnae: CnaeSet | null;
+    due_at: string;
+    created_at: string;
+    reviewed_at: string | null;
+};
+
+export type AdditionalInfoLabel =
+    | "EIN_LETTER"
+    | "KYC_PROVIDER_DOCUMENT"
+    | "FLOW_OF_FUNDS"
+    | "BANK_STATEMENT"
+    | "TAX_RETURN"
+    | "AUDITED_FINANCIALS"
+    | "OPERATING_AGREEMENT"
+    | "BOARD_RESOLUTION"
+    | "CERTIFICATE_OF_GOOD_STANDING"
+    | "BUSINESS_LICENSE"
+    | "MSB_LICENSE"
+    | "POWER_OF_ATTORNEY"
+    | "TRUST_DEED"
+    | "SHAREHOLDER_REGISTRY"
+    | "BENEFICIAL_OWNER_DECLARATION"
+    | "COMPLIANCE_QUESTIONNAIRE"
+    | "PROOF_OF_EMPLOYMENT"
+    | "REFERENCE_LETTER"
+    | "OTHER";
+
+export type AdditionalInfoItem = {
+    label: AdditionalInfoLabel;
+    /** A document URL (re-hosted on BlindPay storage) or a free-text note. */
+    value: string;
+};
+
 export type IndividualWithStandardKYC = {
     id: string;
-    is_tos_accepted: boolean;
+    is_tos_accepted: boolean | null;
     type: Extract<AccountClass, "individual">;
     kyc_type: Extract<KycType, "standard">;
     kyc_status: KycStatus;
@@ -89,30 +200,29 @@ export type IndividualWithStandardKYC = {
         warning_id: string | null;
     }> | null;
     email: string;
-    tax_id: string;
-    address_line_1: string;
+    tax_id: string | null;
+    address_line_1: string | null;
     address_line_2?: string | null;
-    city: string;
-    state_province_region: string;
+    city: string | null;
+    state_province_region: string | null;
     country: Country;
-    postal_code: string;
+    postal_code: string | null;
     ip_address: string | null;
     image_url: string | null;
-    phone_number: string;
-    proof_of_address_doc_type: ProofOfAddressDocType;
-    proof_of_address_doc_file: string;
-    first_name: string;
-    last_name: string;
-    date_of_birth: string;
-    id_doc_country: Country;
-    id_doc_type: IdentificationDocument;
-    id_doc_front_file: string;
-    id_doc_back_file: string;
-    aiprise_validation_key: string;
+    phone_number: string | null;
+    proof_of_address_doc_type: ProofOfAddressDocType | null;
+    proof_of_address_doc_file: string | null;
+    first_name: string | null;
+    last_name: string | null;
+    date_of_birth?: string | null;
+    id_doc_country: Country | null;
+    id_doc_type: IdentificationDocument | null;
+    id_doc_front_file: string | null;
+    id_doc_back_file: string | null;
     instance_id: string;
     tos_id: string | null;
-    created_at: string;
-    updated_at: string;
+    created_at: string | null;
+    updated_at: string | null;
     limit: {
         per_transaction: number;
         daily: number;
@@ -136,11 +246,19 @@ export type IndividualWithStandardKYC = {
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
     publicly_traded?: boolean | null;
+    cnae_condition?: CustomerCnaeCondition | null;
+    virtual_account_preapproval?: CustomerVirtualAccountPreapproval | null;
+    is_nested?: boolean | null;
+    additional_info?: AdditionalInfoItem[] | null;
+    business_type?: BusinessType | null;
+    customer_id?: string;
+    latitude?: number | null;
+    longitude?: number | null;
 };
 
 export type IndividualWithEnhancedKYC = {
     id: string;
-    is_tos_accepted: boolean;
+    is_tos_accepted: boolean | null;
     type: Extract<AccountClass, "individual">;
     kyc_type: Extract<KycType, "enhanced">;
     kyc_status: KycStatus;
@@ -151,35 +269,33 @@ export type IndividualWithEnhancedKYC = {
         warning_id: string | null;
     }> | null;
     email: string;
-    tax_id: string;
-    address_line_1: string;
+    tax_id: string | null;
+    address_line_1: string | null;
     address_line_2?: string | null;
-    city: string;
-    state_province_region: string;
+    city: string | null;
+    state_province_region: string | null;
     country: Country;
-    postal_code: string;
+    postal_code: string | null;
     ip_address: string | null;
     image_url: string | null;
     phone_number: string | null;
-    proof_of_address_doc_type: ProofOfAddressDocType;
-    proof_of_address_doc_file: string;
-    first_name: string;
-    last_name: string;
-    date_of_birth: string;
-    id_doc_country: Country;
-    id_doc_type: IdentificationDocument;
-    id_doc_front_file: string;
+    proof_of_address_doc_type: ProofOfAddressDocType | null;
+    proof_of_address_doc_file: string | null;
+    first_name: string | null;
+    last_name: string | null;
+    date_of_birth?: string | null;
+    id_doc_country: Country | null;
+    id_doc_type: IdentificationDocument | null;
+    id_doc_front_file: string | null;
     id_doc_back_file: string | null;
-    aiprise_validation_key: string;
     instance_id: string;
-    source_of_funds_doc_type: string;
-    source_of_funds_doc_file: string;
-    individual_holding_doc_front_file: string;
-    purpose_of_transactions: PurposeOfTransactions;
+    source_of_funds_doc_type: SourceOfFundsDocType | null;
+    source_of_funds_doc_file: string | null;
+    purpose_of_transactions: PurposeOfTransactions | null;
     purpose_of_transactions_explanation: string | null;
     tos_id: string | null;
-    created_at: string;
-    updated_at: string;
+    created_at: string | null;
+    updated_at: string | null;
     limit: {
         per_transaction: number;
         daily: number;
@@ -201,12 +317,20 @@ export type IndividualWithEnhancedKYC = {
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
     publicly_traded?: boolean | null;
+    cnae_condition?: CustomerCnaeCondition | null;
+    virtual_account_preapproval?: CustomerVirtualAccountPreapproval | null;
+    is_nested?: boolean | null;
+    additional_info?: AdditionalInfoItem[] | null;
+    business_type?: BusinessType | null;
+    customer_id?: string;
+    latitude?: number | null;
+    longitude?: number | null;
 };
 
 export type BusinessWithStandardKYB = {
     id: string;
-    is_tos_accepted: boolean;
-    is_fbo: boolean;
+    is_tos_accepted: boolean | null;
+    is_fbo: boolean | null;
     type: Extract<AccountClass, "business">;
     kyc_type: Extract<KycType, "standard">;
     kyc_status: KycStatus;
@@ -217,31 +341,30 @@ export type BusinessWithStandardKYB = {
         warning_id: string | null;
     }> | null;
     email: string;
-    tax_id: string;
-    address_line_1: string;
+    tax_id: string | null;
+    address_line_1: string | null;
     address_line_2?: string | null;
-    city: string;
-    state_province_region: string;
+    city: string | null;
+    state_province_region: string | null;
     country: Country;
-    postal_code: string;
+    postal_code: string | null;
     ip_address: string | null;
     image_url: string | null;
     phone_number: string | null;
-    proof_of_address_doc_type: ProofOfAddressDocType;
-    proof_of_address_doc_file: string;
-    legal_name: string;
+    proof_of_address_doc_type: ProofOfAddressDocType | null;
+    proof_of_address_doc_file: string | null;
+    legal_name: string | null;
     alternate_name: string | null;
-    formation_date: string;
+    formation_date?: string | null;
     website: string | null;
-    owners: Owner[];
-    incorporation_doc_file: string;
-    proof_of_ownership_doc_file: string;
+    owners: Owner[] | null;
+    incorporation_doc_file: string | null;
+    proof_of_ownership_doc_file: string | null;
     external_id: string | null;
     instance_id: string;
     tos_id: string | null;
-    aiprise_validation_key: string;
-    created_at: string;
-    updated_at: string;
+    created_at: string | null;
+    updated_at: string | null;
     limit: {
         per_transaction: number;
         daily: number;
@@ -262,7 +385,33 @@ export type BusinessWithStandardKYB = {
     source_of_wealth?: SourceOfWealth | null;
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
+    publicly_traded?: boolean | null;
+    cnae_condition?: CustomerCnaeCondition | null;
+    virtual_account_preapproval?: CustomerVirtualAccountPreapproval | null;
+    is_nested?: boolean | null;
+    additional_info?: AdditionalInfoItem[] | null;
+    business_type?: BusinessType | null;
+    customer_id?: string;
+    latitude?: number | null;
+    longitude?: number | null;
 };
+
+/** Legacy KYC tier carried by customers migrated from older tiers. It can't be created. */
+export type IndividualWithLightKYC = StrictOmit<IndividualWithStandardKYC, "kyc_type"> & {
+    kyc_type: Extract<KycType, "light">;
+};
+
+/** Legacy KYB tier carried by customers migrated from older tiers. It can't be created. */
+export type BusinessWithLightKYB = StrictOmit<BusinessWithStandardKYB, "kyc_type"> & {
+    kyc_type: Extract<KycType, "light">;
+};
+
+export type Customer =
+    | IndividualWithStandardKYC
+    | IndividualWithEnhancedKYC
+    | IndividualWithLightKYC
+    | BusinessWithStandardKYB
+    | BusinessWithLightKYB;
 
 export type CreateIndividualWithStandardKYCInput = {
     country: Country;
@@ -296,10 +445,14 @@ export type CreateIndividualWithStandardKYCInput = {
     occupation?: string | null;
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
+    additional_info?: AdditionalInfoItem[] | null;
+    latitude?: number | null;
+    longitude?: number | null;
 };
 
 export type CreateIndividualWithStandardKYCResponse = {
     id: string;
+    customer_id: string;
 };
 
 export type CreateIndividualWithEnhancedKYCInput = {
@@ -336,10 +489,14 @@ export type CreateIndividualWithEnhancedKYCInput = {
     occupation?: string | null;
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
+    additional_info?: AdditionalInfoItem[] | null;
+    latitude?: number | null;
+    longitude?: number | null;
 };
 
 export type CreateIndividualWithEnhancedKYCResponse = {
     id: string;
+    customer_id: string;
 };
 
 export type CreateBusinessWithStandardKYBInput = {
@@ -360,7 +517,7 @@ export type CreateBusinessWithStandardKYBInput = {
     incorporation_doc_file?: string | null;
     ip_address?: string | null;
     legal_name?: string | null;
-    owners?: Array<StrictOmit<Owner, "id">> | null;
+    owners?: CreateCustomerOwnerInput[] | null;
     phone_number?: string | null;
     postal_code?: string | null;
     proof_of_address_doc_file?: string | null;
@@ -378,80 +535,86 @@ export type CreateBusinessWithStandardKYBInput = {
     occupation?: string | null;
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
+    additional_info?: AdditionalInfoItem[] | null;
+    latitude?: number | null;
+    longitude?: number | null;
 };
 
 export type CreateBusinessWithStandardKYBResponse = {
     id: string;
+    customer_id: string;
 };
 
 export type ListCustomersInput = PaginationParams & {
     full_name?: string;
     customer_name?: string;
-    status?: string;
+    status?: KycStatus;
     customer_id?: string;
     bank_account_id?: string;
     country?: Country;
 };
 
-export type ListCustomersResponse = {
-    data: Array<IndividualWithStandardKYC | IndividualWithEnhancedKYC | BusinessWithStandardKYB>;
-    pagination: PaginationMetadata;
-};
+export type ListCustomersResponse =
+    | {
+          data: Customer[];
+          pagination: PaginationMetadata;
+      }
+    | Customer[];
 
 export type GetCustomerInput = string;
 
-export type GetCustomerResponse =
-    | IndividualWithStandardKYC
-    | IndividualWithEnhancedKYC
-    | BusinessWithStandardKYB;
+export type GetCustomerResponse = Customer;
 
 export type UpdateCustomerInput = {
     customer_id: string;
     account_purpose?: AccountPurpose | null;
-    address_line_1?: string;
-    address_line_2?: string;
-    alternate_name?: string;
-    business_description?: string;
+    address_line_1?: string | null;
+    address_line_2?: string | null;
+    alternate_name?: string | null;
+    business_description?: string | null;
     business_industry?: BusinessIndustry | null;
     business_type?: BusinessType | null;
-    city?: string;
-    country?: Country;
-    date_of_birth?: string;
-    email?: string;
+    city?: string | null;
+    country: Country;
+    date_of_birth?: string | null;
+    email: string;
     estimated_annual_revenue?: EstimatedAnnualRevenue | null;
-    external_id?: string;
-    first_name?: string;
-    formation_date?: string;
-    id_doc_back_file?: string;
-    id_doc_country?: Country;
-    id_doc_front_file?: string;
-    id_doc_type?: IdentificationDocument;
-    image_url?: string;
-    incorporation_doc_file?: string;
-    ip_address?: string;
-    last_name?: string;
-    legal_name?: string;
-    owners?: Array<StrictOmit<Owner, "id">>;
-    phone_number?: string;
-    postal_code?: string;
-    proof_of_address_doc_file?: string;
-    proof_of_address_doc_type?: ProofOfAddressDocType;
-    proof_of_ownership_doc_file?: string;
+    external_id?: string | null;
+    first_name?: string | null;
+    formation_date?: string | null;
+    id_doc_back_file?: string | null;
+    id_doc_country?: Country | null;
+    id_doc_front_file?: string | null;
+    id_doc_type?: IdentificationDocument | null;
+    image_url?: string | null;
+    incorporation_doc_file?: string | null;
+    ip_address?: string | null;
+    last_name?: string | null;
+    legal_name?: string | null;
+    owners?: UpdateCustomerOwnerInput[] | null;
+    phone_number?: string | null;
+    postal_code?: string | null;
+    proof_of_address_doc_file?: string | null;
+    proof_of_address_doc_type?: ProofOfAddressDocType | null;
+    proof_of_ownership_doc_file?: string | null;
     publicly_traded?: boolean | null;
-    purpose_of_transactions?: PurposeOfTransactions;
-    purpose_of_transactions_explanation?: string;
-    selfie_file?: string;
-    source_of_funds_doc_file?: string;
-    source_of_funds_doc_type?: SourceOfFundsDocType;
+    purpose_of_transactions?: PurposeOfTransactions | null;
+    purpose_of_transactions_explanation?: string | null;
+    selfie_file?: string | null;
+    source_of_funds_doc_file?: string | null;
+    source_of_funds_doc_type?: SourceOfFundsDocType | null;
     source_of_wealth?: SourceOfWealth | null;
-    state_province_region?: string;
-    tax_id?: string;
-    tos_id?: string;
-    website?: string;
+    state_province_region?: string | null;
+    tax_id?: string | null;
+    tos_id?: string | null;
+    website?: string | null;
     account_purpose_other?: string | null;
     occupation?: string | null;
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
+    additional_info?: AdditionalInfoItem[] | null;
+    latitude?: number | null;
+    longitude?: number | null;
 };
 
 export type DeleteCustomerInput = string;
@@ -479,21 +642,36 @@ export type LimitIncreaseRequestSupportingDocumentType =
     | "individual_bank_statement"
     | "individual_tax_return"
     | "individual_proof_of_income"
+    | "individual_pay_stub"
+    | "individual_employment_letter"
+    | "individual_investment_statement"
+    | "individual_crypto_exchange_statement"
+    | "individual_blockchain_wallet_statement"
     | "business_bank_statement"
     | "business_financial_statements"
+    | "business_accounts_receivable"
+    | "business_contract"
+    | "business_merchant_processor_statement"
+    | "business_shareholder_loan"
     | "business_tax_return";
+
+export type LimitIncreaseSupportingDocument = {
+    type: LimitIncreaseRequestSupportingDocumentType;
+    file: string;
+};
 
 export type GetLimitIncreaseRequestsResponse = Array<{
     id: string;
     customer_id: string;
     status: LimitIncreaseRequestStatus;
-    daily: number;
-    monthly: number;
-    per_transaction: number;
-    supporting_document_file: string;
-    supporting_document_type: LimitIncreaseRequestSupportingDocumentType;
-    created_at: string;
-    updated_at: string;
+    daily: number | null;
+    monthly: number | null;
+    per_transaction: number | null;
+    supporting_document_file: string | null;
+    supporting_document_type: LimitIncreaseRequestSupportingDocumentType | null;
+    supporting_documents?: LimitIncreaseSupportingDocument[] | null;
+    created_at: string | null;
+    updated_at: string | null;
     approved_per_transaction?: number | null;
     approved_daily?: number | null;
     approved_monthly?: number | null;
@@ -501,11 +679,12 @@ export type GetLimitIncreaseRequestsResponse = Array<{
 
 export type RequestLimitIncreaseInput = {
     customer_id: string;
-    daily: number;
-    monthly: number;
-    per_transaction: number;
-    supporting_document_file: string;
-    supporting_document_type: LimitIncreaseRequestSupportingDocumentType;
+    daily: number | null;
+    monthly: number | null;
+    per_transaction: number | null;
+    supporting_document_file?: string;
+    supporting_document_type?: LimitIncreaseRequestSupportingDocumentType;
+    supporting_documents?: LimitIncreaseSupportingDocument[];
 };
 
 export type RequestLimitIncreaseResponse = {
@@ -519,40 +698,61 @@ export function createCustomersResource(instanceId: string, client: InternalApiC
             return client.get(`/instances/${instanceId}/customers${queryParams}`);
         },
         createIndividualWithStandardKYC(
-            data: CreateIndividualWithStandardKYCInput
+            data: CreateIndividualWithStandardKYCInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateIndividualWithStandardKYCResponse>> {
-            return client.post(`/instances/${instanceId}/customers`, {
-                kyc_type: "standard",
-                type: "individual",
-                ...data,
-            });
+            return client.post(
+                `/instances/${instanceId}/customers`,
+                {
+                    kyc_type: "standard",
+                    type: "individual",
+                    ...data,
+                },
+                options
+            );
         },
         createIndividualWithEnhancedKYC(
-            data: CreateIndividualWithEnhancedKYCInput
+            data: CreateIndividualWithEnhancedKYCInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateIndividualWithEnhancedKYCResponse>> {
-            return client.post(`/instances/${instanceId}/customers`, {
-                kyc_type: "enhanced",
-                type: "individual",
-                ...data,
-            });
+            return client.post(
+                `/instances/${instanceId}/customers`,
+                {
+                    kyc_type: "enhanced",
+                    type: "individual",
+                    ...data,
+                },
+                options
+            );
         },
         createBusinessWithStandardKYB(
-            data: CreateBusinessWithStandardKYBInput
+            data: CreateBusinessWithStandardKYBInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateBusinessWithStandardKYBResponse>> {
-            return client.post(`/instances/${instanceId}/customers`, {
-                kyc_type: "standard",
-                type: "business",
-                ...data,
-            });
+            return client.post(
+                `/instances/${instanceId}/customers`,
+                {
+                    kyc_type: "standard",
+                    type: "business",
+                    ...data,
+                },
+                options
+            );
         },
         get(customer_id: GetCustomerInput): Promise<BlindpayApiResponse<GetCustomerResponse>> {
             return client.get(`/instances/${instanceId}/customers/${customer_id}`);
         },
-        update({ customer_id, ...data }: UpdateCustomerInput): Promise<BlindpayApiResponse<void>> {
-            return client.put(`/instances/${instanceId}/customers/${customer_id}`, data);
+        update(
+            { customer_id, ...data }: UpdateCustomerInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.put(`/instances/${instanceId}/customers/${customer_id}`, data, options);
         },
-        delete(customer_id: DeleteCustomerInput): Promise<BlindpayApiResponse<void>> {
-            return client.delete(`/instances/${instanceId}/customers/${customer_id}`);
+        delete(
+            customer_id: DeleteCustomerInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.delete(`/instances/${instanceId}/customers/${customer_id}`, options);
         },
         getLimits(
             customer_id: GetCustomerLimitsInput
@@ -564,13 +764,14 @@ export function createCustomersResource(instanceId: string, client: InternalApiC
         ): Promise<BlindpayApiResponse<GetLimitIncreaseRequestsResponse>> {
             return client.get(`/instances/${instanceId}/customers/${customer_id}/limit-increase`);
         },
-        requestLimitIncrease({
-            customer_id,
-            ...data
-        }: RequestLimitIncreaseInput): Promise<BlindpayApiResponse<RequestLimitIncreaseResponse>> {
+        requestLimitIncrease(
+            { customer_id, ...data }: RequestLimitIncreaseInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<RequestLimitIncreaseResponse>> {
             return client.post(
                 `/instances/${instanceId}/customers/${customer_id}/limit-increase`,
-                data
+                data,
+                options
             );
         },
     };

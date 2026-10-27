@@ -1,6 +1,13 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { KnownDivergenceEntry, SpecMap, UnmodeledFile } from "./types";
+import type {
+    KnownDivergenceEntry,
+    NewSchemaMapEntry,
+    PathLocator,
+    SpecLocator,
+    SpecMap,
+    UnmodeledFile,
+} from "./types";
 
 export function loadSpecMap(path: string): SpecMap {
     const raw = JSON.parse(readFileSync(path, "utf8"));
@@ -12,6 +19,36 @@ export function loadSpecMap(path: string): SpecMap {
         throw new Error(`${path}: expected {enums: [], types: [], ignore: {schemas: []}}`);
     }
     return raw;
+}
+
+/**
+ * The map as it will look once this run's operation-inserts persist their new types[] entries.
+ * `--apply` judges new schemas and enum coverage against it, so a schema the generator is about
+ * to map is not reported as needing a human. Never mutates `map`.
+ */
+export function withPendingMapEntries<M extends Pick<SpecMap, "types">>(
+    map: M,
+    entries: NewSchemaMapEntry[]
+): M {
+    const types = map.types.map((t) => ({ ...t, sdk: [...t.sdk] }));
+    for (const entry of entries) {
+        const locator: SpecLocator =
+            entry.kind === "schema"
+                ? { schema: entry.schema }
+                : {
+                      path: entry.path,
+                      method: entry.method,
+                      location: entry.location as PathLocator["location"],
+                  };
+        const site = { file: entry.file, symbol: entry.symbol };
+        const existing = types.find((t) => JSON.stringify(t.spec) === JSON.stringify(locator));
+        if (!existing) {
+            types.push({ spec: locator, sdk: [site], notes: entry.notes });
+        } else if (!existing.sdk.some((t) => t.symbol === entry.symbol)) {
+            existing.sdk.push(site);
+        }
+    }
+    return { ...map, types };
 }
 
 export function loadUnmodeled(path: string): UnmodeledFile {

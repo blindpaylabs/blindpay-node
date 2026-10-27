@@ -28,12 +28,14 @@ blindpay-node/
     internal/
       api-client.ts                     # InternalApiClient interface (get/post/put/patch/delete)
       blindpay-error.ts                 # BlindPayError class
+      error-response.ts                 # toErrorResponse: API error envelope -> ErrorResponse
       helpers/strict-omit.ts            # StrictOmit<T, K> utility type
       vitest-fetch-mock.d.ts            # Type declaration for fetch mock
     resources/
       {resource-name}/
         index.ts                        # Types + factory function for the resource
         {resource-name}.test.ts         # Tests (colocated with resource)
+      request-options.test.ts           # Fails on a mutation that doesn't forward RequestOptions
       wallets/                          # Grouped sub-resources (no index.ts)
         blockchain.ts                   # createBlockchainWalletsResource
         blockchain.test.ts
@@ -46,6 +48,9 @@ blindpay-node/
         quotes.ts                       # createPayinQuotesResource (sub-resource)
         payins.test.ts
         payins-quotes.test.ts
+      webhooks/
+        index.ts                        # Webhook endpoints and the WebhookEvents name union
+        events.ts                       # WebhookEvent: payload union keyed on webhook_event
 ```
 
 ## Conventions
@@ -110,6 +115,30 @@ Examples: `createPayinsResource`, `createPartnerFeesResource`, `createBlockchain
 - Linter: Biome recommended rules. No unused variables (error). `import type` required (error). No explicit `any` (warn).
 - TypeScript: `verbatimModuleSyntax: true` (must use `import type` for type-only imports). `strict: true`.
 
+## Generate before you hand-write
+
+`scripts/api-sync/` is a deterministic patcher (no LLM) that reconciles the SDK against the OpenAPI spec. Anything it can produce must come from it, not from a hand-written (or model-written) edit:
+
+```bash
+bun run sync -- --spec /tmp/openapi.public.json   # apply against the current public spec (built below)
+bun run sync:check                                # CI gate against the committed snapshot
+bun run audit:types                               # informational full type audit
+```
+
+`.api-sync/spec-snapshot.json` is the spec the SDK last synced to, so applying against it only restores methods the SDK lost. To pick up a new endpoint, build the current public spec from blindpay-v2's committed `openapi.json` with blindpay-v2's own public filter (run inside a blindpay-v2 checkout):
+
+```bash
+git fetch origin main
+mkdir -p /tmp/v2 && git archive origin/main apps/api/openapi.json apps/api/src/shared/helpers scripts/openapi-public-filter.ts | tar -x -C /tmp/v2
+(cd /tmp/v2 && bun scripts/openapi-public-filter.ts --in apps/api/openapi.json --out /tmp/openapi.public.json)
+```
+
+Normally the api-sync workflow does this for you: blindpay-v2's `sdk-sync.yml` delivers the spec and dispatches the run. A successful `--apply` also refreshes the snapshot.
+
+It applies three kinds of change on its own: new enum members, new optional fields, and new methods for standard operations on an existing resource (instance-scoped path, JSON request and response, an existing `create{X}Resource(instanceId, client)` factory). For anything else it prints the exact reason it stopped. Only then use the manual recipes below: a brand-new resource, non-instance paths (`/available/*`, `/e/*`), multipart uploads, non-GET operations with query parameters, and resource files with a non-standard factory. After a manual change, `bun run sync:check` names any `.api-sync/spec-map.json` entry still missing.
+
+Deliberate differences from the spec are recorded in `.api-sync/unmodeled.json` with an owner and a reason. Never silence a finding by editing that file without the reason being true.
+
 ## How to: Add a New Resource
 
 ### Step 1: Create the resource file
@@ -119,7 +148,13 @@ Create `src/resources/{resource-name}/index.ts`.
 Template for a standard instance-scoped resource:
 
 ```typescript
-import type { BlindpayApiResponse, PaginationMetadata, PaginationParams } from "../../../types";
+import type {
+    BlindpayApiResponse,
+    PaginationMetadata,
+    PaginationParams,
+    RequestOptions,
+    SuccessResponse,
+} from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 // -- Entity type --
@@ -168,19 +203,26 @@ export function createWidgetsResource(instanceId: string, client: InternalApiCli
             const queryParams = params ? `?${new URLSearchParams(params)}` : "";
             return client.get(`/instances/${instanceId}/widgets${queryParams}`);
         },
-        create({
-            ...data
-        }: CreateWidgetInput): Promise<BlindpayApiResponse<CreateWidgetResponse>> {
-            return client.post(`/instances/${instanceId}/widgets`, data);
+        create(
+            { ...data }: CreateWidgetInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateWidgetResponse>> {
+            return client.post(`/instances/${instanceId}/widgets`, data, options);
         },
         get(id: GetWidgetInput): Promise<BlindpayApiResponse<GetWidgetResponse>> {
             return client.get(`/instances/${instanceId}/widgets/${id}`);
         },
-        update({ widget_id, ...data }: UpdateWidgetInput): Promise<BlindpayApiResponse<void>> {
-            return client.put(`/instances/${instanceId}/widgets/${widget_id}`, data);
+        update(
+            { widget_id, ...data }: UpdateWidgetInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.put(`/instances/${instanceId}/widgets/${widget_id}`, data, options);
         },
-        delete(id: DeleteWidgetInput): Promise<BlindpayApiResponse<void>> {
-            return client.delete(`/instances/${instanceId}/widgets/${id}`);
+        delete(
+            id: DeleteWidgetInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.delete(`/instances/${instanceId}/widgets/${id}`, options);
         },
     };
 }
@@ -329,9 +371,10 @@ export function createWidgetsResource(instanceId: string, client: InternalApiCli
     return {
         // ... existing methods ...
         activate(
-            id: ActivateWidgetInput
+            id: ActivateWidgetInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<ActivateWidgetResponse>> {
-            return client.post(`/instances/${instanceId}/widgets/${id}/activate`, {});
+            return client.post(`/instances/${instanceId}/widgets/${id}/activate`, {}, options);
         },
     };
 }
@@ -395,7 +438,7 @@ Place it inside the parent resource directory. For a sub-resource of `payins`:
 File: `src/resources/payins/quotes.ts`
 
 ```typescript
-import type { BlindpayApiResponse } from "../../../types";
+import type { BlindpayApiResponse, RequestOptions } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type CreatePayinQuoteInput = {
@@ -410,10 +453,11 @@ export type CreatePayinQuoteResponse = {
 
 export function createPayinQuotesResource(instanceId: string, client: InternalApiClient) {
     return {
-        create({
-            ...data
-        }: CreatePayinQuoteInput): Promise<BlindpayApiResponse<CreatePayinQuoteResponse>> {
-            return client.post(`/instances/${instanceId}/payin-quotes`, data);
+        create(
+            { ...data }: CreatePayinQuoteInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreatePayinQuoteResponse>> {
+            return client.post(`/instances/${instanceId}/payin-quotes`, data, options);
         },
     };
 }
@@ -530,7 +574,7 @@ This project uses [Changesets](https://github.com/changesets/changesets).
 
 - `patch`: Bug fixes, type corrections, adding optional fields to existing types.
 - `minor`: New resources, new methods on existing resources, new sub-resources.
-- `major`: Removing resources/methods, renaming fields, removing fields, changing required/optional status of input fields.
+- `major`: Removing resources/methods, renaming fields, removing fields, changing required/optional status of input fields, adding `| null` to a response field, narrowing a response field from `string` to a union, removing an enum member.
 
 ### Creating a changeset
 
@@ -631,8 +675,9 @@ export type CreateWidgetInput = {
 ```
 
 Rules:
-- Required fields: no `?`, no `| null` (unless the API explicitly allows null).
-- Optional fields: use `?` and `| null` if nullable.
+- Required fields: no `?`.
+- Optional fields: use `?`.
+- Nullable fields (`type: [..., "null"]` in the spec): add `| null`, on inputs and responses alike. `sync:check` fails on a spec-nullable field whose SDK type has no `| null`.
 - String enums: use union literal types.
 - Numbers: use `number`.
 - Booleans: use `boolean`.
@@ -729,8 +774,11 @@ export type UpdateWidgetInput = {
     name?: string;
 };
 
-update({ widget_id, ...data }: UpdateWidgetInput): Promise<BlindpayApiResponse<void>> {
-    return client.put(`/instances/${instanceId}/widgets/${widget_id}`, data);
+update(
+    { widget_id, ...data }: UpdateWidgetInput,
+    options?: RequestOptions
+): Promise<BlindpayApiResponse<SuccessResponse>> {
+    return client.put(`/instances/${instanceId}/widgets/${widget_id}`, data, options);
 },
 ```
 
@@ -758,10 +806,15 @@ get({
 Every method returns `Promise<BlindpayApiResponse<T>>` where `T` is the response type. `BlindpayApiResponse<T>` is a discriminated union:
 
 ```typescript
-type BlindpayApiResponse<T> = { data: T; error: null } | { data: null; error: { message: string } }
+type BlindpayApiResponse<T> = { data: T; error: null } | { data: null; error: ErrorResponse }
+// ErrorResponse: message, plus code, description, errors and trace_id when the API sends them
 ```
 
-For methods with no response body, use `Promise<BlindpayApiResponse<void>>`.
+When the spec's 200 response is `$ref Success`, use `Promise<BlindpayApiResponse<SuccessResponse>>`. For methods with no response body, use `Promise<BlindpayApiResponse<void>>`.
+
+### Request options (Idempotency-Key)
+
+Every method that sends a POST, PUT, PATCH or DELETE takes a trailing `options?: RequestOptions` and passes it to the client as the last argument; `options.idempotencyKey` becomes the `Idempotency-Key` header. GET methods never take it, and neither do unauthenticated `/e/` routes (the API ignores the header there). `src/resources/request-options.test.ts` fails on a mutation that doesn't forward it, and the api-sync generator emits the same signature.
 
 ### Discriminated/variant creation
 
@@ -769,13 +822,14 @@ When one endpoint creates different variants based on a `type` field, create sep
 
 ```typescript
 createIndividualWithStandardKYC(
-    data: CreateIndividualWithStandardKYCInput
+    data: CreateIndividualWithStandardKYCInput,
+    options?: RequestOptions
 ): Promise<BlindpayApiResponse<CreateIndividualWithStandardKYCResponse>> {
-    return client.post(`/instances/${instanceId}/customers`, {
-        kyc_type: "standard",
-        type: "individual",
-        ...data,
-    });
+    return client.post(
+        `/instances/${instanceId}/customers`,
+        { kyc_type: "standard", type: "individual", ...data },
+        options
+    );
 },
 ```
 
@@ -784,10 +838,11 @@ createIndividualWithStandardKYC(
 When passing an object body to `client.post`/`client.put`, use rest destructuring even when no fields need extracting:
 
 ```typescript
-create({
-    ...data
-}: CreateWidgetInput): Promise<BlindpayApiResponse<CreateWidgetResponse>> {
-    return client.post(`/instances/${instanceId}/widgets`, data);
+create(
+    { ...data }: CreateWidgetInput,
+    options?: RequestOptions
+): Promise<BlindpayApiResponse<CreateWidgetResponse>> {
+    return client.post(`/instances/${instanceId}/widgets`, data, options);
 },
 ```
 
@@ -795,6 +850,7 @@ This is the consistent pattern used throughout the codebase.
 
 ### Summary: complete checklist for adding an OpenAPI endpoint
 
+0. First run `bun run sync -- --spec /tmp/openapi.public.json` (see "Generate before you hand-write"); if it generated the method, skip to step 7.
 1. Identify the API path and HTTP method.
 2. Determine which resource file it belongs to (or create a new one).
 3. Define the input type from request body schema + path params.
@@ -803,9 +859,7 @@ This is the consistent pattern used throughout the codebase.
 6. If new resource: register in `client.ts`, re-export from `index.ts`.
 7. Add tests.
 8. Add a changeset.
-9. Run `bun run lint:fix && bun run check-types && bun run lint:check && bun run test`.
+9. Run `bun run lint:fix && bun run check-types && bun run lint:check && bun run test && bun run sync:check`.
    Always run `lint:fix` first so Biome auto-applies formatter changes
    (trailing newlines, quote style, etc.); then `lint:check` validates
-   that nothing remains. Running only `lint:check` reports formatter
-   diffs as errors instead of fixing them — those are exactly the
-   issues api-sync runs were leaving behind.
+   that nothing remains.

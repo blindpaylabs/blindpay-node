@@ -85,13 +85,56 @@ This SDK uses a consistent error handling pattern. Always check for errors:
 const { data, error } = await blindpay.payins.list();
 
 if (error) {
-  // Handle error
-  console.error('API Error:', error.message);
+  // error.code is a stable code (e.g. PAYOUTS_INSUFFICIENT_BALANCE); error.description is
+  // safe to show to end users; include error.trace_id when contacting support.
+  console.error('API Error:', error.code ?? error.message);
   return;
 }
 
 console.log('Success:', data); // fully typed
 ```
+
+## Safe retries (idempotency)
+
+Every method that creates, updates or deletes something takes an optional last argument. Pass an `idempotencyKey` and a retry with the same key and the same input replays the original response instead of acting twice, for example when a timeout leaves you unsure whether a payout was created. Keys are kept for 24 hours.
+
+```typescript
+import { randomUUID } from 'node:crypto';
+
+const idempotencyKey = randomUUID(); // reuse it only to retry this same call
+
+const { data, error } = await blindpay.payouts.createEvm(
+  { quote_id: 'qu_000000000000', sender_wallet_address: '0x...' },
+  { idempotencyKey }
+);
+```
+
+## Webhooks
+
+`constructWebhookEvent` verifies the Svix signature and returns the payload typed by its `webhook_event`. It throws a `BlindPayError` when verification fails. Pass the raw request body, not a re-serialized object.
+
+```typescript
+const event = blindpay.constructWebhookEvent({
+  secret: process.env.BLINDPAY_WEBHOOK_SECRET as string,
+  headers: {
+    id: req.headers['svix-id'] as string,
+    timestamp: req.headers['svix-timestamp'] as string,
+    signature: req.headers['svix-signature'] as string,
+  },
+  payload: rawBody,
+});
+
+switch (event.webhook_event) {
+  case 'tos.accept':
+    console.log('ToS accepted:', event.tos_id);
+    break;
+  case 'customer.update':
+    console.log('KYC status:', event.kyc_status);
+    break;
+}
+```
+
+`verifyWebhookSignature` is still available when you only need a boolean.
 
 For detailed API documentation, visit:
 - [BlindPay API documentation](https://blindpay.com/docs/getting-started/overview)

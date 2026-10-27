@@ -62,7 +62,7 @@ function deleteTwoOperations(dir: string): void {
     quotes = deleteSpan(quotes, "export type CreateQuoteInput", "export type GetFxRateInput");
     quotes = deleteSpan(
         quotes,
-        "        create({ ...data }: CreateQuoteInput)",
+        "        create(\n            { ...data }: CreateQuoteInput,",
         "        getFxRate("
     );
     writeFileSync(quotesPath, quotes);
@@ -102,13 +102,15 @@ describe("operation-insert golden self-test", () => {
         );
 
         const quotes = readFileSync(join(dir, "src/resources/quotes/index.ts"), "utf8");
-        expect(quotes).toContain("bank_account_id: string;");
-        expect(quotes).toContain("currency_type:");
-        expect(quotes).toContain("request_amount: number;");
+        expect(quotes).toContain("bank_account_id?: string | null;");
+        expect(quotes).toContain("currency_type?:");
+        expect(quotes).toContain("request_amount?: number | null;");
         expect(quotes).toContain(
-            "create({ ...data }: CreateQuoteInput): Promise<BlindpayApiResponse<CreateQuoteResponse>> {"
+            "create({ ...data }: CreateQuoteInput, options?: RequestOptions): Promise<BlindpayApiResponse<CreateQuoteResponse>> {"
         );
-        expect(quotes).toContain("return client.post(`/instances/${instanceId}/quotes`, data);");
+        expect(quotes).toContain(
+            "return client.post(`/instances/${instanceId}/quotes`, data, options);"
+        );
 
         execFileSync("bun", ["run", "check-types"], { cwd: dir, stdio: "pipe" });
         execFileSync("bun", ["run", "test"], { cwd: dir, stdio: "pipe" });

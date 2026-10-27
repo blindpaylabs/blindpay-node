@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse } from "../../../types";
+import type { BlindpayApiResponse, RequestOptions, SuccessResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type ListPartnerFeesResponse = Array<{
@@ -9,19 +9,15 @@ export type ListPartnerFeesResponse = Array<{
     payout_flat_fee: number;
     payin_percentage_fee: number;
     payin_flat_fee: number;
-    evm_wallet_address: string;
-    stellar_wallet_address: string;
 }>;
 
 export type CreatePartnerFeeInput = {
     virtual_account_set?: boolean | null;
-    evm_wallet_address: string;
     name: string;
     payin_flat_fee: number;
     payin_percentage_fee: number;
     payout_flat_fee: number;
     payout_percentage_fee: number;
-    stellar_wallet_address?: string | null;
 };
 
 export type CreatePartnerFeeResponse = {
@@ -32,8 +28,6 @@ export type CreatePartnerFeeResponse = {
     payout_flat_fee: number;
     payin_percentage_fee: number;
     payin_flat_fee: number;
-    evm_wallet_address?: string;
-    stellar_wallet_address?: string;
 };
 
 export type GetPartnerFeeInput = string;
@@ -41,13 +35,11 @@ export type GetPartnerFeeInput = string;
 export type GetPartnerFeeResponse = {
     id: string;
     instance_id: string;
-    evm_wallet_address: string;
     name: string;
     payin_flat_fee: number;
     payin_percentage_fee: number;
     payout_flat_fee: number;
     payout_percentage_fee: number;
-    stellar_wallet_address?: string | null;
 };
 
 export type DeletePartnerFeeInput = string;
@@ -57,16 +49,20 @@ export function createPartnerFeesResource(instanceId: string, client: InternalAp
         list(): Promise<BlindpayApiResponse<ListPartnerFeesResponse>> {
             return client.get(`/instances/${instanceId}/partner-fees`);
         },
-        create({
-            ...data
-        }: CreatePartnerFeeInput): Promise<BlindpayApiResponse<CreatePartnerFeeResponse>> {
-            return client.post(`/instances/${instanceId}/partner-fees`, data);
+        create(
+            { ...data }: CreatePartnerFeeInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreatePartnerFeeResponse>> {
+            return client.post(`/instances/${instanceId}/partner-fees`, data, options);
         },
         get(id: GetPartnerFeeInput): Promise<BlindpayApiResponse<GetPartnerFeeResponse>> {
             return client.get(`/instances/${instanceId}/partner-fees/${id}`);
         },
-        delete(id: DeletePartnerFeeInput): Promise<BlindpayApiResponse<void>> {
-            return client.delete(`/instances/${instanceId}/partner-fees/${id}`);
+        delete(
+            id: DeletePartnerFeeInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.delete(`/instances/${instanceId}/partner-fees/${id}`, options);
         },
     };
 }

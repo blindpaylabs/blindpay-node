@@ -132,6 +132,37 @@ describe("Transfers", () => {
             expect(error).toBeNull();
             expect(data).toEqual(mockedTransfers);
         });
+
+        it("should send every list filter as a query parameter", async () => {
+            fetchMock.mockResponseOnce(
+                JSON.stringify({
+                    data: [],
+                    pagination: { has_more: false, next_page: "", prev_page: "" },
+                }),
+                { headers: { "Content-Type": "application/json" } }
+            );
+
+            const { error } = await blindpay.transfers.list({
+                limit: "10",
+                customer_id: "cu_000000000000",
+                wallet_id: "wa_000000000000",
+                status: "refunded",
+                network: "base",
+                token: "EURC",
+            });
+
+            expect(error).toBeNull();
+            const url = new URL(fetchMock.mock.calls[0][0] as string);
+            expect(url.pathname).toBe("/v1/instances/in_000000000000/transfers");
+            expect(Object.fromEntries(url.searchParams)).toEqual({
+                limit: "10",
+                customer_id: "cu_000000000000",
+                wallet_id: "wa_000000000000",
+                status: "refunded",
+                network: "base",
+                token: "EURC",
+            });
+        });
     });
 
     describe("Get transfer", () => {

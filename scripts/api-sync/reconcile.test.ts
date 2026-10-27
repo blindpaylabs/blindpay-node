@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -12,6 +12,7 @@ let dir: string | null = null;
 function makeRepo(files: Record<string, string>): string {
     dir = mkdtempSync(join(tmpdir(), "api-sync-reconcile-"));
     for (const [rel, content] of Object.entries(files)) {
+        mkdirSync(join(dir, rel, ".."), { recursive: true });
         writeFileSync(join(dir, rel), content);
     }
     return dir;
@@ -163,6 +164,7 @@ describe("field-insertion (property reconciliation)", () => {
                 property: undefined,
                 field: "refund_wallet_address",
                 tsType: "string | null",
+                importsNeeded: [],
                 site: { file: "quotes.ts", symbol: "CreateQuoteInput" },
             },
         ]);
@@ -302,6 +304,246 @@ describe("field-insertion (property reconciliation)", () => {
     });
 });
 
+describe("field-insert of an enum-constrained property", () => {
+    const specWithField = (node: Record<string, unknown>): Spec => ({
+        paths: {},
+        components: {
+            schemas: { BankAccountOut: { type: "object", properties: { country: node } } },
+        },
+    });
+    const map: SpecMap = {
+        enums: [],
+        types: [
+            {
+                spec: { schema: "BankAccountOut" },
+                sdk: [{ file: "bank.ts", symbol: "BankAccount" }],
+            },
+        ],
+        ignore: { schemas: [] },
+    };
+    const files = () => ({
+        "bank.ts": "export type BankAccount = {\n    id: string;\n};\n",
+        "types/index.d.ts": 'export type Country = "BR" | "US";\n',
+    });
+
+    it("reuses the shared union whose members match exactly, and asks for its import", () => {
+        const repo = makeRepo(files());
+        const { applicable } = reconcile(
+            specWithField({ type: ["string", "null"], enum: ["US", "BR"] }),
+            map,
+            emptyUnmodeled(),
+            repo
+        );
+        expect(applicable).toEqual([
+            expect.objectContaining({
+                kind: "field-insert",
+                field: "country",
+                tsType: "Country | null",
+                importsNeeded: ["Country"],
+            }),
+        ]);
+    });
+
+    it("compiles an object property's own properties instead of Record<string, unknown>", () => {
+        const repo = makeRepo(files());
+        const { applicable } = reconcile(
+            specWithField({
+                type: ["object", "null"],
+                properties: {
+                    key: { type: "string" },
+                    code: { type: "string", enum: ["BR", "US"] },
+                },
+                required: ["key"],
+            }),
+            map,
+            emptyUnmodeled(),
+            repo
+        );
+        expect(applicable).toEqual([
+            expect.objectContaining({
+                tsType: "{\n    key: string;\n    code?: Country;\n} | null",
+                importsNeeded: ["Country"],
+            }),
+        ]);
+    });
+
+    it("keeps a free-form object (additionalProperties only) as Record<string, unknown>", () => {
+        const repo = makeRepo(files());
+        const { applicable } = reconcile(
+            specWithField({ type: ["object", "null"], additionalProperties: {} }),
+            map,
+            emptyUnmodeled(),
+            repo
+        );
+        expect(applicable).toEqual([
+            expect.objectContaining({
+                tsType: "Record<string, unknown> | null",
+                importsNeeded: [],
+            }),
+        ]);
+    });
+
+    describe("a property that references a component schema", () => {
+        const refSpec = (country: Record<string, unknown>): Spec => ({
+            paths: {},
+            components: {
+                schemas: {
+                    BankAccountOut: { type: "object", properties: { country } },
+                    TokenOut: {
+                        type: "object",
+                        properties: { amount: { type: "number" } },
+                        required: ["amount"],
+                    },
+                },
+            },
+        });
+        const ref = { $ref: "#/components/schemas/TokenOut" };
+        const token = "export type Token = {\n    amount: number;\n};\n";
+        const repoFiles = () => ({
+            ...files(),
+            "bank.ts": `${files()["bank.ts"]}\n${token}`,
+            "other.ts": token,
+        });
+        const mapWithToken = (file: string): SpecMap => ({
+            ...map,
+            types: [
+                ...map.types,
+                { spec: { schema: "TokenOut" }, sdk: [{ file, symbol: "Token" }] },
+            ],
+        });
+
+        it("reuses the SDK symbol the schema is mapped to in the same file", () => {
+            const repo = makeRepo(repoFiles());
+            const { applicable } = reconcile(
+                refSpec(ref),
+                mapWithToken("bank.ts"),
+                emptyUnmodeled(),
+                repo
+            );
+            expect(applicable).toEqual([
+                expect.objectContaining({ tsType: "Token", importsNeeded: [] }),
+            ]);
+        });
+
+        it("sees through an allOf that only wraps the reference with a description", () => {
+            const repo = makeRepo(repoFiles());
+            const { applicable } = reconcile(
+                refSpec({ allOf: [ref, { description: "Only on some networks" }] }),
+                mapWithToken("bank.ts"),
+                emptyUnmodeled(),
+                repo
+            );
+            expect(applicable).toEqual([expect.objectContaining({ tsType: "Token" })]);
+        });
+
+        it("compiles the referenced schema when it is not mapped in the target file", () => {
+            const repo = makeRepo(repoFiles());
+            const { applicable } = reconcile(
+                refSpec(ref),
+                mapWithToken("other.ts"),
+                emptyUnmodeled(),
+                repo
+            );
+            expect(applicable).toEqual([
+                expect.objectContaining({ tsType: "{\n    amount: number;\n}", importsNeeded: [] }),
+            ]);
+        });
+    });
+
+    describe("an array property", () => {
+        it("compiles its items instead of unknown[]", () => {
+            const repo = makeRepo(files());
+            const { applicable } = reconcile(
+                specWithField({ type: ["array", "null"], items: { type: "string" } }),
+                map,
+                emptyUnmodeled(),
+                repo
+            );
+            expect(applicable).toEqual([
+                expect.objectContaining({ tsType: "string[] | null", importsNeeded: [] }),
+            ]);
+        });
+
+        it("reuses the shared union for enum items, and asks for its import", () => {
+            const repo = makeRepo(files());
+            const { applicable } = reconcile(
+                specWithField({ type: "array", items: { type: "string", enum: ["US", "BR"] } }),
+                map,
+                emptyUnmodeled(),
+                repo
+            );
+            expect(applicable).toEqual([
+                expect.objectContaining({ tsType: "Country[]", importsNeeded: ["Country"] }),
+            ]);
+        });
+
+        it("reuses the SDK symbol its item schema is mapped to in the same file", () => {
+            const repo = makeRepo({
+                ...files(),
+                "bank.ts": `${files()["bank.ts"]}\nexport type Token = {\n    amount: number;\n};\n`,
+            });
+            const spec: Spec = {
+                paths: {},
+                components: {
+                    schemas: {
+                        BankAccountOut: {
+                            type: "object",
+                            properties: {
+                                country: {
+                                    type: ["array", "null"],
+                                    items: { $ref: "#/components/schemas/TokenOut" },
+                                },
+                            },
+                        },
+                        TokenOut: {
+                            type: "object",
+                            properties: { amount: { type: "number" } },
+                            required: ["amount"],
+                        },
+                    },
+                },
+            };
+            const withToken: SpecMap = {
+                ...map,
+                types: [
+                    ...map.types,
+                    { spec: { schema: "TokenOut" }, sdk: [{ file: "bank.ts", symbol: "Token" }] },
+                ],
+            };
+            const { applicable } = reconcile(spec, withToken, emptyUnmodeled(), repo);
+            expect(applicable).toEqual([
+                expect.objectContaining({ tsType: "Token[] | null", importsNeeded: [] }),
+            ]);
+        });
+    });
+
+    it("keeps a boolean enum (e.g. `enum: [true]`) as boolean, matching the type check", () => {
+        const repo = makeRepo(files());
+        const { applicable } = reconcile(
+            specWithField({ type: "boolean", enum: [true] }),
+            map,
+            emptyUnmodeled(),
+            repo
+        );
+        expect(applicable).toEqual([
+            expect.objectContaining({ tsType: "boolean", importsNeeded: [] }),
+        ]);
+    });
+
+    it("falls back to a literal union, never a bare string, when no shared union matches", () => {
+        const repo = makeRepo(files());
+        const { applicable } = reconcile(
+            specWithField({ type: "string", enum: ["a", "b"] }),
+            map,
+            emptyUnmodeled(),
+            repo
+        );
+        expect(applicable).toEqual([
+            expect.objectContaining({ tsType: '"a" | "b"', importsNeeded: [] }),
+        ]);
+    });
+});
+
 describe("needs-human classifications", () => {
     it("a mapped schema locator that no longer resolves in the delivered spec", () => {
         const repo = makeRepo({ "x.ts": "export type X = { a: string };\n" });
@@ -369,6 +611,43 @@ describe("needs-human classifications", () => {
         expect(needsHuman.length).toBe(1);
         expect(needsHuman[0]).toContain("billing_fee_amount");
         expect(needsHuman[0]).toContain('spec is "number", SDK declares "string"');
+    });
+
+    it("a spec-nullable field whose SDK type has no | null, on a required response field", () => {
+        const repo = makeRepo({
+            "quotes.ts": [
+                "export type CreateQuoteResponse = {",
+                "    expires_at: number;",
+                "};",
+                "",
+            ].join("\n"),
+        });
+        const spec: Spec = {
+            paths: {},
+            components: {
+                schemas: {
+                    QuoteOut: {
+                        type: "object",
+                        properties: { expires_at: { type: ["number", "null"] } },
+                    },
+                },
+            },
+        };
+        const map: SpecMap = {
+            enums: [],
+            types: [
+                {
+                    spec: { schema: "QuoteOut" },
+                    sdk: [{ file: "quotes.ts", symbol: "CreateQuoteResponse" }],
+                },
+            ],
+            ignore: { schemas: [] },
+        };
+        const { applicable, needsHuman } = reconcile(spec, map, emptyUnmodeled(), repo);
+        expect(applicable).toEqual([]);
+        expect(needsHuman.length).toBe(1);
+        expect(needsHuman[0]).toContain("expires_at");
+        expect(needsHuman[0]).toContain('spec allows null but the SDK type has no "| null"');
     });
 
     it("records a type-mismatch known divergence instead of failing", () => {

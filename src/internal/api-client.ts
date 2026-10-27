@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse } from "../../types";
+import type { BlindpayApiResponse, RequestOptions } from "../../types";
 
 /**
  *
@@ -7,8 +7,20 @@ import type { BlindpayApiResponse } from "../../types";
  */
 export interface InternalApiClient {
     get: <T>(path: string) => Promise<BlindpayApiResponse<T>>;
-    post: <T>(path: string, body: Record<string, unknown>) => Promise<BlindpayApiResponse<T>>;
-    put: <T>(path: string, body: Record<string, unknown>) => Promise<BlindpayApiResponse<T>>;
-    patch: <T>(path: string, body: Record<string, unknown>) => Promise<BlindpayApiResponse<T>>;
-    delete: <T>(path: string, body?: Record<string, unknown>) => Promise<BlindpayApiResponse<T>>;
+    post: <T>(
+        path: string,
+        body: Record<string, unknown>,
+        options?: RequestOptions
+    ) => Promise<BlindpayApiResponse<T>>;
+    put: <T>(
+        path: string,
+        body: Record<string, unknown>,
+        options?: RequestOptions
+    ) => Promise<BlindpayApiResponse<T>>;
+    patch: <T>(
+        path: string,
+        body: Record<string, unknown>,
+        options?: RequestOptions
+    ) => Promise<BlindpayApiResponse<T>>;
+    delete: <T>(path: string, options?: RequestOptions) => Promise<BlindpayApiResponse<T>>;
 }

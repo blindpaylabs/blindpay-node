@@ -1,18 +1,22 @@
 import { Webhook } from "svix";
 import { version } from "../package.json";
-import type { BlindpayApiResponse } from "../types";
+import type { BlindpayApiResponse, RequestOptions } from "../types";
 import type { InternalApiClient } from "./internal/api-client";
 import { BlindPayError } from "./internal/blindpay-error";
+import { toErrorResponse } from "./internal/error-response";
 import { createAvailableResource } from "./resources/available";
 import { createBankAccountsResource } from "./resources/bank-accounts";
 import { createCustomersResource } from "./resources/customers";
 import { createFeesResource } from "./resources/fees";
 import { createInstancesResource } from "./resources/instances";
+import { createInstanceOnboardingResource } from "./resources/instances/onboarding";
 import { createPartnerFeesResource } from "./resources/partner-fees";
+import { createPayablesResource } from "./resources/payables";
 import { createPayinsResource } from "./resources/payins";
 import { createPayinQuotesResource } from "./resources/payins/quotes";
 import { createPayoutsResource } from "./resources/payouts";
 import { createQuotesResource } from "./resources/quotes";
+import { createCustomerRfiResource, createInstanceRfiResource } from "./resources/rfi";
 import { createTermsOfServiceResource } from "./resources/terms-of-service";
 import { createTransfersResource } from "./resources/transfers";
 import { createUploadResource } from "./resources/upload";
@@ -21,6 +25,19 @@ import { createBlockchainWalletsResource } from "./resources/wallets/blockchain"
 import { createCustodialWalletsResource } from "./resources/wallets/custodial";
 import { createOfframpWalletsResource } from "./resources/wallets/offramp";
 import { createWebhookEndpointsResource } from "./resources/webhooks";
+import type { WebhookEvent } from "./resources/webhooks/events";
+
+/** What `verifyWebhookSignature` and `constructWebhookEvent` check: the svix-* headers. */
+export type WebhookVerificationInput = {
+    secret: string;
+    headers: {
+        id: string;
+        timestamp: string;
+        signature: string;
+    };
+    /** The raw request body: re-serialized JSON changes the bytes and fails verification. */
+    payload: string;
+};
 
 export class BlindPay {
     // Options
@@ -33,6 +50,7 @@ export class BlindPay {
     // Resources
     readonly available: ReturnType<typeof createAvailableResource>;
     readonly partnerFees: ReturnType<typeof createPartnerFeesResource>;
+    readonly payables: ReturnType<typeof createPayablesResource>;
     readonly payins: ReturnType<typeof createPayinsResource> & {
         quotes: ReturnType<typeof createPayinQuotesResource>;
     };
@@ -44,10 +62,13 @@ export class BlindPay {
     readonly virtualAccounts: ReturnType<typeof createVirtualAccountsResource>;
     readonly customers: ReturnType<typeof createCustomersResource> & {
         bankAccounts: ReturnType<typeof createBankAccountsResource>;
+        rfi: ReturnType<typeof createCustomerRfiResource>;
     };
     readonly instances: ReturnType<typeof createInstancesResource> & {
         webhookEndpoints: ReturnType<typeof createWebhookEndpointsResource>;
         tos: ReturnType<typeof createTermsOfServiceResource>;
+        onboarding: ReturnType<typeof createInstanceOnboardingResource>;
+        rfi: ReturnType<typeof createInstanceRfiResource>;
     };
     readonly wallets: {
         blockchain: ReturnType<typeof createBlockchainWalletsResource>;
@@ -97,9 +118,13 @@ export class BlindPay {
             ...createInstancesResource(this.instanceId, this.api),
             webhookEndpoints: createWebhookEndpointsResource(this.instanceId, this.api),
             tos: createTermsOfServiceResource(this.instanceId, this.api),
+            onboarding: createInstanceOnboardingResource(this.instanceId, this.api),
+            rfi: createInstanceRfiResource(this.instanceId, this.api),
         };
 
         this.partnerFees = createPartnerFeesResource(this.instanceId, this.api);
+
+        this.payables = createPayablesResource(this.instanceId, this.api);
 
         this.payins = {
             ...createPayinsResource(this.instanceId, this.api),
@@ -114,11 +139,12 @@ export class BlindPay {
 
         this.fees = createFeesResource(this.instanceId, this.api);
 
-        this.upload = createUploadResource(this.baseUrl, this.headers);
+        this.upload = createUploadResource(this.instanceId, this.baseUrl, this.headers, this.api);
 
         this.customers = {
             ...createCustomersResource(this.instanceId, this.api),
             bankAccounts: createBankAccountsResource(this.instanceId, this.api),
+            rfi: createCustomerRfiResource(this.instanceId, this.api),
         };
 
         this.virtualAccounts = createVirtualAccountsResource(this.instanceId, this.api);
@@ -133,22 +159,24 @@ export class BlindPay {
     private async request<T>(
         method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
         path: string,
-        body?: Record<string, unknown>
+        body?: Record<string, unknown>,
+        options?: RequestOptions
     ): Promise<BlindpayApiResponse<T>> {
         try {
+            const idempotencyKey = options?.idempotencyKey;
             const response = await fetch(`${this.baseUrl}${path}`, {
                 method,
-                headers: this.headers,
+                headers:
+                    idempotencyKey === undefined
+                        ? this.headers
+                        : { ...this.headers, "Idempotency-Key": idempotencyKey },
                 body: body ? JSON.stringify(body) : undefined,
             });
 
             if (!response.ok) {
-                const error = await this.parseJsonResponse<{ message?: string }>(response);
                 return {
                     data: null,
-                    error: {
-                        message: error?.message ?? "Unknown error",
-                    },
+                    error: toErrorResponse(await this.parseJsonResponse<unknown>(response)),
                 };
             }
 
@@ -196,30 +224,33 @@ export class BlindPay {
 
     private async post<T>(
         path: string,
-        body: Record<string, unknown>
+        body: Record<string, unknown>,
+        options?: RequestOptions
     ): Promise<BlindpayApiResponse<T>> {
-        return this.request<T>("POST", path, body);
+        return this.request<T>("POST", path, body, options);
     }
 
     private async put<T>(
         path: string,
-        body: Record<string, unknown>
+        body: Record<string, unknown>,
+        options?: RequestOptions
     ): Promise<BlindpayApiResponse<T>> {
-        return this.request<T>("PUT", path, body);
+        return this.request<T>("PUT", path, body, options);
     }
 
     private async patch<T>(
         path: string,
-        body: Record<string, unknown>
+        body: Record<string, unknown>,
+        options?: RequestOptions
     ): Promise<BlindpayApiResponse<T>> {
-        return this.request<T>("PATCH", path, body);
+        return this.request<T>("PATCH", path, body, options);
     }
 
     private async delete<T>(
         path: string,
-        body?: Record<string, unknown>
+        options?: RequestOptions
     ): Promise<BlindpayApiResponse<T>> {
-        return this.request<T>("DELETE", path, body);
+        return this.request<T>("DELETE", path, undefined, options);
     }
 
     /**
@@ -230,31 +261,37 @@ export class BlindPay {
      * @param params.payload The raw request body as a string
      * @returns {boolean} True if the signature is valid, false otherwise
      */
-    verifyWebhookSignature({
-        secret,
-        headers,
-        payload,
-    }: {
-        secret: string;
-        headers: {
-            id: string;
-            timestamp: string;
-            signature: string;
-        };
-        payload: string;
-    }): boolean {
+    verifyWebhookSignature(params: WebhookVerificationInput): boolean {
         try {
-            const webhook = new Webhook(secret);
-
-            webhook.verify(payload, {
-                "svix-id": headers.id,
-                "svix-timestamp": headers.timestamp,
-                "svix-signature": headers.signature,
-            });
-
+            verifyWithSvix(params);
             return true;
         } catch {
             return false;
         }
     }
+
+    /**
+     * Verifies a BlindPay webhook with Svix and returns its payload, typed by `webhook_event`.
+     *
+     * @returns The verified payload; narrow it with a `switch` on `event.webhook_event`
+     * @throws {BlindPayError} When the signature or timestamp does not verify
+     */
+    constructWebhookEvent(params: WebhookVerificationInput): WebhookEvent {
+        try {
+            return verifyWithSvix(params) as WebhookEvent;
+        } catch (error) {
+            throw new BlindPayError(
+                `Webhook verification failed: ${error instanceof Error ? error.message : String(error)}`
+            );
+        }
+    }
+}
+
+/** Returns the parsed payload when the Svix signature and timestamp verify, else throws. */
+function verifyWithSvix({ secret, headers, payload }: WebhookVerificationInput): unknown {
+    return new Webhook(secret).verify(payload, {
+        "svix-id": headers.id,
+        "svix-timestamp": headers.timestamp,
+        "svix-signature": headers.signature,
+    });
 }

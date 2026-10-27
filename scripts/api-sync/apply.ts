@@ -28,6 +28,9 @@ export function insertEnumMember(content: string, symbol: string, member: string
         const semiIdx = lines[declLineIdx].lastIndexOf(";");
         lines[declLineIdx] =
             `${lines[declLineIdx].slice(0, semiIdx)} | "${member}"${lines[declLineIdx].slice(semiIdx)}`;
+    } else if (/=\s*"[^"]*"(\s*\|\s*"[^"]*")*\s*$/.test(lines[declLineIdx])) {
+        // single-line union with no trailing `;` (valid in a .d.ts): `export type X = "a" | "b"`
+        lines[declLineIdx] = `${lines[declLineIdx].trimEnd()} | "${member}"`;
     } else {
         // one-member-per-line union with a leading `|`; find the last such line (it carries the `;`).
         let lastMemberIdx = -1;
@@ -92,7 +95,8 @@ export function insertOptionalField(
         }
     }
 
-    lines.splice(closingIdx, 0, `${indent}${field}?: ${tsType};`);
+    const typeText = tsType.split("\n").join(`\n${indent}`);
+    lines.splice(closingIdx, 0, `${indent}${field}?: ${typeText};`);
     const patched = lines.join("\n");
     return content.slice(0, span.start) + patched + content.slice(span.end);
 }

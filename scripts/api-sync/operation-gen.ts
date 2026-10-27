@@ -36,7 +36,11 @@ function camelCase(segment: string): string {
     return p ? p[0].toLowerCase() + p.slice(1) : p;
 }
 
+/** Path segments that end in "s" without being plurals (`tos` is terms of service). */
+const UNCOUNTABLE_SEGMENTS = new Set(["tos"]);
+
 function singularize(segment: string): string {
+    if (UNCOUNTABLE_SEGMENTS.has(segment)) return segment;
     if (segment.endsWith("ies")) return `${segment.slice(0, -3)}y`;
     if (segment.endsWith("ss")) return segment;
     if (segment.endsWith("s")) return segment.slice(0, -1);
@@ -196,6 +200,13 @@ export function classifyNewOperation(
         };
     }
 
+    if (method === "delete" && op.requestBody) {
+        return {
+            standard: false,
+            reason: `"${method} ${path}" has a request body; the client's delete never sends one.`,
+        };
+    }
+
     const requestBodyKind = jsonContentOnly(op.requestBody?.content);
     if (requestBodyKind === "other") {
         return {
@@ -220,9 +231,9 @@ export function classifyNewOperation(
     }
 
     const parameters: JsonValue[] = op.parameters ?? [];
-    // An *optional* header (e.g. every mutation's "Idempotency-Key") is never modeled by this
-    // SDK at all, on any existing hand-written method; only a REQUIRED header/cookie param is
-    // out of the generator's scope, since the template has nowhere to plumb it from.
+    // Optional headers aren't parameters of the generated method: every mutation's
+    // "Idempotency-Key" travels in its trailing RequestOptions. Only a REQUIRED header/cookie
+    // param is out of the generator's scope, since the template has nowhere to plumb it from.
     if (parameters.some((p) => (p.in === "header" || p.in === "cookie") && p.required)) {
         return {
             standard: false,
@@ -271,10 +282,8 @@ export function classifyNewOperation(
     const segs = pathSegments(path);
     const rest = segs.slice(2); // drop "instances", "{instance_id}"
     const resourceIdx = rest.lastIndexOf(resourceSegment);
-    const pathParamNames = rest
-        .slice(resourceIdx + 1)
-        .filter((s) => s.startsWith("{"))
-        .map((s) => s.slice(1, -1));
+    // Every path ID after the instance, parent resources' included (customers/{customer_id}/...).
+    const pathParamNames = rest.filter((s) => s.startsWith("{")).map((s) => s.slice(1, -1));
     const extraLiteralSegments = rest.slice(resourceIdx + 1).filter((s) => !s.startsWith("{"));
     const isCollection = !rest[rest.length - 1]?.startsWith("{");
 
@@ -322,7 +331,7 @@ export function classifyNewOperation(
     }));
     const queryFields: Field[] = queryParams.map((p) => ({
         name: p.name as string,
-        tsType: synthesizeType(ctx, p.schema, !!p.required),
+        tsType: synthesizeType(ctx, p.schema),
         required: !!p.required,
     }));
 
@@ -337,7 +346,10 @@ export function classifyNewOperation(
     } else if (pathFields.length === 1 && !hasBody && queryFields.length === 0) {
         inputKind = "scalar";
         inputSymbol = `${typePrefix}Input`;
-        scalarArgName = `${camelCase(singularize(resourceSegment))}Id`;
+        scalarArgName =
+            pathFields[0].name === "id"
+                ? `${camelCase(singularize(resourceSegment))}Id`
+                : camelCase(pathFields[0].name);
     } else {
         inputKind = "object";
         inputSymbol = `${typePrefix}Input`;
@@ -416,7 +428,10 @@ export function classifyNewOperation(
             methodName,
             typeDecls: typeDecls.trimEnd(),
             methodSource,
-            importsNeeded: [...ctx.importsNeeded].sort(),
+            importsNeeded: [
+                ...ctx.importsNeeded,
+                ...(method === "get" ? [] : ["RequestOptions"]),
+            ].sort(),
             newMapEntries,
         },
     };
@@ -466,15 +481,23 @@ function buildMethodSource(args: {
         pathTemplate,
     } = args;
     const returnType = `Promise<BlindpayApiResponse<${outputSymbol}>>`;
+    // Every mutation takes RequestOptions last (its Idempotency-Key header); a GET never does.
+    const params = (input: string) =>
+        method === "get" ? input : [input, "options?: RequestOptions"].filter(Boolean).join(", ");
+    const call = (body: "data" | "{}") => {
+        if (method === "get") return `client.get(\`${pathTemplate}\`)`;
+        if (method === "delete") return `client.delete(\`${pathTemplate}\`, options)`;
+        return `client.${method}(\`${pathTemplate}\`, ${body}, options)`;
+    };
 
     if (inputKind === "none") {
-        return `${methodName}(): ${returnType} {\n            return client.${method}(\`${pathTemplate}\`);\n        },`;
+        return `${methodName}(${params("")}): ${returnType} {\n            return ${call("{}")};\n        },`;
     }
 
     if (inputKind === "scalar") {
         return (
-            `${methodName}(${scalarArgName}: ${inputSymbol}): ${returnType} {\n` +
-            `            return client.${method}(\`${pathTemplate}\`);\n` +
+            `${methodName}(${params(`${scalarArgName}: ${inputSymbol}`)}): ${returnType} {\n` +
+            `            return ${call("{}")};\n` +
             `        },`
         );
     }
@@ -500,22 +523,22 @@ function buildMethodSource(args: {
     }
     if (pathFieldNames.length > 0 && hasBody) {
         return (
-            `${methodName}({ ${pathFieldNames.join(", ")}, ...data }: ${inputSymbol}): ${returnType} {\n` +
-            `            return client.${method}(\`${pathTemplate}\`, data);\n` +
+            `${methodName}(${params(`{ ${pathFieldNames.join(", ")}, ...data }: ${inputSymbol}`)}): ${returnType} {\n` +
+            `            return ${call("data")};\n` +
             `        },`
         );
     }
     if (pathFieldNames.length > 0 && !hasBody) {
         return (
-            `${methodName}({ ${pathFieldNames.join(", ")} }: ${inputSymbol}): ${returnType} {\n` +
-            `            return client.${method}(\`${pathTemplate}\`);\n` +
+            `${methodName}(${params(`{ ${pathFieldNames.join(", ")} }: ${inputSymbol}`)}): ${returnType} {\n` +
+            `            return ${call("{}")};\n` +
             `        },`
         );
     }
     // pathFieldNames.length === 0 && hasBody
     return (
-        `${methodName}({ ...data }: ${inputSymbol}): ${returnType} {\n` +
-        `            return client.${method}(\`${pathTemplate}\`, data);\n` +
+        `${methodName}(${params(`{ ...data }: ${inputSymbol}`)}): ${returnType} {\n` +
+        `            return ${call("data")};\n` +
         `        },`
     );
 }

@@ -12,6 +12,17 @@ function resolveRef(spec: Spec, node: JsonValue): JsonValue {
     return node;
 }
 
+/** The component a property points at: a bare $ref, or an allOf that only annotates one. */
+export function soleRefName(node: JsonValue): string | null {
+    const direct = refName(node);
+    if (direct || !Array.isArray(node?.allOf)) return direct;
+    const refs = node.allOf.map(refName).filter((r: string | null) => r !== null);
+    const structural = node.allOf.filter(
+        (m: JsonValue) => !refName(m) && (m?.type || m?.properties || m?.allOf || m?.anyOf)
+    );
+    return refs.length === 1 && structural.length === 0 ? refs[0] : null;
+}
+
 function refName(node: JsonValue): string | null {
     if (node && typeof node === "object" && typeof node.$ref === "string") {
         return node.$ref.split("/").pop() as string;
@@ -69,21 +80,19 @@ function quoteUnion(values: unknown[]): string {
     return values.map((v) => JSON.stringify(v)).join(" | ");
 }
 
-function wrapArrayItem(itemType: string): string {
+export function wrapArrayItem(itemType: string): string {
     return itemType.includes("|") ? `(${itemType})[]` : `${itemType}[]`;
 }
 
 /**
- * Recursively compiles a raw OpenAPI schema node into a TypeScript type expression, matching
- * this codebase's existing hand-written house style:
- *   - required object properties are non-optional and drop the spec's nullability (matching
- *     e.g. CreateQuoteResponse's required `expires_at: number`, spec type `["number","null"]`).
- *   - optional properties keep `?` and, if the spec node itself is nullable, append `| null`.
+ * Recursively compiles a raw OpenAPI schema node into a TypeScript type expression:
+ *   - required object properties are non-optional; optional ones keep `?`.
+ *   - a nullable spec node appends `| null`, required or not (reconcile.ts enforces this).
  *   - string enums become a literal union, or the canonical shared symbol if one already
  *     declares the exact same value set (e.g. spec inlines Network's values -> `Network`).
  *   - a $ref to a schema already mapped whole in spec-map.json reuses that SDK symbol.
  */
-export function synthesizeType(ctx: TypegenContext, node: JsonValue, required: boolean): string {
+export function synthesizeType(ctx: TypegenContext, node: JsonValue): string {
     const named = refName(node);
     if (named) {
         const whole = ctx.wholeSchemas.get(named);
@@ -93,10 +102,10 @@ export function synthesizeType(ctx: TypegenContext, node: JsonValue, required: b
         }
     }
     const resolved = resolveRef(ctx.spec, node);
-    return synthesizeResolvedType(ctx, resolved, required);
+    return synthesizeResolvedType(ctx, resolved);
 }
 
-function synthesizeResolvedType(ctx: TypegenContext, node: JsonValue, required: boolean): string {
+function synthesizeResolvedType(ctx: TypegenContext, node: JsonValue): string {
     if (node === undefined || node === null) return "unknown";
 
     if (Array.isArray(node.enum) && node.enum.length > 0) {
@@ -104,38 +113,34 @@ function synthesizeResolvedType(ctx: TypegenContext, node: JsonValue, required: 
         const canonical = ctx.canonicalEnums.get(sig);
         const base = canonical ?? quoteUnion(node.enum);
         if (canonical) ctx.importsNeeded.add(canonical);
-        return nullableSuffix(node, base, required);
+        return nullableSuffix(node, base);
     }
 
     const rawTypes: string[] = Array.isArray(node.type) ? node.type : node.type ? [node.type] : [];
     const nonNull = rawTypes.filter((t) => t !== "null");
 
     if (nonNull.includes("array")) {
-        const itemType = node.items ? synthesizeType(ctx, node.items, true) : "unknown";
-        return nullableSuffix(node, wrapArrayItem(itemType), required);
+        const itemType = node.items ? synthesizeType(ctx, node.items) : "unknown";
+        return nullableSuffix(node, wrapArrayItem(itemType));
     }
     if (nonNull.includes("object") || node.properties) {
-        return nullableSuffix(node, synthesizeObjectLiteral(ctx, node), required);
+        return nullableSuffix(node, synthesizeObjectLiteral(ctx, node));
     }
     if (nonNull.includes("integer") || nonNull.includes("number")) {
-        return nullableSuffix(node, "number", required);
+        return nullableSuffix(node, "number");
     }
     if (nonNull.includes("boolean")) {
-        return nullableSuffix(node, "boolean", required);
+        return nullableSuffix(node, "boolean");
     }
     if (nonNull.includes("string")) {
-        return nullableSuffix(node, "string", required);
+        return nullableSuffix(node, "string");
     }
     return "unknown";
 }
 
-function nullableSuffix(node: JsonValue, base: string, required: boolean): string {
+function nullableSuffix(node: JsonValue, base: string): string {
     const rawTypes: string[] = Array.isArray(node.type) ? node.type : node.type ? [node.type] : [];
-    const nullable = rawTypes.includes("null");
-    // House style (see reconcile.ts DISCRIMINATOR_FIELDS comment block): a *required* field drops
-    // spec nullability entirely; only an *optional* field's `?` carries `| null` alongside it.
-    if (nullable && !required) return `${base} | null`;
-    return base;
+    return rawTypes.includes("null") ? `${base} | null` : base;
 }
 
 /** Compiles an object schema's properties into `{ a: T; b?: U; }`, one property per line. */
@@ -145,7 +150,7 @@ export function synthesizeObjectLiteral(ctx: TypegenContext, node: JsonValue): s
     const lines: string[] = [];
     for (const [name, propNode] of Object.entries(props)) {
         const isRequired = requiredSet.has(name);
-        const tsType = synthesizeType(ctx, propNode, isRequired);
+        const tsType = synthesizeType(ctx, propNode);
         lines.push(`    ${name}${isRequired ? "" : "?"}: ${tsType};`);
     }
     if (lines.length === 0) return "Record<string, unknown>";
@@ -162,6 +167,6 @@ export function synthesizeObjectFields(
     const requiredSet = new Set<string>(node?.required ?? []);
     return Object.entries(props).map(([name, propNode]) => {
         const isRequired = requiredSet.has(name);
-        return { name, tsType: synthesizeType(ctx, propNode, isRequired), required: isRequired };
+        return { name, tsType: synthesizeType(ctx, propNode), required: isRequired };
     });
 }

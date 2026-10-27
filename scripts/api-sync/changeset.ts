@@ -46,3 +46,22 @@ export function renderChangeset(
         "",
     ].join("\n");
 }
+
+/**
+ * A second --apply against the same spec (say, after a spec-map fix lets the patcher reach
+ * more) writes to the same file, so it carries the earlier run's changes and bump forward
+ * instead of dropping them.
+ */
+export function mergeChangeset(
+    existing: string | null,
+    packageName: string,
+    bump: Exclude<BumpType, "none">,
+    applied: string[]
+): string {
+    if (existing === null) return renderChangeset(packageName, bump, applied);
+    // Both patterns read renderChangeset's own output: the bump line and the "- " bullets.
+    const mergedBump = /^".+": minor$/m.test(existing) ? "minor" : bump;
+    const earlierApplied = [...existing.matchAll(/^- (.+)$/gm)].map((match) => match[1]);
+    const merged = [...new Set([...earlierApplied, ...applied])].sort();
+    return renderChangeset(packageName, mergedBump, merged);
+}

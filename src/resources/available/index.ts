@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse, Rail } from "../../../types";
+import type { BlindpayApiResponse, Country, Rail } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type BankDetailKey =
@@ -49,6 +49,41 @@ export type BankDetailKey =
     | "swift_intermediary_bank_swift_code_bic"
     | "swift_intermediary_bank_account_number_iban"
     | "swift_intermediary_bank_name"
+    | "business_industry"
+    | "date_of_birth"
+    | "force_cpf_cnpj"
+    | "onemoney_external_account_id"
+    | "phone_number"
+    | "pix_safe_bank_code"
+    | "pix_safe_branch_code"
+    | "pix_safe_cpf_cnpj"
+    | "recipient_relationship"
+    | "sepa_beneficiary_address_line_1"
+    | "sepa_beneficiary_address_line_2"
+    | "sepa_beneficiary_bic"
+    | "sepa_beneficiary_city"
+    | "sepa_beneficiary_country"
+    | "sepa_beneficiary_legal_name"
+    | "sepa_beneficiary_postal_code"
+    | "sepa_beneficiary_state_province_region"
+    | "sepa_iban"
+    | "status"
+    | "swift_ifsc_branch_code"
+    | "swift_payment_code"
+    | "tax_id"
+    | "ted_bank_code"
+    | "ted_branch_code"
+    | "ted_cpf_cnpj"
+    | "faster_payments_account_number"
+    | "faster_payments_beneficiary_address_line_1"
+    | "faster_payments_beneficiary_address_line_2"
+    | "faster_payments_beneficiary_city"
+    | "faster_payments_beneficiary_country"
+    | "faster_payments_beneficiary_legal_name"
+    | "faster_payments_beneficiary_postal_code"
+    | "faster_payments_beneficiary_state_province_region"
+    | "faster_payments_sort_code"
+    | "swift_intermediary_bank_routing_number"
     | "swift_intermediary_bank_country";
 
 export type GetBankDetailsResponse = Array<{
@@ -60,13 +95,101 @@ export type GetBankDetailsResponse = Array<{
         value: string;
         is_active?: boolean;
     }>;
-    required: boolean;
+    required: boolean | null;
+    requiredWhen?: {
+        field:
+            | "type"
+            | "name"
+            | "status"
+            | "recipient_relationship"
+            | "swift_payment_code"
+            | "pix_key"
+            | "force_cpf_cnpj"
+            | "beneficiary_name"
+            | "routing_number"
+            | "account_number"
+            | "account_type"
+            | "account_class"
+            | "address_line_1"
+            | "address_line_2"
+            | "city"
+            | "state_province_region"
+            | "country"
+            | "postal_code"
+            | "checkbook_account_id"
+            | "checkbook_user_key"
+            | "onemoney_external_account_id"
+            | "pix_safe_bank_code"
+            | "pix_safe_branch_code"
+            | "pix_safe_cpf_cnpj"
+            | "ted_bank_code"
+            | "ted_branch_code"
+            | "ted_cpf_cnpj"
+            | "spei_protocol"
+            | "spei_institution_code"
+            | "spei_clabe"
+            | "transfers_type"
+            | "transfers_account"
+            | "ach_cop_beneficiary_first_name"
+            | "ach_cop_beneficiary_last_name"
+            | "ach_cop_document_id"
+            | "ach_cop_document_type"
+            | "ach_cop_email"
+            | "ach_cop_bank_code"
+            | "ach_cop_bank_account"
+            | "swift_code_bic"
+            | "swift_account_holder_name"
+            | "swift_account_number_iban"
+            | "swift_beneficiary_address_line_1"
+            | "swift_beneficiary_address_line_2"
+            | "swift_beneficiary_country"
+            | "swift_beneficiary_city"
+            | "swift_beneficiary_state_province_region"
+            | "swift_beneficiary_postal_code"
+            | "swift_bank_name"
+            | "swift_bank_address_line_1"
+            | "swift_bank_address_line_2"
+            | "swift_bank_country"
+            | "swift_bank_city"
+            | "swift_bank_state_province_region"
+            | "swift_bank_postal_code"
+            | "swift_ifsc_branch_code"
+            | "swift_intermediary_bank_swift_code_bic"
+            | "swift_intermediary_bank_account_number_iban"
+            | "swift_intermediary_bank_name"
+            | "swift_intermediary_bank_country"
+            | "swift_intermediary_bank_routing_number"
+            | "sepa_iban"
+            | "sepa_beneficiary_bic"
+            | "sepa_beneficiary_legal_name"
+            | "sepa_beneficiary_address_line_1"
+            | "sepa_beneficiary_address_line_2"
+            | "sepa_beneficiary_city"
+            | "sepa_beneficiary_state_province_region"
+            | "sepa_beneficiary_postal_code"
+            | "sepa_beneficiary_country"
+            | "faster_payments_sort_code"
+            | "faster_payments_account_number"
+            | "faster_payments_beneficiary_legal_name"
+            | "faster_payments_beneficiary_address_line_1"
+            | "faster_payments_beneficiary_address_line_2"
+            | "faster_payments_beneficiary_city"
+            | "faster_payments_beneficiary_state_province_region"
+            | "faster_payments_beneficiary_postal_code"
+            | "faster_payments_beneficiary_country"
+            | "business_industry"
+            | "phone_number"
+            | "tax_id"
+            | "date_of_birth";
+        operator: "in" | "eq" | "notIn" | "notEq";
+        values: string[];
+    };
 }>;
 
 export type GetRailsResponse = Array<{
     label: string;
     value: Rail;
-    country: string;
+    country: Country;
 }>;
 
 export type GetNaicsCodesResponse = Array<{

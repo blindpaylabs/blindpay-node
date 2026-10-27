@@ -1,15 +1,19 @@
 import { afterEach, describe, expect, it } from "vitest";
+import type { SuccessResponse } from "../../../types";
 import { BlindPay } from "../../client";
 import type {
     CreateAchResponse,
     CreateArgentinaTransfersResponse,
     CreateColombiaAchResponse,
+    CreateFasterPaymentsResponse,
     CreateInternationalSwiftResponse,
     CreatePixResponse,
     CreatePixSafeResponse,
+    CreatePlaidBankAccountResponse,
     CreateRtpResponse,
     CreateSepaResponse,
     CreateSpeiResponse,
+    CreateTedResponse,
     CreateWireResponse,
     GetBankAccountResponse,
     ListBankAccountsResponse,
@@ -279,6 +283,7 @@ describe("Bank accounts", () => {
                 swift_intermediary_bank_account_number_iban: null,
                 swift_intermediary_bank_name: null,
                 swift_intermediary_bank_country: null,
+                swift_intermediary_bank_routing_number: "021000089",
                 swift_payment_code: null,
                 created_at: "2021-01-01T00:00:00Z",
             };
@@ -312,10 +317,20 @@ describe("Bank accounts", () => {
                 swift_intermediary_bank_country: null,
                 swift_intermediary_bank_name: null,
                 swift_intermediary_bank_swift_code_bic: null,
+                swift_intermediary_bank_routing_number: "021000089",
             });
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedInternationalSwiftAccount);
+            const [url, init] = fetchMock.mock.calls[0];
+            expect(url).toBe(
+                "https://api.blindpay.com/v1/instances/in_000000000000/customers/re_000000000000/bank-accounts"
+            );
+            expect(init?.method).toBe("POST");
+            expect(JSON.parse(init?.body as string)).toMatchObject({
+                type: "international_swift",
+                swift_intermediary_bank_routing_number: "021000089",
+            });
         });
     });
 
@@ -367,17 +382,21 @@ describe("Bank accounts", () => {
         it("should get a bank account", async () => {
             const mockedBankAccount: GetBankAccountResponse = {
                 id: "ba_000000000000",
-                customer_id: "rcv_123",
-                account_holder_name: "Individual full name or business name",
-                account_number: "1001001234",
-                routing_number: "012345678",
-                account_type: "checking",
-                bank_name: "Bank Name",
-                swift_code: "123456789",
-                iban: null,
-                is_primary: false,
+                type: "sepa",
+                name: "SEPA Account",
+                account_class: "individual",
+                sepa_iban: "BE68539007547034",
+                sepa_beneficiary_bic: "GKCCBEBB",
+                sepa_beneficiary_legal_name: "John Doe",
+                sepa_beneficiary_address_line_1: "123 Main Street",
+                sepa_beneficiary_address_line_2: null,
+                sepa_beneficiary_city: "Brussels",
+                sepa_beneficiary_state_province_region: null,
+                sepa_beneficiary_postal_code: "1000",
+                sepa_beneficiary_country: "BE",
+                swift_intermediary_bank_swift_code_bic: null,
+                status: "approved",
                 created_at: "2021-01-01T00:00:00Z",
-                updated_at: "2021-01-01T00:00:00Z",
             };
 
             fetchMock.mockResponseOnce(JSON.stringify(mockedBankAccount), {
@@ -552,9 +571,134 @@ describe("Bank accounts", () => {
         });
     });
 
+    describe("Create TED bank account", () => {
+        it("should create a TED bank account with account number and type", async () => {
+            const mockedTedAccount: CreateTedResponse = {
+                id: "ba_000000000000",
+                type: "ted",
+                name: "TED Account",
+                beneficiary_name: "Jane Doe",
+                ted_bank_code: "001",
+                ted_branch_code: "0001",
+                ted_cpf_cnpj: "12345678900",
+                account_number: "123456-7",
+                account_type: "checking",
+                created_at: "2021-01-01T00:00:00Z",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedTedAccount), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.customers.bankAccounts.createTed({
+                customer_id: "re_000000000000",
+                name: "TED Account",
+                beneficiary_name: "Jane Doe",
+                ted_bank_code: "001",
+                ted_branch_code: "0001",
+                ted_cpf_cnpj: "12345678900",
+                account_number: "123456-7",
+                account_type: "checking",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedTedAccount);
+            const [, init] = fetchMock.mock.calls[0];
+            expect(JSON.parse(init?.body as string)).toEqual({
+                type: "ted",
+                name: "TED Account",
+                beneficiary_name: "Jane Doe",
+                ted_bank_code: "001",
+                ted_branch_code: "0001",
+                ted_cpf_cnpj: "12345678900",
+                account_number: "123456-7",
+                account_type: "checking",
+            });
+        });
+    });
+
+    describe("Create faster payments bank account", () => {
+        it("should create a faster payments bank account", async () => {
+            const mockedFasterPaymentsAccount: CreateFasterPaymentsResponse = {
+                id: "ba_000000000000",
+                type: "faster_payments",
+                name: "Faster Payments Account",
+                account_class: "individual",
+                faster_payments_sort_code: "040004",
+                faster_payments_account_number: "12345678",
+                faster_payments_beneficiary_legal_name: "John Doe",
+                faster_payments_beneficiary_address_line_1: "1 High Street",
+                faster_payments_beneficiary_address_line_2: null,
+                faster_payments_beneficiary_city: "London",
+                faster_payments_beneficiary_state_province_region: null,
+                faster_payments_beneficiary_postal_code: "EC1A 1BB",
+                faster_payments_beneficiary_country: "GB",
+                created_at: "2021-01-01T00:00:00Z",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedFasterPaymentsAccount), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.customers.bankAccounts.createFasterPayments({
+                customer_id: "re_000000000000",
+                name: "Faster Payments Account",
+                account_class: "individual",
+                faster_payments_sort_code: "040004",
+                faster_payments_account_number: "12345678",
+                faster_payments_beneficiary_legal_name: "John Doe",
+                faster_payments_beneficiary_address_line_1: "1 High Street",
+                faster_payments_beneficiary_city: "London",
+                faster_payments_beneficiary_postal_code: "EC1A 1BB",
+                faster_payments_beneficiary_country: "GB",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedFasterPaymentsAccount);
+            const [url, init] = fetchMock.mock.calls[0];
+            expect(url).toBe(
+                "https://api.blindpay.com/v1/instances/in_000000000000/customers/re_000000000000/bank-accounts"
+            );
+            expect(init?.method).toBe("POST");
+            expect(JSON.parse(init?.body as string)).toEqual({
+                type: "faster_payments",
+                name: "Faster Payments Account",
+                account_class: "individual",
+                faster_payments_sort_code: "040004",
+                faster_payments_account_number: "12345678",
+                faster_payments_beneficiary_legal_name: "John Doe",
+                faster_payments_beneficiary_address_line_1: "1 High Street",
+                faster_payments_beneficiary_city: "London",
+                faster_payments_beneficiary_postal_code: "EC1A 1BB",
+                faster_payments_beneficiary_country: "GB",
+            });
+        });
+    });
+
+    describe("List bank accounts with filters", () => {
+        it("should send the status filter as a query param", async () => {
+            fetchMock.mockResponseOnce(JSON.stringify([]), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { error } = await blindpay.customers.bankAccounts.list({
+                customer_id: "re_000000000000",
+                status: "approved",
+                type: "faster_payments",
+            });
+
+            expect(error).toBeNull();
+            expect(fetchMock.mock.calls[0][0]).toBe(
+                "https://api.blindpay.com/v1/instances/in_000000000000/customers/re_000000000000/bank-accounts?status=approved&type=faster_payments"
+            );
+        });
+    });
+
     describe("Delete bank account", () => {
         it("should delete a bank account", async () => {
-            fetchMock.mockResponseOnce(JSON.stringify({ data: null }), {
+            const mockedResponse: SuccessResponse = { success: true };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
                 headers: { "Content-Type": "application/json" },
             });
 
@@ -564,7 +708,34 @@ describe("Bank accounts", () => {
             });
 
             expect(error).toBeNull();
-            expect(data).toEqual({ data: null });
+            expect(data).toEqual(mockedResponse);
+        });
+    });
+    describe("Create Plaid bank account link", () => {
+        it("should create a Plaid link for the customer", async () => {
+            const mockedLink: CreatePlaidBankAccountResponse = {
+                url: "https://link.plaid.com/xyz",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedLink), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.customers.bankAccounts.createPlaid({
+                customer_id: "re_000000000000",
+                redirect_url: "https://example.com/done",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedLink);
+            const [url, init] = fetchMock.mock.calls[0];
+            expect(url).toBe(
+                "https://api.blindpay.com/v1/instances/in_000000000000/customers/re_000000000000/bank-accounts/plaid"
+            );
+            expect(init?.method).toBe("POST");
+            expect(JSON.parse(init?.body as string)).toEqual({
+                redirect_url: "https://example.com/done",
+            });
         });
     });
 });

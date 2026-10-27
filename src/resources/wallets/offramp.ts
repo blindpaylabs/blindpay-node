@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse } from "../../../types";
+import type { BlindpayApiResponse, RequestOptions } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type OfframpWalletNetwork =
@@ -12,18 +12,22 @@ export type OfframpWalletNetwork =
     | "polygon"
     | "polygon_amoy"
     | "sepolia"
+    | "arc"
+    | "arc_testnet"
+    | "tempo"
+    | "tempo_testnet"
     | "solana_devnet";
 
 export type OfframpWallet = {
     id: string;
-    external_id: string;
+    external_id: string | null;
     instance_id: string;
     customer_id: string;
     bank_account_id: string;
     network: OfframpWalletNetwork;
     address: string;
-    created_at: string;
-    updated_at: string;
+    created_at: string | null;
+    updated_at: string | null;
     circle_wallet_id?: string | null;
 };
 
@@ -67,14 +71,14 @@ export function createOfframpWalletsResource(instanceId: string, client: Interna
                 `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets`
             );
         },
-        create({
-            customer_id,
-            bank_account_id,
-            ...data
-        }: CreateOfframpWalletInput): Promise<BlindpayApiResponse<CreateOfframpWalletResponse>> {
+        create(
+            { customer_id, bank_account_id, ...data }: CreateOfframpWalletInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateOfframpWalletResponse>> {
             return client.post(
                 `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets`,
-                data
+                data,
+                options
             );
         },
         get({

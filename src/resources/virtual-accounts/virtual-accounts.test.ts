@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import type { SuccessResponse } from "../../../types";
 import { BlindPay } from "../../client";
 import type {
     CreateVirtualAccountResponse,
@@ -274,7 +275,9 @@ describe("Virtual accounts", () => {
 
     describe("Update virtual account", () => {
         it("should update a virtual account", async () => {
-            fetchMock.mockResponseOnce(JSON.stringify(null), {
+            const mockedResponse: SuccessResponse = { success: true };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
                 headers: { "Content-Type": "application/json" },
             });
 
@@ -286,7 +289,37 @@ describe("Virtual accounts", () => {
             });
 
             expect(error).toBeNull();
-            expect(data).toEqual(null);
+            expect(data).toEqual(mockedResponse);
+        });
+    });
+
+    describe("Get Bre-B virtual account", () => {
+        it("should type a virtual account without US bank details", async () => {
+            const mockedVirtualAccount: GetVirtualAccountResponse = {
+                id: "va_000000000000",
+                banking_partner: "bre_b",
+                kyc_status: "approved",
+                us: null,
+                co: {
+                    bre_b: { key: "@blindpay123" },
+                    beneficiary: { name: "Jane Doe" },
+                },
+                token: "USDC",
+                blockchain_wallet_id: "bw_000000000000",
+                blockchain_wallet: { network: "polygon", address: null },
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedVirtualAccount), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.virtualAccounts.get({
+                customer_id: "cu_000000000000",
+                id: "va_000000000000",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedVirtualAccount);
         });
     });
 });

@@ -40,6 +40,38 @@ describe("Payin quotes", () => {
             expect(error).toBeNull();
             expect(data).toEqual(mockedPayinQuote);
         });
+
+        it("should create a payin quote with only the required fields", async () => {
+            const mockedPayinQuote: CreatePayinQuoteResponse = {
+                id: "qu_000000000000",
+                expires_at: 1712958191,
+                commercial_quotation: 495,
+                blindpay_quotation: 505,
+                receiver_amount: 1010,
+                sender_amount: 5240,
+                flat_fee: 50,
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedPayinQuote), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.payins.quotes.create({
+                currency_type: "sender",
+                request_amount: 1000,
+                payment_method: "pix",
+                token: "USDC",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedPayinQuote);
+            expect(JSON.parse(fetchMock.mock.calls[0][1]?.body as string)).toEqual({
+                currency_type: "sender",
+                request_amount: 1000,
+                payment_method: "pix",
+                token: "USDC",
+            });
+        });
     });
 
     describe("Get FX rate", () => {

@@ -3,8 +3,8 @@ import type { InternalApiClient } from "../../internal/api-client";
 
 export type InitiateInput = {
     idempotency_key: string;
-    customer_id: string | null;
-    redirect_url: string | null;
+    customer_id?: string | null;
+    redirect_url?: string | null;
 };
 
 export type InitiateResponse = {

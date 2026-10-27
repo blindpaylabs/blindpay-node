@@ -3,9 +3,10 @@ import type {
     Network,
     PaginationMetadata,
     PaginationParams,
-    StablecoinToken,
+    RequestOptions,
     TrackingStatus,
     TransactionStatus,
+    WalletToken,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
@@ -33,36 +34,41 @@ export type Transfer = {
     tracking_paymaster: TransferTrackingStep;
     tracking_bridge_swap: TransferTrackingStep;
     tracking_complete: TransferTrackingStep;
-    tracking_partner_fee: TransferTrackingStep;
-    created_at: string;
-    updated_at: string;
-    image_url?: string;
-    first_name?: string;
-    last_name?: string;
-    legal_name?: string;
+    tracking_partner_fee: TransferTrackingStep | null;
+    created_at: string | null;
+    updated_at: string | null;
+    image_url?: string | null;
+    first_name?: string | null;
+    last_name?: string | null;
+    legal_name?: string | null;
     wallet_id: string;
-    sender_token: StablecoinToken;
+    sender_token: WalletToken;
     sender_amount: number;
     receiver_amount: number;
     customer_network: Network;
-    customer_token: StablecoinToken;
+    customer_token: WalletToken;
     customer_wallet_address: string;
     partner_fee_amount: number | null;
     customer_id: string;
-    address: string;
+    address: string | null;
     network: Network;
+    partner_flat_fee?: number;
+    partner_percentage_fee?: number;
+    external_id?: string | null;
 };
 
 export type CreateTransferQuoteInput = {
     wallet_id: string;
-    sender_token: StablecoinToken;
+    sender_token: WalletToken;
     customer_wallet_address: string;
-    customer_token: StablecoinToken;
+    customer_token: WalletToken;
     customer_network: Network;
     request_amount: number;
     cover_fees?: boolean | null;
     amount_reference: "sender" | "receiver";
     partner_fee_id?: string | null;
+    partner_flat_fee?: number;
+    partner_percentage_fee?: number;
 };
 
 export type CreateTransferQuoteResponse = {
@@ -74,6 +80,8 @@ export type CreateTransferQuoteResponse = {
     sender_amount: number;
     partner_fee_amount: number | null;
     flat_fee: number;
+    partner_flat_fee?: number;
+    partner_percentage_fee?: number;
 };
 
 export type CreateTransferInput = {
@@ -87,10 +95,16 @@ export type CreateTransferResponse = {
     tracking_complete: TransferTrackingStep;
     tracking_paymaster: TransferTrackingStep;
     tracking_transaction_monitoring: TransferTrackingTransactionMonitoring;
-    tracking_partner_fee: TransferTrackingStep;
+    tracking_partner_fee: TransferTrackingStep | null;
 };
 
-export type ListTransfersInput = PaginationParams;
+export type ListTransfersInput = PaginationParams & {
+    customer_id?: string;
+    wallet_id?: string;
+    status?: "processing" | "failed" | "refunded" | "completed";
+    network?: Network;
+    token?: WalletToken;
+};
 
 export type ListTransfersResponse = {
     data: Transfer[];
@@ -108,18 +122,18 @@ export type GetTransferTrackResponse = Transfer;
 export function createTransfersResource(instanceId: string, client: InternalApiClient) {
     return {
         quotes: {
-            create({
-                ...data
-            }: CreateTransferQuoteInput): Promise<
-                BlindpayApiResponse<CreateTransferQuoteResponse>
-            > {
-                return client.post(`/instances/${instanceId}/transfer-quotes`, data);
+            create(
+                { ...data }: CreateTransferQuoteInput,
+                options?: RequestOptions
+            ): Promise<BlindpayApiResponse<CreateTransferQuoteResponse>> {
+                return client.post(`/instances/${instanceId}/transfer-quotes`, data, options);
             },
         },
-        create({
-            ...data
-        }: CreateTransferInput): Promise<BlindpayApiResponse<CreateTransferResponse>> {
-            return client.post(`/instances/${instanceId}/transfers`, data);
+        create(
+            { ...data }: CreateTransferInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateTransferResponse>> {
+            return client.post(`/instances/${instanceId}/transfers`, data, options);
         },
         list(params?: ListTransfersInput): Promise<BlindpayApiResponse<ListTransfersResponse>> {
             const queryParams = params ? `?${new URLSearchParams(params)}` : "";

@@ -28,6 +28,8 @@ describe("Fees", () => {
                 ach_colombia: mockFeeOptions,
                 transfers_3: mockFeeOptions,
                 spei: mockFeeOptions,
+                sepa: mockFeeOptions,
+                faster_payments: mockFeeOptions,
                 tron: mockFeeOptions,
                 ethereum: mockFeeOptions,
                 polygon: mockFeeOptions,

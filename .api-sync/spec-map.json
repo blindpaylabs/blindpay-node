@@ -20,6 +20,19 @@
         },
         {
             "spec": {
+                "schema": "BankAccountOut",
+                "property": "status"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/bank-accounts/index.ts",
+                    "symbol": "BankAccountStatus"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
                 "schema": "BankAccountWebhookOut",
                 "property": "account_type"
             },
@@ -115,6 +128,19 @@
         },
         {
             "spec": {
+                "schema": "CreatePayableIn",
+                "property": "currency"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "PayableCurrency"
+                }
+            ],
+            "notes": "Same value set as PayableOut.currency."
+        },
+        {
+            "spec": {
                 "schema": "CreatePayinQuoteIn",
                 "property": "currency_type"
             },
@@ -135,13 +161,22 @@
                 {
                     "file": "types/index.d.ts",
                     "symbol": "PaymentMethod"
-                },
+                }
+            ],
+            "notes": "Methods a payin quote accepts. PayinPaymentMethod (PayinOut.payment_method) is the wider set a created payin can report."
+        },
+        {
+            "spec": {
+                "schema": "PayinOut",
+                "property": "payment_method"
+            },
+            "sdk": [
                 {
                     "file": "types/index.d.ts",
                     "symbol": "PayinPaymentMethod"
                 }
             ],
-            "notes": "Declared twice with identical values (PaymentMethod and PayinPaymentMethod, both in types/index.d.ts); both used across payins/transfers/bank-accounts. Verified: spec has exactly these 9 values (ach, wire, pix, spei, transfers, pse, international_swift, rtp, ted), matching both SDK unions exactly."
+            "notes": null
         },
         {
             "spec": {
@@ -159,6 +194,19 @@
                 }
             ],
             "notes": "Declared twice, same reasoning as BankingPartner."
+        },
+        {
+            "spec": {
+                "schema": "CustomerCnaeCondition",
+                "property": "status"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "CnaeConditionStatus"
+                }
+            ],
+            "notes": null
         },
         {
             "spec": {
@@ -201,6 +249,59 @@
         },
         {
             "spec": {
+                "schema": "CustomerVirtualAccountPreapproval",
+                "property": "banking_partners",
+                "itemsEnum": true
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "VirtualAccountPreapprovalBankingPartner"
+                }
+            ],
+            "notes": "Array-of-enum (values on properties.banking_partners.items.enum). A strict subset of BankingPartner, so declared as its own union instead of reusing the shared one."
+        },
+        {
+            "spec": {
+                "schema": "CustomerVirtualAccountPreapproval",
+                "property": "status"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "VirtualAccountPreapprovalStatus"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "InstanceRfi",
+                "property": "status"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/rfi/index.ts",
+                    "symbol": "RfiStatus"
+                }
+            ],
+            "notes": "Shared with Rfi.status (same member set)."
+        },
+        {
+            "spec": {
+                "schema": "LimitIncreaseSupportingDocument",
+                "property": "type"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "LimitIncreaseRequestSupportingDocumentType"
+                }
+            ],
+            "notes": "Same 15-value set as CustomerLimitIncreaseIn.supporting_document_type."
+        },
+        {
+            "spec": {
                 "schema": "LimitIncreaseUpdateWebhookOut",
                 "property": "status"
             },
@@ -211,6 +312,58 @@
                 }
             ],
             "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PayableBankAccount",
+                "property": "type"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "PayableBankAccountType"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PayableOut",
+                "property": "currency"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "PayableCurrency"
+                }
+            ],
+            "notes": "Fiat-only subset of the shared Currency union (no USDC/USDT/USDB), so declared locally rather than reusing Currency."
+        },
+        {
+            "spec": {
+                "schema": "PayableOut",
+                "property": "last_attempt_status"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "PayableLastAttemptStatus"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PayableOut",
+                "property": "status"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "PayableStatus"
+                }
+            ],
+            "notes": "Also the value set of the list endpoint's `status` query parameter (ListPayablesInput.status)."
         },
         {
             "spec": {
@@ -247,6 +400,45 @@
                 {
                     "file": "types/index.d.ts",
                     "symbol": "AccountClass"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PayoutOut",
+                "property": "tracking_complete.step"
+            },
+            "sdk": [
+                {
+                    "file": "types/index.d.ts",
+                    "symbol": "TrackingStatus"
+                }
+            ],
+            "notes": "Shared step union of every payin, payout and transfer tracking object; anchored on one of them."
+        },
+        {
+            "spec": {
+                "schema": "PayoutOut",
+                "property": "tracking_payment.forced_provider"
+            },
+            "sdk": [
+                {
+                    "file": "types/index.d.ts",
+                    "symbol": "PayoutForcedProvider"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PayoutOut",
+                "property": "tracking_payment.provider_integration"
+            },
+            "sdk": [
+                {
+                    "file": "types/index.d.ts",
+                    "symbol": "PayoutProviderIntegration"
                 }
             ],
             "notes": null
@@ -292,6 +484,58 @@
         },
         {
             "spec": {
+                "schema": "RetrieveInstanceOut",
+                "property": "onboarding_step"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/instances/index.ts",
+                    "symbol": "InstanceOnboardingStep"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "RetrieveInstanceOut",
+                "property": "type"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/instances/index.ts",
+                    "symbol": "InstanceType"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "Rfi",
+                "property": "status"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/rfi/index.ts",
+                    "symbol": "RfiStatus"
+                }
+            ],
+            "notes": "Shared with InstanceRfi.status (same member set)."
+        },
+        {
+            "spec": {
+                "schema": "RfiField",
+                "property": "aiprise_document_type"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/rfi/index.ts",
+                    "symbol": "RfiDocumentType"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
                 "schema": "UpdateCustomerIn",
                 "property": "account_purpose"
             },
@@ -314,7 +558,7 @@
                     "symbol": "BusinessIndustry"
                 }
             ],
-            "notes": "SDK union additionally carries crypto/web3 business categories (dapp, exchange, gambling, gaming, infra, marketplace, neo_bank, other, saas, social, wallet) that are not NAICS codes and are not part of this spec property at all."
+            "notes": null
         },
         {
             "spec": {
@@ -461,6 +705,32 @@
         },
         {
             "spec": {
+                "schema": "UploadAnalyzeIn",
+                "property": "type"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/upload/index.ts",
+                    "symbol": "UploadAnalyzeDocumentType"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "UploadAnalyzeOut",
+                "property": "approval_rate"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/upload/index.ts",
+                    "symbol": "UploadAnalyzeApprovalRate"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
                 "schema": "UploadIn",
                 "property": "bucket"
             },
@@ -517,6 +787,45 @@
         },
         {
             "spec": {
+                "schema": "WalletDepositOut",
+                "property": "network"
+            },
+            "sdk": [
+                {
+                    "file": "types/index.d.ts",
+                    "symbol": "Network"
+                }
+            ],
+            "notes": "17-member set (adds tempo, tempo_testnet, arc, arc_testnet); shared Network in types/index.d.ts has only 13, so a local union is declared instead of reusing it."
+        },
+        {
+            "spec": {
+                "schema": "WalletDepositOut",
+                "property": "status"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/wallets/custodial.ts",
+                    "symbol": "WalletDepositStatus"
+                }
+            ],
+            "notes": "No `failed` member, so not identical to shared TransactionStatus. Also used for the deposits list `status` query filter."
+        },
+        {
+            "spec": {
+                "schema": "WalletDepositOut",
+                "property": "token"
+            },
+            "sdk": [
+                {
+                    "file": "types/index.d.ts",
+                    "symbol": "WalletToken"
+                }
+            ],
+            "notes": "Tokens a custodial wallet holds or moves: balances, deposits and transfers. StablecoinToken stays the payin/payout set, which has no EUR stablecoins."
+        },
+        {
+            "spec": {
                 "schema": "WebhookEndpointIn",
                 "property": "events",
                 "itemsEnum": true
@@ -528,6 +837,31 @@
                 }
             ],
             "notes": "Array-of-enum: values live on properties.events.items.enum, not a top-level schema enum. This is also contract-check.mjs's own hard-fail anchor (regex-parsed)."
+        },
+        {
+            "spec": {
+                "schema": "YieldStatus"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/wallets/custodial.ts",
+                    "symbol": "YieldStatus"
+                }
+            ],
+            "notes": "Standalone enum schema, referenced by WalletOut.yield_status and YieldOut.status."
+        },
+        {
+            "spec": {
+                "schema": "AdditionalInfoItem",
+                "property": "label"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "AdditionalInfoLabel"
+                }
+            ],
+            "notes": null
         }
     ],
     "types": [
@@ -819,6 +1153,10 @@
                 {
                     "file": "src/resources/bank-accounts/index.ts",
                     "symbol": "CreateTedResponse"
+                },
+                {
+                    "file": "src/resources/bank-accounts/index.ts",
+                    "symbol": "CreateFasterPaymentsResponse"
                 }
             ],
             "notes": "Fan-out response side: get, list item, and 11 rail create-response types."
@@ -903,6 +1241,10 @@
                 {
                     "file": "src/resources/bank-accounts/index.ts",
                     "symbol": "CreateTedInput"
+                },
+                {
+                    "file": "src/resources/bank-accounts/index.ts",
+                    "symbol": "CreateFasterPaymentsInput"
                 }
             ],
             "notes": "Discriminator fan-out: 11 rail create input types. The `type` discriminator itself is injected by the factory function body (bank-accounts/index.ts:508-610), not carried on any input type by design."
@@ -953,7 +1295,7 @@
                     "symbol": "CreateEvmPayinInput"
                 }
             ],
-            "notes": "createEvm(payin_quote_id) posts {payin_quote_id}, matching this schema's one field exactly. CreatePayinInput (payins/index.ts:111, `{quote_id: string}`) is dead code: never referenced by the factory, and its field name does not even match the spec (payin_quote_id). Orphaned, same situation as CreatePayoutInput (payouts/index.ts:106) noted separately."
+            "notes": "createEvm(payin_quote_id) posts {payin_quote_id}, matching this schema's one field exactly."
         },
         {
             "spec": {
@@ -1083,7 +1425,17 @@
                 {
                     "file": "src/resources/customers/index.ts",
                     "symbol": "RequestLimitIncreaseResponse"
-                },
+                }
+            ],
+            "notes": "1-field {id} response shape shared by several create/request endpoints."
+        },
+        {
+            "spec": {
+                "path": "/v1/instances/{instance_id}/customers",
+                "method": "post",
+                "location": "response:200"
+            },
+            "sdk": [
                 {
                     "file": "src/resources/customers/index.ts",
                     "symbol": "CreateIndividualWithStandardKYCResponse"
@@ -1097,7 +1449,7 @@
                     "symbol": "CreateBusinessWithStandardKYBResponse"
                 }
             ],
-            "notes": "1-field {id} response shape shared by several create/request endpoints."
+            "notes": "inline object response {id, customer_id}, not a named schema. One response type per create variant."
         },
         {
             "spec": {
@@ -1115,9 +1467,17 @@
                 {
                     "file": "src/resources/customers/index.ts",
                     "symbol": "BusinessWithStandardKYB"
+                },
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "IndividualWithLightKYC"
+                },
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "BusinessWithLightKYB"
                 }
             ],
-            "notes": "Discriminator fan-out: the 3 KYC/KYB response types. Same GetCustomerResponse/ListCustomersResponse union is used for get/list."
+            "notes": "Discriminator fan-out: the 5 KYC/KYB response types, including the legacy light tier that migrated customers carry. The Customer union backs GetCustomerResponse and ListCustomersResponse."
         },
         {
             "spec": {
@@ -1147,6 +1507,32 @@
         },
         {
             "spec": {
+                "schema": "CreateCustomerIn",
+                "property": "owners"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "CreateCustomerOwnerInput"
+                }
+            ],
+            "notes": "Nested at owners.[]."
+        },
+        {
+            "spec": {
+                "schema": "UpdateCustomerIn",
+                "property": "owners"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "UpdateCustomerOwnerInput"
+                }
+            ],
+            "notes": "Nested at owners.[]. id is required; every other field is optional."
+        },
+        {
+            "spec": {
                 "schema": "Error"
             },
             "sdk": [
@@ -1155,7 +1541,7 @@
                     "symbol": "ErrorResponse"
                 }
             ],
-            "notes": "This SDK's error envelope only ever surfaces `message`; it does not expose the spec's stable `code`, `description`, `errors` list, or `trace_id`."
+            "notes": "The SDK's `error` object: every field but `success`, which BlindpayApiResponse's data/error split already carries."
         },
         {
             "spec": {
@@ -1523,6 +1909,10 @@
             },
             "sdk": [
                 {
+                    "file": "types/index.d.ts",
+                    "symbol": "SuccessResponse"
+                },
+                {
                     "file": "src/resources/instances/index.ts",
                     "symbol": "MigrateInstanceOwnershipResponse"
                 }
@@ -1742,6 +2132,518 @@
                 }
             ],
             "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PayableOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "Payable"
+                }
+            ],
+            "notes": "Create/get/delete responses and list items alias Payable (CreatePayableResponse, GetPayableResponse, DeletePayableResponse, ListPayablesResponse.data[])."
+        },
+        {
+            "spec": {
+                "schema": "CreatePayableIn"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "CreatePayableInput"
+                }
+            ],
+            "notes": "bank_account ($ref CreateBankAccountIn) is typed as CreatePayableBankAccountInput: the existing CreateAchInput/CreateWireInput minus customer_id plus the `type` discriminator, since payables only accept ach or wire (payable-invoice docs)."
+        },
+        {
+            "spec": {
+                "schema": "PayableParty"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "PayableParty"
+                }
+            ],
+            "notes": "Used for both `from` and `to` (to is allOf[PayableParty] with a description only)."
+        },
+        {
+            "spec": {
+                "schema": "PayableLineItem"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "PayableLineItem"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PayableBankAccount"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "PayableBankAccount"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "path": "/v1/instances/{instance_id}/payables",
+                "method": "get",
+                "location": "response:200"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/payables/index.ts",
+                    "symbol": "ListPayablesResponse"
+                }
+            ],
+            "notes": "inline anyOf body ({data, pagination} | PayableOut[]); the SDK models both branches, and the type check compares the envelope's keys."
+        },
+        {
+            "spec": {
+                "schema": "WalletDepositOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/wallets/custodial.ts",
+                    "symbol": "WalletDeposit"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "WalletDepositsOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/wallets/custodial.ts",
+                    "symbol": "GetCustodialWalletDepositsResponse"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "CustomerVirtualAccountPreapproval"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "CustomerVirtualAccountPreapproval"
+                }
+            ],
+            "notes": "Nested at CustomerOut.virtual_account_preapproval on all 3 KYC/KYB response types."
+        },
+        {
+            "spec": {
+                "schema": "CustomerCnaeCondition"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "CustomerCnaeCondition"
+                }
+            ],
+            "notes": "Nested at CustomerOut.cnae_condition on all 3 KYC/KYB response types."
+        },
+        {
+            "spec": {
+                "schema": "LimitIncreaseSupportingDocument"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "LimitIncreaseSupportingDocument"
+                }
+            ],
+            "notes": "Item of CustomerLimitIncreaseIn.supporting_documents and GetCustomerLimitIncreaseOut.supporting_documents."
+        },
+        {
+            "spec": {
+                "schema": "Rfi"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/rfi/index.ts",
+                    "symbol": "CustomerRfi"
+                }
+            ],
+            "notes": "Customer-scoped RFI, exposed as blindpay.customers.rfi. Spec type is [object, null]: GetCustomerRfiResponse = CustomerRfi | null. customer_type reuses the shared AccountClass (exact member set); customer_kyc_status is a bare string in the spec and is kept as string."
+        },
+        {
+            "spec": {
+                "schema": "InstanceRfi"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/rfi/index.ts",
+                    "symbol": "InstanceRfi"
+                }
+            ],
+            "notes": "Exposed as blindpay.instances.rfi. Spec type is [object, null]: GetInstanceRfiResponse = InstanceRfi | null."
+        },
+        {
+            "spec": {
+                "schema": "RfiSection"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/rfi/index.ts",
+                    "symbol": "RfiSection"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "RfiField"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/rfi/index.ts",
+                    "symbol": "RfiField"
+                }
+            ],
+            "notes": "items[] ({label, value}) is modeled inline."
+        },
+        {
+            "spec": {
+                "schema": "RetrieveInstanceOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/instances/index.ts",
+                    "symbol": "Instance"
+                }
+            ],
+            "notes": "Response of GET /v1/instances/{id}, exposed as instances.get(); GetInstanceResponse is an alias of Instance."
+        },
+        {
+            "spec": {
+                "path": "/v1/instances/{instance_id}/onboarding/business_details",
+                "method": "get",
+                "location": "response:200"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/instances/onboarding.ts",
+                    "symbol": "GetInstanceBusinessDetailsResponse"
+                }
+            ],
+            "notes": "inline object response, not a named schema. The spec has no required list, so every field is optional."
+        },
+        {
+            "spec": {
+                "path": "/v1/instances/{instance_id}/onboarding/business_profile",
+                "method": "get",
+                "location": "response:200"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/instances/onboarding.ts",
+                    "symbol": "GetInstanceBusinessProfileResponse"
+                }
+            ],
+            "notes": "inline object response, not a named schema. The spec has no required list, so every field is optional."
+        },
+        {
+            "spec": {
+                "path": "/v1/instances/{instance_id}/onboarding/ownership_documents",
+                "method": "get",
+                "location": "response:200"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/instances/onboarding.ts",
+                    "symbol": "GetInstanceOwnershipDocumentsResponse"
+                }
+            ],
+            "notes": "inline object response, not a named schema. owners[] items are InstanceOnboardingOwner. The spec has no required list, so every field is optional."
+        },
+        {
+            "spec": {
+                "schema": "UpdateBlockchainWalletIn"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/wallets/blockchain.ts",
+                    "symbol": "SetBlockchainWalletSelfCustodyInput"
+                }
+            ],
+            "notes": "PATCH body of blockchain-wallets/{id}, exposed as wallets.blockchain.setSelfCustody(). customer_id and id on the SDK input are path params, not body fields."
+        },
+        {
+            "spec": {
+                "schema": "PresignIn"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/upload/index.ts",
+                    "symbol": "PresignInput"
+                }
+            ],
+            "notes": "JSON request of POST /v1/presign, exposed as upload.presign(). instance_id is a required query param, not part of PresignIn; it defaults to the client's instanceId when the caller omits it."
+        },
+        {
+            "spec": {
+                "schema": "PresignOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/upload/index.ts",
+                    "symbol": "PresignResponse"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "UploadAnalyzeIn"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/upload/index.ts",
+                    "symbol": "UploadAnalyzeInput"
+                }
+            ],
+            "notes": "multipart/form-data request of POST /v1/upload/analyze, exposed as upload.analyze(); instance_id is an optional query param, not part of UploadAnalyzeIn."
+        },
+        {
+            "spec": {
+                "schema": "UploadAnalyzeOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/upload/index.ts",
+                    "symbol": "UploadAnalyzeResponse"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "CreatePlaidLinkIn"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/bank-accounts/index.ts",
+                    "symbol": "CreatePlaidBankAccountInput"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PlaidLinkOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/bank-accounts/index.ts",
+                    "symbol": "CreatePlaidBankAccountResponse"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "AdditionalInfoItem"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "AdditionalInfoItem"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PayinNewWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "PayinWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "PayinUpdateWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "PayinWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "PayinCompleteWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "PayinWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "PayinPartnerFeeWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "PayinWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "PayoutNewWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "PayoutWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "PayoutUpdateWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "PayoutWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "PayoutCompleteWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "PayoutWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "PayoutPartnerFeeWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "PayoutWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "TransferNewWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "TransferWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "TransferUpdateWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "TransferWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "TransferCompleteWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "TransferWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "TosAcceptWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "TosAcceptWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "CustomerDeleteWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "CustomerDeleteWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "WalletInboundWebhookOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "WalletInboundWebhookEvent"
+                }
+            ],
+            "notes": "webhook payload; one SDK type covers every event of this resource, its webhook_event union lists each event name"
+        },
+        {
+            "spec": {
+                "schema": "WalletInboundTokenOut"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/webhooks/events.ts",
+                    "symbol": "WalletInboundToken"
+                }
+            ],
+            "notes": "wallet.inbound payload's token object"
         }
     ],
     "ignore": {
@@ -1752,122 +2654,113 @@
             },
             {
                 "name": "BankAccountWebhookOut",
-                "reason": "Webhook payload body for bankAccount.new. This SDK does not model webhook payload shapes as typed symbols anywhere; verifyWebhookSignature only verifies the signature and returns a boolean, consumers parse the JSON body themselves."
+                "reason": "Webhook payload body for bankAccount.new. Typed as BankAccountWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & ListBankAccountsResponse[number]: the payload has the same property set as BankAccountOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+            },
+            {
+                "name": "BlockchainWalletUpdateWebhookOut",
+                "reason": "Webhook payload body for blockchainWallet.update. Typed as BlockchainWalletWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetBlockchainWalletResponse: the payload has the same property set as BlockchainWalletOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "BlockchainWalletWebhookOut",
-                "reason": "Webhook payload body for blockchainWallet.new; same reasoning as BankAccountWebhookOut."
-            },
-            {
-                "name": "CustomerDeleteWebhookOut",
-                "reason": "Webhook payload body for customer.delete; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for blockchainWallet.new. Typed as BlockchainWalletWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetBlockchainWalletResponse: the payload has the same property set as BlockchainWalletOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "CustomerNewWebhookOut",
-                "reason": "Webhook payload body for customer.new; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for customer.new. Typed as CustomerWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetCustomerResponse: the payload has the same property set as CustomerOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "CustomerUpdateWebhookOut",
-                "reason": "Webhook payload body for customer.update; same reasoning as BankAccountWebhookOut."
-            },
-            {
-                "name": "InstanceRfi",
-                "reason": "Instance-level RFI variant; not modeled, same as Rfi."
+                "reason": "Webhook payload body for customer.update. Typed as CustomerWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetCustomerResponse: the payload has the same property set as CustomerOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "LimitIncreaseNewWebhookOut",
-                "reason": "Webhook payload body for limitIncrease.new; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for limitIncrease.new. Typed as LimitIncreaseWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetLimitIncreaseRequestsResponse[number]: the payload has the same property set as GetCustomerLimitIncreaseOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "LimitIncreaseUpdateWebhookOut",
-                "reason": "Webhook payload body for limitIncrease.update; same reasoning as BankAccountWebhookOut (still used above as the reachable anchor for the LimitIncreaseRequestStatus enum, which is otherwise identical to GetCustomerLimitIncreaseOut.status)."
+                "reason": "Webhook payload body for limitIncrease.update. Typed as LimitIncreaseWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetLimitIncreaseRequestsResponse[number]: the payload has the same property set as GetCustomerLimitIncreaseOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection. Still the reachable anchor for the LimitIncreaseRequestStatus enum above."
+            },
+            {
+                "name": "PayableCompleteWebhookOut",
+                "reason": "Webhook payload body for payable.complete. Typed as PayableWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & Payable: the payload has the same property set as PayableOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+            },
+            {
+                "name": "PayableNewWebhookOut",
+                "reason": "Webhook payload body for payable.new. Typed as PayableWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & Payable: the payload has the same property set as PayableOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+            },
+            {
+                "name": "PayableUpdateWebhookOut",
+                "reason": "Webhook payload body for payable.update. Typed as PayableWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & Payable: the payload has the same property set as PayableOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
             },
             {
                 "name": "PayinCompleteWebhookOut",
-                "reason": "Webhook payload body for payin.complete; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for payin.complete. Its top-level fields are checked through the types[] mapping to PayinWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to PayinOut's, which are covered there."
             },
             {
                 "name": "PayinNewWebhookOut",
-                "reason": "Webhook payload body for payin.new; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for payin.new. Its top-level fields are checked through the types[] mapping to PayinWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to PayinOut's, which are covered there."
             },
             {
                 "name": "PayinPartnerFeeWebhookOut",
-                "reason": "Webhook payload body for payin.partnerFee; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for payin.partnerFee. Its top-level fields are checked through the types[] mapping to PayinWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to PayinOut's, which are covered there."
             },
             {
                 "name": "PayinUpdateWebhookOut",
-                "reason": "Webhook payload body for payin.update; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for payin.update. Its top-level fields are checked through the types[] mapping to PayinWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to PayinOut's, which are covered there."
             },
             {
                 "name": "PayoutCompleteWebhookOut",
-                "reason": "Webhook payload body for payout.complete; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for payout.complete. Its top-level fields are checked through the types[] mapping to PayoutWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to PayoutOut's, which are covered there."
             },
             {
                 "name": "PayoutNewWebhookOut",
-                "reason": "Webhook payload body for payout.new; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for payout.new. Its top-level fields are checked through the types[] mapping to PayoutWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to PayoutOut's, which are covered there."
             },
             {
                 "name": "PayoutPartnerFeeWebhookOut",
-                "reason": "Webhook payload body for payout.partnerFee; same reasoning as BankAccountWebhookOut."
+                "reason": "Webhook payload body for payout.partnerFee. Its top-level fields are checked through the types[] mapping to PayoutWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to PayoutOut's, which are covered there."
             },
             {
                 "name": "PayoutUpdateWebhookOut",
-                "reason": "Webhook payload body for payout.update; same reasoning as BankAccountWebhookOut (still used above as the reachable anchor for the TransactionStatus enum)."
-            },
-            {
-                "name": "Rfi",
-                "reason": "RFI resource (GET/POST /v1/instances/{instance_id}/rfi and .../customers/{customer_id}/rfi) is not modeled by this SDK. Known coverage gap, tracked for Phase C."
-            },
-            {
-                "name": "RfiField",
-                "reason": "Nested under Rfi.request/response; not modeled, same as Rfi."
-            },
-            {
-                "name": "RfiSection",
-                "reason": "Nested under Rfi.request/response; not modeled, same as Rfi."
+                "reason": "Webhook payload body for payout.update. Its top-level fields are checked through the types[] mapping to PayoutWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to PayoutOut's, which are covered there. Still the reachable anchor for the TransactionStatus enum above."
             },
             {
                 "name": "SwiftCodeResponse",
                 "reason": "Array-wrapper alias for SwiftCodeItem[]; the item shape itself is mapped via GetSwiftCodeBankDetailsResponse -> SwiftCodeItem."
             },
             {
-                "name": "TosAcceptWebhookOut",
-                "reason": "Webhook payload body for tos.accept; same reasoning as BankAccountWebhookOut."
+                "name": "TransferCompleteWebhookOut",
+                "reason": "Webhook payload body for transfer.complete. Its top-level fields are checked through the types[] mapping to TransferWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to TransferOut's, which are covered there."
             },
             {
-                "name": "UploadAnalyzeIn",
-                "reason": "POST /v1/upload/analyze is not modeled by this SDK. Known coverage gap, tracked for Phase C."
+                "name": "TransferNewWebhookOut",
+                "reason": "Webhook payload body for transfer.new. Its top-level fields are checked through the types[] mapping to TransferWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to TransferOut's, which are covered there."
             },
             {
-                "name": "UploadAnalyzeOut",
-                "reason": "Response of POST /v1/upload/analyze; not modeled, same as UploadAnalyzeIn."
+                "name": "TransferUpdateWebhookOut",
+                "reason": "Webhook payload body for transfer.update. Its top-level fields are checked through the types[] mapping to TransferWebhookEvent (src/resources/webhooks/events.ts). Kept in ignore only so its inline nested shapes (the tracking_* objects, and blindpay_bank_details on payin) need no nestedShapeOmissions entries: they are identical to TransferOut's, which are covered there."
             },
             {
-                "name": "WalletInboundSchemaOut",
-                "reason": "Webhook payload body for wallet.inbound; same reasoning as BankAccountWebhookOut."
+                "name": "VirtualAccountCompleteWebhookOut",
+                "reason": "Webhook payload body for virtualAccount.complete. Typed as VirtualAccountWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & VirtualAccount: the payload has the same property set as VirtualAccountOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+            },
+            {
+                "name": "VirtualAccountNewWebhookOut",
+                "reason": "Webhook payload body for virtualAccount.new. Typed as VirtualAccountWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & VirtualAccount: the payload has the same property set as VirtualAccountOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+            },
+            {
+                "name": "WalletNewWebhookOut",
+                "reason": "Webhook payload body for wallet.new. Typed as WalletWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & CustodialWallet: the payload has the same property set as WalletOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+            },
+            {
+                "name": "WalletUpdateWebhookOut",
+                "reason": "Webhook payload body for wallet.update. Typed as WalletWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & CustodialWallet: the payload has the same property set as WalletOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+            },
+            {
+                "name": "YieldFee",
+                "reason": "Only referenced by GetFeesOut.yield (billing fees resource, src/resources/fees/index.ts). GetFeesResponse does not model the yield fee split yet; see the GetFeesOut.yield entry in unmodeled.json properties."
             }
         ],
-        "operations": [
-            {
-                "name": "GET /v1/instances/{instance_id}/customers/{customer_id}/rfi",
-                "reason": "Rfi (request-for-information) family has no existing SDK resource; a human must design it, the generator will not guess a brand-new resource."
-            },
-            {
-                "name": "GET /v1/instances/{instance_id}/rfi",
-                "reason": "Rfi family, same as the customer-scoped variant."
-            },
-            {
-                "name": "POST /v1/instances/{instance_id}/customers/{customer_id}/rfi",
-                "reason": "Rfi family, same as the customer-scoped GET."
-            },
-            {
-                "name": "POST /v1/instances/{instance_id}/rfi",
-                "reason": "Rfi family, same as the customer-scoped GET."
-            },
-            {
-                "name": "POST /v1/upload/analyze",
-                "reason": "Multipart/binary upload, not instance-scoped and not JSON in/out; classifier never guesses this shape."
-            }
-        ]
+        "operations": []
     }
 }

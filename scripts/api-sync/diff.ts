@@ -1,3 +1,4 @@
+import { extractEnumMembers, findDeclarationSpan, readSource } from "./sdk-scan";
 import {
     operationKeys,
     reachableSchemas,
@@ -5,7 +6,7 @@ import {
     resolveProperties,
     type Spec,
 } from "./spec";
-import { isPathLocator, type SpecMap } from "./types";
+import { isPathLocator, type SdkSite, type SpecMap } from "./types";
 
 function locatorLabel(loc: {
     schema?: string;
@@ -17,13 +18,33 @@ function locatorLabel(loc: {
     return loc.property ? `${loc.schema}.${loc.property}` : (loc.schema as string);
 }
 
+/** True if any of `sites` is a string-literal union that still lists `member`. An unreadable
+ * site counts as declaring it, so a removal is never hidden by a missing file. */
+function sdkDeclares(repoRoot: string, sites: SdkSite[], member: string): boolean {
+    return sites.some((site) => {
+        try {
+            const span = findDeclarationSpan(readSource(repoRoot, site.file), site.symbol);
+            return extractEnumMembers(span.text)?.has(member) ?? true;
+        } catch {
+            return true;
+        }
+    });
+}
+
 /**
  * The only place old-vs-new spec diffing is used: catching something the state-based pass
  * cannot, by definition, ever see, a member/property that existed in the committed snapshot
  * and is simply gone from the newly delivered spec. Always a hard fail; removals are breaking
- * and must be a deliberate major version bump, never automatic.
+ * and must be a deliberate major version bump, never automatic. With `repoRoot`, an enum member
+ * no mapped SDK union declares any more counts as already removed by hand, so only members the
+ * SDK still carries are reported.
  */
-export function detectRemovals(oldSpec: Spec, newSpec: Spec, map: SpecMap): string[] {
+export function detectRemovals(
+    oldSpec: Spec,
+    newSpec: Spec,
+    map: SpecMap,
+    repoRoot?: string
+): string[] {
     const messages: string[] = [];
 
     for (const entry of map.enums) {
@@ -39,7 +60,10 @@ export function detectRemovals(oldSpec: Spec, newSpec: Spec, map: SpecMap): stri
         } catch {
             continue; // surfaced separately by reconcile() as "no longer resolves"
         }
-        const removed = [...oldMembers].filter((m) => !newMembers.has(m)).sort();
+        const removed = [...oldMembers]
+            .filter((m) => !newMembers.has(m))
+            .filter((m) => repoRoot === undefined || sdkDeclares(repoRoot, entry.sdk, m))
+            .sort();
         if (removed.length > 0) {
             messages.push(
                 `enum "${locatorLabel(entry.spec)}" lost member(s) [${removed.join(", ")}] present in the committed snapshot; a removal needs a deliberate major version bump, not this patcher.`

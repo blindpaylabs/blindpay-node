@@ -12,6 +12,7 @@ import type {
     PayinTrackingPartnerFee,
     PayinTrackingPayment,
     PayinTrackingTransaction,
+    RequestOptions,
     StablecoinToken,
     TransactionStatus,
 } from "../../../types";
@@ -65,22 +66,22 @@ export type Payin = {
     tracking_payment: PayinTrackingPayment;
     tracking_complete: PayinTrackingComplete;
     tracking_partner_fee?: PayinTrackingPartnerFee;
-    created_at: string;
-    updated_at: string;
+    created_at: string | null;
+    updated_at: string | null;
     image_url?: string | null | undefined;
     first_name?: string | null | undefined;
     last_name?: string | null | undefined;
     legal_name?: string | null | undefined;
     type: AccountClass;
     payment_method: PayinPaymentMethod;
-    sender_amount: number;
-    receiver_amount: number;
+    sender_amount: number | null;
+    receiver_amount: number | null;
     token: StablecoinToken;
     partner_fee_id?: string | null;
     partner_fee_amount?: number | null;
     total_fee_amount?: number | null;
-    commercial_quotation: number;
-    blindpay_quotation: number;
+    commercial_quotation: number | null;
+    blindpay_quotation: number | null;
     currency: Extract<Currency, "BRL" | "USD" | "MXN" | "COP" | "ARS" | "EUR" | "GBP">;
     billing_fee?: number | null;
     billing_fee_amount?: number | null;
@@ -94,11 +95,22 @@ export type Payin = {
     pse_full_name?: string | null;
     pse_tax_id?: string | null;
     pse_document_type?: Extract<AchCopDocument, "CC" | "NIT"> | null;
+    manual_concluded_at?: string;
+    manual_concluded_by?: string | null;
+    manual_execution_status?: "pending" | "concluded" | "failed" | null;
+    partner_fee?: number;
+    transaction_fee_amount?: number | null;
 };
 
 export type ListPayinsInput = PaginationParams & {
     status?: TransactionStatus;
     customer_id?: string;
+    customer_name?: string;
+    bank_account_id?: string;
+    country?: string;
+    payment_method?: PayinPaymentMethod;
+    network?: string;
+    token?: string;
 };
 
 export type ListPayinsResponse =
@@ -107,10 +119,6 @@ export type ListPayinsResponse =
           pagination: PaginationMetadata;
       }
     | Payin[];
-
-export type CreatePayinInput = {
-    quote_id: string;
-};
 
 export type GetPayinInput = string;
 
@@ -140,6 +148,9 @@ export type CreateEvmPayinResponse = Pick<
     payment_method?: PayinPaymentMethod | null;
     billing_fee?: number | null;
     sender_amount?: number | null;
+    billing_fee_amount?: number | null;
+    partner_fee?: number;
+    transaction_fee_amount?: number | null;
 };
 
 export function createPayinsResource(instanceId: string, client: InternalApiClient) {
@@ -155,11 +166,16 @@ export function createPayinsResource(instanceId: string, client: InternalApiClie
             return client.get(`/e/payins/${payinId}`);
         },
         createEvm(
-            payin_quote_id: CreateEvmPayinInput
+            payin_quote_id: CreateEvmPayinInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateEvmPayinResponse>> {
-            return client.post(`/instances/${instanceId}/payins/evm`, {
-                payin_quote_id,
-            });
+            return client.post(
+                `/instances/${instanceId}/payins/evm`,
+                {
+                    payin_quote_id,
+                },
+                options
+            );
         },
     };
 }

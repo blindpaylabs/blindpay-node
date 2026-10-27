@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse } from "../../../types";
+import type { BlindpayApiResponse, RequestOptions, SuccessResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type WebhookEvents =
@@ -25,6 +25,10 @@ export type WebhookEvents =
     | "wallet.inbound"
     | "customer.new"
     | "customer.update"
+    | "payable.complete"
+    | "payable.new"
+    | "payable.update"
+    | "wallet.update"
     | "customer.delete";
 
 export type CreateWebhookEndpointInput = {
@@ -42,10 +46,10 @@ export type ListWebhookEndpointsResponse = Array<{
     id: string;
     url: string;
     events: WebhookEvents[];
-    last_event_at: string;
+    last_event_at?: string | null;
     instance_id: string;
-    created_at: string;
-    updated_at: string;
+    created_at: string | null;
+    updated_at: string | null;
 }>;
 
 export type GetWebhookEndpointSecretInput = string;
@@ -63,15 +67,17 @@ export function createWebhookEndpointsResource(instanceId: string, client: Inter
         list(): Promise<BlindpayApiResponse<ListWebhookEndpointsResponse>> {
             return client.get(`/instances/${instanceId}/webhook-endpoints`);
         },
-        create({
-            ...data
-        }: CreateWebhookEndpointInput): Promise<
-            BlindpayApiResponse<CreateWebhookEndpointResponse>
-        > {
-            return client.post(`/instances/${instanceId}/webhook-endpoints`, data);
+        create(
+            { ...data }: CreateWebhookEndpointInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateWebhookEndpointResponse>> {
+            return client.post(`/instances/${instanceId}/webhook-endpoints`, data, options);
         },
-        delete(id: DeleteWebhookEndpointInput): Promise<BlindpayApiResponse<void>> {
-            return client.delete(`/instances/${instanceId}/webhook-endpoints/${id}`);
+        delete(
+            id: DeleteWebhookEndpointInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<SuccessResponse>> {
+            return client.delete(`/instances/${instanceId}/webhook-endpoints/${id}`, options);
         },
         getSecret(
             id: GetWebhookEndpointSecretInput

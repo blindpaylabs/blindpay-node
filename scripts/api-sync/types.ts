@@ -163,6 +163,8 @@ export type ApplicableChange =
           property?: string;
           field: string;
           tsType: string;
+          /** Shared types/index.d.ts unions tsType reuses; the target file must import them. */
+          importsNeeded: string[];
           site: SdkSite;
       }
     | OperationInsertChange;

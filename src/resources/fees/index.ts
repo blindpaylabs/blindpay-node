@@ -20,6 +20,8 @@ export type GetFeesResponse = {
     ach_colombia: FeeOptions;
     transfers_3: FeeOptions;
     spei: FeeOptions;
+    sepa: FeeOptions;
+    faster_payments: FeeOptions;
     tron: FeeOptions;
     ethereum: FeeOptions;
     polygon: FeeOptions;
@@ -27,9 +29,14 @@ export type GetFeesResponse = {
     arbitrum: FeeOptions;
     stellar: FeeOptions;
     solana: FeeOptions;
-    ted: FeeOptions;
-    created_at: string;
-    updated_at: string;
+    ted?: FeeOptions | null;
+    created_at: string | null;
+    updated_at: string | null;
+    yield?: {
+        blindpay_share_bps: number;
+        partner_share_bps: number;
+        partner_wallet_address?: string | null;
+    } | null;
 };
 
 export function createFeesResource(instanceId: string, client: InternalApiClient) {

@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { isKnownEnumDivergence, isKnownTypeMismatchDivergence, isUnmodeledProperty } from "./map";
 import {
     extractEnumMembers,
@@ -10,6 +12,14 @@ import {
 } from "./sdk-scan";
 import { resolveEnumMembers, resolveLocator, resolveProperties, type Spec } from "./spec";
 import { classifySdkType, compareTypeSignatures, specTypeSignature } from "./type-check";
+import {
+    loadCanonicalEnums,
+    loadWholeSchemaSymbols,
+    soleRefName,
+    synthesizeObjectLiteral,
+    type TypegenContext,
+    wrapArrayItem,
+} from "./typegen";
 import {
     type ApplicableChange,
     isPathLocator,
@@ -48,18 +58,79 @@ function resolveFieldNode(spec: Spec, loc: SpecLocator, field: string): unknown 
     return node?.properties?.[field];
 }
 
-function inferTsType(node: unknown): string {
+/**
+ * TypeScript type for a field-insert at `siteFile`. A property referencing a component reuses the
+ * SDK symbol that component is mapped to in the same file; otherwise the component is compiled.
+ * An array applies the same rule to its items.
+ */
+function fieldInsertType(
+    node: unknown,
+    siteFile: string,
+    spec: Spec,
+    canonicalEnums: Map<string, string>,
+    wholeSchemas: Map<string, { file: string; symbol: string }>
+): { tsType: string; importsNeeded: string[] } {
+    // biome-ignore lint/suspicious/noExplicitAny: raw OpenAPI schema node
+    const n = node as any;
+    const types: string[] = Array.isArray(n?.type) ? n.type : [n?.type];
+    if (types.includes("array") && n.items) {
+        const item = fieldInsertType(n.items, siteFile, spec, canonicalEnums, wholeSchemas);
+        const list = wrapArrayItem(item.tsType);
+        return { ...item, tsType: types.includes("null") ? `${list} | null` : list };
+    }
+    const ref = soleRefName(node);
+    if (!ref) return inferTsType(node, canonicalEnums, spec);
+    const whole = wholeSchemas.get(ref);
+    if (whole?.file === siteFile) return { tsType: whole.symbol, importsNeeded: [] };
+    return inferTsType(spec.components.schemas[ref], canonicalEnums, spec);
+}
+
+/**
+ * TypeScript type for a field-insert. A string enum becomes the shared types/index.d.ts union
+ * with exactly the same members (as the method generator does), else a literal union: never a
+ * bare `string`, which the type check would immediately reject as a dropped enum.
+ */
+function inferTsType(
+    node: unknown,
+    canonicalEnums: Map<string, string>,
+    spec: Spec
+): { tsType: string; importsNeeded: string[] } {
     // biome-ignore lint/suspicious/noExplicitAny: raw OpenAPI schema node
     const n = node as any;
     const rawType = n?.type;
     const types: string[] = Array.isArray(rawType) ? rawType : rawType ? [rawType] : [];
     const nullable = types.includes("null");
+    const withNull = (base: string) => (nullable ? `${base} | null` : base);
+    // String enums only: the type check models enums as string unions (a boolean `enum: [true]`
+    // stays `boolean`).
+    const members: unknown[] = Array.isArray(n?.enum)
+        ? n.enum.filter((v: unknown) => typeof v === "string")
+        : [];
+    if (members.length > 0) {
+        const canonical = canonicalEnums.get(members.map(String).sort().join(","));
+        if (canonical) return { tsType: withNull(canonical), importsNeeded: [canonical] };
+        return {
+            tsType: withNull(members.map((v) => JSON.stringify(v)).join(" | ")),
+            importsNeeded: [],
+        };
+    }
+    if (types.includes("object") && Object.keys(n?.properties ?? {}).length > 0) {
+        // Same compiler the method generator uses; nested refs are inlined, never imported.
+        const ctx: TypegenContext = {
+            spec,
+            canonicalEnums,
+            wholeSchemas: new Map(),
+            importsNeeded: new Set(),
+        };
+        const literal = synthesizeObjectLiteral(ctx, n);
+        return { tsType: withNull(literal), importsNeeded: [...ctx.importsNeeded].sort() };
+    }
     let base = "string";
     if (types.includes("integer") || types.includes("number")) base = "number";
     else if (types.includes("boolean")) base = "boolean";
     else if (types.includes("object")) base = "Record<string, unknown>";
     else if (types.includes("array")) base = "unknown[]";
-    return nullable ? `${base} | null` : base;
+    return { tsType: withNull(base), importsNeeded: [] };
 }
 
 /**
@@ -90,6 +161,10 @@ export function reconcile(
     const applicable: ApplicableChange[] = [];
     const needsHuman: string[] = [];
     const divergencesHit: string[] = [];
+    const canonicalEnums = existsSync(join(repoRoot, "types/index.d.ts"))
+        ? loadCanonicalEnums(repoRoot)
+        : new Map<string, string>();
+    const wholeSchemas = loadWholeSchemaSymbols(map);
 
     // (schema, property) pairs already covered by a dedicated enums[] mapping, so the type-check
     // pass below never double-reports an enum-member gap the enum-reconciliation pass already owns.
@@ -228,14 +303,22 @@ export function reconcile(
             // to every declared union site above. Always optional (`field?: T`), matching spec: an
             // added property is never required on an already-shipped type, and emitting it as
             // non-optional would force every existing caller to start passing it.
-            const tsType = inferTsType(resolveFieldNode(spec, entry.spec, field));
+            const node = resolveFieldNode(spec, entry.spec, field);
             for (const target of nonOpaqueSites) {
+                const { tsType, importsNeeded } = fieldInsertType(
+                    node,
+                    target.file,
+                    spec,
+                    canonicalEnums,
+                    wholeSchemas
+                );
                 applicable.push({
                     kind: "field-insert",
                     schema: schemaName,
                     property: propertyName,
                     field,
                     tsType,
+                    importsNeeded,
                     site: target,
                 });
             }
@@ -246,17 +329,14 @@ export function reconcile(
         // TypeScript type. A mismatch is never auto-applicable: silently rewriting a
         // consumer-facing type is exactly the kind of change that needs a human's eyes, so every
         // finding here is either a needs-human failure or (if pre-recorded) a known divergence.
+        // That includes nullability: a spec-nullable field must carry `| null` on every mapped
+        // site, inputs and responses alike, because making a response field nullable breaks
+        // consumers.
         //
-        // Scoped narrower than the full comparison `auditTypes` runs (see audit.ts):
-        //   - nullability is not enforced here. This codebase does not mirror JSON nullability
-        //     into `| null` on response fields as a matter of pervasive, pre-existing house
-        //     style (hundreds of fields), not oversight; retrofitting that is a separate,
-        //     wholesale, human-reviewed pass, not a Phase A concern. `bun run audit:types`
-        //     reports it in full, non-blocking, for exactly that follow-up.
-        //   - discriminator fields (DISCRIMINATOR_FIELDS) are skipped entirely; see its comment.
+        // Discriminator fields (DISCRIMINATOR_FIELDS) are skipped entirely; see its comment.
         for (const field of specProps) {
             if (missingSet.has(field) || DISCRIMINATOR_FIELDS.has(field)) continue;
-            const specSig = specTypeSignature(resolveFieldNode(spec, entry.spec, field));
+            const specSig = specTypeSignature(resolveFieldNode(spec, entry.spec, field), spec);
             for (const [siteKey, fields] of fieldsBySite) {
                 const info = fields.get(field);
                 if (!info) continue; // this particular site doesn't carry the field (a fan-out variant)
@@ -265,10 +345,7 @@ export function reconcile(
                 const skipEnumValues =
                     enumCovered.has(`${schemaName} ${field}`) ||
                     (!!sdkSig.namedAs && enumSymbolsCovered.has(sdkSig.namedAs));
-                const problems = compareTypeSignatures(specSig, sdkSig, {
-                    skipEnumValues,
-                    skipNullability: true,
-                });
+                const problems = compareTypeSignatures(specSig, sdkSig, { skipEnumValues });
                 for (const problem of problems) {
                     if (isKnownTypeMismatchDivergence(unmodeled, schemaName, field)) {
                         divergencesHit.push(

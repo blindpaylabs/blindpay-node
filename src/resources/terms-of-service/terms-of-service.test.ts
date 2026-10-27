@@ -26,5 +26,28 @@ describe("Terms of Service", () => {
             expect(error).toBeNull();
             expect(data).toEqual(mockedUrl);
         });
+
+        it("should initiate terms of service with only an idempotency key", async () => {
+            const mockedUrl: InitiateResponse = {
+                url: "https://app.blindpay.com/e/terms-of-service?session_token=token",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedUrl), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.instances.tos.initiate({
+                idempotency_key: "123e4567-e89b-12d3-a456-426614174000",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedUrl);
+
+            const [url, init] = fetchMock.mock.calls[0];
+            expect(url).toBe("https://api.blindpay.com/v1/e/instances/in_000000000000/tos");
+            expect(JSON.parse(init?.body as string)).toEqual({
+                idempotency_key: "123e4567-e89b-12d3-a456-426614174000",
+            });
+        });
     });
 });

@@ -11,7 +11,27 @@ export type Spec = {
 };
 
 export function loadSpec(path: string): Spec {
-    return JSON.parse(readFileSync(path, "utf8"));
+    return sdkSurface(JSON.parse(readFileSync(path, "utf8")));
+}
+
+/**
+ * The spec minus operations blindpay-v2 marks `x-sdk: false`. Every route there declares the
+ * flag (enforced by its check-sdk-tags.yml), and `false` means "exclude from the SDKs", so
+ * those operations, and schemas reachable only through them, are never gaps or new schemas.
+ */
+export function sdkSurface(spec: Spec): Spec {
+    const paths: Spec["paths"] = {};
+    for (const [path, item] of Object.entries(spec.paths)) {
+        const kept = Object.fromEntries(Object.entries(item).filter(([, op]) => !isExcluded(op)));
+        if (Object.keys(kept).some((key) => HTTP_METHOD_KEYS.has(key))) paths[path] = kept;
+    }
+    return { ...spec, paths };
+}
+
+const HTTP_METHOD_KEYS = new Set(["get", "post", "put", "patch", "delete"]);
+
+function isExcluded(op: JsonValue): boolean {
+    return typeof op === "object" && op !== null && op["x-sdk"] === false;
 }
 
 function collectRefs(node: JsonValue, out: Set<string>): void {
@@ -107,6 +127,12 @@ function propsOf(spec: Spec, node: JsonValue): Set<string> {
     if (isArrayType(node) && node.items) {
         const item = resolveRef(spec, node.items);
         return new Set(Object.keys(item?.properties ?? {}));
+    }
+    const branches = node?.anyOf ?? node?.oneOf;
+    if (!node?.properties && Array.isArray(branches)) {
+        // A list body is a page envelope or a bare array; the envelope is the shape to compare.
+        const objects = branches.map((b) => resolveRef(spec, b)).filter((b) => !isArrayType(b));
+        return new Set(objects.flatMap((b) => Object.keys(b?.properties ?? {})));
     }
     return new Set(Object.keys(node?.properties ?? {}));
 }

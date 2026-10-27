@@ -3,28 +3,30 @@ import type {
     Currency,
     CurrencyType,
     Network,
+    RequestOptions,
     StablecoinToken,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type CreateQuoteInput = {
-    bank_account_id: string;
-    currency_type: CurrencyType;
-    cover_fees: boolean;
-    request_amount: number;
+    bank_account_id?: string | null;
+    currency_type?: CurrencyType;
+    cover_fees?: boolean | null;
+    request_amount?: number | null;
     network: Network;
     token: StablecoinToken;
     description?: string | null;
     partner_fee_id?: string | null;
     refund_wallet_address?: string | null;
+    payable_id?: string | null;
 };
 export type CreateQuoteResponse = {
     id: string;
-    expires_at: number;
-    commercial_quotation: number;
-    blindpay_quotation: number;
-    receiver_amount: number;
-    sender_amount: number;
+    expires_at: number | null;
+    commercial_quotation: number | null;
+    blindpay_quotation: number | null;
+    receiver_amount: number | null;
+    sender_amount: number | null;
     partner_fee_amount?: number | null;
     flat_fee?: number | null;
     contract?: {
@@ -40,6 +42,7 @@ export type CreateQuoteResponse = {
     } | null;
     customer_local_amount?: number | null;
     description?: string | null;
+    billing_fee_amount?: number | null;
 };
 
 export type GetFxRateInput = {
@@ -50,8 +53,8 @@ export type GetFxRateInput = {
 };
 
 export type GetFxRateResponse = {
-    commercial_quotation: number;
-    blindpay_quotation: number;
+    commercial_quotation: number | null;
+    blindpay_quotation: number | null;
     result_amount: number;
     instance_flat_fee?: number | null;
     instance_percentage_fee: number;
@@ -59,12 +62,18 @@ export type GetFxRateResponse = {
 
 export function createQuotesResource(instanceId: string, client: InternalApiClient) {
     return {
-        create({ ...data }: CreateQuoteInput): Promise<BlindpayApiResponse<CreateQuoteResponse>> {
-            return client.post(`/instances/${instanceId}/quotes`, data);
+        create(
+            { ...data }: CreateQuoteInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<CreateQuoteResponse>> {
+            return client.post(`/instances/${instanceId}/quotes`, data, options);
         },
 
-        getFxRate({ ...data }: GetFxRateInput): Promise<BlindpayApiResponse<GetFxRateResponse>> {
-            return client.post(`/instances/${instanceId}/quotes/fx`, data);
+        getFxRate(
+            { ...data }: GetFxRateInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetFxRateResponse>> {
+            return client.post(`/instances/${instanceId}/quotes/fx`, data, options);
         },
     };
 }
