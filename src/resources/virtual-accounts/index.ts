@@ -69,6 +69,7 @@ export type VirtualAccount = {
         } | null;
     } | null;
     partner_fee_id?: string | null;
+    customer_id?: string | null;
 };
 
 export type ListVirtualAccountsInput = string;

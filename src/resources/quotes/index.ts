@@ -41,6 +41,7 @@ export type CreateQuoteResponse = {
     } | null;
     customer_local_amount?: number | null;
     description?: string | null;
+    billing_fee_amount?: number | null;
 };
 
 export type GetFxRateInput = {

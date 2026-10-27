@@ -80,7 +80,7 @@ function quoteUnion(values: unknown[]): string {
     return values.map((v) => JSON.stringify(v)).join(" | ");
 }
 
-function wrapArrayItem(itemType: string): string {
+export function wrapArrayItem(itemType: string): string {
     return itemType.includes("|") ? `(${itemType})[]` : `${itemType}[]`;
 }
 

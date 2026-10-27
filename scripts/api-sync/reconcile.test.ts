@@ -450,6 +450,73 @@ describe("field-insert of an enum-constrained property", () => {
         });
     });
 
+    describe("an array property", () => {
+        it("compiles its items instead of unknown[]", () => {
+            const repo = makeRepo(files());
+            const { applicable } = reconcile(
+                specWithField({ type: ["array", "null"], items: { type: "string" } }),
+                map,
+                emptyUnmodeled(),
+                repo
+            );
+            expect(applicable).toEqual([
+                expect.objectContaining({ tsType: "string[] | null", importsNeeded: [] }),
+            ]);
+        });
+
+        it("reuses the shared union for enum items, and asks for its import", () => {
+            const repo = makeRepo(files());
+            const { applicable } = reconcile(
+                specWithField({ type: "array", items: { type: "string", enum: ["US", "BR"] } }),
+                map,
+                emptyUnmodeled(),
+                repo
+            );
+            expect(applicable).toEqual([
+                expect.objectContaining({ tsType: "Country[]", importsNeeded: ["Country"] }),
+            ]);
+        });
+
+        it("reuses the SDK symbol its item schema is mapped to in the same file", () => {
+            const repo = makeRepo({
+                ...files(),
+                "bank.ts": `${files()["bank.ts"]}\nexport type Token = {\n    amount: number;\n};\n`,
+            });
+            const spec: Spec = {
+                paths: {},
+                components: {
+                    schemas: {
+                        BankAccountOut: {
+                            type: "object",
+                            properties: {
+                                country: {
+                                    type: ["array", "null"],
+                                    items: { $ref: "#/components/schemas/TokenOut" },
+                                },
+                            },
+                        },
+                        TokenOut: {
+                            type: "object",
+                            properties: { amount: { type: "number" } },
+                            required: ["amount"],
+                        },
+                    },
+                },
+            };
+            const withToken: SpecMap = {
+                ...map,
+                types: [
+                    ...map.types,
+                    { spec: { schema: "TokenOut" }, sdk: [{ file: "bank.ts", symbol: "Token" }] },
+                ],
+            };
+            const { applicable } = reconcile(spec, withToken, emptyUnmodeled(), repo);
+            expect(applicable).toEqual([
+                expect.objectContaining({ tsType: "Token[] | null", importsNeeded: [] }),
+            ]);
+        });
+    });
+
     it("keeps a boolean enum (e.g. `enum: [true]`) as boolean, matching the type check", () => {
         const repo = makeRepo(files());
         const { applicable } = reconcile(

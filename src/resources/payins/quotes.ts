@@ -32,6 +32,7 @@ export type CreatePayinQuoteResponse = {
     partner_fee_amount?: number | null;
     flat_fee: number | null;
     is_otc?: boolean | null;
+    billing_fee_amount?: number | null;
 };
 
 export type GetPayinFxRateInput = {

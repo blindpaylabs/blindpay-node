@@ -345,6 +345,20 @@ export type PayinTrackingTransaction = {
         provider: string;
         tokenization_key: string;
     } | null;
+    end_to_end_id?: string | null;
+    provider_name?: string | null;
+    provider_transaction_id?: string | null;
+    sender_bank_name?: string | null;
+    ted_instruction?: {
+        beneficiary_name: string;
+        tax_id: string;
+        bank_code: string;
+        bank_name: string;
+        branch_code: string;
+        account_number: string;
+        account_type: string;
+    } | null;
+    transaction_hash?: string | null;
   };
   
 export type PayinTrackingPayment = {
@@ -353,6 +367,9 @@ export type PayinTrackingPayment = {
     completed_at?: string | null
     review_contexts?: Record<string, unknown> | null;
     review_sources?: unknown[] | null;
+    approved_risk_sources?: string[] | null;
+    review_context?: Record<string, unknown> | null;
+    review_source?: string | null;
   };
   
 export type PayinTrackingComplete = {
@@ -876,6 +893,8 @@ export type PayerRules = {
     pse_bank_code?: string | null;
 }
 
+export type PayoutProviderIntegration = "veem" | "zenus" | "checkbook" | "onemoney" | "bitso" | "starkbank" | "triplea" | "infinitus" | "portage_g";
+
 export type PayoutForcedProvider = "zenus" | "veem" | "infinitus_portage";
 
 export type TrackingStatus = 'processing' | 'on_hold' | 'completed' | 'pending_review' | "pending_refund_review";
@@ -887,6 +906,10 @@ export type PayoutTrackingTransaction = {
     status: 'failed' | 'found' | null;
     transaction_hash: string | null
     completed_at: string | null
+    ledger_in_transaction_id?: string | null;
+    ledger_out_transaction_id?: string | null;
+    provider_error_reason?: string | null;
+    provider_transaction_id?: string | null;
   };
   
 export type PayoutTrackingPayment = {
@@ -910,6 +933,14 @@ export type PayoutTrackingPayment = {
     review_context?: Record<string, unknown> | null;
     review_source?: string | null;
     review_sources?: unknown[] | null;
+    coelsa_id?: string | null;
+    end_to_end_id?: string | null;
+    provider_clearing_system?: string | null;
+    provider_error_reason?: string | null;
+    provider_imad?: string | null;
+    provider_integration?: PayoutProviderIntegration | null;
+    provider_reference?: string | null;
+    provider_uetr?: string | null;
   };
   
 export type PayoutTrackingLiquidity = {
@@ -925,6 +956,8 @@ export type PayoutTrackingComplete = {
     status: 'tokens_refunded' | 'paid' | null;
     transaction_hash: string | null;
     completed_at: string | null;
+    provider_transaction_id?: string | null;
+    refund_reason?: string | null;
   };
 
 export type PayoutTrackingPartnerFee = {

@@ -15,6 +15,7 @@ import type {
     PayoutTrackingTransaction,
     Rail,
     StablecoinToken,
+    TrackingStatus,
     TransactionDocumentType,
     TransactionStatus,
 } from "../../../types";
@@ -108,6 +109,18 @@ export type Payout = {
     sepa_beneficiary_legal_name?: string | null;
     sepa_beneficiary_postal_code?: string | null;
     sepa_iban?: string | null;
+    partner_fee?: number;
+    pix_safe_bank_code?: string | null;
+    pix_safe_branch_code?: string | null;
+    pix_safe_cpf_cnpj?: string | null;
+    sender_legal_name?: string | null;
+    tracking_documents?: {
+        step: TrackingStatus;
+        status?: "waiting_documents" | "compliance_reviewing" | null;
+        reviewed_by?: string | null;
+        completed_at?: string | null;
+    } | null;
+    transaction_fee_amount?: number | null;
 };
 
 export type ListPayoutsInput = PaginationParams & {
@@ -180,6 +193,17 @@ export type CreateStellarPayoutResponse = {
     tracking_liquidity?: PayoutTrackingLiquidity | null;
     customer_id: string | null;
     payable_id?: string | null;
+    bank_account_id?: string | null;
+    billing_fee_amount?: number | null;
+    offramp_wallet_id?: string | null;
+    partner_fee?: number;
+    tracking_documents?: {
+        step: TrackingStatus;
+        status?: "waiting_documents" | "compliance_reviewing" | null;
+        reviewed_by?: string | null;
+        completed_at?: string | null;
+    } | null;
+    transaction_fee_amount?: number | null;
 };
 
 export type CreateEvmPayoutInput = {
@@ -199,6 +223,17 @@ export type CreateEvmPayoutResponse = {
     tracking_liquidity?: PayoutTrackingLiquidity | null;
     customer_id: string | null;
     payable_id?: string | null;
+    bank_account_id?: string | null;
+    billing_fee_amount?: number | null;
+    offramp_wallet_id?: string | null;
+    partner_fee?: number;
+    tracking_documents?: {
+        step: TrackingStatus;
+        status?: "waiting_documents" | "compliance_reviewing" | null;
+        reviewed_by?: string | null;
+        completed_at?: string | null;
+    } | null;
+    transaction_fee_amount?: number | null;
 };
 
 export type CreateSolanaPayoutInput = {
@@ -219,6 +254,17 @@ export type CreateSolanaPayoutResponse = {
     tracking_liquidity?: PayoutTrackingLiquidity | null;
     customer_id: string | null;
     payable_id?: string | null;
+    bank_account_id?: string | null;
+    billing_fee_amount?: number | null;
+    offramp_wallet_id?: string | null;
+    partner_fee?: number;
+    tracking_documents?: {
+        step: TrackingStatus;
+        status?: "waiting_documents" | "compliance_reviewing" | null;
+        reviewed_by?: string | null;
+        completed_at?: string | null;
+    } | null;
+    transaction_fee_amount?: number | null;
 };
 
 export function createPayoutsResource(instanceId: string, client: InternalApiClient) {

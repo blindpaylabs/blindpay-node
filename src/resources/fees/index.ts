@@ -31,6 +31,12 @@ export type GetFeesResponse = {
     created_at: string | null;
     updated_at: string | null;
     faster_payments?: string;
+    sepa?: FeeOptions;
+    yield?: {
+        blindpay_share_bps: number;
+        partner_share_bps: number;
+        partner_wallet_address?: string | null;
+    } | null;
 };
 
 export function createFeesResource(instanceId: string, client: InternalApiClient) {

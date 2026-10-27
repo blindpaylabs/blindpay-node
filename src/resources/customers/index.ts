@@ -109,6 +109,33 @@ export type CustomerCnaeCondition = {
     reviewed_at: string | null;
 };
 
+export type AdditionalInfoLabel =
+    | "EIN_LETTER"
+    | "KYC_PROVIDER_DOCUMENT"
+    | "FLOW_OF_FUNDS"
+    | "BANK_STATEMENT"
+    | "TAX_RETURN"
+    | "AUDITED_FINANCIALS"
+    | "OPERATING_AGREEMENT"
+    | "BOARD_RESOLUTION"
+    | "CERTIFICATE_OF_GOOD_STANDING"
+    | "BUSINESS_LICENSE"
+    | "MSB_LICENSE"
+    | "POWER_OF_ATTORNEY"
+    | "TRUST_DEED"
+    | "SHAREHOLDER_REGISTRY"
+    | "BENEFICIAL_OWNER_DECLARATION"
+    | "COMPLIANCE_QUESTIONNAIRE"
+    | "PROOF_OF_EMPLOYMENT"
+    | "REFERENCE_LETTER"
+    | "OTHER";
+
+export type AdditionalInfoItem = {
+    label: AdditionalInfoLabel;
+    /** A document URL (re-hosted on BlindPay storage) or a free-text note. */
+    value: string;
+};
+
 export type IndividualWithStandardKYC = {
     id: string;
     is_tos_accepted: boolean | null;
@@ -172,6 +199,11 @@ export type IndividualWithStandardKYC = {
     cnae_condition?: CustomerCnaeCondition;
     virtual_account_preapproval?: CustomerVirtualAccountPreapproval;
     is_nested?: boolean | null;
+    additional_info?: AdditionalInfoItem[] | null;
+    business_type?: BusinessType | null;
+    customer_id?: string;
+    latitude?: number | null;
+    longitude?: number | null;
 };
 
 export type IndividualWithEnhancedKYC = {
@@ -240,6 +272,11 @@ export type IndividualWithEnhancedKYC = {
     cnae_condition?: CustomerCnaeCondition;
     virtual_account_preapproval?: CustomerVirtualAccountPreapproval;
     is_nested?: boolean | null;
+    additional_info?: AdditionalInfoItem[] | null;
+    business_type?: BusinessType | null;
+    customer_id?: string;
+    latitude?: number | null;
+    longitude?: number | null;
 };
 
 export type BusinessWithStandardKYB = {
@@ -304,6 +341,11 @@ export type BusinessWithStandardKYB = {
     cnae_condition?: CustomerCnaeCondition;
     virtual_account_preapproval?: CustomerVirtualAccountPreapproval;
     is_nested?: boolean | null;
+    additional_info?: AdditionalInfoItem[] | null;
+    business_type?: BusinessType | null;
+    customer_id?: string;
+    latitude?: number | null;
+    longitude?: number | null;
 };
 
 export type CreateIndividualWithStandardKYCInput = {
@@ -338,6 +380,9 @@ export type CreateIndividualWithStandardKYCInput = {
     occupation?: string | null;
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
+    additional_info?: AdditionalInfoItem[] | null;
+    latitude?: number | null;
+    longitude?: number | null;
 };
 
 export type CreateIndividualWithStandardKYCResponse = {
@@ -378,6 +423,9 @@ export type CreateIndividualWithEnhancedKYCInput = {
     occupation?: string | null;
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
+    additional_info?: AdditionalInfoItem[] | null;
+    latitude?: number | null;
+    longitude?: number | null;
 };
 
 export type CreateIndividualWithEnhancedKYCResponse = {
@@ -420,6 +468,9 @@ export type CreateBusinessWithStandardKYBInput = {
     occupation?: string | null;
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
+    additional_info?: AdditionalInfoItem[] | null;
+    latitude?: number | null;
+    longitude?: number | null;
 };
 
 export type CreateBusinessWithStandardKYBResponse = {
@@ -498,6 +549,9 @@ export type UpdateCustomerInput = {
     occupation?: string | null;
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
+    additional_info?: AdditionalInfoItem[] | null;
+    latitude?: number | null;
+    longitude?: number | null;
 };
 
 export type DeleteCustomerInput = string;

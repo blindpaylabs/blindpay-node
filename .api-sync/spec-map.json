@@ -433,6 +433,19 @@
         {
             "spec": {
                 "schema": "PayoutOut",
+                "property": "tracking_payment.provider_integration"
+            },
+            "sdk": [
+                {
+                    "file": "types/index.d.ts",
+                    "symbol": "PayoutProviderIntegration"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PayoutOut",
                 "property": "tracking_payment.estimated_time_of_arrival"
             },
             "sdk": [
@@ -836,6 +849,19 @@
                 }
             ],
             "notes": "Standalone enum schema, referenced by WalletOut.yield_status and YieldOut.status."
+        },
+        {
+            "spec": {
+                "schema": "AdditionalInfoItem",
+                "property": "label"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "AdditionalInfoLabel"
+                }
+            ],
+            "notes": null
         }
     ],
     "types": [
@@ -2367,6 +2393,18 @@
                 {
                     "file": "src/resources/bank-accounts/index.ts",
                     "symbol": "CreatePlaidBankAccountResponse"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "AdditionalInfoItem"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/customers/index.ts",
+                    "symbol": "AdditionalInfoItem"
                 }
             ],
             "notes": null

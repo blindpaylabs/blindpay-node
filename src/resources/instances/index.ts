@@ -19,6 +19,7 @@ export type GetInstanceMembersResponse = Array<{
     image_url: string;
     created_at: string | null;
     role: InstanceMemberRole;
+    has_passkey?: boolean | null;
 }>;
 
 export type InstanceType = "production" | "development";
@@ -51,6 +52,8 @@ export type UpdateInstanceInput = {
     partner_tos_link?: string | null;
     partner_tos_screenshot?: string | null;
     partner_tos_terms_accepted?: boolean;
+    compliance_emails?: string[] | null;
+    customer_rfi_emails_enabled?: boolean;
 };
 
 export type DeleteInstanceMemberInput = string;

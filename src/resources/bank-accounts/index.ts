@@ -115,6 +115,7 @@ export type ListBankAccountsResponse = Array<{
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
+    swift_ifsc_branch_code?: string | null;
 }>;
 
 export type GetBankAccountInput = {
@@ -146,6 +147,7 @@ export type GetBankAccountResponse = {
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type DeleteBankAccountInput = {
@@ -166,6 +168,8 @@ export type CreatePixInput = {
     faster_payments_beneficiary_postal_code?: string | null;
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
+    force_cpf_cnpj?: boolean | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreatePixResponse = {
@@ -184,6 +188,7 @@ export type CreatePixResponse = {
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreatePixSafeInput = {
@@ -204,6 +209,8 @@ export type CreatePixSafeInput = {
     faster_payments_beneficiary_postal_code?: string | null;
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
+    force_cpf_cnpj?: boolean | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreatePixSafeResponse = {
@@ -227,6 +234,7 @@ export type CreatePixSafeResponse = {
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateArgentinaTransfersInput = {
@@ -244,6 +252,8 @@ export type CreateArgentinaTransfersInput = {
     faster_payments_beneficiary_postal_code?: string | null;
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
+    force_cpf_cnpj?: boolean | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateArgentinaTransfersResponse = {
@@ -264,6 +274,7 @@ export type CreateArgentinaTransfersResponse = {
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateSpeiInput = {
@@ -282,6 +293,8 @@ export type CreateSpeiInput = {
     faster_payments_beneficiary_postal_code?: string | null;
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
+    force_cpf_cnpj?: boolean | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateSpeiResponse = {
@@ -303,6 +316,7 @@ export type CreateSpeiResponse = {
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateColombiaAchInput = {
@@ -325,6 +339,8 @@ export type CreateColombiaAchInput = {
     faster_payments_beneficiary_postal_code?: string | null;
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
+    force_cpf_cnpj?: boolean | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateColombiaAchResponse = {
@@ -350,6 +366,7 @@ export type CreateColombiaAchResponse = {
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateAchInput = {
@@ -380,6 +397,8 @@ export type CreateAchInput = {
     faster_payments_beneficiary_postal_code?: string | null;
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
+    force_cpf_cnpj?: boolean | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateAchResponse = {
@@ -416,6 +435,7 @@ export type CreateAchResponse = {
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateWireInput = {
@@ -445,6 +465,8 @@ export type CreateWireInput = {
     faster_payments_beneficiary_postal_code?: string | null;
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
+    force_cpf_cnpj?: boolean | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateWireResponse = {
@@ -473,6 +495,7 @@ export type CreateWireResponse = {
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateInternationalSwiftInput = {
@@ -515,6 +538,8 @@ export type CreateInternationalSwiftInput = {
     faster_payments_beneficiary_postal_code?: string | null;
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
+    force_cpf_cnpj?: boolean | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateInternationalSwiftResponse = {
@@ -563,6 +588,7 @@ export type CreateInternationalSwiftResponse = {
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateRtpInput = {
@@ -592,6 +618,8 @@ export type CreateRtpInput = {
     faster_payments_beneficiary_postal_code?: string | null;
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
+    force_cpf_cnpj?: boolean | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateRtpResponse = {
@@ -620,6 +648,7 @@ export type CreateRtpResponse = {
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateSepaInput = {
@@ -644,6 +673,8 @@ export type CreateSepaInput = {
     faster_payments_beneficiary_postal_code?: string | null;
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
+    force_cpf_cnpj?: boolean | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateSepaResponse = {
@@ -672,6 +703,7 @@ export type CreateSepaResponse = {
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateTedInput = {
@@ -690,6 +722,8 @@ export type CreateTedInput = {
     faster_payments_beneficiary_postal_code?: string | null;
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
+    force_cpf_cnpj?: boolean | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreateTedResponse = {
@@ -711,6 +745,7 @@ export type CreateTedResponse = {
     faster_payments_beneficiary_state_province_region?: string | null;
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
+    swift_ifsc_branch_code?: string | null;
 };
 
 export type CreatePlaidBankAccountInput = {

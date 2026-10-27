@@ -53,6 +53,7 @@ export type Transfer = {
     network: Network;
     partner_flat_fee?: number;
     partner_percentage_fee?: number;
+    external_id?: string | null;
 };
 
 export type CreateTransferQuoteInput = {

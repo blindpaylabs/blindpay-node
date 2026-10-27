@@ -18,6 +18,7 @@ import {
     soleRefName,
     synthesizeObjectLiteral,
     type TypegenContext,
+    wrapArrayItem,
 } from "./typegen";
 import {
     type ApplicableChange,
@@ -60,6 +61,7 @@ function resolveFieldNode(spec: Spec, loc: SpecLocator, field: string): unknown 
 /**
  * TypeScript type for a field-insert at `siteFile`. A property referencing a component reuses the
  * SDK symbol that component is mapped to in the same file; otherwise the component is compiled.
+ * An array applies the same rule to its items.
  */
 function fieldInsertType(
     node: unknown,
@@ -68,6 +70,14 @@ function fieldInsertType(
     canonicalEnums: Map<string, string>,
     wholeSchemas: Map<string, { file: string; symbol: string }>
 ): { tsType: string; importsNeeded: string[] } {
+    // biome-ignore lint/suspicious/noExplicitAny: raw OpenAPI schema node
+    const n = node as any;
+    const types: string[] = Array.isArray(n?.type) ? n.type : [n?.type];
+    if (types.includes("array") && n.items) {
+        const item = fieldInsertType(n.items, siteFile, spec, canonicalEnums, wholeSchemas);
+        const list = wrapArrayItem(item.tsType);
+        return { ...item, tsType: types.includes("null") ? `${list} | null` : list };
+    }
     const ref = soleRefName(node);
     if (!ref) return inferTsType(node, canonicalEnums, spec);
     const whole = wholeSchemas.get(ref);

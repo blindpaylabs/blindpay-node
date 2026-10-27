@@ -94,6 +94,11 @@ export type Payin = {
     pse_full_name?: string | null;
     pse_tax_id?: string | null;
     pse_document_type?: Extract<AchCopDocument, "CC" | "NIT"> | null;
+    manual_concluded_at?: string;
+    manual_concluded_by?: string | null;
+    manual_execution_status?: "pending" | "concluded" | "failed" | null;
+    partner_fee?: number;
+    transaction_fee_amount?: number | null;
 };
 
 export type ListPayinsInput = PaginationParams & {
@@ -140,6 +145,9 @@ export type CreateEvmPayinResponse = Pick<
     payment_method?: PayinPaymentMethod | null;
     billing_fee?: number | null;
     sender_amount?: number | null;
+    billing_fee_amount?: number | null;
+    partner_fee?: number;
+    transaction_fee_amount?: number | null;
 };
 
 export function createPayinsResource(instanceId: string, client: InternalApiClient) {
