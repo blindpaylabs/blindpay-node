@@ -12,7 +12,13 @@ import {
 } from "./sdk-scan";
 import { resolveEnumMembers, resolveLocator, resolveProperties, type Spec } from "./spec";
 import { classifySdkType, compareTypeSignatures, specTypeSignature } from "./type-check";
-import { loadCanonicalEnums, synthesizeObjectLiteral, type TypegenContext } from "./typegen";
+import {
+    loadCanonicalEnums,
+    loadWholeSchemaSymbols,
+    soleRefName,
+    synthesizeObjectLiteral,
+    type TypegenContext,
+} from "./typegen";
 import {
     type ApplicableChange,
     isPathLocator,
@@ -49,6 +55,24 @@ function resolveFieldNode(spec: Spec, loc: SpecLocator, field: string): unknown 
         node = items?.$ref ? spec.components.schemas[items.$ref.split("/").pop()] : items;
     }
     return node?.properties?.[field];
+}
+
+/**
+ * TypeScript type for a field-insert at `siteFile`. A property referencing a component reuses the
+ * SDK symbol that component is mapped to in the same file; otherwise the component is compiled.
+ */
+function fieldInsertType(
+    node: unknown,
+    siteFile: string,
+    spec: Spec,
+    canonicalEnums: Map<string, string>,
+    wholeSchemas: Map<string, { file: string; symbol: string }>
+): { tsType: string; importsNeeded: string[] } {
+    const ref = soleRefName(node);
+    if (!ref) return inferTsType(node, canonicalEnums, spec);
+    const whole = wholeSchemas.get(ref);
+    if (whole?.file === siteFile) return { tsType: whole.symbol, importsNeeded: [] };
+    return inferTsType(spec.components.schemas[ref], canonicalEnums, spec);
 }
 
 /**
@@ -130,6 +154,7 @@ export function reconcile(
     const canonicalEnums = existsSync(join(repoRoot, "types/index.d.ts"))
         ? loadCanonicalEnums(repoRoot)
         : new Map<string, string>();
+    const wholeSchemas = loadWholeSchemaSymbols(map);
 
     // (schema, property) pairs already covered by a dedicated enums[] mapping, so the type-check
     // pass below never double-reports an enum-member gap the enum-reconciliation pass already owns.
@@ -268,12 +293,15 @@ export function reconcile(
             // to every declared union site above. Always optional (`field?: T`), matching spec: an
             // added property is never required on an already-shipped type, and emitting it as
             // non-optional would force every existing caller to start passing it.
-            const { tsType, importsNeeded } = inferTsType(
-                resolveFieldNode(spec, entry.spec, field),
-                canonicalEnums,
-                spec
-            );
+            const node = resolveFieldNode(spec, entry.spec, field);
             for (const target of nonOpaqueSites) {
+                const { tsType, importsNeeded } = fieldInsertType(
+                    node,
+                    target.file,
+                    spec,
+                    canonicalEnums,
+                    wholeSchemas
+                );
                 applicable.push({
                     kind: "field-insert",
                     schema: schemaName,
@@ -291,10 +319,10 @@ export function reconcile(
         // TypeScript type. A mismatch is never auto-applicable: silently rewriting a
         // consumer-facing type is exactly the kind of change that needs a human's eyes, so every
         // finding here is either a needs-human failure or (if pre-recorded) a known divergence.
+        // That includes nullability: a spec-nullable field must carry `| null` on every mapped
+        // site, inputs and responses alike, because making a response field nullable breaks
+        // consumers.
         //
-        // Nullability is enforced: a spec-nullable field must carry `| null` on every mapped
-        // site, inputs and responses alike. Making a response field nullable breaks consumers,
-        // so it is a needs-human finding, never an auto-applied change.
         // Discriminator fields (DISCRIMINATOR_FIELDS) are skipped entirely; see its comment.
         for (const field of specProps) {
             if (missingSet.has(field) || DISCRIMINATOR_FIELDS.has(field)) continue;

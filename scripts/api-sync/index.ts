@@ -258,9 +258,8 @@ function main(): void {
             after = insertEnumMember(before, change.site.symbol, change.member);
         } else if (change.kind === "field-insert") {
             // A shared union is declared in types/index.d.ts itself, so that file never imports it.
-            if (file !== "types/index.d.ts") {
-                before = ensureSharedTypeImports(before, change.importsNeeded);
-            }
+            const imports = file === "types/index.d.ts" ? [] : change.importsNeeded;
+            before = ensureSharedTypeImports(before, imports);
             after = insertOptionalField(before, change.site.symbol, change.field, change.tsType);
         } else {
             before = ensureSharedTypeImports(before, change.importsNeeded);

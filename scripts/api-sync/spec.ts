@@ -22,14 +22,16 @@ export function loadSpec(path: string): Spec {
 export function sdkSurface(spec: Spec): Spec {
     const paths: Spec["paths"] = {};
     for (const [path, item] of Object.entries(spec.paths)) {
-        const kept = Object.fromEntries(
-            Object.entries(item).filter(
-                ([, op]) => !(op && typeof op === "object" && op["x-sdk"] === false)
-            )
-        );
-        if (Object.keys(kept).length > 0) paths[path] = kept;
+        const kept = Object.fromEntries(Object.entries(item).filter(([, op]) => !isExcluded(op)));
+        if (Object.keys(kept).some((key) => HTTP_METHOD_KEYS.has(key))) paths[path] = kept;
     }
     return { ...spec, paths };
+}
+
+const HTTP_METHOD_KEYS = new Set(["get", "post", "put", "patch", "delete"]);
+
+function isExcluded(op: JsonValue): boolean {
+    return typeof op === "object" && op !== null && op["x-sdk"] === false;
 }
 
 function collectRefs(node: JsonValue, out: Set<string>): void {

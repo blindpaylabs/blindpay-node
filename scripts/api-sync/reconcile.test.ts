@@ -383,6 +383,73 @@ describe("field-insert of an enum-constrained property", () => {
         ]);
     });
 
+    describe("a property that references a component schema", () => {
+        const refSpec = (country: Record<string, unknown>): Spec => ({
+            paths: {},
+            components: {
+                schemas: {
+                    BankAccountOut: { type: "object", properties: { country } },
+                    TokenOut: {
+                        type: "object",
+                        properties: { amount: { type: "number" } },
+                        required: ["amount"],
+                    },
+                },
+            },
+        });
+        const ref = { $ref: "#/components/schemas/TokenOut" };
+        const token = "export type Token = {\n    amount: number;\n};\n";
+        const repoFiles = () => ({
+            ...files(),
+            "bank.ts": `${files()["bank.ts"]}\n${token}`,
+            "other.ts": token,
+        });
+        const mapWithToken = (file: string): SpecMap => ({
+            ...map,
+            types: [
+                ...map.types,
+                { spec: { schema: "TokenOut" }, sdk: [{ file, symbol: "Token" }] },
+            ],
+        });
+
+        it("reuses the SDK symbol the schema is mapped to in the same file", () => {
+            const repo = makeRepo(repoFiles());
+            const { applicable } = reconcile(
+                refSpec(ref),
+                mapWithToken("bank.ts"),
+                emptyUnmodeled(),
+                repo
+            );
+            expect(applicable).toEqual([
+                expect.objectContaining({ tsType: "Token", importsNeeded: [] }),
+            ]);
+        });
+
+        it("sees through an allOf that only wraps the reference with a description", () => {
+            const repo = makeRepo(repoFiles());
+            const { applicable } = reconcile(
+                refSpec({ allOf: [ref, { description: "Only on some networks" }] }),
+                mapWithToken("bank.ts"),
+                emptyUnmodeled(),
+                repo
+            );
+            expect(applicable).toEqual([expect.objectContaining({ tsType: "Token" })]);
+        });
+
+        it("compiles the referenced schema when it is not mapped in the target file", () => {
+            const repo = makeRepo(repoFiles());
+            const { applicable } = reconcile(
+                refSpec(ref),
+                mapWithToken("other.ts"),
+                emptyUnmodeled(),
+                repo
+            );
+            expect(applicable).toEqual([
+                expect.objectContaining({ tsType: "{\n    amount: number;\n}", importsNeeded: [] }),
+            ]);
+        });
+    });
+
     it("keeps a boolean enum (e.g. `enum: [true]`) as boolean, matching the type check", () => {
         const repo = makeRepo(files());
         const { applicable } = reconcile(

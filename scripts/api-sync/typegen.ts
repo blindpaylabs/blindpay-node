@@ -12,6 +12,17 @@ function resolveRef(spec: Spec, node: JsonValue): JsonValue {
     return node;
 }
 
+/** The component a property points at: a bare $ref, or an allOf that only annotates one. */
+export function soleRefName(node: JsonValue): string | null {
+    const direct = refName(node);
+    if (direct || !Array.isArray(node?.allOf)) return direct;
+    const refs = node.allOf.map(refName).filter((r: string | null) => r !== null);
+    const structural = node.allOf.filter(
+        (m: JsonValue) => !refName(m) && (m?.type || m?.properties || m?.allOf || m?.anyOf)
+    );
+    return refs.length === 1 && structural.length === 0 ? refs[0] : null;
+}
+
 function refName(node: JsonValue): string | null {
     if (node && typeof node === "object" && typeof node.$ref === "string") {
         return node.$ref.split("/").pop() as string;

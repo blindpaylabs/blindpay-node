@@ -56,33 +56,14 @@ export type GetCustodialWalletBalanceResponse = {
     USDC: WalletTokenBalance;
     USDT: WalletTokenBalance;
     USDB: WalletTokenBalance;
-    EURB?: string;
-    EURC?: string;
+    EURB?: WalletTokenBalance;
+    EURC?: WalletTokenBalance;
 };
 
 export type DeleteCustodialWalletInput = {
     customer_id: string;
     id: string;
 };
-
-export type WalletDepositNetwork =
-    | "base"
-    | "sepolia"
-    | "arbitrum_sepolia"
-    | "base_sepolia"
-    | "arbitrum"
-    | "polygon"
-    | "polygon_amoy"
-    | "ethereum"
-    | "stellar"
-    | "stellar_testnet"
-    | "tron"
-    | "solana"
-    | "solana_devnet"
-    | "tempo"
-    | "tempo_testnet"
-    | "arc"
-    | "arc_testnet";
 
 export type WalletDepositToken = "USDC" | "USDT" | "USDB" | "EURC" | "EURB";
 
@@ -91,7 +72,7 @@ export type WalletDepositStatus = "processing" | "completed" | "on_hold" | "refu
 export type WalletDeposit = {
     id: string;
     wallet_id: string;
-    network: WalletDepositNetwork;
+    network: Network;
     token: WalletDepositToken;
     amount: number;
     token_amount: string | null;

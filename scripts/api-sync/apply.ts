@@ -95,7 +95,6 @@ export function insertOptionalField(
         }
     }
 
-    // A multi-line object type's continuation lines sit one level under the field.
     const typeText = tsType.split("\n").join(`\n${indent}`);
     lines.splice(closingIdx, 0, `${indent}${field}?: ${typeText};`);
     const patched = lines.join("\n");

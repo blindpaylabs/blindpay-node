@@ -287,8 +287,8 @@ Sync SDK with API changes:
 - add enum member "tempo_testnet" to src/resources/wallets/offramp.ts:OfframpWalletNetwork (BankAccountWebhookOut.offramp_wallets.[].network)
 - add enum member "tempo_testnet" to types/index.d.ts:Network (VirtualAccountOut.blockchain_wallet.network)
 - add enum member "wallet.update" to src/resources/webhooks/index.ts:WebhookEvents (WebhookEndpointIn.events)
-- add field "EURB?: string" to src/resources/wallets/custodial.ts:GetCustodialWalletBalanceResponse (WalletBalanceOut)
-- add field "EURC?: string" to src/resources/wallets/custodial.ts:GetCustodialWalletBalanceResponse (WalletBalanceOut)
+- add field "EURB?: WalletTokenBalance" to src/resources/wallets/custodial.ts:GetCustodialWalletBalanceResponse (WalletBalanceOut)
+- add field "EURC?: WalletTokenBalance" to src/resources/wallets/custodial.ts:GetCustodialWalletBalanceResponse (WalletBalanceOut)
 - add field "accent_color?: string | null" to src/resources/instances/index.ts:UpdateInstanceInput (UpdateInstanceIn)
 - add field "bank_account_id?: string | null" to src/resources/payouts/index.ts:Payout (PayoutOut)
 - add field "bre_b?: {

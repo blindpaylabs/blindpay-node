@@ -18,14 +18,6 @@ function locatorLabel(loc: {
     return loc.property ? `${loc.schema}.${loc.property}` : (loc.schema as string);
 }
 
-/**
- * The only place old-vs-new spec diffing is used: catching something the state-based pass
- * cannot, by definition, ever see, a member/property that existed in the committed snapshot
- * and is simply gone from the newly delivered spec. Always a hard fail; removals are breaking
- * and must be a deliberate major version bump, never automatic. With `repoRoot`, an enum member
- * no mapped SDK union declares any more counts as already removed by hand, so only members the
- * SDK still carries are reported.
- */
 /** True if any of `sites` is a string-literal union that still lists `member`. An unreadable
  * site counts as declaring it, so a removal is never hidden by a missing file. */
 function sdkDeclares(repoRoot: string, sites: SdkSite[], member: string): boolean {
@@ -39,6 +31,14 @@ function sdkDeclares(repoRoot: string, sites: SdkSite[], member: string): boolea
     });
 }
 
+/**
+ * The only place old-vs-new spec diffing is used: catching something the state-based pass
+ * cannot, by definition, ever see, a member/property that existed in the committed snapshot
+ * and is simply gone from the newly delivered spec. Always a hard fail; removals are breaking
+ * and must be a deliberate major version bump, never automatic. With `repoRoot`, an enum member
+ * no mapped SDK union declares any more counts as already removed by hand, so only members the
+ * SDK still carries are reported.
+ */
 export function detectRemovals(
     oldSpec: Spec,
     newSpec: Spec,

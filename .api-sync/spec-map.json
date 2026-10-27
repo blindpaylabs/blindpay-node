@@ -757,8 +757,8 @@
             },
             "sdk": [
                 {
-                    "file": "src/resources/wallets/custodial.ts",
-                    "symbol": "WalletDepositNetwork"
+                    "file": "types/index.d.ts",
+                    "symbol": "Network"
                 }
             ],
             "notes": "17-member set (adds tempo, tempo_testnet, arc, arc_testnet); shared Network in types/index.d.ts has only 13, so a local union is declared instead of reusing it."

@@ -71,7 +71,7 @@ export function createUploadResource(
         formData: FormData,
         instance_id?: string
     ): Promise<BlindpayApiResponse<T>> {
-        const queryParams = instance_id ? `?instance_id=${instance_id}` : "";
+        const queryParams = instance_id ? `?${new URLSearchParams({ instance_id })}` : "";
 
         const { "Content-Type": _, ...headersWithoutContentType } = headers;
 
@@ -130,7 +130,7 @@ export function createUploadResource(
             instance_id,
             ...data
         }: PresignInput): Promise<BlindpayApiResponse<PresignResponse>> {
-            return client.post(`/presign?instance_id=${instance_id}`, data);
+            return client.post(`/presign?${new URLSearchParams({ instance_id })}`, data);
         },
     };
 }
