@@ -75,6 +75,36 @@ export type UpdateVirtualAccountInput = {
     blockchain_wallet_id: string;
 };
 
+export type BrebSenderDocumentType = "CC" | "CE" | "NIT" | "TI" | "PA";
+
+export type SimulateSpeiDepositInput = {
+    customer_id: string;
+    id: string;
+    amount: number;
+    sender_name?: string | null;
+    sender_clabe?: string | null;
+    sender_rfc_curp?: string | null;
+    deposit_id?: string | null;
+};
+
+export type SimulateSpeiDepositResponse = {
+    success: boolean;
+};
+
+export type SimulateBrebDepositInput = {
+    customer_id: string;
+    id: string;
+    amount: number;
+    sender_name?: string | null;
+    sender_document_type?: BrebSenderDocumentType | null;
+    sender_document_id?: string | null;
+    deposit_id?: string | null;
+};
+
+export type SimulateBrebDepositResponse = {
+    success: boolean;
+};
+
 export function createVirtualAccountsResource(instanceId: string, client: InternalApiClient) {
     return {
         list(
@@ -106,6 +136,28 @@ export function createVirtualAccountsResource(instanceId: string, client: Intern
         }: UpdateVirtualAccountInput): Promise<BlindpayApiResponse<void>> {
             return client.put(
                 `/instances/${instanceId}/customers/${customer_id}/virtual-accounts/${id}`,
+                data
+            );
+        },
+        /** Development instances only. Simulates an MXN deposit arriving on the virtual account's CLABE. */
+        simulateSpeiDeposit({
+            customer_id,
+            id,
+            ...data
+        }: SimulateSpeiDepositInput): Promise<BlindpayApiResponse<SimulateSpeiDepositResponse>> {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/virtual-accounts/${id}/simulate-spei-deposit`,
+                data
+            );
+        },
+        /** Development instances only. Simulates a COP deposit arriving on the virtual account's Bre-B key. */
+        simulateBrebDeposit({
+            customer_id,
+            id,
+            ...data
+        }: SimulateBrebDepositInput): Promise<BlindpayApiResponse<SimulateBrebDepositResponse>> {
+            return client.post(
+                `/instances/${instanceId}/customers/${customer_id}/virtual-accounts/${id}/simulate-breb-deposit`,
                 data
             );
         },

@@ -401,6 +401,77 @@ describe("Customers", () => {
             expect(data).toEqual(mockedCustomer);
         });
 
+        it("should get a business customer with CNAE condition and virtual account preapproval", async () => {
+            const mockedCustomer: GetCustomerResponse = {
+                id: "re_YuaMcI2B8zbQ",
+                is_tos_accepted: true,
+                is_fbo: false,
+                type: "business",
+                kyc_type: "standard",
+                kyc_status: "approved",
+                kyc_warnings: null,
+                email: "finance@example.com.br",
+                tax_id: "12345678000190",
+                address_line_1: "Av. Paulista, 1000",
+                city: "Sao Paulo",
+                state_province_region: "SP",
+                country: "BR",
+                postal_code: "01310100",
+                ip_address: null,
+                image_url: null,
+                phone_number: null,
+                proof_of_address_doc_type: "UTILITY_BILL",
+                proof_of_address_doc_file: "https://example.com/image.png",
+                legal_name: "Empresa Exemplo LTDA",
+                alternate_name: null,
+                formation_date: "2015-01-01T00:00:00.000Z",
+                website: null,
+                owners: [],
+                incorporation_doc_file: "https://example.com/image.png",
+                proof_of_ownership_doc_file: "https://example.com/image.png",
+                external_id: null,
+                instance_id: "in_000000000000",
+                tos_id: null,
+                aiprise_validation_key: "",
+                created_at: "2021-01-01T00:00:00.000Z",
+                updated_at: "2021-01-01T00:00:00.000Z",
+                limit: {
+                    per_transaction: 100000,
+                    daily: 200000,
+                    monthly: 1000000,
+                },
+                cnae_condition: {
+                    status: "pending",
+                    expected_cnaes: ["6201501", "6202300"],
+                    cnae_at_approval: {
+                        primary: { code: "4751201", description: "Comercio varejista" },
+                        secondary: [
+                            { code: "6201501", description: "Desenvolvimento de software" },
+                        ],
+                    },
+                    result_cnae: null,
+                    due_at: "2021-04-01T00:00:00.000Z",
+                    created_at: "2021-01-01T00:00:00.000Z",
+                    reviewed_at: null,
+                },
+                virtual_account_preapproval: {
+                    status: "approved",
+                    banking_partners: ["jpmorgan", "portage"],
+                    rejection_reason: null,
+                    reviewed_at: "2021-01-02T00:00:00.000Z",
+                },
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedCustomer), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.customers.get("re_YuaMcI2B8zbQ");
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedCustomer);
+        });
+
         it("should get a customer", async () => {
             const mockedCustomer: GetCustomerResponse = {
                 id: "re_YuaMcI2B8zbQ",
@@ -666,6 +737,96 @@ describe("Customers", () => {
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedResponse);
+        });
+
+        it("should request a limit increase with multiple supporting documents", async () => {
+            const mockedResponse: RequestLimitIncreaseResponse = {
+                id: "rl_000000000000",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedResponse), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.customers.requestLimitIncrease({
+                customer_id: "re_YuaMcI2B8zbQ",
+                daily: 100000,
+                monthly: 500000,
+                per_transaction: 50000,
+                supporting_documents: [
+                    {
+                        type: "individual_pay_stub",
+                        file: "https://example.com/pay-stub.pdf",
+                    },
+                    {
+                        type: "individual_crypto_exchange_statement",
+                        file: "https://example.com/exchange-statement.pdf",
+                    },
+                ],
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedResponse);
+
+            const [url, init] = fetchMock.mock.calls[0];
+            expect(url).toContain(
+                "/instances/in_000000000000/customers/re_YuaMcI2B8zbQ/limit-increase"
+            );
+            expect(init?.method).toBe("POST");
+            expect(JSON.parse(init?.body as string)).toEqual({
+                daily: 100000,
+                monthly: 500000,
+                per_transaction: 50000,
+                supporting_documents: [
+                    {
+                        type: "individual_pay_stub",
+                        file: "https://example.com/pay-stub.pdf",
+                    },
+                    {
+                        type: "individual_crypto_exchange_statement",
+                        file: "https://example.com/exchange-statement.pdf",
+                    },
+                ],
+            });
+        });
+    });
+
+    describe("Get limit increase requests with supporting documents", () => {
+        it("should get limit increase requests with every supporting document", async () => {
+            const mockedLimitIncreaseRequests: GetLimitIncreaseRequestsResponse = [
+                {
+                    id: "rl_000000000000",
+                    customer_id: "re_YuaMcI2B8zbQ",
+                    status: "in_review",
+                    daily: 50000,
+                    monthly: 250000,
+                    per_transaction: 25000,
+                    supporting_document_file: "https://example.com/contract.pdf",
+                    supporting_document_type: "business_contract",
+                    supporting_documents: [
+                        {
+                            type: "business_contract",
+                            file: "https://example.com/contract.pdf",
+                        },
+                        {
+                            type: "business_shareholder_loan",
+                            file: "https://example.com/loan.pdf",
+                        },
+                    ],
+                    created_at: "2025-01-15T10:30:00.000Z",
+                    updated_at: "2025-01-15T10:30:00.000Z",
+                },
+            ];
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedLimitIncreaseRequests), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } =
+                await blindpay.customers.getLimitIncreaseRequests("re_YuaMcI2B8zbQ");
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedLimitIncreaseRequests);
         });
     });
 });

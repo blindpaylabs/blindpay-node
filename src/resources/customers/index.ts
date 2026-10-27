@@ -76,6 +76,39 @@ export type Owner = {
     customer_id?: string;
 };
 
+export type VirtualAccountPreapprovalStatus = "in_review" | "approved" | "rejected";
+
+export type VirtualAccountPreapprovalBankingPartner = "jpmorgan" | "portage";
+
+export type CustomerVirtualAccountPreapproval = {
+    status: VirtualAccountPreapprovalStatus;
+    banking_partners: VirtualAccountPreapprovalBankingPartner[];
+    rejection_reason: string | null;
+    reviewed_at: string | null;
+};
+
+export type CnaeConditionStatus = "pending" | "passed" | "failed" | "cancelled";
+
+export type Cnae = {
+    code: string;
+    description: string;
+};
+
+export type CnaeSet = {
+    primary: Cnae;
+    secondary: Cnae[];
+};
+
+export type CustomerCnaeCondition = {
+    status: CnaeConditionStatus;
+    expected_cnaes: string[];
+    cnae_at_approval: CnaeSet;
+    result_cnae: CnaeSet | null;
+    due_at: string;
+    created_at: string;
+    reviewed_at: string | null;
+};
+
 export type IndividualWithStandardKYC = {
     id: string;
     is_tos_accepted: boolean | null;
@@ -136,6 +169,8 @@ export type IndividualWithStandardKYC = {
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
     publicly_traded?: boolean | null;
+    cnae_condition?: CustomerCnaeCondition;
+    virtual_account_preapproval?: CustomerVirtualAccountPreapproval;
 };
 
 export type IndividualWithEnhancedKYC = {
@@ -201,6 +236,8 @@ export type IndividualWithEnhancedKYC = {
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
     publicly_traded?: boolean | null;
+    cnae_condition?: CustomerCnaeCondition;
+    virtual_account_preapproval?: CustomerVirtualAccountPreapproval;
 };
 
 export type BusinessWithStandardKYB = {
@@ -262,6 +299,8 @@ export type BusinessWithStandardKYB = {
     source_of_wealth?: SourceOfWealth | null;
     recipient_relationship?: RecipientRelationship | null;
     sole_proprietor_doc_type?: SoleProprietorDocType | null;
+    cnae_condition?: CustomerCnaeCondition;
+    virtual_account_preapproval?: CustomerVirtualAccountPreapproval;
 };
 
 export type CreateIndividualWithStandardKYCInput = {
@@ -479,18 +518,23 @@ export type LimitIncreaseRequestSupportingDocumentType =
     | "individual_bank_statement"
     | "individual_tax_return"
     | "individual_proof_of_income"
+    | "individual_pay_stub"
+    | "individual_employment_letter"
+    | "individual_investment_statement"
+    | "individual_crypto_exchange_statement"
+    | "individual_blockchain_wallet_statement"
     | "business_bank_statement"
     | "business_financial_statements"
     | "business_accounts_receivable"
     | "business_contract"
     | "business_merchant_processor_statement"
     | "business_shareholder_loan"
-    | "individual_blockchain_wallet_statement"
-    | "individual_crypto_exchange_statement"
-    | "individual_employment_letter"
-    | "individual_investment_statement"
-    | "individual_pay_stub"
     | "business_tax_return";
+
+export type LimitIncreaseSupportingDocument = {
+    type: LimitIncreaseRequestSupportingDocumentType;
+    file: string;
+};
 
 export type GetLimitIncreaseRequestsResponse = Array<{
     id: string;
@@ -501,6 +545,7 @@ export type GetLimitIncreaseRequestsResponse = Array<{
     per_transaction: number | null;
     supporting_document_file: string | null;
     supporting_document_type: LimitIncreaseRequestSupportingDocumentType | null;
+    supporting_documents?: LimitIncreaseSupportingDocument[] | null;
     created_at: string | null;
     updated_at: string | null;
     approved_per_transaction?: number | null;
@@ -513,8 +558,9 @@ export type RequestLimitIncreaseInput = {
     daily: number | null;
     monthly: number | null;
     per_transaction: number | null;
-    supporting_document_file: string;
-    supporting_document_type: LimitIncreaseRequestSupportingDocumentType;
+    supporting_document_file?: string;
+    supporting_document_type?: LimitIncreaseRequestSupportingDocumentType;
+    supporting_documents?: LimitIncreaseSupportingDocument[];
 };
 
 export type RequestLimitIncreaseResponse = {
