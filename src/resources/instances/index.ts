@@ -21,6 +21,26 @@ export type GetInstanceMembersResponse = Array<{
     role: InstanceMemberRole;
 }>;
 
+export type InstanceType = "production" | "development";
+
+export type InstanceOnboardingStep =
+    | "initial"
+    | "business_details"
+    | "business_profile"
+    | "documents"
+    | "applicant"
+    | "completed"
+    | "blocked";
+
+export type Instance = {
+    id: string;
+    name: string;
+    type: InstanceType;
+    onboarding_step: InstanceOnboardingStep;
+};
+
+export type GetInstanceResponse = Instance;
+
 export type UpdateInstanceInput = {
     name: string;
     customer_invite_redirect_url?: string | null;
@@ -45,6 +65,9 @@ export type MigrateInstanceOwnershipResponse = {
 
 export function createInstancesResource(instanceId: string, client: InternalApiClient) {
     return {
+        get(): Promise<BlindpayApiResponse<GetInstanceResponse>> {
+            return client.get(`/instances/${instanceId}`);
+        },
         getMembers(): Promise<BlindpayApiResponse<GetInstanceMembersResponse>> {
             return client.get(`/instances/${instanceId}/members`);
         },

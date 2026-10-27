@@ -1,10 +1,34 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "../../client";
+import type { GetInstanceResponse } from ".";
 
 describe("Instances", () => {
     afterEach(() => fetchMock.resetMocks());
 
     const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
+
+    describe("Get instance", () => {
+        it("should get the instance", async () => {
+            const mockedInstance: GetInstanceResponse = {
+                id: "in_000000000000",
+                name: "My Instance",
+                type: "development",
+                onboarding_step: "completed",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedInstance), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.instances.get();
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedInstance);
+            const [url, init] = fetchMock.mock.calls[0];
+            expect(url).toBe("https://api.blindpay.com/v1/instances/in_000000000000");
+            expect(init?.method).toBe("GET");
+        });
+    });
 
     describe("Get instance members", () => {
         it("should get instance members", async () => {

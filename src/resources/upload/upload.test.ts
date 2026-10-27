@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "../../client";
-import type { UploadResponse } from ".";
+import type { PresignResponse, UploadAnalyzeResponse, UploadResponse } from ".";
 
 describe("Upload", () => {
     afterEach(() => fetchMock.resetMocks());
@@ -47,6 +47,111 @@ describe("Upload", () => {
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedUpload);
+        });
+    });
+
+    describe("Analyze document", () => {
+        it("should analyze a document", async () => {
+            const mockedAnalysis: UploadAnalyzeResponse = {
+                approval_rate: "high",
+                description: "The document is a legible utility bill matching the provided name.",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedAnalysis), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const file = new Blob(["test content"], { type: "application/pdf" });
+
+            const { data, error } = await blindpay.upload.analyze({
+                file,
+                type: "proof_of_address",
+                metadata: JSON.stringify({ full_name: "Jane Doe" }),
+                instance_id: "in_000000000000",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedAnalysis);
+
+            const [url, init] = fetchMock.mock.calls[0];
+            expect(url).toBe(
+                "https://api.blindpay.com/v1/upload/analyze?instance_id=in_000000000000"
+            );
+            expect(init?.method).toBe("POST");
+            const body = init?.body as FormData;
+            expect(body).toBeInstanceOf(FormData);
+            expect(body.get("type")).toBe("proof_of_address");
+            expect(body.get("metadata")).toBe(JSON.stringify({ full_name: "Jane Doe" }));
+            expect(body.get("file")).toBeInstanceOf(Blob);
+            expect(new Headers(init?.headers).has("Content-Type")).toBe(false);
+        });
+
+        it("should analyze a document without metadata or instance_id", async () => {
+            const mockedAnalysis: UploadAnalyzeResponse = {
+                approval_rate: "low",
+                description: "The document is blurry.",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedAnalysis), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const file = new Blob(["test content"], { type: "image/png" });
+
+            const { data, error } = await blindpay.upload.analyze({
+                file,
+                type: "selfie",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedAnalysis);
+
+            const [url, init] = fetchMock.mock.calls[0];
+            expect(url).toBe("https://api.blindpay.com/v1/upload/analyze");
+            const body = init?.body as FormData;
+            expect(body.has("metadata")).toBe(false);
+        });
+
+        it("should return an error when analysis fails", async () => {
+            fetchMock.mockResponseOnce(JSON.stringify({ message: "Unsupported file" }), {
+                status: 400,
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const file = new Blob(["test content"], { type: "text/plain" });
+
+            const { data, error } = await blindpay.upload.analyze({ file, type: "invoice" });
+
+            expect(data).toBeNull();
+            expect(error).toEqual({ message: "Unsupported file" });
+        });
+    });
+
+    describe("Presign file URL", () => {
+        it("should presign a file URL", async () => {
+            const mockedPresign: PresignResponse = {
+                file_url: "https://storage.blindpay.com/uploads/abc123.pdf?signature=xyz",
+                expires_at: "2025-01-01T01:00:00Z",
+            };
+
+            fetchMock.mockResponseOnce(JSON.stringify(mockedPresign), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { data, error } = await blindpay.upload.presign({
+                file_url: "https://storage.blindpay.com/uploads/abc123.pdf",
+                instance_id: "in_000000000000",
+            });
+
+            expect(error).toBeNull();
+            expect(data).toEqual(mockedPresign);
+
+            const [url, init] = fetchMock.mock.calls[0];
+            expect(url).toBe("https://api.blindpay.com/v1/presign?instance_id=in_000000000000");
+            expect(init?.method).toBe("POST");
+            expect(JSON.parse(init?.body as string)).toEqual({
+                file_url: "https://storage.blindpay.com/uploads/abc123.pdf",
+            });
         });
     });
 });
