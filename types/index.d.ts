@@ -874,6 +874,8 @@ export type PayerRules = {
     pse_bank_code?: string | null;
 }
 
+export type PayoutForcedProvider = "zenus" | "veem" | "infinitus_portage";
+
 export type TrackingStatus = 'processing' | 'on_hold' | 'completed' | 'pending_review' | "pending_refund_review";
 
 export type EstimatedTimeOfArrival = '5_min' | '30_min' | '2_hours' | '1_business_day' | '2_business_days' | '5_business_days' | "5_30_min";
@@ -898,7 +900,7 @@ export type PayoutTrackingPayment = {
     recipient_account_type: string | null ;
     estimated_time_of_arrival: EstimatedTimeOfArrival | null ;
     completed_at: string | null ;
-    forced_provider?: "zenus" | "veem" | null;
+    forced_provider?: PayoutForcedProvider | null;
     refund_review_actioned_at?: string | null;
     refund_review_detected_at?: string | null;
     refund_review_reason?: "amount_threshold" | "time_window" | "late_cancellation_no_live_run" | "master_account_return" | "policy_always_review" | "operator_requested" | "partial_return" | null;

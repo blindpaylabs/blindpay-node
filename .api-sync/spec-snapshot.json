@@ -7931,7 +7931,8 @@
                 ],
                 "enum": [
                   "zenus",
-                  "veem"
+                  "veem",
+                  "infinitus_portage"
                 ],
                 "description": "Ops-set per-payout provider override (backoffice Reroute tab). When present it wins over the instance payment_route and default routing at send time. Left in place after the send as an audit marker of the forced route.",
                 "example": "veem"
@@ -8598,7 +8599,8 @@
                 ],
                 "enum": [
                   "zenus",
-                  "veem"
+                  "veem",
+                  "infinitus_portage"
                 ],
                 "description": "Ops-set per-payout provider override (backoffice Reroute tab). When present it wins over the instance payment_route and default routing at send time. Left in place after the send as an audit marker of the forced route.",
                 "example": "veem"
@@ -9265,7 +9267,8 @@
                 ],
                 "enum": [
                   "zenus",
-                  "veem"
+                  "veem",
+                  "infinitus_portage"
                 ],
                 "description": "Ops-set per-payout provider override (backoffice Reroute tab). When present it wins over the instance payment_route and default routing at send time. Left in place after the send as an audit marker of the forced route.",
                 "example": "veem"
@@ -9932,7 +9935,8 @@
                 ],
                 "enum": [
                   "zenus",
-                  "veem"
+                  "veem",
+                  "infinitus_portage"
                 ],
                 "description": "Ops-set per-payout provider override (backoffice Reroute tab). When present it wins over the instance payment_route and default routing at send time. Left in place after the send as an audit marker of the forced route.",
                 "example": "veem"
@@ -18319,7 +18323,8 @@
                 ],
                 "enum": [
                   "zenus",
-                  "veem"
+                  "veem",
+                  "infinitus_portage"
                 ],
                 "description": "Ops-set per-payout provider override (backoffice Reroute tab). When present it wins over the instance payment_route and default routing at send time. Left in place after the send as an audit marker of the forced route.",
                 "example": "veem"
@@ -20731,7 +20736,8 @@
                 ],
                 "enum": [
                   "zenus",
-                  "veem"
+                  "veem",
+                  "infinitus_portage"
                 ],
                 "description": "Ops-set per-payout provider override (backoffice Reroute tab). When present it wins over the instance payment_route and default routing at send time. Left in place after the send as an audit marker of the forced route.",
                 "example": "veem"

@@ -411,6 +411,19 @@
         {
             "spec": {
                 "schema": "PayoutOut",
+                "property": "tracking_payment.forced_provider"
+            },
+            "sdk": [
+                {
+                    "file": "types/index.d.ts",
+                    "symbol": "PayoutForcedProvider"
+                }
+            ],
+            "notes": null
+        },
+        {
+            "spec": {
+                "schema": "PayoutOut",
                 "property": "tracking_payment.estimated_time_of_arrival"
             },
             "sdk": [
