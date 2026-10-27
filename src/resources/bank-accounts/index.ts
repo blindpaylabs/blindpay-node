@@ -82,6 +82,7 @@ export type ListBankAccountsResponse = Array<{
     swift_intermediary_bank_account_number_iban?: string | null;
     swift_intermediary_bank_name?: string | null;
     swift_intermediary_bank_country?: Country | null;
+    swift_intermediary_bank_routing_number?: string | null;
     pix_safe_bank_code?: string | null;
     pix_safe_branch_code?: string | null;
     pix_safe_cpf_cnpj?: string | null;
@@ -346,6 +347,7 @@ export type CreateInternationalSwiftInput = {
     swift_intermediary_bank_country?: Country | null;
     swift_intermediary_bank_name?: string | null;
     swift_intermediary_bank_swift_code_bic?: string | null;
+    swift_intermediary_bank_routing_number?: string | null;
     swift_payment_code?: string | null;
     business_industry?: BusinessIndustry | null;
     phone_number?: string | null;
@@ -386,6 +388,7 @@ export type CreateInternationalSwiftResponse = {
     swift_intermediary_bank_account_number_iban: string | null;
     swift_intermediary_bank_name: string | null;
     swift_intermediary_bank_country: Country | null;
+    swift_intermediary_bank_routing_number?: string | null;
     swift_payment_code: string | null;
     created_at: string | null;
 };

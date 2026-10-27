@@ -279,6 +279,7 @@ describe("Bank accounts", () => {
                 swift_intermediary_bank_account_number_iban: null,
                 swift_intermediary_bank_name: null,
                 swift_intermediary_bank_country: null,
+                swift_intermediary_bank_routing_number: "021000089",
                 swift_payment_code: null,
                 created_at: "2021-01-01T00:00:00Z",
             };
@@ -312,10 +313,20 @@ describe("Bank accounts", () => {
                 swift_intermediary_bank_country: null,
                 swift_intermediary_bank_name: null,
                 swift_intermediary_bank_swift_code_bic: null,
+                swift_intermediary_bank_routing_number: "021000089",
             });
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedInternationalSwiftAccount);
+            const [url, init] = fetchMock.mock.calls[0];
+            expect(url).toBe(
+                "https://api.blindpay.com/v1/instances/in_000000000000/customers/re_000000000000/bank-accounts"
+            );
+            expect(init?.method).toBe("POST");
+            expect(JSON.parse(init?.body as string)).toMatchObject({
+                type: "international_swift",
+                swift_intermediary_bank_routing_number: "021000089",
+            });
         });
     });
 
