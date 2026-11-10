@@ -26,11 +26,13 @@ blindpay-node/
   test/fixtures/spec/                   # Shared spec-shaped fixtures (copied from sdk-parity; don't hand-edit)
   src/
     index.ts                            # Re-exports the client, BlindPayError, listed shared types and all resources
-    client.ts                           # BlindPay class (constructor, HTTP methods, resource wiring)
+    client.ts                           # BlindPay class (BlindPayOptions, resource wiring) over internal/http.ts
+    transport.test.ts                   # Transport contract: config, errors, the retry table, on a fake clock
     internal/
       api-client.ts                     # InternalApiClient interface (get/post/put/patch/delete)
       blindpay-error.ts                 # BlindPayError class
       error-response.ts                 # toErrorResponse: API error envelope -> ErrorResponse
+      http.ts                           # send(): the one transport (timeouts, idempotency keys, retries, error parsing)
       query.ts                          # toQueryString: list filters -> "?a=b", skipping absent values
       test-fixtures.ts                  # Test-only loader for test/fixtures/spec (never import from SDK code)
       helpers/strict-omit.ts            # StrictOmit<T, K> utility type
@@ -121,6 +123,18 @@ Examples: `createPayinsResource`, `createPartnerFeesResource`, `createBlockchain
 - Formatter: 4-space indent, double quotes, trailing commas (ES5), semicolons always, LF line endings, 100-char line width.
 - Linter: Biome recommended rules. No unused variables (error). `import type` required (error). No explicit `any` (warn).
 - TypeScript: `verbatimModuleSyntax: true` (must use `import type` for type-only imports). `strict: true`.
+
+## Transport (`src/internal/http.ts`)
+
+Every request, JSON or multipart, goes through `send()`; resources never call `fetch`. It owns:
+
+- **Config** (`BlindPayOptions`): `baseUrl` (default `https://api.blindpay.com`, paths start `/v1`), `timeoutMs` (60 s per attempt, body read included), `maxRetries` (2), `fetch` (injectable; tests pass a fake one).
+- **Idempotency**: an empty or >255-char `idempotencyKey` is rejected with `type: "invalid_request"` before anything is sent. With retries on, a non-multipart mutation without a key gets a `randomUUID()` key **before the first attempt**. Multipart never sends one.
+- **Retries** follow the sdk-parity Appendix A2 table in `decide()`, which also sets `error.retryable`, so the two can't drift. GETs: no response, 408, 429, 500/502/503/504. Mutations: only no response, 429 and `409 idempotency_key_in_flight`, and **never a 5xx** (the API releases the key on a 5xx, so a resend re-executes). `Retry-After` is honoured when it is an integer of at most 60 s; otherwise `min(8 s, 0.5 s * 2^attempt)` with jitter. The body is serialised once. Sleeps stop on the caller's `signal`.
+- **Errors** never throw: `ErrorResponse` gains `status` (0 without a response), `request_id` (`X-Request-Id`), `idempotency_key`, `retryable` and `type`, each set only when known. A non-JSON error body becomes `HTTP <status> <text>`.
+- `Content-Type: application/json` only when there is a body.
+
+Retry tests use `vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] })`; never let a test sleep for real. A client in a test that mocks a 5xx GET and doesn't test retries should pass `maxRetries: 0`.
 
 ## Generate before you hand-write
 

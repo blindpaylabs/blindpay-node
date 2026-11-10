@@ -161,6 +161,9 @@ describe("Upload", () => {
                 message: "Unsupported file",
                 errors: [],
                 trace_id: "0af7651916cd43dd8448eb211c80319c",
+                status: 400,
+                type: "api_error",
+                retryable: false,
             });
         });
     });
@@ -233,7 +236,12 @@ describe("Upload", () => {
                 const { data, error } = await call();
 
                 expect(data).toBeNull();
-                expect(error).toStrictEqual({ message: "fetch failed" });
+                expect(error).toStrictEqual({
+                    message: "fetch failed",
+                    status: 0,
+                    type: "connection_error",
+                    retryable: false,
+                });
             });
 
             it("returns a non-JSON error body as an error naming the status", async () => {
@@ -247,7 +255,12 @@ describe("Upload", () => {
                 const { data, error } = await call();
 
                 expect(data).toBeNull();
-                expect(error).toStrictEqual({ message: "HTTP 502 Bad Gateway" });
+                expect(error).toStrictEqual({
+                    message: "HTTP 502 Bad Gateway",
+                    status: 502,
+                    type: "api_error",
+                    retryable: false,
+                });
             });
 
             it("returns a 2xx body that isn't JSON as an error", async () => {
@@ -258,6 +271,9 @@ describe("Upload", () => {
                 expect(data).toBeNull();
                 expect(error).toStrictEqual({
                     message: "HTTP 200: the response body is not valid JSON",
+                    status: 200,
+                    type: "invalid_response",
+                    retryable: false,
                 });
             });
 

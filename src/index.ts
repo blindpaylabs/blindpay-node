@@ -14,6 +14,7 @@ export type {
     Currency,
     CurrencyType,
     ErrorResponse,
+    ErrorType,
     EstimatedAnnualRevenue,
     KycStatus,
     Network,

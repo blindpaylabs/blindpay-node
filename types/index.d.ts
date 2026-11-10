@@ -10,7 +10,40 @@ export type ErrorResponse = {
     errors?: string[];
     /** Request trace ID; include it when contacting BlindPay support. */
     trace_id?: string;
+    /** HTTP status of the response; `0` when no response arrived (or the SDK refused to send). */
+    status?: number;
+    /** The `X-Request-Id` response header. */
+    request_id?: string;
+    /**
+     * The `Idempotency-Key` the request carried, yours or the one the SDK generated. After a
+     * timeout or a 5xx on a create, look the resource up first, then resend with this key.
+     */
+    idempotency_key?: string;
+    /**
+     * `true` when sending the same request again (same input, same `idempotency_key`) is safe
+     * and may succeed. The SDK already retried what it could; a mutation that got a 5xx is
+     * never resent automatically, because the API may have acted before failing.
+     */
+    retryable?: boolean;
+    /** What went wrong; see `ErrorType`. */
+    type?: ErrorType;
 }
+
+/**
+ * - `api_error`: the API answered with a non-2xx status.
+ * - `connection_error`: no response arrived (DNS, TLS, connection reset...).
+ * - `timeout_error`: no complete response within `timeoutMs`.
+ * - `aborted`: the caller's `signal` aborted the request.
+ * - `invalid_request`: the SDK refused to send it (e.g. an empty `idempotencyKey`).
+ * - `invalid_response`: a 2xx response whose body isn't JSON.
+ */
+export type ErrorType =
+    | "api_error"
+    | "connection_error"
+    | "timeout_error"
+    | "aborted"
+    | "invalid_request"
+    | "invalid_response";
 
 export type BlindpayErrorResponse = {
     data: null
@@ -22,14 +55,22 @@ export type BlindpaySuccessResponse<T> = {
     error: null;
 }
 
-/** Per-call options for methods that change something (POST, PUT, PATCH, DELETE). */
+/** Per-call options, the last argument of every method. */
 export type RequestOptions = {
     /**
-     * Sent as the `Idempotency-Key` header (up to 255 characters, a UUID is a good default).
-     * Retrying with the same key and the exact same body replays the original response
-     * instead of acting twice; keys are kept for 24 hours. Ignored on file uploads.
+     * Sent as the `Idempotency-Key` header on POST, PUT, PATCH and DELETE (1 to 255 characters;
+     * a UUID is a good default). Retrying with the same key and the exact same body replays the
+     * original response instead of acting twice; keys are kept for 24 hours. When you don't
+     * pass one and retries are on, the SDK generates one. An empty or longer key is rejected
+     * without sending anything. Ignored on GETs and file uploads.
      */
     idempotencyKey?: string;
+    /** Per-attempt timeout in milliseconds for this call; defaults to the client's `timeoutMs`. */
+    timeoutMs?: number;
+    /** Extra request headers. `Authorization`, `User-Agent` and `Idempotency-Key` can't be overridden. */
+    headers?: Record<string, string>;
+    /** Aborts the call, including a pending retry wait. */
+    signal?: AbortSignal;
 }
 
 /** Body of every endpoint whose only answer is `{ success: true }` (deletes, most updates). */

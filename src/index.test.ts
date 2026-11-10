@@ -6,6 +6,7 @@ import type {
     Country,
     Currency,
     ErrorResponse,
+    ErrorType,
     InitiateInput,
     InitiateResponse,
     Network,
@@ -36,7 +37,10 @@ describe("Package entry", () => {
     });
 
     it("exports the shared types", () => {
-        expectTypeOf<RequestOptions>().toEqualTypeOf<{ idempotencyKey?: string }>();
+        expectTypeOf<RequestOptions>().toHaveProperty("idempotencyKey");
+        expectTypeOf<RequestOptions>().toHaveProperty("timeoutMs");
+        expectTypeOf<ErrorResponse>().toHaveProperty("status");
+        expectTypeOf<"timeout_error">().toExtend<ErrorType>();
         expectTypeOf<ErrorResponse>().toHaveProperty("message").toEqualTypeOf<string>();
         expectTypeOf<BlindpayApiResponse<SuccessResponse>>().toHaveProperty("error");
         expectTypeOf<PaginationParams>().toHaveProperty("starting_after");
@@ -47,7 +51,8 @@ describe("Package entry", () => {
         expectTypeOf<"BR">().toExtend<Country>();
         expectTypeOf<"USDC">().toExtend<StablecoinToken>();
         expectTypeOf<"completed">().toExtend<TransactionStatus>();
-        expectTypeOf<BlindPayOptions>().toEqualTypeOf<{ apiKey: string; instanceId: string }>();
+        expectTypeOf<BlindPayOptions>().toHaveProperty("apiKey").toEqualTypeOf<string>();
+        expectTypeOf<BlindPayOptions>().toHaveProperty("maxRetries");
         expectTypeOf<InitiateInput>().toHaveProperty("idempotency_key").toEqualTypeOf<string>();
         expectTypeOf<InitiateResponse>().toHaveProperty("url").toEqualTypeOf<string>();
     });

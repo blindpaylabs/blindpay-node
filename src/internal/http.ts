@@ -1,0 +1,321 @@
+import { randomUUID } from "node:crypto";
+import type { BlindpayApiResponse, ErrorResponse, ErrorType, RequestOptions } from "../../types";
+import { toErrorResponse } from "./error-response";
+
+export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+export type TransportConfig = {
+    /** Origin without the `/v1` prefix, e.g. `https://api.blindpay.com`. */
+    baseUrl: string;
+    apiKey: string;
+    userAgent: string;
+    timeoutMs: number;
+    maxRetries: number;
+    fetch: typeof fetch;
+};
+
+export type RequestSpec = {
+    method: HttpMethod;
+    /** Path after `/v1`, query string included. */
+    path: string;
+    json?: Record<string, unknown>;
+    form?: FormData;
+    options?: RequestOptions;
+};
+
+const MAX_IDEMPOTENCY_KEY_LENGTH = 255;
+const MAX_RETRY_AFTER_SECONDS = 60;
+/** 5xx codes the spec's error table classifies `terminal`: never retried. */
+const TERMINAL_5XX_CODES = new Set(["PAYINS_CARD_PAYMENT_PENDING"]);
+const RETRYABLE_GET_STATUSES = new Set([408, 429, 500, 502, 503, 504]);
+
+/** What one attempt produced: an HTTP response (body already read) or no response at all. */
+type Attempt =
+    | { kind: "response"; response: Response; text: string }
+    | { kind: "failure"; type: "connection_error" | "timeout_error" | "aborted"; message: string };
+
+type Decision = {
+    /** Safe to send the same request again (same bytes, same Idempotency-Key). */
+    retryable: boolean;
+    /** The SDK resends it on its own (v3 C3: never a mutation that got a 5xx). */
+    autoRetry: boolean;
+    /** Wait before the next attempt, when the server said how long (Retry-After <= 60 s). */
+    retryAfterMs?: number;
+};
+
+/**
+ * Sends one API call through the retry loop (sdk-parity Appendix A2) and returns the SDK's
+ * `{ data, error }` result. It never throws: network failures, timeouts, aborts, non-JSON
+ * bodies and rejected options all come back as `error`.
+ */
+export async function send<T>(
+    config: TransportConfig,
+    spec: RequestSpec
+): Promise<BlindpayApiResponse<T>> {
+    const { method, path, json, form, options = {} } = spec;
+    const isMutation = method !== "GET";
+    const isMultipart = form !== undefined;
+
+    let idempotencyKey: string | undefined;
+    if (isMutation && !isMultipart) {
+        idempotencyKey = options.idempotencyKey;
+        if (
+            idempotencyKey !== undefined &&
+            (idempotencyKey === "" || idempotencyKey.length > MAX_IDEMPOTENCY_KEY_LENGTH)
+        ) {
+            return failure({
+                message: `idempotencyKey must be 1 to ${MAX_IDEMPOTENCY_KEY_LENGTH} characters; the API ignores an empty key and rejects a longer one`,
+                type: "invalid_request",
+                status: 0,
+                retryable: false,
+            });
+        }
+        // Generated before the first attempt: that attempt may already have executed.
+        if (idempotencyKey === undefined && config.maxRetries > 0) idempotencyKey = randomUUID();
+    }
+
+    const headers: Record<string, string> = {
+        ...options.headers,
+        Accept: "application/json",
+        "User-Agent": config.userAgent,
+        Authorization: `Bearer ${config.apiKey}`,
+    };
+    if (json !== undefined) headers["Content-Type"] = "application/json";
+    if (idempotencyKey !== undefined) headers["Idempotency-Key"] = idempotencyKey;
+
+    // Serialised once: every attempt resends identical bytes (the API hashes the raw body).
+    const body = json !== undefined ? JSON.stringify(json) : form;
+    const url = `${config.baseUrl}/v1${path}`;
+    const timeoutMs = options.timeoutMs ?? config.timeoutMs;
+
+    for (let attempt = 0; ; attempt++) {
+        const result = await sendOnce(
+            config.fetch,
+            url,
+            { method, headers, body },
+            timeoutMs,
+            options.signal
+        );
+
+        if (result.kind === "response" && result.response.ok) {
+            return toSuccess<T>(result, idempotencyKey);
+        }
+
+        const error: ErrorResponse & { type: ErrorType } =
+            result.kind === "response"
+                ? toApiError(result)
+                : { message: result.message, type: result.type, status: 0 };
+        const decision = decide({
+            method,
+            isMultipart,
+            hasKey: idempotencyKey !== undefined,
+            attempt: result,
+            code: error.code,
+            message: error.message,
+        });
+
+        if (decision.autoRetry && attempt < config.maxRetries) {
+            const delayMs = decision.retryAfterMs ?? backoffMs(attempt);
+            if (await sleep(delayMs, options.signal)) continue;
+            return failure({
+                message: "The request was aborted",
+                type: "aborted",
+                status: 0,
+                retryable: false,
+                idempotency_key: idempotencyKey,
+            });
+        }
+
+        return failure({
+            ...error,
+            retryable: decision.retryable,
+            idempotency_key: idempotencyKey,
+        });
+    }
+}
+
+/** One attempt with its own timeout, which also covers reading the body. */
+async function sendOnce(
+    fetchFn: typeof fetch,
+    url: string,
+    init: { method: HttpMethod; headers: Record<string, string>; body?: string | FormData },
+    timeoutMs: number,
+    callerSignal?: AbortSignal
+): Promise<Attempt> {
+    if (callerSignal?.aborted) {
+        return { kind: "failure", type: "aborted", message: "The request was aborted" };
+    }
+    // Node 18 has no AbortSignal.any, so the caller's signal is forwarded by hand.
+    const controller = new AbortController();
+    let timedOut = false;
+    const timer = setTimeout(() => {
+        timedOut = true;
+        controller.abort();
+    }, timeoutMs);
+    const onCallerAbort = () => controller.abort();
+    callerSignal?.addEventListener("abort", onCallerAbort);
+    try {
+        const response = await fetchFn(url, { ...init, signal: controller.signal });
+        const text = await response.text();
+        return { kind: "response", response, text };
+    } catch (error) {
+        if (callerSignal?.aborted) {
+            return { kind: "failure", type: "aborted", message: "The request was aborted" };
+        }
+        if (timedOut) {
+            return {
+                kind: "failure",
+                type: "timeout_error",
+                message: `The request timed out after ${timeoutMs} ms`,
+            };
+        }
+        return { kind: "failure", type: "connection_error", message: messageOf(error) };
+    } finally {
+        clearTimeout(timer);
+        callerSignal?.removeEventListener("abort", onCallerAbort);
+    }
+}
+
+/**
+ * Appendix A2, top to bottom. `retryable` is what the error reports to the caller;
+ * `autoRetry` is whether the loop resends on its own. Both come from here so they can't drift.
+ */
+function decide(ctx: {
+    method: HttpMethod;
+    isMultipart: boolean;
+    hasKey: boolean;
+    attempt: Attempt;
+    code?: string;
+    message: string;
+}): Decision {
+    const { method, isMultipart, hasKey, attempt } = ctx;
+    const isGet = method === "GET";
+    // A mutation is only safe to resend under an Idempotency-Key (multipart never has one).
+    const resendable = isGet || (hasKey && !isMultipart);
+    const no: Decision = { retryable: false, autoRetry: false };
+
+    if (attempt.kind === "failure") {
+        if (attempt.type === "aborted") return no;
+        return { retryable: resendable, autoRetry: resendable && !isMultipart };
+    }
+
+    const { status } = attempt.response;
+    const retryAfterMs = parseRetryAfter(attempt.response.headers.get("Retry-After"));
+
+    if (status === 409 && ctx.message === "idempotency_key_in_flight") {
+        return { retryable: true, autoRetry: resendable, retryAfterMs };
+    }
+    // Produced before the idempotency middleware, so the handler never ran.
+    if (status === 429) {
+        return { retryable: true, autoRetry: resendable && !isMultipart, retryAfterMs };
+    }
+    if (status >= 500) {
+        if (ctx.code && TERMINAL_5XX_CODES.has(ctx.code)) return no;
+        if (!isGet) {
+            // The API releases the key on a 5xx, so a resend re-executes the handler: the caller
+            // checks state first and then resends deliberately with the same key.
+            return { retryable: hasKey && !isMultipart, autoRetry: false };
+        }
+    }
+    if (isGet && RETRYABLE_GET_STATUSES.has(status)) {
+        return { retryable: true, autoRetry: true, retryAfterMs };
+    }
+    return no;
+}
+
+/** Integer seconds only, and only up to 60 s; anything else falls back to backoff. */
+function parseRetryAfter(value: string | null): number | undefined {
+    if (value === null || !/^\d+$/.test(value.trim())) return undefined;
+    const seconds = Number(value.trim());
+    return seconds <= MAX_RETRY_AFTER_SECONDS ? seconds * 1000 : undefined;
+}
+
+/** `min(8 s, 0.5 s * 2^attempt)` with jitter in [0.5, 1.0]. */
+function backoffMs(attempt: number): number {
+    return Math.min(8000, 500 * 2 ** attempt) * (0.5 + Math.random() * 0.5);
+}
+
+/** Resolves `true` after `ms`, or `false` as soon as `signal` aborts (the timer is cleared). */
+function sleep(ms: number, signal?: AbortSignal): Promise<boolean> {
+    if (signal?.aborted) return Promise.resolve(false);
+    return new Promise((resolve) => {
+        const onAbort = () => {
+            clearTimeout(timer);
+            resolve(false);
+        };
+        const timer = setTimeout(() => {
+            signal?.removeEventListener("abort", onAbort);
+            resolve(true);
+        }, ms);
+        signal?.addEventListener("abort", onAbort, { once: true });
+    });
+}
+
+function toSuccess<T>(
+    result: Extract<Attempt, { kind: "response" }>,
+    idempotencyKey: string | undefined
+): BlindpayApiResponse<T> {
+    if (!result.text) return { data: null as T, error: null };
+    try {
+        return { data: JSON.parse(result.text) as T, error: null };
+    } catch {
+        return failure({
+            ...responseMeta(result.response),
+            message: `HTTP ${result.response.status}: the response body is not valid JSON`,
+            type: "invalid_response",
+            retryable: false,
+            idempotency_key: idempotencyKey,
+        });
+    }
+}
+
+/** A non-2xx response: the API's error envelope when the body is JSON, else the status line. */
+function toApiError(
+    result: Extract<Attempt, { kind: "response" }>
+): ErrorResponse & { type: ErrorType } {
+    const { response, text } = result;
+    let parsed: unknown = null;
+    let isJson = true;
+    if (text) {
+        try {
+            parsed = JSON.parse(text);
+        } catch {
+            isJson = false;
+        }
+    }
+    const envelope = isJson ? toErrorResponse(parsed) : { message: statusLine(response) };
+    return { ...envelope, ...responseMeta(response), type: "api_error" };
+}
+
+function responseMeta(response: Response): Pick<ErrorResponse, "status" | "request_id"> {
+    const requestId = response.headers.get("X-Request-Id");
+    return requestId
+        ? { status: response.status, request_id: requestId }
+        : { status: response.status };
+}
+
+function statusLine(response: Response): string {
+    return response.statusText
+        ? `HTTP ${response.status} ${response.statusText}`
+        : `HTTP ${response.status}`;
+}
+
+/** Builds the `{ data: null, error }` result, leaving out fields that are `undefined`. */
+function failure(fields: ErrorResponse & { type: ErrorType }): {
+    data: null;
+    error: ErrorResponse;
+} {
+    const error = Object.fromEntries(
+        Object.entries(fields).filter(([, value]) => value !== undefined)
+    ) as ErrorResponse;
+    return { data: null, error };
+}
+
+function messageOf(error: unknown): string {
+    if (error instanceof Error) return error.message;
+    if (error && typeof error === "object" && "message" in error) {
+        const { message } = error as { message: unknown };
+        if (typeof message === "string") return message;
+    }
+    return "Unknown error";
+}

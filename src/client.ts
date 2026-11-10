@@ -3,7 +3,7 @@ import { version } from "../package.json";
 import type { BlindpayApiResponse, RequestOptions } from "../types";
 import type { InternalApiClient } from "./internal/api-client";
 import { BlindPayError } from "./internal/blindpay-error";
-import { toErrorResponse } from "./internal/error-response";
+import { type HttpMethod, send, type TransportConfig } from "./internal/http";
 import { createAvailableResource } from "./resources/available";
 import { createBankAccountsResource } from "./resources/bank-accounts";
 import { createCustomersResource } from "./resources/customers";
@@ -45,13 +45,31 @@ export type BlindPayOptions = {
     apiKey: string;
     /** Instance the client acts on; every instance-scoped path uses it. */
     instanceId: string;
+    /**
+     * API origin, default `https://api.blindpay.com` (paths start with `/v1`). Change it only
+     * for a proxy or a test server: it receives your API key.
+     */
+    baseUrl?: string;
+    /** Per-attempt timeout in milliseconds, default 60 000. A call can override it. */
+    timeoutMs?: number;
+    /**
+     * Automatic retries after the first attempt, default 2; `0` turns them off. GETs are
+     * retried on connection errors, timeouts, 408, 429 and 5xx. Mutations are retried only
+     * under an `Idempotency-Key` (generated when you don't pass one) and only when the API
+     * can't have acted: no response, 429, or a concurrent duplicate (409); never on a 5xx.
+     */
+    maxRetries?: number;
+    /** `fetch` implementation to use (tests, proxies, instrumentation); default the global one. */
+    fetch?: typeof fetch;
 };
+
+const DEFAULT_BASE_URL = "https://api.blindpay.com";
+const DEFAULT_TIMEOUT_MS = 60_000;
+const DEFAULT_MAX_RETRIES = 2;
 
 export class BlindPay {
     // Options
-    private readonly baseUrl = "https://api.blindpay.com/v1";
-    private readonly headers: Record<string, string>;
-    private readonly apiKey: string;
+    private readonly transport: TransportConfig;
     private readonly instanceId: string;
     private readonly api: InternalApiClient;
 
@@ -84,7 +102,19 @@ export class BlindPay {
         custodial: ReturnType<typeof createCustodialWalletsResource>;
     };
 
-    constructor({ apiKey, instanceId }: BlindPayOptions) {
+    /**
+     * A configured client is immutable and safe to share: per-call options never change it.
+     *
+     * @throws {BlindPayError} When `apiKey` or `instanceId` is missing, or an option is invalid
+     */
+    constructor({
+        apiKey,
+        instanceId,
+        baseUrl = DEFAULT_BASE_URL,
+        timeoutMs = DEFAULT_TIMEOUT_MS,
+        maxRetries = DEFAULT_MAX_RETRIES,
+        fetch: fetchFn,
+    }: BlindPayOptions) {
         if (!apiKey) {
             throw new BlindPayError("Api key not provided, get your api key on blindpay dashboard");
         }
@@ -95,14 +125,24 @@ export class BlindPay {
             );
         }
 
-        this.apiKey = apiKey;
+        if (!Number.isInteger(maxRetries) || maxRetries < 0) {
+            throw new BlindPayError("maxRetries must be a non-negative integer");
+        }
+
+        if (!(timeoutMs > 0)) {
+            throw new BlindPayError("timeoutMs must be a positive number of milliseconds");
+        }
+
         this.instanceId = instanceId;
 
-        this.headers = {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            "User-Agent": `blindpay-node/${version}`,
-            Authorization: `Bearer ${this.apiKey}`,
+        this.transport = {
+            baseUrl: baseUrl.replace(/\/+$/, ""),
+            apiKey,
+            userAgent: `blindpay-node/${version}`,
+            timeoutMs,
+            maxRetries,
+            // Looked up per call, so a fetch installed (or mocked) after construction is used.
+            fetch: fetchFn ?? ((input, init) => globalThis.fetch(input, init)),
         };
 
         // Initialize the internal API client with bound HTTP methods to encapsulate and restrict direct access to raw API calls
@@ -112,6 +152,7 @@ export class BlindPay {
             put: this.put.bind(this),
             patch: this.patch.bind(this),
             delete: this.delete.bind(this),
+            postMultipart: this.postMultipart.bind(this),
         };
 
         this.available = createAvailableResource(this.api);
@@ -141,7 +182,7 @@ export class BlindPay {
 
         this.fees = createFeesResource(this.instanceId, this.api);
 
-        this.upload = createUploadResource(this.instanceId, this.baseUrl, this.headers, this.api);
+        this.upload = createUploadResource(this.instanceId, this.transport.baseUrl, {}, this.api);
 
         this.customers = {
             ...createCustomersResource(this.instanceId, this.api),
@@ -158,73 +199,20 @@ export class BlindPay {
         };
     }
 
-    private async request<T>(
-        method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
+    private request<T>(
+        method: HttpMethod,
         path: string,
         body?: Record<string, unknown>,
         options?: RequestOptions
     ): Promise<BlindpayApiResponse<T>> {
-        try {
-            const idempotencyKey = options?.idempotencyKey;
-            const response = await fetch(`${this.baseUrl}${path}`, {
-                method,
-                headers:
-                    idempotencyKey === undefined
-                        ? this.headers
-                        : { ...this.headers, "Idempotency-Key": idempotencyKey },
-                body: body ? JSON.stringify(body) : undefined,
-            });
-
-            if (!response.ok) {
-                return {
-                    data: null,
-                    error: toErrorResponse(await this.parseJsonResponse<unknown>(response)),
-                };
-            }
-
-            const data = await this.parseJsonResponse<T>(response);
-
-            return {
-                data: data as T,
-                error: null,
-            };
-        } catch (error) {
-            if (error instanceof Error) {
-                return {
-                    data: null,
-                    error: {
-                        message: error.message,
-                    },
-                };
-            }
-
-            const errorMessage =
-                error &&
-                typeof error === "object" &&
-                "message" in error &&
-                typeof error.message === "string"
-                    ? error.message
-                    : "Unknown error";
-
-            return {
-                data: null,
-                error: {
-                    message: errorMessage,
-                },
-            };
-        }
+        return send<T>(this.transport, { method, path, json: body, options });
     }
 
-    private async parseJsonResponse<T>(response: Response): Promise<T | null> {
-        const text = await response.text();
-        return text ? (JSON.parse(text) as T) : null;
+    private get<T>(path: string, options?: RequestOptions): Promise<BlindpayApiResponse<T>> {
+        return this.request<T>("GET", path, undefined, options);
     }
 
-    private async get<T>(path: string): Promise<BlindpayApiResponse<T>> {
-        return this.request<T>("GET", path);
-    }
-
-    private async post<T>(
+    private post<T>(
         path: string,
         body: Record<string, unknown>,
         options?: RequestOptions
@@ -232,7 +220,7 @@ export class BlindPay {
         return this.request<T>("POST", path, body, options);
     }
 
-    private async put<T>(
+    private put<T>(
         path: string,
         body: Record<string, unknown>,
         options?: RequestOptions
@@ -240,7 +228,7 @@ export class BlindPay {
         return this.request<T>("PUT", path, body, options);
     }
 
-    private async patch<T>(
+    private patch<T>(
         path: string,
         body: Record<string, unknown>,
         options?: RequestOptions
@@ -248,11 +236,17 @@ export class BlindPay {
         return this.request<T>("PATCH", path, body, options);
     }
 
-    private async delete<T>(
+    private delete<T>(path: string, options?: RequestOptions): Promise<BlindpayApiResponse<T>> {
+        return this.request<T>("DELETE", path, undefined, options);
+    }
+
+    /** Multipart POST: no Idempotency-Key (the API skips it) and no automatic retry. */
+    private postMultipart<T>(
         path: string,
+        form: FormData,
         options?: RequestOptions
     ): Promise<BlindpayApiResponse<T>> {
-        return this.request<T>("DELETE", path, undefined, options);
+        return send<T>(this.transport, { method: "POST", path, form, options });
     }
 
     /**
