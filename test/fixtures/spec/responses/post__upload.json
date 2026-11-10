@@ -1,0 +1,26 @@
+{
+  "operation": "POST /v1/upload",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "UploadOut",
+      "variants": {
+        "full": {
+          "file_url": "https://example.com/resource"
+        },
+        "required_only": {
+          "file_url": "https://example.com/resource"
+        },
+        "nullables_null": {
+          "file_url": "https://example.com/resource"
+        },
+        "unknown_enum": {
+          "file_url": "https://example.com/resource"
+        },
+        "decimals": {
+          "file_url": "https://example.com/resource"
+        }
+      }
+    }
+  }
+}

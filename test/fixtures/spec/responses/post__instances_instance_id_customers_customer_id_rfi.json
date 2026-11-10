@@ -1,0 +1,46 @@
+{
+  "operation": "POST /v1/instances/{instance_id}/customers/{customer_id}/rfi",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": null,
+      "variants": {
+        "full.b0": {
+          "success": true
+        },
+        "required_only.b0": {
+          "success": true
+        },
+        "nullables_null.b0": {
+          "success": true
+        },
+        "unknown_enum.b0": {
+          "success": true
+        },
+        "decimals.b0": {
+          "success": true
+        },
+        "full.b1": {
+          "success": false,
+          "reason": "no_pending_rfi"
+        },
+        "required_only.b1": {
+          "success": false,
+          "reason": "no_pending_rfi"
+        },
+        "nullables_null.b1": {
+          "success": false,
+          "reason": "no_pending_rfi"
+        },
+        "unknown_enum.b1": {
+          "success": false,
+          "reason": "zz_unknown_value_from_future_api"
+        },
+        "decimals.b1": {
+          "success": false,
+          "reason": "no_pending_rfi"
+        }
+      }
+    }
+  }
+}

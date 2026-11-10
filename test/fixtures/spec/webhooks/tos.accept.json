@@ -1,0 +1,39 @@
+{
+  "event": "tos.accept",
+  "schema_ref": "TosAcceptWebhookOut",
+  "variants": {
+    "full": {
+      "webhook_event": "tos.accept",
+      "tos_id": "to_000000000000",
+      "idempotency_key": "123e4567-e89b-12d3-a456-426614174000",
+      "customer_id": "re_000000000000",
+      "version": "1.0.0"
+    },
+    "required_only": {
+      "webhook_event": "tos.accept",
+      "tos_id": "to_000000000000",
+      "idempotency_key": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "nullables_null": {
+      "webhook_event": "tos.accept",
+      "tos_id": "to_000000000000",
+      "idempotency_key": "123e4567-e89b-12d3-a456-426614174000",
+      "customer_id": null,
+      "version": null
+    },
+    "unknown_enum": {
+      "webhook_event": "tos.accept",
+      "tos_id": "to_000000000000",
+      "idempotency_key": "123e4567-e89b-12d3-a456-426614174000",
+      "customer_id": "re_000000000000",
+      "version": "zz_unknown_value_from_future_api"
+    },
+    "decimals": {
+      "webhook_event": "tos.accept",
+      "tos_id": "to_000000000000",
+      "idempotency_key": "123e4567-e89b-12d3-a456-426614174000",
+      "customer_id": "re_000000000000",
+      "version": "1.0.0"
+    }
+  }
+}

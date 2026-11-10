@@ -1,0 +1,26 @@
+{
+  "operation": "POST /v1/instances/{instance_id}/payouts/stellar/authorize",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": null,
+      "variants": {
+        "full": {
+          "transaction_hash": "sample_transaction_hash"
+        },
+        "required_only": {
+          "transaction_hash": "sample_transaction_hash"
+        },
+        "nullables_null": {
+          "transaction_hash": "sample_transaction_hash"
+        },
+        "unknown_enum": {
+          "transaction_hash": "sample_transaction_hash"
+        },
+        "decimals": {
+          "transaction_hash": "sample_transaction_hash"
+        }
+      }
+    }
+  }
+}

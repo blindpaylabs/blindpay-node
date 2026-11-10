@@ -1,0 +1,22 @@
+{
+  "source": "components.schemas.Error + blindpay-v2/apps/api/src/shared/infra/error-handler.ts:203-221",
+  "status": 404,
+  "body": {
+    "success": false,
+    "code": "CUSTOMERS_NOT_FOUND",
+    "message": "customer_not_found",
+    "description": "The customer was not found.",
+    "errors": [],
+    "trace_id": "0af7651916cd43dd8448eb211c80319c"
+  },
+  "spec_generated_example": {
+    "success": false,
+    "code": "PAYOUTS_INSUFFICIENT_BALANCE",
+    "message": "not_enough_balance",
+    "description": "There is not enough balance to complete this payout. Fund your balance and try again.",
+    "errors": [
+      "sample_errors"
+    ],
+    "trace_id": "0af7651916cd43dd8448eb211c80319c"
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "operation": "GET /v1/available/bank-details",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "AvailableBankDetails",
+      "variants": {
+        "full": [
+          {
+            "label": "Account Number",
+            "regex": "^[0-9]{9}$",
+            "key": "account_number",
+            "items": [
+              {
+                "label": "United States of America",
+                "value": "US",
+                "is_active": true
+              }
+            ],
+            "required": false,
+            "requiredWhen": {
+              "field": "country",
+              "operator": "in",
+              "values": [
+                "sample_values"
+              ]
+            }
+          }
+        ],
+        "required_only": [
+          {
+            "label": "Account Number",
+            "regex": "^[0-9]{9}$",
+            "key": "account_number"
+          }
+        ],
+        "nullables_null": [
+          {
+            "label": "Account Number",
+            "regex": "^[0-9]{9}$",
+            "key": "account_number",
+            "items": [
+              {
+                "label": "United States of America",
+                "value": "US",
+                "is_active": true
+              }
+            ],
+            "required": null,
+            "requiredWhen": {
+              "field": "country",
+              "operator": "in",
+              "values": [
+                "sample_values"
+              ]
+            }
+          }
+        ],
+        "unknown_enum": [
+          {
+            "label": "Account Number",
+            "regex": "^[0-9]{9}$",
+            "key": "zz_unknown_value_from_future_api",
+            "items": [
+              {
+                "label": "United States of America",
+                "value": "US",
+                "is_active": true
+              }
+            ],
+            "required": false,
+            "requiredWhen": {
+              "field": "zz_unknown_value_from_future_api",
+              "operator": "zz_unknown_value_from_future_api",
+              "values": [
+                "sample_values"
+              ]
+            }
+          }
+        ],
+        "decimals": [
+          {
+            "label": "Account Number",
+            "regex": "^[0-9]{9}$",
+            "key": "account_number",
+            "items": [
+              {
+                "label": "United States of America",
+                "value": "US",
+                "is_active": true
+              }
+            ],
+            "required": false,
+            "requiredWhen": {
+              "field": "country",
+              "operator": "in",
+              "values": [
+                "sample_values"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "event": "limitIncrease.update",
+  "schema_ref": "LimitIncreaseUpdateWebhookOut",
+  "variants": {
+    "full": {
+      "webhook_event": "limitIncrease.update",
+      "id": "rl_000000000000",
+      "status": "in_review",
+      "per_transaction": 100000,
+      "daily": 200000,
+      "monthly": 1000000,
+      "approved_per_transaction": 70000,
+      "approved_daily": 140000,
+      "approved_monthly": 700000,
+      "supporting_document_type": "individual_bank_statement",
+      "supporting_document_file": "https://example.com/document.pdf",
+      "supporting_documents": [
+        {
+          "type": "individual_bank_statement",
+          "file": "https://example.com/document.pdf"
+        }
+      ],
+      "customer_id": "re_000000000000",
+      "created_at": "2021-01-01T00:00:00Z",
+      "updated_at": "2021-01-01T00:00:00Z"
+    },
+    "required_only": {
+      "webhook_event": "limitIncrease.update",
+      "id": "rl_000000000000",
+      "status": "in_review",
+      "customer_id": "re_000000000000"
+    },
+    "nullables_null": {
+      "webhook_event": "limitIncrease.update",
+      "id": "rl_000000000000",
+      "status": "in_review",
+      "per_transaction": null,
+      "daily": null,
+      "monthly": null,
+      "approved_per_transaction": null,
+      "approved_daily": null,
+      "approved_monthly": null,
+      "supporting_document_type": null,
+      "supporting_document_file": null,
+      "supporting_documents": null,
+      "customer_id": "re_000000000000",
+      "created_at": null,
+      "updated_at": null
+    },
+    "unknown_enum": {
+      "webhook_event": "limitIncrease.update",
+      "id": "rl_000000000000",
+      "status": "zz_unknown_value_from_future_api",
+      "per_transaction": 100000,
+      "daily": 200000,
+      "monthly": 1000000,
+      "approved_per_transaction": 70000,
+      "approved_daily": 140000,
+      "approved_monthly": 700000,
+      "supporting_document_type": "zz_unknown_value_from_future_api",
+      "supporting_document_file": "https://example.com/document.pdf",
+      "supporting_documents": [
+        {
+          "type": "zz_unknown_value_from_future_api",
+          "file": "https://example.com/document.pdf"
+        }
+      ],
+      "customer_id": "re_000000000000",
+      "created_at": "2021-01-01T00:00:00Z",
+      "updated_at": "2021-01-01T00:00:00Z"
+    },
+    "decimals": {
+      "webhook_event": "limitIncrease.update",
+      "id": "rl_000000000000",
+      "status": "in_review",
+      "per_transaction": 100000,
+      "daily": 200000,
+      "monthly": 1000000,
+      "approved_per_transaction": 70000,
+      "approved_daily": 140000,
+      "approved_monthly": 700000,
+      "supporting_document_type": "individual_bank_statement",
+      "supporting_document_file": "https://example.com/document.pdf",
+      "supporting_documents": [
+        {
+          "type": "individual_bank_statement",
+          "file": "https://example.com/document.pdf"
+        }
+      ],
+      "customer_id": "re_000000000000",
+      "created_at": "2021-01-01T00:00:00Z",
+      "updated_at": "2021-01-01T00:00:00Z"
+    }
+  }
+}

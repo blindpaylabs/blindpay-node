@@ -1,0 +1,12 @@
+{
+  "source": "blindpay-v2/apps/api/src/shared/middlewares/idempotency.middleware.ts:211",
+  "status": 422,
+  "body": {
+    "success": false,
+    "message": "idempotency_key_payload_mismatch",
+    "errors": [
+      "This Idempotency-Key was already used with a different request body"
+    ]
+  },
+  "sdk_behaviour": "terminal, never retry"
+}

@@ -1,0 +1,34 @@
+{
+  "operation": "POST /v1/instances/{instance_id}/prepare-delegate-solana",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": null,
+      "variants": {
+        "full": {
+          "success": true,
+          "transaction": "sample_transaction",
+          "debug": {}
+        },
+        "required_only": {
+          "success": true
+        },
+        "nullables_null": {
+          "success": true,
+          "transaction": "sample_transaction",
+          "debug": {}
+        },
+        "unknown_enum": {
+          "success": true,
+          "transaction": "sample_transaction",
+          "debug": {}
+        },
+        "decimals": {
+          "success": true,
+          "transaction": "sample_transaction",
+          "debug": {}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "operation": "POST /v1/instances/{instance_id}/webhook-endpoints",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "WebhookEndpointOut",
+      "variants": {
+        "full": {
+          "id": "we_000000000000"
+        },
+        "required_only": {
+          "id": "we_000000000000"
+        },
+        "nullables_null": {
+          "id": "we_000000000000"
+        },
+        "unknown_enum": {
+          "id": "we_000000000000"
+        },
+        "decimals": {
+          "id": "we_000000000000"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "event": "wallet.inbound",
+  "schema_ref": "WalletInboundWebhookOut",
+  "variants": {
+    "full": {
+      "webhook_event": "wallet.inbound",
+      "id": "xx_000000000000",
+      "address": "sample_address",
+      "network": "base",
+      "token": {
+        "address": "sample_address",
+        "id": "xx_000000000000",
+        "symbol": "USDC",
+        "amount": 12.34
+      },
+      "deposit_id": "wd_000000000000",
+      "transaction_hash": "0x8f3e1b..."
+    },
+    "required_only": {
+      "webhook_event": "wallet.inbound",
+      "id": "xx_000000000000",
+      "address": "sample_address",
+      "network": "base",
+      "token": {
+        "address": "sample_address",
+        "id": "xx_000000000000",
+        "symbol": "USDC",
+        "amount": 12.34
+      },
+      "deposit_id": "wd_000000000000",
+      "transaction_hash": "0x8f3e1b..."
+    },
+    "nullables_null": {
+      "webhook_event": "wallet.inbound",
+      "id": "xx_000000000000",
+      "address": "sample_address",
+      "network": "base",
+      "token": {
+        "address": "sample_address",
+        "id": "xx_000000000000",
+        "symbol": "USDC",
+        "amount": 12.34
+      },
+      "deposit_id": "wd_000000000000",
+      "transaction_hash": "0x8f3e1b..."
+    },
+    "unknown_enum": {
+      "webhook_event": "wallet.inbound",
+      "id": "xx_000000000000",
+      "address": "sample_address",
+      "network": "zz_unknown_value_from_future_api",
+      "token": {
+        "address": "sample_address",
+        "id": "xx_000000000000",
+        "symbol": "zz_unknown_value_from_future_api",
+        "amount": 12.34
+      },
+      "deposit_id": "wd_000000000000",
+      "transaction_hash": "0x8f3e1b..."
+    },
+    "decimals": {
+      "webhook_event": "wallet.inbound",
+      "id": "xx_000000000000",
+      "address": "sample_address",
+      "network": "base",
+      "token": {
+        "address": "sample_address",
+        "id": "xx_000000000000",
+        "symbol": "USDC",
+        "amount": 1234.56
+      },
+      "deposit_id": "wd_000000000000",
+      "transaction_hash": "0x8f3e1b..."
+    }
+  }
+}

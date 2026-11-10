@@ -1,0 +1,60 @@
+{
+  "operation": "GET /v1/instances/{instance_id}/onboarding/business_profile",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": null,
+      "variants": {
+        "full": {
+          "scenario": "custodial",
+          "scenario_description": "Scenario description",
+          "has_kyc_screening": true,
+          "is_regulated": true,
+          "business_industry": "wallet",
+          "website": "https://domain.com",
+          "top_volume_by_country": [
+            "AF"
+          ],
+          "estimated_volume_per_month": "up_to_1000"
+        },
+        "required_only": {},
+        "nullables_null": {
+          "scenario": "custodial",
+          "scenario_description": null,
+          "has_kyc_screening": null,
+          "is_regulated": null,
+          "business_industry": "wallet",
+          "website": null,
+          "top_volume_by_country": [
+            "AF"
+          ],
+          "estimated_volume_per_month": "up_to_1000"
+        },
+        "unknown_enum": {
+          "scenario": "zz_unknown_value_from_future_api",
+          "scenario_description": "Scenario description",
+          "has_kyc_screening": true,
+          "is_regulated": true,
+          "business_industry": "zz_unknown_value_from_future_api",
+          "website": "https://domain.com",
+          "top_volume_by_country": [
+            "zz_unknown_value_from_future_api"
+          ],
+          "estimated_volume_per_month": "zz_unknown_value_from_future_api"
+        },
+        "decimals": {
+          "scenario": "custodial",
+          "scenario_description": "Scenario description",
+          "has_kyc_screening": true,
+          "is_regulated": true,
+          "business_industry": "wallet",
+          "website": "https://domain.com",
+          "top_volume_by_country": [
+            "AF"
+          ],
+          "estimated_volume_per_month": "up_to_1000"
+        }
+      }
+    }
+  }
+}

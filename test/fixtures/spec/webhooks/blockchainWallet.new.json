@@ -1,0 +1,57 @@
+{
+  "event": "blockchainWallet.new",
+  "schema_ref": "BlockchainWalletWebhookOut",
+  "variants": {
+    "full": {
+      "webhook_event": "blockchainWallet.new",
+      "id": "bw_000000000000",
+      "name": "Wallet Display Name",
+      "network": "polygon",
+      "address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+      "signature_tx_hash": "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
+      "is_account_abstraction": false,
+      "is_self_custody": true,
+      "customer_id": "re_000000000000"
+    },
+    "required_only": {
+      "webhook_event": "blockchainWallet.new",
+      "id": "bw_000000000000",
+      "name": "Wallet Display Name",
+      "network": "polygon",
+      "customer_id": "re_000000000000"
+    },
+    "nullables_null": {
+      "webhook_event": "blockchainWallet.new",
+      "id": "bw_000000000000",
+      "name": null,
+      "network": null,
+      "address": null,
+      "signature_tx_hash": null,
+      "is_account_abstraction": null,
+      "is_self_custody": null,
+      "customer_id": "re_000000000000"
+    },
+    "unknown_enum": {
+      "webhook_event": "blockchainWallet.new",
+      "id": "bw_000000000000",
+      "name": "Wallet Display Name",
+      "network": "zz_unknown_value_from_future_api",
+      "address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+      "signature_tx_hash": "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
+      "is_account_abstraction": false,
+      "is_self_custody": true,
+      "customer_id": "re_000000000000"
+    },
+    "decimals": {
+      "webhook_event": "blockchainWallet.new",
+      "id": "bw_000000000000",
+      "name": "Wallet Display Name",
+      "network": "polygon",
+      "address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+      "signature_tx_hash": "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
+      "is_account_abstraction": false,
+      "is_self_custody": true,
+      "customer_id": "re_000000000000"
+    }
+  }
+}

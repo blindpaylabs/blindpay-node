@@ -1,0 +1,31 @@
+{
+  "operation": "POST /v1/upload/analyze",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "UploadAnalyzeOut",
+      "variants": {
+        "full": {
+          "approval_rate": "high",
+          "description": "sample_description"
+        },
+        "required_only": {
+          "approval_rate": "high",
+          "description": "sample_description"
+        },
+        "nullables_null": {
+          "approval_rate": "high",
+          "description": "sample_description"
+        },
+        "unknown_enum": {
+          "approval_rate": "zz_unknown_value_from_future_api",
+          "description": "sample_description"
+        },
+        "decimals": {
+          "approval_rate": "high",
+          "description": "sample_description"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,652 @@
+{
+  "operation": "GET /v1/e/payins/{id}",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "PayinOut",
+      "variants": {
+        "full": {
+          "id": "re_000000000000",
+          "pix_code": "00020101021226790014br.gov.bcb.pix2557brcode.starkinfra.com/v2/bcf07f6c4110454e9fd6f120bab13e835204000053039865802BR5915Blind Pay, Inc.6010Vila Velha62070503***6304BCAB",
+          "memo_code": "8K45GHBNT6BQ6462",
+          "clabe": "014027000000000008",
+          "status": "processing",
+          "payin_quote_id": "qu_000000000000",
+          "instance_id": "in_000000000000",
+          "customer_id": "re_000000000000",
+          "partner_fee": 25000,
+          "tracking_transaction": {
+            "step": "processing",
+            "status": "failed",
+            "external_id": "12345678",
+            "completed_at": "2011-10-05T14:48:00.000Z",
+            "transaction_hash": "0x123...890",
+            "provider_name": "HSBC",
+            "provider_transaction_id": "<provider_transaction_id>",
+            "sender_name": "John Doe Smith",
+            "sender_bank_name": "Bank of America",
+            "sender_tax_id": "123.456.789-10",
+            "sender_bank_code": "00416968",
+            "sender_account_number": "1234567890",
+            "end_to_end_id": "E20018183202603311320vm6ALFpJpsS",
+            "trace_number": "1234567890",
+            "transaction_reference": "1234567890",
+            "description": "Payment from John Doe Smith",
+            "pse_instruction": {
+              "payment_link": "https://pse.example.com/payment/abc123",
+              "fid": "be6185ad-afdf-d682-2ca7-d447250f5e96",
+              "payin_intent_id": "be6185ad-afdf-d682-2ca7-d447250f5e96",
+              "expires_at": "2026-02-26T23:59:59Z",
+              "full_name": "Juan P\u00e9rez Garc\u00eda",
+              "tax_id": "1234567890",
+              "document_type": "CC",
+              "phone": "+573001234567",
+              "email": "juan@example.com",
+              "bank_code": "1007"
+            },
+            "transfers_instruction": {
+              "account": "0000003100012389237485",
+              "type": "CVU",
+              "tax_id": "20123456786"
+            },
+            "ted_instruction": {
+              "beneficiary_name": "Blind Pay, Inc.",
+              "tax_id": "57.599.376/0001-81",
+              "bank_code": "665",
+              "bank_name": "STARK BANK S.A.",
+              "branch_code": "5340",
+              "account_number": "01011707084-8",
+              "account_type": "checking"
+            },
+            "card_instruction": {
+              "provider": "nmi",
+              "tokenization_key": "KXypee-Vq3y2f-K6c7Dy-Wq92R5",
+              "checkout_public_key": "checkout_public_Ab12Cd34Ef56Gh78",
+              "checkout_token": "cGlfMDAwMDAwMDAwMDAwLjE3OTM1NzQ0MDAuM2Y1YQ",
+              "checkout_url": "https://app.blindpay.com/e/card/pi_000000000000?t=cGlfMDAwMDAwMDAwMDAwLjE3OTM1NzQ0MDAuM2Y1YQ"
+            },
+            "card_evidence": {
+              "eci": "05",
+              "cavv": "AAABBWcSNIdjeUZThmNHAAAAAAA=",
+              "cavv_result": "2",
+              "avs_response": "Y",
+              "cvv_response": "M",
+              "auth_code": "123456",
+              "cardholder_name": "Jane Doe",
+              "three_ds_version": "2.2.0"
+            },
+            "card_failed_attempts": 0,
+            "card_claim_at": "2025-11-10T15:59:30.000Z",
+            "card_gates_failed_at": "2025-11-10T15:59:30.000Z"
+          },
+          "tracking_payment": {
+            "step": "on_hold",
+            "provider_name": "blockchain",
+            "completed_at": "2011-10-05T14:48:00.000Z",
+            "review_source": "seon_review",
+            "review_context": {
+              "sample_key": {}
+            },
+            "review_sources": [
+              "sample_review_sources"
+            ],
+            "review_contexts": {
+              "sample_key": {}
+            },
+            "approved_risk_sources": [
+              "sample_approved_risk_sources"
+            ]
+          },
+          "tracking_complete": {
+            "step": "on_hold",
+            "transaction_hash": "0x123...890",
+            "completed_at": "2011-10-05T14:48:00.000Z"
+          },
+          "manual_execution_status": "pending",
+          "manual_concluded_at": {},
+          "manual_concluded_by": "sample_manual_concluded_by",
+          "created_at": "2021-01-01T00:00:00Z",
+          "updated_at": "2021-01-01T00:00:00Z",
+          "image_url": "https://example.com/image.png",
+          "first_name": "John",
+          "last_name": "Doe",
+          "legal_name": "Company Name Inc.",
+          "type": "individual",
+          "payment_method": "pix",
+          "sender_amount": 5240,
+          "receiver_amount": 1010,
+          "token": "USDC",
+          "partner_fee_id": "pf_000000000000",
+          "partner_fee_amount": 150,
+          "total_fee_amount": 1.53,
+          "commercial_quotation": 495,
+          "blindpay_quotation": 505,
+          "currency": "BRL",
+          "billing_fee_amount": 50,
+          "transaction_fee_amount": 100,
+          "is_otc": false,
+          "payer_rules": {
+            "pix_allowed_tax_ids": [
+              "123.456.789-09"
+            ],
+            "transfers_allowed_tax_id": "20-12345678-6",
+            "pse_allowed_tax_ids": [
+              "1234567890"
+            ],
+            "pse_full_name": "sample_pse_full_name",
+            "pse_document_type": "CC",
+            "pse_document_number": "sample_pse_document_number",
+            "pse_email": "dev@example.com",
+            "pse_phone": "sample_pse_phone",
+            "pse_bank_code": "sample_pse_bank_code"
+          },
+          "name": "Wallet Display Name",
+          "address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+          "network": "polygon",
+          "blindpay_bank_details": {
+            "routing_number": "121145349",
+            "account_number": "621327727210181",
+            "account_type": "Business checking",
+            "swift_bic_code": "CHASUS33",
+            "ach": {
+              "routing_number": "123456789",
+              "account_number": "123456789"
+            },
+            "wire": {
+              "routing_number": "123456789",
+              "account_number": "123456789"
+            },
+            "rtp": {
+              "routing_number": "123456789",
+              "account_number": "123456789"
+            },
+            "beneficiary": {
+              "name": "BlindPay, Inc.",
+              "address_line_1": "8 The Green, #19364",
+              "address_line_2": "Dover, DE 19901"
+            },
+            "receiving_bank": {
+              "name": "CFSB",
+              "address_line_1": "1 Letterman Drive, Building A, Suite A4-700",
+              "address_line_2": "San Francisco, CA 94129"
+            },
+            "swift_account_number": "GB50TCCL04140449730892",
+            "swift_receiving_bank": {
+              "name": "JPMorgan Chase",
+              "address_line_1": "270 Park Ave",
+              "address_line_2": "New York, NY, 10017-2070"
+            }
+          },
+          "pse_payment_link": "https://pse.example.com/payment/abc123",
+          "pse_full_name": "Juan P\u00e9rez Garc\u00eda",
+          "pse_tax_id": "1234567890",
+          "pse_document_type": "CC"
+        },
+        "required_only": {
+          "id": "re_000000000000",
+          "status": "processing",
+          "payin_quote_id": "qu_000000000000",
+          "instance_id": "in_000000000000",
+          "customer_id": "re_000000000000",
+          "tracking_transaction": {
+            "step": "processing"
+          },
+          "tracking_payment": {
+            "step": "on_hold"
+          },
+          "tracking_complete": {
+            "step": "on_hold"
+          },
+          "type": "individual",
+          "payment_method": "pix",
+          "sender_amount": 5240,
+          "receiver_amount": 1010,
+          "token": "USDC",
+          "commercial_quotation": 495,
+          "blindpay_quotation": 505,
+          "currency": "BRL",
+          "name": "Wallet Display Name",
+          "network": "polygon"
+        },
+        "nullables_null": {
+          "id": "re_000000000000",
+          "pix_code": null,
+          "memo_code": null,
+          "clabe": null,
+          "status": "processing",
+          "payin_quote_id": "qu_000000000000",
+          "instance_id": "in_000000000000",
+          "customer_id": "re_000000000000",
+          "partner_fee": 25000,
+          "tracking_transaction": {
+            "step": "processing",
+            "status": null,
+            "external_id": null,
+            "completed_at": null,
+            "transaction_hash": null,
+            "provider_name": null,
+            "provider_transaction_id": null,
+            "sender_name": null,
+            "sender_bank_name": null,
+            "sender_tax_id": null,
+            "sender_bank_code": null,
+            "sender_account_number": null,
+            "end_to_end_id": null,
+            "trace_number": null,
+            "transaction_reference": null,
+            "description": null,
+            "pse_instruction": null,
+            "transfers_instruction": null,
+            "ted_instruction": null,
+            "card_instruction": null,
+            "card_evidence": null,
+            "card_failed_attempts": null,
+            "card_claim_at": null,
+            "card_gates_failed_at": null
+          },
+          "tracking_payment": {
+            "step": "on_hold",
+            "provider_name": null,
+            "completed_at": null,
+            "review_source": null,
+            "review_context": null,
+            "review_sources": null,
+            "review_contexts": null,
+            "approved_risk_sources": null
+          },
+          "tracking_complete": {
+            "step": "on_hold",
+            "transaction_hash": null,
+            "completed_at": null
+          },
+          "manual_execution_status": null,
+          "manual_concluded_at": {},
+          "manual_concluded_by": null,
+          "created_at": null,
+          "updated_at": null,
+          "image_url": null,
+          "first_name": null,
+          "last_name": null,
+          "legal_name": null,
+          "type": "individual",
+          "payment_method": "pix",
+          "sender_amount": null,
+          "receiver_amount": null,
+          "token": "USDC",
+          "partner_fee_id": null,
+          "partner_fee_amount": null,
+          "total_fee_amount": null,
+          "commercial_quotation": null,
+          "blindpay_quotation": null,
+          "currency": "BRL",
+          "billing_fee_amount": null,
+          "transaction_fee_amount": null,
+          "is_otc": null,
+          "payer_rules": null,
+          "name": "Wallet Display Name",
+          "address": null,
+          "network": "polygon",
+          "blindpay_bank_details": null,
+          "pse_payment_link": null,
+          "pse_full_name": null,
+          "pse_tax_id": null,
+          "pse_document_type": null
+        },
+        "unknown_enum": {
+          "id": "re_000000000000",
+          "pix_code": "00020101021226790014br.gov.bcb.pix2557brcode.starkinfra.com/v2/bcf07f6c4110454e9fd6f120bab13e835204000053039865802BR5915Blind Pay, Inc.6010Vila Velha62070503***6304BCAB",
+          "memo_code": "8K45GHBNT6BQ6462",
+          "clabe": "014027000000000008",
+          "status": "zz_unknown_value_from_future_api",
+          "payin_quote_id": "qu_000000000000",
+          "instance_id": "in_000000000000",
+          "customer_id": "re_000000000000",
+          "partner_fee": 25000,
+          "tracking_transaction": {
+            "step": "zz_unknown_value_from_future_api",
+            "status": "zz_unknown_value_from_future_api",
+            "external_id": "12345678",
+            "completed_at": "2011-10-05T14:48:00.000Z",
+            "transaction_hash": "0x123...890",
+            "provider_name": "zz_unknown_value_from_future_api",
+            "provider_transaction_id": "<provider_transaction_id>",
+            "sender_name": "John Doe Smith",
+            "sender_bank_name": "Bank of America",
+            "sender_tax_id": "123.456.789-10",
+            "sender_bank_code": "00416968",
+            "sender_account_number": "1234567890",
+            "end_to_end_id": "E20018183202603311320vm6ALFpJpsS",
+            "trace_number": "1234567890",
+            "transaction_reference": "1234567890",
+            "description": "Payment from John Doe Smith",
+            "pse_instruction": {
+              "payment_link": "https://pse.example.com/payment/abc123",
+              "fid": "be6185ad-afdf-d682-2ca7-d447250f5e96",
+              "payin_intent_id": "be6185ad-afdf-d682-2ca7-d447250f5e96",
+              "expires_at": "2026-02-26T23:59:59Z",
+              "full_name": "Juan P\u00e9rez Garc\u00eda",
+              "tax_id": "1234567890",
+              "document_type": "zz_unknown_value_from_future_api",
+              "phone": "+573001234567",
+              "email": "juan@example.com",
+              "bank_code": "1007"
+            },
+            "transfers_instruction": {
+              "account": "0000003100012389237485",
+              "type": "zz_unknown_value_from_future_api",
+              "tax_id": "20123456786"
+            },
+            "ted_instruction": {
+              "beneficiary_name": "Blind Pay, Inc.",
+              "tax_id": "57.599.376/0001-81",
+              "bank_code": "665",
+              "bank_name": "STARK BANK S.A.",
+              "branch_code": "5340",
+              "account_number": "01011707084-8",
+              "account_type": "checking"
+            },
+            "card_instruction": {
+              "provider": "nmi",
+              "tokenization_key": "KXypee-Vq3y2f-K6c7Dy-Wq92R5",
+              "checkout_public_key": "checkout_public_Ab12Cd34Ef56Gh78",
+              "checkout_token": "cGlfMDAwMDAwMDAwMDAwLjE3OTM1NzQ0MDAuM2Y1YQ",
+              "checkout_url": "https://app.blindpay.com/e/card/pi_000000000000?t=cGlfMDAwMDAwMDAwMDAwLjE3OTM1NzQ0MDAuM2Y1YQ"
+            },
+            "card_evidence": {
+              "eci": "05",
+              "cavv": "AAABBWcSNIdjeUZThmNHAAAAAAA=",
+              "cavv_result": "2",
+              "avs_response": "Y",
+              "cvv_response": "M",
+              "auth_code": "123456",
+              "cardholder_name": "Jane Doe",
+              "three_ds_version": "2.2.0"
+            },
+            "card_failed_attempts": 0,
+            "card_claim_at": "2025-11-10T15:59:30.000Z",
+            "card_gates_failed_at": "2025-11-10T15:59:30.000Z"
+          },
+          "tracking_payment": {
+            "step": "zz_unknown_value_from_future_api",
+            "provider_name": "blockchain",
+            "completed_at": "2011-10-05T14:48:00.000Z",
+            "review_source": "seon_review",
+            "review_context": {
+              "sample_key": {}
+            },
+            "review_sources": [
+              "sample_review_sources"
+            ],
+            "review_contexts": {
+              "sample_key": {}
+            },
+            "approved_risk_sources": [
+              "sample_approved_risk_sources"
+            ]
+          },
+          "tracking_complete": {
+            "step": "zz_unknown_value_from_future_api",
+            "transaction_hash": "0x123...890",
+            "completed_at": "2011-10-05T14:48:00.000Z"
+          },
+          "manual_execution_status": "zz_unknown_value_from_future_api",
+          "manual_concluded_at": {},
+          "manual_concluded_by": "sample_manual_concluded_by",
+          "created_at": "2021-01-01T00:00:00Z",
+          "updated_at": "2021-01-01T00:00:00Z",
+          "image_url": "https://example.com/image.png",
+          "first_name": "John",
+          "last_name": "Doe",
+          "legal_name": "Company Name Inc.",
+          "type": "zz_unknown_value_from_future_api",
+          "payment_method": "zz_unknown_value_from_future_api",
+          "sender_amount": 5240,
+          "receiver_amount": 1010,
+          "token": "zz_unknown_value_from_future_api",
+          "partner_fee_id": "pf_000000000000",
+          "partner_fee_amount": 150,
+          "total_fee_amount": 1.53,
+          "commercial_quotation": 495,
+          "blindpay_quotation": 505,
+          "currency": "zz_unknown_value_from_future_api",
+          "billing_fee_amount": 50,
+          "transaction_fee_amount": 100,
+          "is_otc": false,
+          "payer_rules": {
+            "pix_allowed_tax_ids": [
+              "123.456.789-09"
+            ],
+            "transfers_allowed_tax_id": "20-12345678-6",
+            "pse_allowed_tax_ids": [
+              "1234567890"
+            ],
+            "pse_full_name": "sample_pse_full_name",
+            "pse_document_type": "zz_unknown_value_from_future_api",
+            "pse_document_number": "sample_pse_document_number",
+            "pse_email": "dev@example.com",
+            "pse_phone": "sample_pse_phone",
+            "pse_bank_code": "sample_pse_bank_code"
+          },
+          "name": "Wallet Display Name",
+          "address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+          "network": "zz_unknown_value_from_future_api",
+          "blindpay_bank_details": {
+            "routing_number": "121145349",
+            "account_number": "621327727210181",
+            "account_type": "Business checking",
+            "swift_bic_code": "CHASUS33",
+            "ach": {
+              "routing_number": "123456789",
+              "account_number": "123456789"
+            },
+            "wire": {
+              "routing_number": "123456789",
+              "account_number": "123456789"
+            },
+            "rtp": {
+              "routing_number": "123456789",
+              "account_number": "123456789"
+            },
+            "beneficiary": {
+              "name": "BlindPay, Inc.",
+              "address_line_1": "8 The Green, #19364",
+              "address_line_2": "Dover, DE 19901"
+            },
+            "receiving_bank": {
+              "name": "CFSB",
+              "address_line_1": "1 Letterman Drive, Building A, Suite A4-700",
+              "address_line_2": "San Francisco, CA 94129"
+            },
+            "swift_account_number": "GB50TCCL04140449730892",
+            "swift_receiving_bank": {
+              "name": "JPMorgan Chase",
+              "address_line_1": "270 Park Ave",
+              "address_line_2": "New York, NY, 10017-2070"
+            }
+          },
+          "pse_payment_link": "https://pse.example.com/payment/abc123",
+          "pse_full_name": "Juan P\u00e9rez Garc\u00eda",
+          "pse_tax_id": "1234567890",
+          "pse_document_type": "zz_unknown_value_from_future_api"
+        },
+        "decimals": {
+          "id": "re_000000000000",
+          "pix_code": "00020101021226790014br.gov.bcb.pix2557brcode.starkinfra.com/v2/bcf07f6c4110454e9fd6f120bab13e835204000053039865802BR5915Blind Pay, Inc.6010Vila Velha62070503***6304BCAB",
+          "memo_code": "8K45GHBNT6BQ6462",
+          "clabe": "014027000000000008",
+          "status": "processing",
+          "payin_quote_id": "qu_000000000000",
+          "instance_id": "in_000000000000",
+          "customer_id": "re_000000000000",
+          "partner_fee": 25000,
+          "tracking_transaction": {
+            "step": "processing",
+            "status": "failed",
+            "external_id": "12345678",
+            "completed_at": "2011-10-05T14:48:00.000Z",
+            "transaction_hash": "0x123...890",
+            "provider_name": "HSBC",
+            "provider_transaction_id": "<provider_transaction_id>",
+            "sender_name": "John Doe Smith",
+            "sender_bank_name": "Bank of America",
+            "sender_tax_id": "123.456.789-10",
+            "sender_bank_code": "00416968",
+            "sender_account_number": "1234567890",
+            "end_to_end_id": "E20018183202603311320vm6ALFpJpsS",
+            "trace_number": "1234567890",
+            "transaction_reference": "1234567890",
+            "description": "Payment from John Doe Smith",
+            "pse_instruction": {
+              "payment_link": "https://pse.example.com/payment/abc123",
+              "fid": "be6185ad-afdf-d682-2ca7-d447250f5e96",
+              "payin_intent_id": "be6185ad-afdf-d682-2ca7-d447250f5e96",
+              "expires_at": "2026-02-26T23:59:59Z",
+              "full_name": "Juan P\u00e9rez Garc\u00eda",
+              "tax_id": "1234567890",
+              "document_type": "CC",
+              "phone": "+573001234567",
+              "email": "juan@example.com",
+              "bank_code": "1007"
+            },
+            "transfers_instruction": {
+              "account": "0000003100012389237485",
+              "type": "CVU",
+              "tax_id": "20123456786"
+            },
+            "ted_instruction": {
+              "beneficiary_name": "Blind Pay, Inc.",
+              "tax_id": "57.599.376/0001-81",
+              "bank_code": "665",
+              "bank_name": "STARK BANK S.A.",
+              "branch_code": "5340",
+              "account_number": "01011707084-8",
+              "account_type": "checking"
+            },
+            "card_instruction": {
+              "provider": "nmi",
+              "tokenization_key": "KXypee-Vq3y2f-K6c7Dy-Wq92R5",
+              "checkout_public_key": "checkout_public_Ab12Cd34Ef56Gh78",
+              "checkout_token": "cGlfMDAwMDAwMDAwMDAwLjE3OTM1NzQ0MDAuM2Y1YQ",
+              "checkout_url": "https://app.blindpay.com/e/card/pi_000000000000?t=cGlfMDAwMDAwMDAwMDAwLjE3OTM1NzQ0MDAuM2Y1YQ"
+            },
+            "card_evidence": {
+              "eci": "05",
+              "cavv": "AAABBWcSNIdjeUZThmNHAAAAAAA=",
+              "cavv_result": "2",
+              "avs_response": "Y",
+              "cvv_response": "M",
+              "auth_code": "123456",
+              "cardholder_name": "Jane Doe",
+              "three_ds_version": "2.2.0"
+            },
+            "card_failed_attempts": 0,
+            "card_claim_at": "2025-11-10T15:59:30.000Z",
+            "card_gates_failed_at": "2025-11-10T15:59:30.000Z"
+          },
+          "tracking_payment": {
+            "step": "on_hold",
+            "provider_name": "blockchain",
+            "completed_at": "2011-10-05T14:48:00.000Z",
+            "review_source": "seon_review",
+            "review_context": {
+              "sample_key": {}
+            },
+            "review_sources": [
+              "sample_review_sources"
+            ],
+            "review_contexts": {
+              "sample_key": {}
+            },
+            "approved_risk_sources": [
+              "sample_approved_risk_sources"
+            ]
+          },
+          "tracking_complete": {
+            "step": "on_hold",
+            "transaction_hash": "0x123...890",
+            "completed_at": "2011-10-05T14:48:00.000Z"
+          },
+          "manual_execution_status": "pending",
+          "manual_concluded_at": {},
+          "manual_concluded_by": "sample_manual_concluded_by",
+          "created_at": "2021-01-01T00:00:00Z",
+          "updated_at": "2021-01-01T00:00:00Z",
+          "image_url": "https://example.com/image.png",
+          "first_name": "John",
+          "last_name": "Doe",
+          "legal_name": "Company Name Inc.",
+          "type": "individual",
+          "payment_method": "pix",
+          "sender_amount": 5240,
+          "receiver_amount": 1010,
+          "token": "USDC",
+          "partner_fee_id": "pf_000000000000",
+          "partner_fee_amount": 150,
+          "total_fee_amount": 1.53,
+          "commercial_quotation": 1234.56,
+          "blindpay_quotation": 1234.56,
+          "currency": "BRL",
+          "billing_fee_amount": 50,
+          "transaction_fee_amount": 100,
+          "is_otc": false,
+          "payer_rules": {
+            "pix_allowed_tax_ids": [
+              "123.456.789-09"
+            ],
+            "transfers_allowed_tax_id": "20-12345678-6",
+            "pse_allowed_tax_ids": [
+              "1234567890"
+            ],
+            "pse_full_name": "sample_pse_full_name",
+            "pse_document_type": "CC",
+            "pse_document_number": "sample_pse_document_number",
+            "pse_email": "dev@example.com",
+            "pse_phone": "sample_pse_phone",
+            "pse_bank_code": "sample_pse_bank_code"
+          },
+          "name": "Wallet Display Name",
+          "address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+          "network": "polygon",
+          "blindpay_bank_details": {
+            "routing_number": "121145349",
+            "account_number": "621327727210181",
+            "account_type": "Business checking",
+            "swift_bic_code": "CHASUS33",
+            "ach": {
+              "routing_number": "123456789",
+              "account_number": "123456789"
+            },
+            "wire": {
+              "routing_number": "123456789",
+              "account_number": "123456789"
+            },
+            "rtp": {
+              "routing_number": "123456789",
+              "account_number": "123456789"
+            },
+            "beneficiary": {
+              "name": "BlindPay, Inc.",
+              "address_line_1": "8 The Green, #19364",
+              "address_line_2": "Dover, DE 19901"
+            },
+            "receiving_bank": {
+              "name": "CFSB",
+              "address_line_1": "1 Letterman Drive, Building A, Suite A4-700",
+              "address_line_2": "San Francisco, CA 94129"
+            },
+            "swift_account_number": "GB50TCCL04140449730892",
+            "swift_receiving_bank": {
+              "name": "JPMorgan Chase",
+              "address_line_1": "270 Park Ave",
+              "address_line_2": "New York, NY, 10017-2070"
+            }
+          },
+          "pse_payment_link": "https://pse.example.com/payment/abc123",
+          "pse_full_name": "Juan P\u00e9rez Garc\u00eda",
+          "pse_tax_id": "1234567890",
+          "pse_document_type": "CC"
+        }
+      }
+    }
+  }
+}

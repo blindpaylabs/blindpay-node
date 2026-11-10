@@ -1,0 +1,109 @@
+{
+  "operation": "GET /v1/instances/{instance_id}/onboarding/ownership_documents",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": null,
+      "variants": {
+        "full": {
+          "incorporation_doc_file": "sample_incorporation_doc_file",
+          "proof_of_ownership_doc_file": "sample_proof_of_ownership_doc_file",
+          "proof_of_address_doc_type": "UTILITY_BILL",
+          "proof_of_address_doc_file": "sample_proof_of_address_doc_file",
+          "owners": [
+            {
+              "id": "ow_000000000000",
+              "instance_id": "in_000000000000",
+              "role": "beneficial_owner",
+              "first_name": "John",
+              "last_name": "Doe",
+              "ownership_percentage": 50,
+              "date_of_birth": "2025-11-10T15:59:30.000Z",
+              "tax_id": "536804398",
+              "address_line_1": "738 Plain St",
+              "address_line_2": "Building 22",
+              "city": "Marshfield",
+              "state_province_region": "MA",
+              "country": "US",
+              "postal_code": "02050",
+              "id_doc_country": "BR",
+              "id_doc_type": "PASSPORT",
+              "id_doc_front_file": "https://example.com/resource",
+              "id_doc_back_file": "https://example.com/resource",
+              "proof_of_address_doc_type": "UTILITY_BILL",
+              "proof_of_address_doc_file": "sample_proof_of_address_doc_file"
+            }
+          ]
+        },
+        "required_only": {},
+        "nullables_null": {
+          "incorporation_doc_file": null,
+          "proof_of_ownership_doc_file": null,
+          "proof_of_address_doc_type": null,
+          "proof_of_address_doc_file": null,
+          "owners": null
+        },
+        "unknown_enum": {
+          "incorporation_doc_file": "sample_incorporation_doc_file",
+          "proof_of_ownership_doc_file": "sample_proof_of_ownership_doc_file",
+          "proof_of_address_doc_type": "zz_unknown_value_from_future_api",
+          "proof_of_address_doc_file": "sample_proof_of_address_doc_file",
+          "owners": [
+            {
+              "id": "ow_000000000000",
+              "instance_id": "in_000000000000",
+              "role": "zz_unknown_value_from_future_api",
+              "first_name": "John",
+              "last_name": "Doe",
+              "ownership_percentage": 50,
+              "date_of_birth": "2025-11-10T15:59:30.000Z",
+              "tax_id": "536804398",
+              "address_line_1": "738 Plain St",
+              "address_line_2": "Building 22",
+              "city": "Marshfield",
+              "state_province_region": "MA",
+              "country": "zz_unknown_value_from_future_api",
+              "postal_code": "02050",
+              "id_doc_country": "zz_unknown_value_from_future_api",
+              "id_doc_type": "zz_unknown_value_from_future_api",
+              "id_doc_front_file": "https://example.com/resource",
+              "id_doc_back_file": "https://example.com/resource",
+              "proof_of_address_doc_type": "zz_unknown_value_from_future_api",
+              "proof_of_address_doc_file": "sample_proof_of_address_doc_file"
+            }
+          ]
+        },
+        "decimals": {
+          "incorporation_doc_file": "sample_incorporation_doc_file",
+          "proof_of_ownership_doc_file": "sample_proof_of_ownership_doc_file",
+          "proof_of_address_doc_type": "UTILITY_BILL",
+          "proof_of_address_doc_file": "sample_proof_of_address_doc_file",
+          "owners": [
+            {
+              "id": "ow_000000000000",
+              "instance_id": "in_000000000000",
+              "role": "beneficial_owner",
+              "first_name": "John",
+              "last_name": "Doe",
+              "ownership_percentage": 1234.56,
+              "date_of_birth": "2025-11-10T15:59:30.000Z",
+              "tax_id": "536804398",
+              "address_line_1": "738 Plain St",
+              "address_line_2": "Building 22",
+              "city": "Marshfield",
+              "state_province_region": "MA",
+              "country": "US",
+              "postal_code": "02050",
+              "id_doc_country": "BR",
+              "id_doc_type": "PASSPORT",
+              "id_doc_front_file": "https://example.com/resource",
+              "id_doc_back_file": "https://example.com/resource",
+              "proof_of_address_doc_type": "UTILITY_BILL",
+              "proof_of_address_doc_file": "sample_proof_of_address_doc_file"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

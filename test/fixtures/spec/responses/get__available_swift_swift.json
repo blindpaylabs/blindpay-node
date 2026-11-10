@@ -1,0 +1,71 @@
+{
+  "operation": "GET /v1/available/swift/{swift}",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "SwiftCodeResponse",
+      "variants": {
+        "full": [
+          {
+            "id": "416",
+            "bank": "BANK OF AMERICA, N.A.",
+            "city": "NEW JERSEY",
+            "branch": "LENDING SERVICES AND OPERATIONS (LSOP)",
+            "swiftCode": "BOFAUS3NLMA",
+            "swiftCodeLink": "https://bank.codes/swift-code/united-states/bofaus3nlma/",
+            "country": "United States",
+            "countrySlug": "united-states"
+          }
+        ],
+        "required_only": [
+          {
+            "id": "416",
+            "bank": "BANK OF AMERICA, N.A.",
+            "city": "NEW JERSEY",
+            "branch": "LENDING SERVICES AND OPERATIONS (LSOP)",
+            "swiftCode": "BOFAUS3NLMA",
+            "swiftCodeLink": "https://bank.codes/swift-code/united-states/bofaus3nlma/",
+            "country": "United States",
+            "countrySlug": "united-states"
+          }
+        ],
+        "nullables_null": [
+          {
+            "id": "416",
+            "bank": "BANK OF AMERICA, N.A.",
+            "city": "NEW JERSEY",
+            "branch": "LENDING SERVICES AND OPERATIONS (LSOP)",
+            "swiftCode": "BOFAUS3NLMA",
+            "swiftCodeLink": "https://bank.codes/swift-code/united-states/bofaus3nlma/",
+            "country": "United States",
+            "countrySlug": "united-states"
+          }
+        ],
+        "unknown_enum": [
+          {
+            "id": "416",
+            "bank": "BANK OF AMERICA, N.A.",
+            "city": "NEW JERSEY",
+            "branch": "LENDING SERVICES AND OPERATIONS (LSOP)",
+            "swiftCode": "BOFAUS3NLMA",
+            "swiftCodeLink": "https://bank.codes/swift-code/united-states/bofaus3nlma/",
+            "country": "United States",
+            "countrySlug": "united-states"
+          }
+        ],
+        "decimals": [
+          {
+            "id": "416",
+            "bank": "BANK OF AMERICA, N.A.",
+            "city": "NEW JERSEY",
+            "branch": "LENDING SERVICES AND OPERATIONS (LSOP)",
+            "swiftCode": "BOFAUS3NLMA",
+            "swiftCodeLink": "https://bank.codes/swift-code/united-states/bofaus3nlma/",
+            "country": "United States",
+            "countrySlug": "united-states"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,315 @@
+{
+  "operation": "GET /v1/instances/{instance_id}/transfers",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": null,
+      "variants": {
+        "full": {
+          "data": [
+            {
+              "id": "bl_000000000000",
+              "status": "processing",
+              "transfer_quote_id": "qu_000000000000",
+              "instance_id": "in_000000000000",
+              "tracking_transaction_monitoring": {
+                "step": "processing",
+                "blockchain_screening": 1,
+                "risk_score": 1,
+                "completed_at": "2011-10-05T14:48:00.000Z"
+              },
+              "tracking_paymaster": {
+                "step": "on_hold",
+                "transaction_hash": "0x123...890",
+                "gas_fee": "100",
+                "completed_at": "2011-10-05T14:48:00.000Z",
+                "error_message": "Gas fee is too low"
+              },
+              "tracking_bridge_swap": {
+                "step": "on_hold",
+                "transaction_hash": "0x123...890",
+                "gas_fee": "100",
+                "completed_at": "2011-10-05T14:48:00.000Z",
+                "error_message": "Gas fee is too low"
+              },
+              "tracking_complete": {
+                "step": "on_hold",
+                "transaction_hash": "0x123...890",
+                "gas_fee": "100",
+                "completed_at": "2011-10-05T14:48:00.000Z",
+                "error_message": "Gas fee is too low"
+              },
+              "tracking_partner_fee": {
+                "step": "on_hold",
+                "transaction_hash": "0x123...890",
+                "gas_fee": "100",
+                "completed_at": "2011-10-05T14:48:00.000Z",
+                "error_message": "Gas fee is too low"
+              },
+              "created_at": "2021-01-01T00:00:00Z",
+              "updated_at": "2021-01-01T00:00:00Z",
+              "image_url": "https://example.com/image.png",
+              "first_name": "John",
+              "last_name": "Doe",
+              "legal_name": "Company Name Inc.",
+              "wallet_id": "bl_000000000000",
+              "sender_token": "USDC",
+              "sender_amount": 5240,
+              "receiver_amount": 1010,
+              "customer_network": "polygon",
+              "customer_token": "USDC",
+              "customer_wallet_address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+              "partner_fee_amount": 150,
+              "partner_percentage_fee": 150,
+              "partner_flat_fee": 50,
+              "external_id": "your-database-id",
+              "customer_id": "re_000000000000",
+              "address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+              "network": "polygon"
+            }
+          ],
+          "pagination": {
+            "has_more": true,
+            "next_page": "pi_123",
+            "prev_page": "pi_123"
+          }
+        },
+        "required_only": {
+          "data": [
+            {
+              "id": "bl_000000000000",
+              "status": "processing",
+              "transfer_quote_id": "qu_000000000000",
+              "instance_id": "in_000000000000",
+              "tracking_transaction_monitoring": {
+                "step": "processing"
+              },
+              "tracking_paymaster": {
+                "step": "on_hold"
+              },
+              "tracking_bridge_swap": {
+                "step": "on_hold"
+              },
+              "tracking_complete": {
+                "step": "on_hold"
+              },
+              "wallet_id": "bl_000000000000",
+              "sender_token": "USDC",
+              "sender_amount": 5240,
+              "receiver_amount": 1010,
+              "customer_network": "polygon",
+              "customer_token": "USDC",
+              "customer_wallet_address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+              "customer_id": "re_000000000000",
+              "network": "polygon"
+            }
+          ],
+          "pagination": {
+            "has_more": true
+          }
+        },
+        "nullables_null": {
+          "data": [
+            {
+              "id": "bl_000000000000",
+              "status": "processing",
+              "transfer_quote_id": "qu_000000000000",
+              "instance_id": "in_000000000000",
+              "tracking_transaction_monitoring": {
+                "step": "processing",
+                "blockchain_screening": null,
+                "risk_score": null,
+                "completed_at": null
+              },
+              "tracking_paymaster": {
+                "step": "on_hold",
+                "transaction_hash": null,
+                "gas_fee": null,
+                "completed_at": null,
+                "error_message": null
+              },
+              "tracking_bridge_swap": {
+                "step": "on_hold",
+                "transaction_hash": null,
+                "gas_fee": null,
+                "completed_at": null,
+                "error_message": null
+              },
+              "tracking_complete": {
+                "step": "on_hold",
+                "transaction_hash": null,
+                "gas_fee": null,
+                "completed_at": null,
+                "error_message": null
+              },
+              "tracking_partner_fee": null,
+              "created_at": null,
+              "updated_at": null,
+              "image_url": null,
+              "first_name": null,
+              "last_name": null,
+              "legal_name": null,
+              "wallet_id": "bl_000000000000",
+              "sender_token": "USDC",
+              "sender_amount": 5240,
+              "receiver_amount": 1010,
+              "customer_network": "polygon",
+              "customer_token": "USDC",
+              "customer_wallet_address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+              "partner_fee_amount": null,
+              "partner_percentage_fee": 150,
+              "partner_flat_fee": 50,
+              "external_id": null,
+              "customer_id": "re_000000000000",
+              "address": null,
+              "network": "polygon"
+            }
+          ],
+          "pagination": {
+            "has_more": true,
+            "next_page": null,
+            "prev_page": null
+          }
+        },
+        "unknown_enum": {
+          "data": [
+            {
+              "id": "bl_000000000000",
+              "status": "zz_unknown_value_from_future_api",
+              "transfer_quote_id": "qu_000000000000",
+              "instance_id": "in_000000000000",
+              "tracking_transaction_monitoring": {
+                "step": "zz_unknown_value_from_future_api",
+                "blockchain_screening": 1,
+                "risk_score": 1,
+                "completed_at": "2011-10-05T14:48:00.000Z"
+              },
+              "tracking_paymaster": {
+                "step": "zz_unknown_value_from_future_api",
+                "transaction_hash": "0x123...890",
+                "gas_fee": "100",
+                "completed_at": "2011-10-05T14:48:00.000Z",
+                "error_message": "Gas fee is too low"
+              },
+              "tracking_bridge_swap": {
+                "step": "zz_unknown_value_from_future_api",
+                "transaction_hash": "0x123...890",
+                "gas_fee": "100",
+                "completed_at": "2011-10-05T14:48:00.000Z",
+                "error_message": "Gas fee is too low"
+              },
+              "tracking_complete": {
+                "step": "zz_unknown_value_from_future_api",
+                "transaction_hash": "0x123...890",
+                "gas_fee": "100",
+                "completed_at": "2011-10-05T14:48:00.000Z",
+                "error_message": "Gas fee is too low"
+              },
+              "tracking_partner_fee": {
+                "step": "zz_unknown_value_from_future_api",
+                "transaction_hash": "0x123...890",
+                "gas_fee": "100",
+                "completed_at": "2011-10-05T14:48:00.000Z",
+                "error_message": "Gas fee is too low"
+              },
+              "created_at": "2021-01-01T00:00:00Z",
+              "updated_at": "2021-01-01T00:00:00Z",
+              "image_url": "https://example.com/image.png",
+              "first_name": "John",
+              "last_name": "Doe",
+              "legal_name": "Company Name Inc.",
+              "wallet_id": "bl_000000000000",
+              "sender_token": "zz_unknown_value_from_future_api",
+              "sender_amount": 5240,
+              "receiver_amount": 1010,
+              "customer_network": "zz_unknown_value_from_future_api",
+              "customer_token": "zz_unknown_value_from_future_api",
+              "customer_wallet_address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+              "partner_fee_amount": 150,
+              "partner_percentage_fee": 150,
+              "partner_flat_fee": 50,
+              "external_id": "your-database-id",
+              "customer_id": "re_000000000000",
+              "address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+              "network": "zz_unknown_value_from_future_api"
+            }
+          ],
+          "pagination": {
+            "has_more": true,
+            "next_page": "pi_123",
+            "prev_page": "pi_123"
+          }
+        },
+        "decimals": {
+          "data": [
+            {
+              "id": "bl_000000000000",
+              "status": "processing",
+              "transfer_quote_id": "qu_000000000000",
+              "instance_id": "in_000000000000",
+              "tracking_transaction_monitoring": {
+                "step": "processing",
+                "blockchain_screening": 1,
+                "risk_score": 1234.56,
+                "completed_at": "2011-10-05T14:48:00.000Z"
+              },
+              "tracking_paymaster": {
+                "step": "on_hold",
+                "transaction_hash": "0x123...890",
+                "gas_fee": "100",
+                "completed_at": "2011-10-05T14:48:00.000Z",
+                "error_message": "Gas fee is too low"
+              },
+              "tracking_bridge_swap": {
+                "step": "on_hold",
+                "transaction_hash": "0x123...890",
+                "gas_fee": "100",
+                "completed_at": "2011-10-05T14:48:00.000Z",
+                "error_message": "Gas fee is too low"
+              },
+              "tracking_complete": {
+                "step": "on_hold",
+                "transaction_hash": "0x123...890",
+                "gas_fee": "100",
+                "completed_at": "2011-10-05T14:48:00.000Z",
+                "error_message": "Gas fee is too low"
+              },
+              "tracking_partner_fee": {
+                "step": "on_hold",
+                "transaction_hash": "0x123...890",
+                "gas_fee": "100",
+                "completed_at": "2011-10-05T14:48:00.000Z",
+                "error_message": "Gas fee is too low"
+              },
+              "created_at": "2021-01-01T00:00:00Z",
+              "updated_at": "2021-01-01T00:00:00Z",
+              "image_url": "https://example.com/image.png",
+              "first_name": "John",
+              "last_name": "Doe",
+              "legal_name": "Company Name Inc.",
+              "wallet_id": "bl_000000000000",
+              "sender_token": "USDC",
+              "sender_amount": 5240,
+              "receiver_amount": 1010,
+              "customer_network": "polygon",
+              "customer_token": "USDC",
+              "customer_wallet_address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+              "partner_fee_amount": 150,
+              "partner_percentage_fee": 150,
+              "partner_flat_fee": 50,
+              "external_id": "your-database-id",
+              "customer_id": "re_000000000000",
+              "address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+              "network": "polygon"
+            }
+          ],
+          "pagination": {
+            "has_more": true,
+            "next_page": "pi_123",
+            "prev_page": "pi_123"
+          }
+        }
+      }
+    }
+  }
+}

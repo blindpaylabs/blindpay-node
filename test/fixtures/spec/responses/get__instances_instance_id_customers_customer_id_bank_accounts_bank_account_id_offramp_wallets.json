@@ -1,0 +1,81 @@
+{
+  "operation": "GET /v1/instances/{instance_id}/customers/{customer_id}/bank-accounts/{bank_account_id}/offramp-wallets",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": null,
+      "variants": {
+        "full": [
+          {
+            "id": "ow_000000000000",
+            "external_id": "your_external_id",
+            "instance_id": "in_000000000000",
+            "customer_id": "re_000000000000",
+            "bank_account_id": "ba_000000000000",
+            "circle_wallet_id": "01234567-abcd-efgh-ijkl-012345678901",
+            "network": "tron",
+            "address": "TALJN9zTTEL9TVBb4WuTt6wLvPqJZr3hvb",
+            "partner_fee_id": "pf_000000000000",
+            "created_at": "2021-01-01T00:00:00Z",
+            "updated_at": "2021-01-01T00:00:00Z"
+          }
+        ],
+        "required_only": [
+          {
+            "id": "ow_000000000000",
+            "instance_id": "in_000000000000",
+            "customer_id": "re_000000000000",
+            "bank_account_id": "ba_000000000000",
+            "network": "tron",
+            "address": "TALJN9zTTEL9TVBb4WuTt6wLvPqJZr3hvb"
+          }
+        ],
+        "nullables_null": [
+          {
+            "id": "ow_000000000000",
+            "external_id": null,
+            "instance_id": "in_000000000000",
+            "customer_id": "re_000000000000",
+            "bank_account_id": "ba_000000000000",
+            "circle_wallet_id": null,
+            "network": "tron",
+            "address": "TALJN9zTTEL9TVBb4WuTt6wLvPqJZr3hvb",
+            "partner_fee_id": null,
+            "created_at": null,
+            "updated_at": null
+          }
+        ],
+        "unknown_enum": [
+          {
+            "id": "ow_000000000000",
+            "external_id": "your_external_id",
+            "instance_id": "in_000000000000",
+            "customer_id": "re_000000000000",
+            "bank_account_id": "ba_000000000000",
+            "circle_wallet_id": "01234567-abcd-efgh-ijkl-012345678901",
+            "network": "zz_unknown_value_from_future_api",
+            "address": "TALJN9zTTEL9TVBb4WuTt6wLvPqJZr3hvb",
+            "partner_fee_id": "pf_000000000000",
+            "created_at": "2021-01-01T00:00:00Z",
+            "updated_at": "2021-01-01T00:00:00Z"
+          }
+        ],
+        "decimals": [
+          {
+            "id": "ow_000000000000",
+            "external_id": "your_external_id",
+            "instance_id": "in_000000000000",
+            "customer_id": "re_000000000000",
+            "bank_account_id": "ba_000000000000",
+            "circle_wallet_id": "01234567-abcd-efgh-ijkl-012345678901",
+            "network": "tron",
+            "address": "TALJN9zTTEL9TVBb4WuTt6wLvPqJZr3hvb",
+            "partner_fee_id": "pf_000000000000",
+            "created_at": "2021-01-01T00:00:00Z",
+            "updated_at": "2021-01-01T00:00:00Z"
+          }
+        ]
+      }
+    }
+  }
+}

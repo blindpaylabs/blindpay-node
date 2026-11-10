@@ -1,0 +1,76 @@
+{
+  "operation": "GET /v1/instances/{instance_id}/onboarding/business_details",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": null,
+      "variants": {
+        "full": {
+          "legal_name": "My Company",
+          "tax_id": "000.000.000-00",
+          "formation_date": "2025-11-10T15:59:30.000Z",
+          "trading_names": [
+            "sample_trading_names"
+          ],
+          "address_line_1": "5th Avenue",
+          "address_line_2": "Building 1",
+          "city": "New York",
+          "state_province_region": "NY",
+          "postal_code": "64101",
+          "country": "BR",
+          "entity_type": "company",
+          "state_of_incorporation": "NY"
+        },
+        "required_only": {},
+        "nullables_null": {
+          "legal_name": "My Company",
+          "tax_id": "000.000.000-00",
+          "formation_date": "2025-11-10T15:59:30.000Z",
+          "trading_names": [
+            "sample_trading_names"
+          ],
+          "address_line_1": "5th Avenue",
+          "address_line_2": null,
+          "city": "New York",
+          "state_province_region": "NY",
+          "postal_code": "64101",
+          "country": "BR",
+          "entity_type": "company",
+          "state_of_incorporation": "NY"
+        },
+        "unknown_enum": {
+          "legal_name": "My Company",
+          "tax_id": "000.000.000-00",
+          "formation_date": "2025-11-10T15:59:30.000Z",
+          "trading_names": [
+            "sample_trading_names"
+          ],
+          "address_line_1": "5th Avenue",
+          "address_line_2": "Building 1",
+          "city": "New York",
+          "state_province_region": "NY",
+          "postal_code": "64101",
+          "country": "zz_unknown_value_from_future_api",
+          "entity_type": "zz_unknown_value_from_future_api",
+          "state_of_incorporation": "NY"
+        },
+        "decimals": {
+          "legal_name": "My Company",
+          "tax_id": "000.000.000-00",
+          "formation_date": "2025-11-10T15:59:30.000Z",
+          "trading_names": [
+            "sample_trading_names"
+          ],
+          "address_line_1": "5th Avenue",
+          "address_line_2": "Building 1",
+          "city": "New York",
+          "state_province_region": "NY",
+          "postal_code": "64101",
+          "country": "BR",
+          "entity_type": "company",
+          "state_of_incorporation": "NY"
+        }
+      }
+    }
+  }
+}

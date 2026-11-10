@@ -1,0 +1,56 @@
+{
+  "event": "customer.delete",
+  "schema_ref": "CustomerDeleteWebhookOut",
+  "variants": {
+    "full": {
+      "webhook_event": "customer.delete",
+      "id": "re_000000000000",
+      "customer_id": "re_000000000000",
+      "instance_id": "in_000000000000",
+      "type": "individual",
+      "kyc_type": "standard",
+      "kyc_status": "verifying",
+      "deleted_at": "2025-11-10T15:59:30.000Z"
+    },
+    "required_only": {
+      "webhook_event": "customer.delete",
+      "id": "re_000000000000",
+      "customer_id": "re_000000000000",
+      "instance_id": "in_000000000000",
+      "type": "individual",
+      "kyc_type": "standard",
+      "kyc_status": "verifying",
+      "deleted_at": "2025-11-10T15:59:30.000Z"
+    },
+    "nullables_null": {
+      "webhook_event": "customer.delete",
+      "id": "re_000000000000",
+      "customer_id": "re_000000000000",
+      "instance_id": "in_000000000000",
+      "type": "individual",
+      "kyc_type": "standard",
+      "kyc_status": "verifying",
+      "deleted_at": "2025-11-10T15:59:30.000Z"
+    },
+    "unknown_enum": {
+      "webhook_event": "customer.delete",
+      "id": "re_000000000000",
+      "customer_id": "re_000000000000",
+      "instance_id": "in_000000000000",
+      "type": "zz_unknown_value_from_future_api",
+      "kyc_type": "zz_unknown_value_from_future_api",
+      "kyc_status": "zz_unknown_value_from_future_api",
+      "deleted_at": "2025-11-10T15:59:30.000Z"
+    },
+    "decimals": {
+      "webhook_event": "customer.delete",
+      "id": "re_000000000000",
+      "customer_id": "re_000000000000",
+      "instance_id": "in_000000000000",
+      "type": "individual",
+      "kyc_type": "standard",
+      "kyc_status": "verifying",
+      "deleted_at": "2025-11-10T15:59:30.000Z"
+    }
+  }
+}

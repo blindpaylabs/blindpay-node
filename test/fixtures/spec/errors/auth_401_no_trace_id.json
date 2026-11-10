@@ -1,0 +1,10 @@
+{
+  "source": "error-handler.ts publicErrorBody (auth/rate-limit: no trace_id)",
+  "status": 401,
+  "body": {
+    "success": false,
+    "code": "AUTH_INVALID_API_KEY",
+    "message": "unauthorized"
+  },
+  "sdk_behaviour": "decode with trace_id and errors absent; terminal"
+}

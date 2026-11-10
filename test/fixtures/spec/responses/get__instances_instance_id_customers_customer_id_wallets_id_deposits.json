@@ -1,0 +1,114 @@
+{
+  "operation": "GET /v1/instances/{instance_id}/customers/{customer_id}/wallets/{id}/deposits",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "WalletDepositsOut",
+      "variants": {
+        "full": {
+          "data": [
+            {
+              "id": "wd_000000000000",
+              "wallet_id": "bl_000000000000",
+              "network": "polygon",
+              "token": "USDC",
+              "amount": 150000,
+              "token_amount": "1500.000123",
+              "status": "completed",
+              "transaction_hash": "0x8f3e1b...",
+              "sender_address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+              "created_at": "2026-10-15T10:02:00Z"
+            }
+          ],
+          "pagination": {
+            "has_more": true,
+            "next_page": "pi_123",
+            "prev_page": "pi_123"
+          }
+        },
+        "required_only": {
+          "data": [
+            {
+              "id": "wd_000000000000",
+              "wallet_id": "bl_000000000000",
+              "network": "polygon",
+              "token": "USDC",
+              "amount": 150000,
+              "token_amount": "1500.000123",
+              "status": "completed",
+              "transaction_hash": "0x8f3e1b...",
+              "sender_address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+              "created_at": "2026-10-15T10:02:00Z"
+            }
+          ],
+          "pagination": {
+            "has_more": true
+          }
+        },
+        "nullables_null": {
+          "data": [
+            {
+              "id": "wd_000000000000",
+              "wallet_id": "bl_000000000000",
+              "network": "polygon",
+              "token": "USDC",
+              "amount": 150000,
+              "token_amount": null,
+              "status": "completed",
+              "transaction_hash": "0x8f3e1b...",
+              "sender_address": null,
+              "created_at": "2026-10-15T10:02:00Z"
+            }
+          ],
+          "pagination": {
+            "has_more": true,
+            "next_page": null,
+            "prev_page": null
+          }
+        },
+        "unknown_enum": {
+          "data": [
+            {
+              "id": "wd_000000000000",
+              "wallet_id": "bl_000000000000",
+              "network": "zz_unknown_value_from_future_api",
+              "token": "zz_unknown_value_from_future_api",
+              "amount": 150000,
+              "token_amount": "1500.000123",
+              "status": "zz_unknown_value_from_future_api",
+              "transaction_hash": "0x8f3e1b...",
+              "sender_address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+              "created_at": "2026-10-15T10:02:00Z"
+            }
+          ],
+          "pagination": {
+            "has_more": true,
+            "next_page": "pi_123",
+            "prev_page": "pi_123"
+          }
+        },
+        "decimals": {
+          "data": [
+            {
+              "id": "wd_000000000000",
+              "wallet_id": "bl_000000000000",
+              "network": "polygon",
+              "token": "USDC",
+              "amount": 150000,
+              "token_amount": "1500.000123",
+              "status": "completed",
+              "transaction_hash": "0x8f3e1b...",
+              "sender_address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+              "created_at": "2026-10-15T10:02:00Z"
+            }
+          ],
+          "pagination": {
+            "has_more": true,
+            "next_page": "pi_123",
+            "prev_page": "pi_123"
+          }
+        }
+      }
+    }
+  }
+}

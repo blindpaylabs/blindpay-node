@@ -1,0 +1,576 @@
+{
+  "event": "customer.update",
+  "schema_ref": "CustomerUpdateWebhookOut",
+  "variants": {
+    "full": {
+      "webhook_event": "customer.update",
+      "id": "re_000000000000",
+      "customer_id": "re_000000000000",
+      "type": "individual",
+      "kyc_type": "standard",
+      "kyc_status": "verifying",
+      "kyc_warnings": [
+        {
+          "code": "sample_code",
+          "message": "sample_message",
+          "resolution_status": "sample_resolution_status",
+          "warning_id": "xx_000000000000"
+        }
+      ],
+      "fraud_warnings": [
+        {
+          "id": "xx_000000000000",
+          "name": "sample_name",
+          "operation": "sample_operation",
+          "score": 12.34
+        }
+      ],
+      "email": "email@example.com",
+      "tax_id": "536804398",
+      "address_line_1": "738 Plain St",
+      "address_line_2": "Building 22",
+      "city": "Marshfield",
+      "state_province_region": "MA",
+      "country": "US",
+      "postal_code": "02050",
+      "ip_address": "127.0.0.1",
+      "latitude": 37.7749,
+      "longitude": -122.4194,
+      "image_url": "https://example.com/image.png",
+      "phone_number": "+13055555555",
+      "proof_of_address_doc_type": "UTILITY_BILL",
+      "proof_of_address_doc_file": "https://example.com/image.png",
+      "first_name": "John",
+      "last_name": "Doe",
+      "date_of_birth": "2025-11-10T15:59:30.000Z",
+      "id_doc_country": "BR",
+      "id_doc_type": "PASSPORT",
+      "id_doc_front_file": "https://example.com/image.png",
+      "id_doc_back_file": "https://example.com/image.png",
+      "legal_name": "Company Name Inc.",
+      "alternate_name": "Company Name Inc.",
+      "formation_date": "2025-11-10T15:59:30.000Z",
+      "website": "https://example.com",
+      "owners": [
+        {
+          "id": "ub_000000000000",
+          "instance_id": "in_000000000000",
+          "customer_id": "re_000000000000",
+          "role": "beneficial_owner",
+          "first_name": "John",
+          "last_name": "Doe",
+          "date_of_birth": "2025-11-10T15:59:30.000Z",
+          "tax_id": "536804398",
+          "address_line_1": "738 Plain St",
+          "address_line_2": "Building 22",
+          "city": "Marshfield",
+          "state_province_region": "MA",
+          "country": "US",
+          "postal_code": "02050",
+          "id_doc_country": "BR",
+          "id_doc_type": "PASSPORT",
+          "id_doc_front_file": "sample_id_doc_front_file",
+          "id_doc_back_file": "sample_id_doc_back_file",
+          "proof_of_address_doc_type": "UTILITY_BILL",
+          "proof_of_address_doc_file": "sample_proof_of_address_doc_file",
+          "ownership_percentage": 25,
+          "title": "CEO",
+          "tax_type": "SSN"
+        }
+      ],
+      "incorporation_doc_file": "https://example.com/image.png",
+      "proof_of_ownership_doc_file": "https://example.com/image.png",
+      "source_of_funds_doc_type": "business_income",
+      "source_of_funds_doc_file": "https://example.com/image.png",
+      "selfie_file": "https://example.com/image.png",
+      "purpose_of_transactions": "business_transactions",
+      "purpose_of_transactions_explanation": "I am a business owner and I want to receive payments from my customers",
+      "is_fbo": false,
+      "is_nested": false,
+      "account_purpose": "treasury_management",
+      "account_purpose_other": "Custom account purpose description",
+      "business_type": "llc",
+      "business_description": "Software development company",
+      "business_industry": "541511",
+      "estimated_annual_revenue": "1000000_9999999",
+      "source_of_wealth": "affiliate_or_royalty_income",
+      "publicly_traded": false,
+      "occupation": "Software Engineer",
+      "external_id": "your_company_external_id",
+      "instance_id": "in_000000000000",
+      "tos_id": "to_000000000000",
+      "aml_status": "clear",
+      "aml_hits": {
+        "has_sanction_match": true,
+        "has_pep_match": true,
+        "has_watchlist_match": true,
+        "has_crimelist_match": true,
+        "has_adversemedia_match": true
+      },
+      "created_at": "2021-01-01T00:00:00Z",
+      "updated_at": "2021-01-01T00:00:00Z",
+      "limit": {
+        "per_transaction": 100000,
+        "daily": 200000,
+        "monthly": 1000000
+      },
+      "is_tos_accepted": true,
+      "additional_info": [
+        {
+          "label": "EIN_LETTER",
+          "value": "sample_value"
+        }
+      ],
+      "cnae_condition": {
+        "status": "pending",
+        "expected_cnaes": [
+          "sample_expected_cnaes"
+        ],
+        "cnae_at_approval": {
+          "primary": {
+            "code": "sample_code",
+            "description": "sample_description"
+          },
+          "secondary": [
+            {
+              "code": "sample_code",
+              "description": "sample_description"
+            }
+          ]
+        },
+        "result_cnae": {
+          "primary": {
+            "code": "sample_code",
+            "description": "sample_description"
+          },
+          "secondary": [
+            {
+              "code": "sample_code",
+              "description": "sample_description"
+            }
+          ]
+        },
+        "due_at": "2025-11-10T15:59:30.000Z",
+        "created_at": "2025-11-10T15:59:30.000Z",
+        "reviewed_at": "2025-11-10T15:59:30.000Z"
+      },
+      "virtual_account_preapproval": {
+        "status": "approved",
+        "banking_partners": [
+          "jpmorgan"
+        ],
+        "rejection_reason": "sample_rejection_reason",
+        "reviewed_at": "2026-09-01T00:00:00.000Z"
+      }
+    },
+    "required_only": {
+      "webhook_event": "customer.update",
+      "id": "re_000000000000",
+      "customer_id": "re_000000000000",
+      "type": "individual",
+      "kyc_type": "standard",
+      "kyc_status": "verifying",
+      "email": "email@example.com",
+      "country": "US",
+      "instance_id": "in_000000000000",
+      "limit": {
+        "per_transaction": 100000,
+        "daily": 200000,
+        "monthly": 1000000
+      }
+    },
+    "nullables_null": {
+      "webhook_event": "customer.update",
+      "id": "re_000000000000",
+      "customer_id": "re_000000000000",
+      "type": "individual",
+      "kyc_type": "standard",
+      "kyc_status": "verifying",
+      "kyc_warnings": null,
+      "fraud_warnings": null,
+      "email": "email@example.com",
+      "tax_id": null,
+      "address_line_1": null,
+      "address_line_2": null,
+      "city": null,
+      "state_province_region": null,
+      "country": "US",
+      "postal_code": null,
+      "ip_address": null,
+      "latitude": null,
+      "longitude": null,
+      "image_url": null,
+      "phone_number": null,
+      "proof_of_address_doc_type": null,
+      "proof_of_address_doc_file": null,
+      "first_name": null,
+      "last_name": null,
+      "date_of_birth": null,
+      "id_doc_country": null,
+      "id_doc_type": null,
+      "id_doc_front_file": null,
+      "id_doc_back_file": null,
+      "legal_name": null,
+      "alternate_name": null,
+      "formation_date": null,
+      "website": null,
+      "owners": null,
+      "incorporation_doc_file": null,
+      "proof_of_ownership_doc_file": null,
+      "source_of_funds_doc_type": null,
+      "source_of_funds_doc_file": null,
+      "selfie_file": null,
+      "purpose_of_transactions": null,
+      "purpose_of_transactions_explanation": null,
+      "is_fbo": null,
+      "is_nested": null,
+      "account_purpose": null,
+      "account_purpose_other": null,
+      "business_type": null,
+      "business_description": null,
+      "business_industry": null,
+      "estimated_annual_revenue": null,
+      "source_of_wealth": null,
+      "publicly_traded": null,
+      "occupation": null,
+      "external_id": null,
+      "instance_id": "in_000000000000",
+      "tos_id": null,
+      "aml_status": null,
+      "aml_hits": null,
+      "created_at": null,
+      "updated_at": null,
+      "limit": {
+        "per_transaction": null,
+        "daily": null,
+        "monthly": null
+      },
+      "is_tos_accepted": null,
+      "additional_info": null,
+      "cnae_condition": null,
+      "virtual_account_preapproval": null
+    },
+    "unknown_enum": {
+      "webhook_event": "customer.update",
+      "id": "re_000000000000",
+      "customer_id": "re_000000000000",
+      "type": "zz_unknown_value_from_future_api",
+      "kyc_type": "zz_unknown_value_from_future_api",
+      "kyc_status": "zz_unknown_value_from_future_api",
+      "kyc_warnings": [
+        {
+          "code": "sample_code",
+          "message": "sample_message",
+          "resolution_status": "sample_resolution_status",
+          "warning_id": "xx_000000000000"
+        }
+      ],
+      "fraud_warnings": [
+        {
+          "id": "xx_000000000000",
+          "name": "sample_name",
+          "operation": "sample_operation",
+          "score": 12.34
+        }
+      ],
+      "email": "email@example.com",
+      "tax_id": "536804398",
+      "address_line_1": "738 Plain St",
+      "address_line_2": "Building 22",
+      "city": "Marshfield",
+      "state_province_region": "MA",
+      "country": "zz_unknown_value_from_future_api",
+      "postal_code": "02050",
+      "ip_address": "127.0.0.1",
+      "latitude": 37.7749,
+      "longitude": -122.4194,
+      "image_url": "https://example.com/image.png",
+      "phone_number": "+13055555555",
+      "proof_of_address_doc_type": "zz_unknown_value_from_future_api",
+      "proof_of_address_doc_file": "https://example.com/image.png",
+      "first_name": "John",
+      "last_name": "Doe",
+      "date_of_birth": "2025-11-10T15:59:30.000Z",
+      "id_doc_country": "zz_unknown_value_from_future_api",
+      "id_doc_type": "zz_unknown_value_from_future_api",
+      "id_doc_front_file": "https://example.com/image.png",
+      "id_doc_back_file": "https://example.com/image.png",
+      "legal_name": "Company Name Inc.",
+      "alternate_name": "Company Name Inc.",
+      "formation_date": "2025-11-10T15:59:30.000Z",
+      "website": "https://example.com",
+      "owners": [
+        {
+          "id": "ub_000000000000",
+          "instance_id": "in_000000000000",
+          "customer_id": "re_000000000000",
+          "role": "zz_unknown_value_from_future_api",
+          "first_name": "John",
+          "last_name": "Doe",
+          "date_of_birth": "2025-11-10T15:59:30.000Z",
+          "tax_id": "536804398",
+          "address_line_1": "738 Plain St",
+          "address_line_2": "Building 22",
+          "city": "Marshfield",
+          "state_province_region": "MA",
+          "country": "zz_unknown_value_from_future_api",
+          "postal_code": "02050",
+          "id_doc_country": "zz_unknown_value_from_future_api",
+          "id_doc_type": "zz_unknown_value_from_future_api",
+          "id_doc_front_file": "sample_id_doc_front_file",
+          "id_doc_back_file": "sample_id_doc_back_file",
+          "proof_of_address_doc_type": "zz_unknown_value_from_future_api",
+          "proof_of_address_doc_file": "sample_proof_of_address_doc_file",
+          "ownership_percentage": 25,
+          "title": "CEO",
+          "tax_type": "zz_unknown_value_from_future_api"
+        }
+      ],
+      "incorporation_doc_file": "https://example.com/image.png",
+      "proof_of_ownership_doc_file": "https://example.com/image.png",
+      "source_of_funds_doc_type": "zz_unknown_value_from_future_api",
+      "source_of_funds_doc_file": "https://example.com/image.png",
+      "selfie_file": "https://example.com/image.png",
+      "purpose_of_transactions": "zz_unknown_value_from_future_api",
+      "purpose_of_transactions_explanation": "I am a business owner and I want to receive payments from my customers",
+      "is_fbo": false,
+      "is_nested": false,
+      "account_purpose": "zz_unknown_value_from_future_api",
+      "account_purpose_other": "Custom account purpose description",
+      "business_type": "zz_unknown_value_from_future_api",
+      "business_description": "Software development company",
+      "business_industry": "541511",
+      "estimated_annual_revenue": "zz_unknown_value_from_future_api",
+      "source_of_wealth": "zz_unknown_value_from_future_api",
+      "publicly_traded": false,
+      "occupation": "Software Engineer",
+      "external_id": "your_company_external_id",
+      "instance_id": "in_000000000000",
+      "tos_id": "to_000000000000",
+      "aml_status": "zz_unknown_value_from_future_api",
+      "aml_hits": {
+        "has_sanction_match": true,
+        "has_pep_match": true,
+        "has_watchlist_match": true,
+        "has_crimelist_match": true,
+        "has_adversemedia_match": true
+      },
+      "created_at": "2021-01-01T00:00:00Z",
+      "updated_at": "2021-01-01T00:00:00Z",
+      "limit": {
+        "per_transaction": 100000,
+        "daily": 200000,
+        "monthly": 1000000
+      },
+      "is_tos_accepted": true,
+      "additional_info": [
+        {
+          "label": "zz_unknown_value_from_future_api",
+          "value": "sample_value"
+        }
+      ],
+      "cnae_condition": {
+        "status": "zz_unknown_value_from_future_api",
+        "expected_cnaes": [
+          "sample_expected_cnaes"
+        ],
+        "cnae_at_approval": {
+          "primary": {
+            "code": "sample_code",
+            "description": "sample_description"
+          },
+          "secondary": [
+            {
+              "code": "sample_code",
+              "description": "sample_description"
+            }
+          ]
+        },
+        "result_cnae": {
+          "primary": {
+            "code": "sample_code",
+            "description": "sample_description"
+          },
+          "secondary": [
+            {
+              "code": "sample_code",
+              "description": "sample_description"
+            }
+          ]
+        },
+        "due_at": "2025-11-10T15:59:30.000Z",
+        "created_at": "2025-11-10T15:59:30.000Z",
+        "reviewed_at": "2025-11-10T15:59:30.000Z"
+      },
+      "virtual_account_preapproval": {
+        "status": "zz_unknown_value_from_future_api",
+        "banking_partners": [
+          "zz_unknown_value_from_future_api"
+        ],
+        "rejection_reason": "sample_rejection_reason",
+        "reviewed_at": "2026-09-01T00:00:00.000Z"
+      }
+    },
+    "decimals": {
+      "webhook_event": "customer.update",
+      "id": "re_000000000000",
+      "customer_id": "re_000000000000",
+      "type": "individual",
+      "kyc_type": "standard",
+      "kyc_status": "verifying",
+      "kyc_warnings": [
+        {
+          "code": "sample_code",
+          "message": "sample_message",
+          "resolution_status": "sample_resolution_status",
+          "warning_id": "xx_000000000000"
+        }
+      ],
+      "fraud_warnings": [
+        {
+          "id": "xx_000000000000",
+          "name": "sample_name",
+          "operation": "sample_operation",
+          "score": 1234.56
+        }
+      ],
+      "email": "email@example.com",
+      "tax_id": "536804398",
+      "address_line_1": "738 Plain St",
+      "address_line_2": "Building 22",
+      "city": "Marshfield",
+      "state_province_region": "MA",
+      "country": "US",
+      "postal_code": "02050",
+      "ip_address": "127.0.0.1",
+      "latitude": 1234.56,
+      "longitude": 1234.56,
+      "image_url": "https://example.com/image.png",
+      "phone_number": "+13055555555",
+      "proof_of_address_doc_type": "UTILITY_BILL",
+      "proof_of_address_doc_file": "https://example.com/image.png",
+      "first_name": "John",
+      "last_name": "Doe",
+      "date_of_birth": "2025-11-10T15:59:30.000Z",
+      "id_doc_country": "BR",
+      "id_doc_type": "PASSPORT",
+      "id_doc_front_file": "https://example.com/image.png",
+      "id_doc_back_file": "https://example.com/image.png",
+      "legal_name": "Company Name Inc.",
+      "alternate_name": "Company Name Inc.",
+      "formation_date": "2025-11-10T15:59:30.000Z",
+      "website": "https://example.com",
+      "owners": [
+        {
+          "id": "ub_000000000000",
+          "instance_id": "in_000000000000",
+          "customer_id": "re_000000000000",
+          "role": "beneficial_owner",
+          "first_name": "John",
+          "last_name": "Doe",
+          "date_of_birth": "2025-11-10T15:59:30.000Z",
+          "tax_id": "536804398",
+          "address_line_1": "738 Plain St",
+          "address_line_2": "Building 22",
+          "city": "Marshfield",
+          "state_province_region": "MA",
+          "country": "US",
+          "postal_code": "02050",
+          "id_doc_country": "BR",
+          "id_doc_type": "PASSPORT",
+          "id_doc_front_file": "sample_id_doc_front_file",
+          "id_doc_back_file": "sample_id_doc_back_file",
+          "proof_of_address_doc_type": "UTILITY_BILL",
+          "proof_of_address_doc_file": "sample_proof_of_address_doc_file",
+          "ownership_percentage": 25,
+          "title": "CEO",
+          "tax_type": "SSN"
+        }
+      ],
+      "incorporation_doc_file": "https://example.com/image.png",
+      "proof_of_ownership_doc_file": "https://example.com/image.png",
+      "source_of_funds_doc_type": "business_income",
+      "source_of_funds_doc_file": "https://example.com/image.png",
+      "selfie_file": "https://example.com/image.png",
+      "purpose_of_transactions": "business_transactions",
+      "purpose_of_transactions_explanation": "I am a business owner and I want to receive payments from my customers",
+      "is_fbo": false,
+      "is_nested": false,
+      "account_purpose": "treasury_management",
+      "account_purpose_other": "Custom account purpose description",
+      "business_type": "llc",
+      "business_description": "Software development company",
+      "business_industry": "541511",
+      "estimated_annual_revenue": "1000000_9999999",
+      "source_of_wealth": "affiliate_or_royalty_income",
+      "publicly_traded": false,
+      "occupation": "Software Engineer",
+      "external_id": "your_company_external_id",
+      "instance_id": "in_000000000000",
+      "tos_id": "to_000000000000",
+      "aml_status": "clear",
+      "aml_hits": {
+        "has_sanction_match": true,
+        "has_pep_match": true,
+        "has_watchlist_match": true,
+        "has_crimelist_match": true,
+        "has_adversemedia_match": true
+      },
+      "created_at": "2021-01-01T00:00:00Z",
+      "updated_at": "2021-01-01T00:00:00Z",
+      "limit": {
+        "per_transaction": 100000,
+        "daily": 200000,
+        "monthly": 1000000
+      },
+      "is_tos_accepted": true,
+      "additional_info": [
+        {
+          "label": "EIN_LETTER",
+          "value": "sample_value"
+        }
+      ],
+      "cnae_condition": {
+        "status": "pending",
+        "expected_cnaes": [
+          "sample_expected_cnaes"
+        ],
+        "cnae_at_approval": {
+          "primary": {
+            "code": "sample_code",
+            "description": "sample_description"
+          },
+          "secondary": [
+            {
+              "code": "sample_code",
+              "description": "sample_description"
+            }
+          ]
+        },
+        "result_cnae": {
+          "primary": {
+            "code": "sample_code",
+            "description": "sample_description"
+          },
+          "secondary": [
+            {
+              "code": "sample_code",
+              "description": "sample_description"
+            }
+          ]
+        },
+        "due_at": "2025-11-10T15:59:30.000Z",
+        "created_at": "2025-11-10T15:59:30.000Z",
+        "reviewed_at": "2025-11-10T15:59:30.000Z"
+      },
+      "virtual_account_preapproval": {
+        "status": "approved",
+        "banking_partners": [
+          "jpmorgan"
+        ],
+        "rejection_reason": "sample_rejection_reason",
+        "reviewed_at": "2026-09-01T00:00:00.000Z"
+      }
+    }
+  }
+}

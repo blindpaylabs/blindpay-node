@@ -1,0 +1,48 @@
+{
+  "operation": "POST /v1/instances/{instance_id}/customers/{customer_id}/bank-accounts/{bank_account_id}/offramp-wallets",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": null,
+      "variants": {
+        "full": {
+          "id": "ow_000000000000",
+          "external_id": "your_external_id",
+          "circle_wallet_id": "01234567-abcd-efgh-ijkl-012345678901",
+          "network": "tron",
+          "address": "TALJN9zTTEL9TVBb4WuTt6wLvPqJZr3hvb",
+          "partner_fee_id": "pf_000000000000"
+        },
+        "required_only": {
+          "id": "ow_000000000000",
+          "network": "tron",
+          "address": "TALJN9zTTEL9TVBb4WuTt6wLvPqJZr3hvb"
+        },
+        "nullables_null": {
+          "id": "ow_000000000000",
+          "external_id": null,
+          "circle_wallet_id": null,
+          "network": "tron",
+          "address": "TALJN9zTTEL9TVBb4WuTt6wLvPqJZr3hvb",
+          "partner_fee_id": null
+        },
+        "unknown_enum": {
+          "id": "ow_000000000000",
+          "external_id": "your_external_id",
+          "circle_wallet_id": "01234567-abcd-efgh-ijkl-012345678901",
+          "network": "zz_unknown_value_from_future_api",
+          "address": "TALJN9zTTEL9TVBb4WuTt6wLvPqJZr3hvb",
+          "partner_fee_id": "pf_000000000000"
+        },
+        "decimals": {
+          "id": "ow_000000000000",
+          "external_id": "your_external_id",
+          "circle_wallet_id": "01234567-abcd-efgh-ijkl-012345678901",
+          "network": "tron",
+          "address": "TALJN9zTTEL9TVBb4WuTt6wLvPqJZr3hvb",
+          "partner_fee_id": "pf_000000000000"
+        }
+      }
+    }
+  }
+}

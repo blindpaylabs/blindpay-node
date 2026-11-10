@@ -1,0 +1,26 @@
+{
+  "operation": "GET /v1/instances/{instance_id}/webhook-endpoints/portal-access",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "PortalAccessOut",
+      "variants": {
+        "full": {
+          "url": "https://example.com/webhook"
+        },
+        "required_only": {
+          "url": "https://example.com/webhook"
+        },
+        "nullables_null": {
+          "url": "https://example.com/webhook"
+        },
+        "unknown_enum": {
+          "url": "https://example.com/webhook"
+        },
+        "decimals": {
+          "url": "https://example.com/webhook"
+        }
+      }
+    }
+  }
+}

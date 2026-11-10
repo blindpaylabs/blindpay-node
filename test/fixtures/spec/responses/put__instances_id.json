@@ -1,0 +1,26 @@
+{
+  "operation": "PUT /v1/instances/{id}",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "Success",
+      "variants": {
+        "full": {
+          "success": true
+        },
+        "required_only": {
+          "success": true
+        },
+        "nullables_null": {
+          "success": true
+        },
+        "unknown_enum": {
+          "success": true
+        },
+        "decimals": {
+          "success": true
+        }
+      }
+    }
+  }
+}

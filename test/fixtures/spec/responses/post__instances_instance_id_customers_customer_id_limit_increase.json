@@ -1,0 +1,26 @@
+{
+  "operation": "POST /v1/instances/{instance_id}/customers/{customer_id}/limit-increase",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "CustomerLimitIncreaseOut",
+      "variants": {
+        "full": {
+          "id": "rl_000000000000"
+        },
+        "required_only": {
+          "id": "rl_000000000000"
+        },
+        "nullables_null": {
+          "id": "rl_000000000000"
+        },
+        "unknown_enum": {
+          "id": "rl_000000000000"
+        },
+        "decimals": {
+          "id": "rl_000000000000"
+        }
+      }
+    }
+  }
+}
