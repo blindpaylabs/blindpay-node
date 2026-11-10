@@ -7,6 +7,7 @@ import type {
     WalletToken,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { autoPage } from "../../internal/paginate";
 import { toQueryString } from "../../internal/query";
 
 export type YieldStatus = "disabled" | "enabled" | "disabling";
@@ -150,6 +151,28 @@ export function createCustodialWalletsResource(instanceId: string, client: Inter
             return client.get(
                 `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/deposits${toQueryString(params)}`,
                 options
+            );
+        },
+        /**
+         * Every deposit of the wallet matching `params`, fetched page by page (`limit` defaults
+         * to 100): `for await (const deposit of blindpay.wallets.custodial.getDepositsAutoPaging(
+         * { customer_id, id })) { ... }`. Forward only, so `ending_before` is rejected. A failed
+         * page throws a `BlindPayError` carrying the error.
+         */
+        getDepositsAutoPaging(
+            { customer_id, id, ...params }: Omit<GetCustodialWalletDepositsInput, "ending_before">,
+            options?: RequestOptions
+        ): AsyncGenerator<WalletDeposit, void, undefined> {
+            return autoPage<
+                WalletDeposit,
+                Omit<GetCustodialWalletDepositsInput, "customer_id" | "id">
+            >(
+                (page) =>
+                    client.get(
+                        `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/deposits${toQueryString(page)}`,
+                        options
+                    ),
+                params
             );
         },
     };

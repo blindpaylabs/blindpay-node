@@ -9,6 +9,7 @@ import type {
     WalletToken,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { autoPage } from "../../internal/paginate";
 import { toQueryString } from "../../internal/query";
 
 export type TransferTrackingStep = {
@@ -143,6 +144,21 @@ export function createTransfersResource(instanceId: string, client: InternalApiC
             return client.get(
                 `/instances/${instanceId}/transfers${toQueryString(params)}`,
                 options
+            );
+        },
+        /**
+         * Every transfer matching `params`, fetched page by page (`limit` defaults to 100):
+         * `for await (const item of blindpay.transfers.listAutoPaging()) { ... }`. Forward only, so
+         * `ending_before` is rejected. A failed page throws a `BlindPayError` carrying the error.
+         */
+        listAutoPaging(
+            params?: Omit<ListTransfersInput, "ending_before">,
+            options?: RequestOptions
+        ): AsyncGenerator<Transfer, void, undefined> {
+            return autoPage<Transfer, ListTransfersInput>(
+                (page) =>
+                    client.get(`/instances/${instanceId}/transfers${toQueryString(page)}`, options),
+                params
             );
         },
         get(

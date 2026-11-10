@@ -6,6 +6,7 @@ import type {
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { StrictOmit } from "../../internal/helpers/strict-omit";
+import { autoPage } from "../../internal/paginate";
 import { toQueryString } from "../../internal/query";
 import type { CreateAchInput, CreateWireInput } from "../bank-accounts";
 
@@ -130,6 +131,21 @@ export function createPayablesResource(instanceId: string, client: InternalApiCl
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<ListPayablesResponse>> {
             return client.get(`/instances/${instanceId}/payables${toQueryString(params)}`, options);
+        },
+        /**
+         * Every payable matching `params`, fetched page by page (`limit` defaults to 100):
+         * `for await (const item of blindpay.payables.listAutoPaging()) { ... }`. Forward only, so
+         * `ending_before` is rejected. A failed page throws a `BlindPayError` carrying the error.
+         */
+        listAutoPaging(
+            params?: Omit<ListPayablesInput, "ending_before">,
+            options?: RequestOptions
+        ): AsyncGenerator<Payable, void, undefined> {
+            return autoPage<Payable, ListPayablesInput>(
+                (page) =>
+                    client.get(`/instances/${instanceId}/payables${toQueryString(page)}`, options),
+                params
+            );
         },
         create(
             { ...data }: CreatePayableInput,

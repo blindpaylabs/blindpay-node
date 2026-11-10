@@ -17,6 +17,7 @@ import type {
     TransactionStatus,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { autoPage } from "../../internal/paginate";
 import { toQueryString } from "../../internal/query";
 
 export type BlindpayBankDetails = {
@@ -162,6 +163,21 @@ export function createPayinsResource(instanceId: string, client: InternalApiClie
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<ListPayinsResponse>> {
             return client.get(`/instances/${instanceId}/payins${toQueryString(params)}`, options);
+        },
+        /**
+         * Every payin matching `params`, fetched page by page (`limit` defaults to 100):
+         * `for await (const item of blindpay.payins.listAutoPaging()) { ... }`. Forward only, so
+         * `ending_before` is rejected. A failed page throws a `BlindPayError` carrying the error.
+         */
+        listAutoPaging(
+            params?: Omit<ListPayinsInput, "ending_before">,
+            options?: RequestOptions
+        ): AsyncGenerator<Payin, void, undefined> {
+            return autoPage<Payin, ListPayinsInput>(
+                (page) =>
+                    client.get(`/instances/${instanceId}/payins${toQueryString(page)}`, options),
+                params
+            );
         },
         get(
             payinId: GetPayinInput,

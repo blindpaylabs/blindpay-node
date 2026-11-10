@@ -34,6 +34,7 @@ blindpay-node/
       error-response.ts                 # toErrorResponse: API error envelope -> ErrorResponse
       http.ts                           # send(): the one transport (timeouts, idempotency keys, retries, error parsing)
       query.ts                          # toQueryString: list filters -> "?a=b", skipping absent values
+      paginate.ts                       # autoPage: async iterator behind every listAutoPaging
       test-fixtures.ts                  # Test-only loader for test/fixtures/spec (never import from SDK code)
       helpers/strict-omit.ts            # StrictOmit<T, K> utility type
       vitest-fetch-mock.d.ts            # Type declaration for fetch mock
@@ -43,6 +44,7 @@ blindpay-node/
         {resource-name}.test.ts         # Tests (colocated with resource)
       request-options.test.ts           # Fails on a mutation that doesn't forward RequestOptions
       list-query.test.ts                # Exact query string each list method sends
+      auto-paging.test.ts               # Every auto-pager: cursor following, errors, guards
       fixture-round-trip.test.ts        # Transport round-trip of test/fixtures/spec variants (not a type check)
       wallets/                          # Grouped sub-resources (no index.ts)
         blockchain.ts                   # createBlockchainWalletsResource
@@ -786,6 +788,10 @@ list(
 ```
 
 `src/resources/list-query.test.ts` asserts the exact URL every list method sends. Add a case there for a new list method. The api-sync generator emits the same `toQueryString(params)` call and adds the import (`ensureQueryStringImport` in `scripts/api-sync/apply.ts`).
+
+### Auto-pagination
+
+Every list whose spec op accepts `starting_after` (payouts, payins, customers, payables, transfers, wallet deposits) has an auto-pager next to it: `listAutoPaging(params?, options?)` (`getDepositsAutoPaging` for deposits), returning `AsyncGenerator<Entity>`. It is one call to `autoPage()` in `src/internal/paginate.ts` with the same path as `list`; never use `this`, since resources are spread into the client. `autoPage` sends `limit` (default `"100"`), follows `pagination.next_page` as `starting_after` while `has_more`, rejects `ending_before`, stops on a bare array, throws a `BlindPayError` (with `.error`) on a failed page, and throws when the cursor doesn't advance. Add a case to `src/resources/auto-paging.test.ts` for a new pager, with hand-written pages (the shared `.b0` fixtures never stop).
 
 ### Path parameters
 

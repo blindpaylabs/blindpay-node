@@ -73,9 +73,11 @@ function deleteTwoOperations(dir: string): void {
 }
 
 /**
- * Deletes payables.list and its toQueryString import (its Input/Response types stay: spec-map
- * maps the list response onto ListPayablesResponse), so the regenerated method has to bring
- * the query helper import back on its own.
+ * Deletes payables.list and its toQueryString import, so the regenerated method has to bring
+ * the import back on its own (its Input/Response types stay: spec-map maps the list response
+ * onto ListPayablesResponse). The hand-written listAutoPaging goes too, along with its case in
+ * auto-paging.test.ts: its own client.get on the same path would count as implementing the
+ * GET, and the generator doesn't emit pagers.
  */
 function deleteListMethod(dir: string): void {
     const payablesPath = join(dir, "src/resources/payables/index.ts");
@@ -85,8 +87,18 @@ function deleteListMethod(dir: string): void {
         "        list(\n            params?: ListPayablesInput,",
         "        create("
     );
-    payables = payables.replace('import { toQueryString } from "../../internal/query";\n', "");
+    payables = payables
+        .replace('import { autoPage } from "../../internal/paginate";\n', "")
+        .replace('import { toQueryString } from "../../internal/query";\n', "");
     writeFileSync(payablesPath, payables);
+
+    const pagerTestPath = join(dir, "src/resources/auto-paging.test.ts");
+    const pagerTest = deleteSpan(
+        readFileSync(pagerTestPath, "utf8"),
+        '    {\n        name: "payables.listAutoPaging",',
+        '    {\n        name: "transfers.listAutoPaging",'
+    );
+    writeFileSync(pagerTestPath, pagerTest);
 }
 
 function runSync(dir: string, ...args: string[]): { status: number; output: string } {

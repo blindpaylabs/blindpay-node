@@ -19,6 +19,7 @@ import type {
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { StrictOmit } from "../../internal/helpers/strict-omit";
+import { autoPage } from "../../internal/paginate";
 import { toQueryString } from "../../internal/query";
 
 export type ProofOfAddressDocType =
@@ -701,6 +702,21 @@ export function createCustomersResource(instanceId: string, client: InternalApiC
             return client.get(
                 `/instances/${instanceId}/customers${toQueryString(params)}`,
                 options
+            );
+        },
+        /**
+         * Every customer matching `params`, fetched page by page (`limit` defaults to 100):
+         * `for await (const item of blindpay.customers.listAutoPaging()) { ... }`. Forward only, so
+         * `ending_before` is rejected. A failed page throws a `BlindPayError` carrying the error.
+         */
+        listAutoPaging(
+            params?: Omit<ListCustomersInput, "ending_before">,
+            options?: RequestOptions
+        ): AsyncGenerator<Customer, void, undefined> {
+            return autoPage<Customer, ListCustomersInput>(
+                (page) =>
+                    client.get(`/instances/${instanceId}/customers${toQueryString(page)}`, options),
+                params
             );
         },
         createIndividualWithStandardKYC(

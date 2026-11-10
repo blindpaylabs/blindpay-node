@@ -22,6 +22,7 @@ import type {
     TransactionStatus,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { autoPage } from "../../internal/paginate";
 import { toQueryString } from "../../internal/query";
 
 export type SpeiProtocol = "clabe" | "debitcard" | "phonenum";
@@ -283,6 +284,21 @@ export function createPayoutsResource(instanceId: string, client: InternalApiCli
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<ListPayoutsResponse>> {
             return client.get(`/instances/${instanceId}/payouts${toQueryString(params)}`, options);
+        },
+        /**
+         * Every payout matching `params`, fetched page by page (`limit` defaults to 100):
+         * `for await (const item of blindpay.payouts.listAutoPaging()) { ... }`. Forward only, so
+         * `ending_before` is rejected. A failed page throws a `BlindPayError` carrying the error.
+         */
+        listAutoPaging(
+            params?: Omit<ListPayoutsInput, "ending_before">,
+            options?: RequestOptions
+        ): AsyncGenerator<Payout, void, undefined> {
+            return autoPage<Payout, ListPayoutsInput>(
+                (page) =>
+                    client.get(`/instances/${instanceId}/payouts${toQueryString(page)}`, options),
+                params
+            );
         },
         get(
             payoutId: GetPayoutInput,
