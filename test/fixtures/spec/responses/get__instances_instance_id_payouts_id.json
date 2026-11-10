@@ -586,7 +586,7 @@
           "partner_fee_amount": 150,
           "commercial_quotation": 1234.56,
           "blindpay_quotation": 1234.56,
-          "total_fee_amount": 1.5,
+          "total_fee_amount": 1234.56,
           "customer_local_amount": 1000,
           "currency": "BRL",
           "transaction_fee_amount": 100,

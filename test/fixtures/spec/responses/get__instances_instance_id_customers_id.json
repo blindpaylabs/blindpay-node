@@ -103,11 +103,11 @@
           "tos_id": "to_000000000000",
           "aml_status": "clear",
           "aml_hits": {
-            "has_sanction_match": true,
-            "has_pep_match": true,
-            "has_watchlist_match": true,
-            "has_crimelist_match": true,
-            "has_adversemedia_match": true
+            "has_sanction_match": false,
+            "has_pep_match": false,
+            "has_watchlist_match": false,
+            "has_crimelist_match": false,
+            "has_adversemedia_match": false
           },
           "created_at": "2021-01-01T00:00:00Z",
           "updated_at": "2021-01-01T00:00:00Z",
@@ -120,7 +120,7 @@
           "additional_info": [
             {
               "label": "EIN_LETTER",
-              "value": "sample_value"
+              "value": "https://example.com/ein.pdf"
             }
           ],
           "cnae_condition": {
@@ -348,11 +348,11 @@
           "tos_id": "to_000000000000",
           "aml_status": "zz_unknown_value_from_future_api",
           "aml_hits": {
-            "has_sanction_match": true,
-            "has_pep_match": true,
-            "has_watchlist_match": true,
-            "has_crimelist_match": true,
-            "has_adversemedia_match": true
+            "has_sanction_match": false,
+            "has_pep_match": false,
+            "has_watchlist_match": false,
+            "has_crimelist_match": false,
+            "has_adversemedia_match": false
           },
           "created_at": "2021-01-01T00:00:00Z",
           "updated_at": "2021-01-01T00:00:00Z",
@@ -365,7 +365,7 @@
           "additional_info": [
             {
               "label": "zz_unknown_value_from_future_api",
-              "value": "sample_value"
+              "value": "https://example.com/ein.pdf"
             }
           ],
           "cnae_condition": {
@@ -508,11 +508,11 @@
           "tos_id": "to_000000000000",
           "aml_status": "clear",
           "aml_hits": {
-            "has_sanction_match": true,
-            "has_pep_match": true,
-            "has_watchlist_match": true,
-            "has_crimelist_match": true,
-            "has_adversemedia_match": true
+            "has_sanction_match": false,
+            "has_pep_match": false,
+            "has_watchlist_match": false,
+            "has_crimelist_match": false,
+            "has_adversemedia_match": false
           },
           "created_at": "2021-01-01T00:00:00Z",
           "updated_at": "2021-01-01T00:00:00Z",
@@ -525,7 +525,7 @@
           "additional_info": [
             {
               "label": "EIN_LETTER",
-              "value": "sample_value"
+              "value": "https://example.com/ein.pdf"
             }
           ],
           "cnae_condition": {

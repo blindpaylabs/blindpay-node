@@ -8,60 +8,60 @@
         "full": {
           "limits": {
             "payin": {
-              "daily": 12.34,
-              "monthly": 12.34
+              "daily": 500000,
+              "monthly": 2000000
             },
             "payout": {
-              "daily": 12.34,
-              "monthly": 12.34
+              "daily": 300000,
+              "monthly": 1000000
             }
           }
         },
         "required_only": {
           "limits": {
             "payin": {
-              "daily": 12.34,
-              "monthly": 12.34
+              "daily": 500000,
+              "monthly": 2000000
             },
             "payout": {
-              "daily": 12.34,
-              "monthly": 12.34
+              "daily": 300000,
+              "monthly": 1000000
             }
           }
         },
         "nullables_null": {
           "limits": {
             "payin": {
-              "daily": 12.34,
-              "monthly": 12.34
+              "daily": 500000,
+              "monthly": 2000000
             },
             "payout": {
-              "daily": 12.34,
-              "monthly": 12.34
+              "daily": 300000,
+              "monthly": 1000000
             }
           }
         },
         "unknown_enum": {
           "limits": {
             "payin": {
-              "daily": 12.34,
-              "monthly": 12.34
+              "daily": 500000,
+              "monthly": 2000000
             },
             "payout": {
-              "daily": 12.34,
-              "monthly": 12.34
+              "daily": 300000,
+              "monthly": 1000000
             }
           }
         },
         "decimals": {
           "limits": {
             "payin": {
-              "daily": 12.34,
-              "monthly": 12.34
+              "daily": 500000,
+              "monthly": 2000000
             },
             "payout": {
-              "daily": 12.34,
-              "monthly": 12.34
+              "daily": 300000,
+              "monthly": 1000000
             }
           }
         }
