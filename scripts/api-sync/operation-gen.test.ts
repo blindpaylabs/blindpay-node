@@ -211,6 +211,64 @@ describe("operation-insert classifier", () => {
         });
     });
 
+    describe("query parameters (the shared toQueryString helper)", () => {
+        const json = (schema: unknown) => ({ content: { "application/json": { schema } } });
+        const list = { type: "array", items: { type: "object", properties: {} } };
+        const query = (name: string) => ({ name, in: "query", schema: { type: "string" } });
+        const classify = (path: string, parameters: unknown[]) => {
+            const spec: Spec = {
+                paths: { [path]: { get: { parameters, responses: { "200": json(list) } } } },
+                components: { schemas: {} },
+            };
+            const repoRoot = makeRepo(baseFiles());
+            const result = classifyNewOperation(
+                spec,
+                "get",
+                path,
+                emptyMap(),
+                repoRoot,
+                loadCanonicalEnums(repoRoot)
+            );
+            if (!result.standard) throw new Error(result.reason);
+            return result.change;
+        };
+
+        it("serialises a GET's query input with toQueryString, never URLSearchParams", () => {
+            const change = classify("/v1/instances/{instance_id}/widgets/archived", [
+                query("status"),
+                query("limit"),
+            ]);
+            expect(change.methodSource).toContain(
+                // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts generated source text
+                "return client.get(`/instances/${instanceId}/widgets/archived${toQueryString(params)}`);"
+            );
+            expect(change.methodSource).not.toContain("URLSearchParams");
+            expect(change.usesQueryString).toBe(true);
+            // A query input has no request body, so it gets no "requestBody" spec-map entry.
+            expect(change.newMapEntries.map((e) => e.location)).not.toContain("requestBody");
+        });
+
+        it("destructures path ids before serialising the remaining query fields", () => {
+            const change = classify("/v1/instances/{instance_id}/customers/{customer_id}/widgets", [
+                { name: "customer_id", in: "path", required: true },
+                query("status"),
+            ]);
+            expect(change.methodSource).toContain("{ customer_id, ...params }");
+            expect(change.methodSource).toContain(
+                // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts generated source text
+                "/customers/${customer_id}/widgets${toQueryString(params)}`);"
+            );
+            expect(change.methodSource).not.toContain("URLSearchParams");
+            expect(change.usesQueryString).toBe(true);
+        });
+
+        it("doesn't ask for the helper when there is no query input", () => {
+            const change = classify("/v1/instances/{instance_id}/widgets/archived", []);
+            expect(change.methodSource).not.toContain("toQueryString");
+            expect(change.usesQueryString).toBe(false);
+        });
+    });
+
     it("names a lone parent-ID scalar after its own parameter, not after the resource", () => {
         const repoRoot = makeRepo(baseFiles());
         const path = "/v1/instances/{instance_id}/customers/{customer_id}/widgets";

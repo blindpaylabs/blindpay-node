@@ -146,6 +146,8 @@ export type OperationInsertChange = {
     typeDecls: string;
     methodSource: string;
     importsNeeded: string[];
+    /** methodSource calls `toQueryString`, so the target file must import it from internal/query. */
+    usesQueryString: boolean;
     newMapEntries: NewSchemaMapEntry[];
 };
 

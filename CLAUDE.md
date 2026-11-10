@@ -761,7 +761,7 @@ list(params?: ListWidgetsInput): Promise<BlindpayApiResponse<ListWidgetsResponse
 },
 ```
 
-`src/resources/list-query.test.ts` asserts the exact URL every list method sends. Add a case there for a new list method.
+`src/resources/list-query.test.ts` asserts the exact URL every list method sends. Add a case there for a new list method. The api-sync generator emits the same `toQueryString(params)` call and adds the import (`ensureQueryStringImport` in `scripts/api-sync/apply.ts`).
 
 ### Path parameters
 

@@ -4,6 +4,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+    ensureQueryStringImport,
     ensureSharedTypeImports,
     insertEnumMember,
     insertOptionalField,
@@ -263,6 +264,7 @@ function main(): void {
             after = insertOptionalField(before, change.site.symbol, change.field, change.tsType);
         } else {
             before = ensureSharedTypeImports(before, change.importsNeeded);
+            if (change.usesQueryString) before = ensureQueryStringImport(before);
             after = insertTypeDeclarations(before, change.site.symbol, change.typeDecls);
             after = insertResourceMethod(
                 after,

@@ -68,6 +68,19 @@ function deleteTwoOperations(dir: string): void {
     writeFileSync(quotesPath, quotes);
 }
 
+/**
+ * Deletes payables.list and its toQueryString import (its Input/Response types stay: spec-map
+ * maps the list response onto ListPayablesResponse), so the regenerated method has to bring
+ * the query helper import back on its own.
+ */
+function deleteListMethod(dir: string): void {
+    const payablesPath = join(dir, "src/resources/payables/index.ts");
+    let payables = readFileSync(payablesPath, "utf8");
+    payables = deleteSpan(payables, "        list(params?: ListPayablesInput)", "        create(");
+    payables = payables.replace('import { toQueryString } from "../../internal/query";\n', "");
+    writeFileSync(payablesPath, payables);
+}
+
 function runSync(dir: string, ...args: string[]): { status: number; output: string } {
     try {
         const output = execFileSync(
@@ -83,10 +96,11 @@ function runSync(dir: string, ...args: string[]): { status: number; output: stri
 }
 
 describe("operation-insert golden self-test", () => {
-    it("regenerates a deleted GET-by-id and a deleted POST-with-body from the committed snapshot spec", () => {
+    it("regenerates a deleted GET-by-id, POST-with-body and GET-with-query from the committed snapshot spec", () => {
         const dir = makeScratchRepo();
         scratchDir = dir;
         deleteTwoOperations(dir);
+        deleteListMethod(dir);
 
         const first = runSync(dir, "--apply");
         expect(first.status).toBe(0);
@@ -112,12 +126,21 @@ describe("operation-insert golden self-test", () => {
             "return client.post(`/instances/${instanceId}/quotes`, data, options);"
         );
 
+        const payables = readFileSync(join(dir, "src/resources/payables/index.ts"), "utf8");
+        expect(payables).toContain('import { toQueryString } from "../../internal/query";');
+        expect(payables).toContain(
+            // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts generated source text
+            "return client.get(`/instances/${instanceId}/payables${toQueryString(params)}`);"
+        );
+        expect(payables).not.toContain("URLSearchParams");
+
         execFileSync("bun", ["run", "check-types"], { cwd: dir, stdio: "pipe" });
         execFileSync("bun", ["run", "test"], { cwd: dir, stdio: "pipe" });
 
         const afterFirstApply: Record<string, string> = {
             payins,
             quotes,
+            payables,
             map: readFileSync(join(dir, ".api-sync/spec-map.json"), "utf8"),
             pkg: readFileSync(join(dir, "package.json"), "utf8"),
         };
@@ -129,6 +152,9 @@ describe("operation-insert golden self-test", () => {
         );
         expect(readFileSync(join(dir, "src/resources/quotes/index.ts"), "utf8")).toBe(
             afterFirstApply.quotes
+        );
+        expect(readFileSync(join(dir, "src/resources/payables/index.ts"), "utf8")).toBe(
+            afterFirstApply.payables
         );
         expect(readFileSync(join(dir, ".api-sync/spec-map.json"), "utf8")).toBe(
             afterFirstApply.map
