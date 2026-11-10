@@ -3,7 +3,7 @@
 ## Commands
 
 ```
-bun run build              # Build with tsup (CJS + ESM + DTS)
+bun run build              # Build with tsup (CJS + ESM + DTS; config in tsup.config.ts)
 bun run test               # Run tests with vitest
 bun run test:coverage      # Run tests with coverage
 bun run check-types        # TypeScript type-check (no emit)
@@ -17,6 +17,7 @@ bun run lint:fix           # Biome auto-fix
 blindpay-node/
   package.json                          # @blindpay/node, bun package manager
   tsconfig.json                         # Strict TS, ES6 target, ESNext modules
+  tsup.config.ts                        # Build entries: src/index.ts + src/resources/**, never *.test.ts
   biome.json                            # Formatter + linter config
   vitest.config.mts                     # Test config (globals, fetch mock setup)
   vitest.setup.mts                      # Enables vitest-fetch-mock globally
