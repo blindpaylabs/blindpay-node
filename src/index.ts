@@ -1,5 +1,10 @@
+// Shared types (RequestOptions, ErrorResponse, BlindpayApiResponse, Network, Currency, ...).
+export type * from "../types";
 export * from "./client";
+export { BlindPayError } from "./internal/blindpay-error";
 export * from "./resources/available";
+// Same members as the copy in ../types; this resource copy is the one exported so far.
+export type { RecipientRelationship } from "./resources/bank-accounts";
 export * from "./resources/bank-accounts";
 export * from "./resources/customers";
 export * from "./resources/fees";
@@ -14,6 +19,8 @@ export * from "./resources/quotes";
 export * from "./resources/rfi";
 export * from "./resources/transfers";
 export * from "./resources/upload";
+// Same members as the copies in ../types; these resource copies are the ones exported so far.
+export type { BankingPartner, SoleProprietorDocType } from "./resources/virtual-accounts";
 export * from "./resources/virtual-accounts";
 export * from "./resources/wallets/blockchain";
 export * from "./resources/wallets/custodial";

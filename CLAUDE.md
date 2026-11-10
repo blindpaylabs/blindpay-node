@@ -24,7 +24,7 @@ blindpay-node/
   types/index.d.ts                      # Shared types (BlindpayApiResponse, enums, pagination)
   test/fixtures/spec/                   # Shared spec-shaped fixtures (copied from sdk-parity; don't hand-edit)
   src/
-    index.ts                            # Re-exports all resources + client
+    index.ts                            # Re-exports the client, BlindPayError, shared types and all resources
     client.ts                           # BlindPay class (constructor, HTTP methods, resource wiring)
     internal/
       api-client.ts                     # InternalApiClient interface (get/post/put/patch/delete)
@@ -421,7 +421,7 @@ Change the field name in the type definition. This is a breaking change -- use a
 
 ### Shared types
 
-Types like `Currency`, `Network`, `StablecoinToken`, `TransactionStatus`, `PaginationParams`, `PaginationMetadata`, `BlindpayApiResponse`, and `Country` live in `types/index.d.ts`. If a new enum value needs to be added to a shared type (e.g., a new network), edit it there.
+Types like `Currency`, `Network`, `StablecoinToken`, `TransactionStatus`, `PaginationParams`, `PaginationMetadata`, `BlindpayApiResponse`, and `Country` live in `types/index.d.ts`. If a new enum value needs to be added to a shared type (e.g., a new network), edit it there. `src/index.ts` re-exports the whole file with `export type * from "../types"` (type-only, so esbuild never tries to load the `.d.ts` at runtime), so every shared type is importable from `@blindpay/node`. If a resource declares a type with the same name, TypeScript reports TS2308; resolve it with an explicit `export type { X } from "./resources/..."` in `src/index.ts`. `src/index.test.ts` asserts the entry's exports.
 
 ## How to: Remove a Resource
 
