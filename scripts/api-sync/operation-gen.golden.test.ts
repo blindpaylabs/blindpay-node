@@ -54,7 +54,11 @@ function deleteTwoOperations(dir: string): void {
         "export type GetPayinInput = string;",
         "export type GetPayinTrackInput"
     );
-    payins = deleteSpan(payins, "        get(payinId: GetPayinInput)", "        getTrack(");
+    payins = deleteSpan(
+        payins,
+        "        get(\n            payinId: GetPayinInput,",
+        "        getTrack("
+    );
     writeFileSync(payinsPath, payins);
 
     const quotesPath = join(dir, "src/resources/quotes/index.ts");
@@ -76,7 +80,11 @@ function deleteTwoOperations(dir: string): void {
 function deleteListMethod(dir: string): void {
     const payablesPath = join(dir, "src/resources/payables/index.ts");
     let payables = readFileSync(payablesPath, "utf8");
-    payables = deleteSpan(payables, "        list(params?: ListPayablesInput)", "        create(");
+    payables = deleteSpan(
+        payables,
+        "        list(\n            params?: ListPayablesInput,",
+        "        create("
+    );
     payables = payables.replace('import { toQueryString } from "../../internal/query";\n', "");
     writeFileSync(payablesPath, payables);
 }
@@ -109,10 +117,10 @@ describe("operation-insert golden self-test", () => {
         expect(payins).toContain("export type GetPayinInput = string;");
         expect(payins).toContain("export type GetPayinResponse = Payin;");
         expect(payins).toContain(
-            "get(payinId: GetPayinInput): Promise<BlindpayApiResponse<GetPayinResponse>> {"
+            "get(payinId: GetPayinInput, options?: RequestOptions): Promise<BlindpayApiResponse<GetPayinResponse>> {"
         );
         expect(payins).toContain(
-            "return client.get(`/instances/${instanceId}/payins/${payinId}`);"
+            "return client.get(`/instances/${instanceId}/payins/${payinId}`, options);"
         );
 
         const quotes = readFileSync(join(dir, "src/resources/quotes/index.ts"), "utf8");
@@ -130,7 +138,7 @@ describe("operation-insert golden self-test", () => {
         expect(payables).toContain('import { toQueryString } from "../../internal/query";');
         expect(payables).toContain(
             // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts generated source text
-            "return client.get(`/instances/${instanceId}/payables${toQueryString(params)}`);"
+            "return client.get(`/instances/${instanceId}/payables${toQueryString(params)}`, options);"
         );
         expect(payables).not.toContain("URLSearchParams");
 

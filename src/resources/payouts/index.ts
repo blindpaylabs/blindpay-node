@@ -278,16 +278,23 @@ export type CreateSolanaPayoutResponse = {
 
 export function createPayoutsResource(instanceId: string, client: InternalApiClient) {
     return {
-        list(params?: ListPayoutsInput): Promise<BlindpayApiResponse<ListPayoutsResponse>> {
-            return client.get(`/instances/${instanceId}/payouts${toQueryString(params)}`);
+        list(
+            params?: ListPayoutsInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<ListPayoutsResponse>> {
+            return client.get(`/instances/${instanceId}/payouts${toQueryString(params)}`, options);
         },
-        get(payoutId: GetPayoutInput): Promise<BlindpayApiResponse<GetPayoutResponse>> {
-            return client.get(`/instances/${instanceId}/payouts/${payoutId}`);
+        get(
+            payoutId: GetPayoutInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetPayoutResponse>> {
+            return client.get(`/instances/${instanceId}/payouts/${payoutId}`, options);
         },
         getTrack(
-            payoutId: GetPayoutTrackInput
+            payoutId: GetPayoutTrackInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetPayoutTrackResponse>> {
-            return client.get(`/e/payouts/${payoutId}`);
+            return client.get(`/e/payouts/${payoutId}`, options);
         },
         authorizeStellarToken(
             { ...data }: AuthorizeStellarTokenInput,

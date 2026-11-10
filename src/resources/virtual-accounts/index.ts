@@ -125,16 +125,21 @@ export type UpdateVirtualAccountInput = {
 export function createVirtualAccountsResource(instanceId: string, client: InternalApiClient) {
     return {
         list(
-            customer_id: ListVirtualAccountsInput
+            customer_id: ListVirtualAccountsInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<ListVirtualAccountsResponse>> {
-            return client.get(`/instances/${instanceId}/customers/${customer_id}/virtual-accounts`);
-        },
-        get({
-            customer_id,
-            id,
-        }: GetVirtualAccountInput): Promise<BlindpayApiResponse<GetVirtualAccountResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/virtual-accounts/${id}`
+                `/instances/${instanceId}/customers/${customer_id}/virtual-accounts`,
+                options
+            );
+        },
+        get(
+            { customer_id, id }: GetVirtualAccountInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetVirtualAccountResponse>> {
+            return client.get(
+                `/instances/${instanceId}/customers/${customer_id}/virtual-accounts/${id}`,
+                options
             );
         },
         create(

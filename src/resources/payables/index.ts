@@ -125,8 +125,11 @@ export type DeletePayableResponse = Payable;
 
 export function createPayablesResource(instanceId: string, client: InternalApiClient) {
     return {
-        list(params?: ListPayablesInput): Promise<BlindpayApiResponse<ListPayablesResponse>> {
-            return client.get(`/instances/${instanceId}/payables${toQueryString(params)}`);
+        list(
+            params?: ListPayablesInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<ListPayablesResponse>> {
+            return client.get(`/instances/${instanceId}/payables${toQueryString(params)}`, options);
         },
         create(
             { ...data }: CreatePayableInput,
@@ -134,8 +137,11 @@ export function createPayablesResource(instanceId: string, client: InternalApiCl
         ): Promise<BlindpayApiResponse<CreatePayableResponse>> {
             return client.post(`/instances/${instanceId}/payables`, data, options);
         },
-        get(id: GetPayableInput): Promise<BlindpayApiResponse<GetPayableResponse>> {
-            return client.get(`/instances/${instanceId}/payables/${id}`);
+        get(
+            id: GetPayableInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetPayableResponse>> {
+            return client.get(`/instances/${instanceId}/payables/${id}`, options);
         },
         delete(
             id: DeletePayableInput,

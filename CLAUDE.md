@@ -221,8 +221,11 @@ export type DeleteWidgetInput = string;
 // -- Factory function --
 export function createWidgetsResource(instanceId: string, client: InternalApiClient) {
     return {
-        list(params?: ListWidgetsInput): Promise<BlindpayApiResponse<ListWidgetsResponse>> {
-            return client.get(`/instances/${instanceId}/widgets${toQueryString(params)}`);
+        list(
+            params?: ListWidgetsInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<ListWidgetsResponse>> {
+            return client.get(`/instances/${instanceId}/widgets${toQueryString(params)}`, options);
         },
         create(
             { ...data }: CreateWidgetInput,
@@ -230,8 +233,11 @@ export function createWidgetsResource(instanceId: string, client: InternalApiCli
         ): Promise<BlindpayApiResponse<CreateWidgetResponse>> {
             return client.post(`/instances/${instanceId}/widgets`, data, options);
         },
-        get(id: GetWidgetInput): Promise<BlindpayApiResponse<GetWidgetResponse>> {
-            return client.get(`/instances/${instanceId}/widgets/${id}`);
+        get(
+            id: GetWidgetInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetWidgetResponse>> {
+            return client.get(`/instances/${instanceId}/widgets/${id}`, options);
         },
         update(
             { widget_id, ...data }: UpdateWidgetInput,
@@ -254,8 +260,8 @@ For a resource NOT scoped to an instance (like `available`), omit `instanceId` f
 ```typescript
 export function createAvailableResource(client: InternalApiClient) {
     return {
-        getRails(): Promise<BlindpayApiResponse<GetRailsResponse>> {
-            return client.get("/available/rails");
+        getRails(options?: RequestOptions): Promise<BlindpayApiResponse<GetRailsResponse>> {
+            return client.get("/available/rails", options);
         },
     };
 }
@@ -771,8 +777,11 @@ export type ListWidgetsInput = PaginationParams & {
 The method builds the query string with the shared `toQueryString` helper (`src/internal/query.ts`). It skips `undefined`, `null` and `""`, so an unset filter is never sent as `"undefined"`, and it returns `""` (no bare `?`) when nothing is set. Path ids are destructured out first:
 
 ```typescript
-list(params?: ListWidgetsInput): Promise<BlindpayApiResponse<ListWidgetsResponse>> {
-    return client.get(`/instances/${instanceId}/widgets${toQueryString(params)}`);
+list(
+    params?: ListWidgetsInput,
+    options?: RequestOptions
+): Promise<BlindpayApiResponse<ListWidgetsResponse>> {
+    return client.get(`/instances/${instanceId}/widgets${toQueryString(params)}`, options);
 },
 ```
 
@@ -784,8 +793,8 @@ Path parameters that are resource IDs are handled in two ways:
 
 1. **Single ID (the resource's own ID)**: passed as a plain string argument.
 ```typescript
-get(id: GetWidgetInput): Promise<BlindpayApiResponse<GetWidgetResponse>> {
-    return client.get(`/instances/${instanceId}/widgets/${id}`);
+get(id: GetWidgetInput, options?: RequestOptions): Promise<BlindpayApiResponse<GetWidgetResponse>> {
+    return client.get(`/instances/${instanceId}/widgets/${id}`, options);
 },
 ```
 
@@ -812,13 +821,13 @@ export type GetOfframpWalletInput = {
     id: string;
 };
 
-get({
-    customer_id,
-    bank_account_id,
-    id,
-}: GetOfframpWalletInput): Promise<BlindpayApiResponse<GetOfframpWalletResponse>> {
+get(
+    { customer_id, bank_account_id, id }: GetOfframpWalletInput,
+    options?: RequestOptions
+): Promise<BlindpayApiResponse<GetOfframpWalletResponse>> {
     return client.get(
-        `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets/${id}`
+        `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets/${id}`,
+        options
     );
 },
 ```
@@ -836,7 +845,7 @@ When the spec's 200 response is `$ref Success`, use `Promise<BlindpayApiResponse
 
 ### Request options (Idempotency-Key)
 
-Every method that sends a POST, PUT, PATCH or DELETE takes a trailing `options?: RequestOptions` and passes it to the client as the last argument; `options.idempotencyKey` becomes the `Idempotency-Key` header. GET methods never take it, and neither do unauthenticated `/e/` routes (the API ignores the header there). `src/resources/request-options.test.ts` fails on a mutation that doesn't forward it, and the api-sync generator emits the same signature.
+Every method, GETs and `/e/` routes included, takes a trailing `options?: RequestOptions` and passes it to the client as the last argument: `timeoutMs`, `headers` and `signal` apply to every call, and on POST, PUT, PATCH and DELETE `options.idempotencyKey` becomes the `Idempotency-Key` header (the API protects `POST /e/instances/{id}/tos` too, since a server SDK reaches it with the API key). `src/resources/request-options.test.ts` fails on any `client.*(...)` call that doesn't forward it, and the api-sync generator emits the same signature.
 
 ### Discriminated/variant creation
 

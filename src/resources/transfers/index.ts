@@ -136,16 +136,26 @@ export function createTransfersResource(instanceId: string, client: InternalApiC
         ): Promise<BlindpayApiResponse<CreateTransferResponse>> {
             return client.post(`/instances/${instanceId}/transfers`, data, options);
         },
-        list(params?: ListTransfersInput): Promise<BlindpayApiResponse<ListTransfersResponse>> {
-            return client.get(`/instances/${instanceId}/transfers${toQueryString(params)}`);
+        list(
+            params?: ListTransfersInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<ListTransfersResponse>> {
+            return client.get(
+                `/instances/${instanceId}/transfers${toQueryString(params)}`,
+                options
+            );
         },
-        get(transferId: GetTransferInput): Promise<BlindpayApiResponse<GetTransferResponse>> {
-            return client.get(`/instances/${instanceId}/transfers/${transferId}`);
+        get(
+            transferId: GetTransferInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetTransferResponse>> {
+            return client.get(`/instances/${instanceId}/transfers/${transferId}`, options);
         },
         getTrack(
-            transferId: GetTransferTrackInput
+            transferId: GetTransferTrackInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetTransferTrackResponse>> {
-            return client.get(`/e/transfers/${transferId}`);
+            return client.get(`/e/transfers/${transferId}`, options);
         },
     };
 }

@@ -116,6 +116,18 @@ describe("client configuration (C1)", () => {
         expect(header(calls[0], "Authorization")).toBe("Bearer test-key");
     });
 
+    it("applies per-call options on GETs too", async () => {
+        const { fetch, calls } = fakeFetch(json([]), "hang");
+        const blindpay = client(fetch, { maxRetries: 0 });
+
+        await blindpay.payouts.list({ limit: "10" }, { headers: { "X-Trace": "list" } });
+        const slow = blindpay.instances.get({ timeoutMs: 2_000 });
+        await vi.advanceTimersByTimeAsync(2_000);
+
+        expect(header(calls[0], "X-Trace")).toBe("list");
+        expect((await slow).error?.type).toBe("timeout_error");
+    });
+
     it("rejects invalid options at construction", () => {
         const { fetch } = fakeFetch();
         expect(() => client(fetch, { maxRetries: -1 })).toThrow("maxRetries");

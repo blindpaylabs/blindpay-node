@@ -93,9 +93,11 @@ describe("operation-insert classifier", () => {
         if (!result.standard) throw new Error("unreachable");
         expect(result.change.methodName).toBe("get");
         expect(result.change.site.file).toBe("src/resources/widgets/index.ts");
-        expect(result.change.methodSource).toContain("get(widgetId: GetWidgetInput)");
         expect(result.change.methodSource).toContain(
-            "client.get(`/instances/${instanceId}/widgets/${widgetId}`)"
+            "get(widgetId: GetWidgetInput, options?: RequestOptions)"
+        );
+        expect(result.change.methodSource).toContain(
+            "client.get(`/instances/${instanceId}/widgets/${widgetId}`, options)"
         );
     });
 
@@ -201,13 +203,19 @@ describe("operation-insert classifier", () => {
             expect(result.standard).toBe(false);
         });
 
-        it("is never added to a GET", () => {
+        it("is the last parameter of a GET too, for its timeout, headers and signal", () => {
             const change = classify("get", "/v1/instances/{instance_id}/widgets/{id}", {
                 parameters: [{ name: "id", in: "path", required: true }],
                 responses: { "200": json(object) },
             });
-            expect(change.methodSource).not.toContain("RequestOptions");
-            expect(change.importsNeeded).not.toContain("RequestOptions");
+            expect(change.methodSource).toContain(
+                "get(widgetId: GetWidgetInput, options?: RequestOptions)"
+            );
+            expect(change.methodSource).toContain(
+                // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts generated source text
+                "client.get(`/instances/${instanceId}/widgets/${widgetId}`, options);"
+            );
+            expect(change.importsNeeded).toContain("RequestOptions");
         });
     });
 
@@ -240,7 +248,7 @@ describe("operation-insert classifier", () => {
             ]);
             expect(change.methodSource).toContain(
                 // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts generated source text
-                "return client.get(`/instances/${instanceId}/widgets/archived${toQueryString(params)}`);"
+                "return client.get(`/instances/${instanceId}/widgets/archived${toQueryString(params)}`, options);"
             );
             expect(change.methodSource).not.toContain("URLSearchParams");
             expect(change.usesQueryString).toBe(true);
@@ -256,7 +264,7 @@ describe("operation-insert classifier", () => {
             expect(change.methodSource).toContain("{ customer_id, ...params }");
             expect(change.methodSource).toContain(
                 // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts generated source text
-                "/customers/${customer_id}/widgets${toQueryString(params)}`);"
+                "/customers/${customer_id}/widgets${toQueryString(params)}`, options);"
             );
             expect(change.methodSource).not.toContain("URLSearchParams");
             expect(change.usesQueryString).toBe(true);

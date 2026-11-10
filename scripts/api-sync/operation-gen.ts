@@ -430,10 +430,7 @@ export function classifyNewOperation(
             methodName,
             typeDecls: typeDecls.trimEnd(),
             methodSource,
-            importsNeeded: [
-                ...ctx.importsNeeded,
-                ...(method === "get" ? [] : ["RequestOptions"]),
-            ].sort(),
+            importsNeeded: [...new Set([...ctx.importsNeeded, "RequestOptions"])].sort(),
             // GETs with query fields serialise them with src/internal/query.ts (see buildMethodSource).
             usesQueryString: method === "get" && inputKind === "object" && queryFields.length > 0,
             newMapEntries,
@@ -485,11 +482,12 @@ function buildMethodSource(args: {
         pathTemplate,
     } = args;
     const returnType = `Promise<BlindpayApiResponse<${outputSymbol}>>`;
-    // Every mutation takes RequestOptions last (its Idempotency-Key header); a GET never does.
+    // Every method takes RequestOptions last (timeout, headers, signal; the Idempotency-Key
+    // header on mutations) and forwards it to the client.
     const params = (input: string) =>
-        method === "get" ? input : [input, "options?: RequestOptions"].filter(Boolean).join(", ");
+        [input, "options?: RequestOptions"].filter(Boolean).join(", ");
     const call = (body: "data" | "{}") => {
-        if (method === "get") return `client.get(\`${pathTemplate}\`)`;
+        if (method === "get") return `client.get(\`${pathTemplate}\`, options)`;
         if (method === "delete") return `client.delete(\`${pathTemplate}\`, options)`;
         return `client.${method}(\`${pathTemplate}\`, ${body}, options)`;
     };
@@ -509,15 +507,15 @@ function buildMethodSource(args: {
     // inputKind === "object"
     if (method === "get" && pathFieldNames.length === 0 && queryFieldNames.length > 0) {
         return (
-            `${methodName}(params?: ${inputSymbol}): ${returnType} {\n` +
-            `            return client.get(\`${pathTemplate}\${toQueryString(params)}\`);\n` +
+            `${methodName}(${params(`params?: ${inputSymbol}`)}): ${returnType} {\n` +
+            `            return client.get(\`${pathTemplate}\${toQueryString(params)}\`, options);\n` +
             `        },`
         );
     }
     if (method === "get" && pathFieldNames.length > 0 && queryFieldNames.length > 0) {
         return (
-            `${methodName}({ ${pathFieldNames.join(", ")}, ...params }: ${inputSymbol}): ${returnType} {\n` +
-            `            return client.get(\`${pathTemplate}\${toQueryString(params)}\`);\n` +
+            `${methodName}(${params(`{ ${pathFieldNames.join(", ")}, ...params }: ${inputSymbol}`)}): ${returnType} {\n` +
+            `            return client.get(\`${pathTemplate}\${toQueryString(params)}\`, options);\n` +
             `        },`
         );
     }

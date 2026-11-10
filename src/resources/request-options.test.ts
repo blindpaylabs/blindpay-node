@@ -12,20 +12,21 @@ function sourceFiles(dir: string): string[] {
     });
 }
 
-/** Every `client.post|put|patch|delete(...)` call whose last argument isn't `options`. */
-function mutationsWithoutOptions(): string[] {
+/** Every `client.<method>(...)` call whose last argument isn't `options`. */
+function callsWithoutOptions(): string[] {
     return sourceFiles(RESOURCES).flatMap((file) => {
         const source = readFileSync(file, "utf8");
-        const calls = source.matchAll(/client\.(post|put|patch|delete)\(([\s\S]*?)\);/g);
+        const calls = source.matchAll(
+            /client\.(get|post|put|patch|delete|postMultipart)\(([\s\S]*?)\);/g
+        );
         return [...calls]
-            .filter(([, , args]) => !args.trim().startsWith("`/e/"))
             .filter(([, , args]) => !/\boptions,?$/.test(args.trim()))
             .map(([call]) => `${relative(RESOURCES, file)}: ${call.split("\n")[0]}`);
     });
 }
 
 describe("RequestOptions", () => {
-    it("is forwarded by every authenticated mutation, so each one can send an Idempotency-Key", () => {
-        expect(mutationsWithoutOptions()).toEqual([]);
+    it("is forwarded by every method, so each one can take an Idempotency-Key, timeout, headers or signal", () => {
+        expect(callsWithoutOptions()).toEqual([]);
     });
 });

@@ -785,20 +785,22 @@ export type CreatePlaidBankAccountResponse = {
 
 export function createBankAccountsResource(instanceId: string, client: InternalApiClient) {
     return {
-        list({
-            customer_id,
-            ...params
-        }: ListBankAccountsInput): Promise<BlindpayApiResponse<ListBankAccountsResponse>> {
+        list(
+            { customer_id, ...params }: ListBankAccountsInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<ListBankAccountsResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts${toQueryString(params)}`
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts${toQueryString(params)}`,
+                options
             );
         },
-        get({
-            customer_id,
-            id,
-        }: GetBankAccountInput): Promise<BlindpayApiResponse<GetBankAccountResponse>> {
+        get(
+            { customer_id, id }: GetBankAccountInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetBankAccountResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${id}`
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${id}`,
+                options
             );
         },
         delete(

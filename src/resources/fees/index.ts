@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse } from "../../../types";
+import type { BlindpayApiResponse, RequestOptions } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type FeeOptions = {
@@ -41,8 +41,8 @@ export type GetFeesResponse = {
 
 export function createFeesResource(instanceId: string, client: InternalApiClient) {
     return {
-        get(): Promise<BlindpayApiResponse<GetFeesResponse>> {
-            return client.get(`/instances/${instanceId}/billing/fees`);
+        get(options?: RequestOptions): Promise<BlindpayApiResponse<GetFeesResponse>> {
+            return client.get(`/instances/${instanceId}/billing/fees`, options);
         },
     };
 }

@@ -71,11 +71,13 @@ export type MigrateInstanceOwnershipResponse = SuccessResponse;
 
 export function createInstancesResource(instanceId: string, client: InternalApiClient) {
     return {
-        get(): Promise<BlindpayApiResponse<GetInstanceResponse>> {
-            return client.get(`/instances/${instanceId}`);
+        get(options?: RequestOptions): Promise<BlindpayApiResponse<GetInstanceResponse>> {
+            return client.get(`/instances/${instanceId}`, options);
         },
-        getMembers(): Promise<BlindpayApiResponse<GetInstanceMembersResponse>> {
-            return client.get(`/instances/${instanceId}/members`);
+        getMembers(
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetInstanceMembersResponse>> {
+            return client.get(`/instances/${instanceId}/members`, options);
         },
         update(
             { ...data }: UpdateInstanceInput,

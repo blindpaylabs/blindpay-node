@@ -101,15 +101,19 @@ export type GetCustodialWalletDepositsResponse = {
 export function createCustodialWalletsResource(instanceId: string, client: InternalApiClient) {
     return {
         list(
-            customer_id: ListCustodialWalletsInput
+            customer_id: ListCustodialWalletsInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<ListCustodialWalletsResponse>> {
-            return client.get(`/instances/${instanceId}/customers/${customer_id}/wallets`);
+            return client.get(`/instances/${instanceId}/customers/${customer_id}/wallets`, options);
         },
-        get({
-            customer_id,
-            id,
-        }: GetCustodialWalletInput): Promise<BlindpayApiResponse<GetCustodialWalletResponse>> {
-            return client.get(`/instances/${instanceId}/customers/${customer_id}/wallets/${id}`);
+        get(
+            { customer_id, id }: GetCustodialWalletInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetCustodialWalletResponse>> {
+            return client.get(
+                `/instances/${instanceId}/customers/${customer_id}/wallets/${id}`,
+                options
+            );
         },
         create(
             { customer_id, ...data }: CreateCustodialWalletInput,
@@ -121,14 +125,13 @@ export function createCustodialWalletsResource(instanceId: string, client: Inter
                 options
             );
         },
-        getBalance({
-            customer_id,
-            id,
-        }: GetCustodialWalletBalanceInput): Promise<
-            BlindpayApiResponse<GetCustodialWalletBalanceResponse>
-        > {
+        getBalance(
+            { customer_id, id }: GetCustodialWalletBalanceInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetCustodialWalletBalanceResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/balance`
+                `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/balance`,
+                options
             );
         },
         delete(
@@ -140,15 +143,13 @@ export function createCustodialWalletsResource(instanceId: string, client: Inter
                 options
             );
         },
-        getDeposits({
-            customer_id,
-            id,
-            ...params
-        }: GetCustodialWalletDepositsInput): Promise<
-            BlindpayApiResponse<GetCustodialWalletDepositsResponse>
-        > {
+        getDeposits(
+            { customer_id, id, ...params }: GetCustodialWalletDepositsInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetCustodialWalletDepositsResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/deposits${toQueryString(params)}`
+                `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/deposits${toQueryString(params)}`,
+                options
             );
         },
     };

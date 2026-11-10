@@ -694,8 +694,14 @@ export type RequestLimitIncreaseResponse = {
 
 export function createCustomersResource(instanceId: string, client: InternalApiClient) {
     return {
-        list(params?: ListCustomersInput): Promise<BlindpayApiResponse<ListCustomersResponse>> {
-            return client.get(`/instances/${instanceId}/customers${toQueryString(params)}`);
+        list(
+            params?: ListCustomersInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<ListCustomersResponse>> {
+            return client.get(
+                `/instances/${instanceId}/customers${toQueryString(params)}`,
+                options
+            );
         },
         createIndividualWithStandardKYC(
             data: CreateIndividualWithStandardKYCInput,
@@ -739,8 +745,11 @@ export function createCustomersResource(instanceId: string, client: InternalApiC
                 options
             );
         },
-        get(customer_id: GetCustomerInput): Promise<BlindpayApiResponse<GetCustomerResponse>> {
-            return client.get(`/instances/${instanceId}/customers/${customer_id}`);
+        get(
+            customer_id: GetCustomerInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetCustomerResponse>> {
+            return client.get(`/instances/${instanceId}/customers/${customer_id}`, options);
         },
         update(
             { customer_id, ...data }: UpdateCustomerInput,
@@ -755,14 +764,19 @@ export function createCustomersResource(instanceId: string, client: InternalApiC
             return client.delete(`/instances/${instanceId}/customers/${customer_id}`, options);
         },
         getLimits(
-            customer_id: GetCustomerLimitsInput
+            customer_id: GetCustomerLimitsInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetCustomerLimitsResponse>> {
-            return client.get(`/instances/${instanceId}/limits/customers/${customer_id}`);
+            return client.get(`/instances/${instanceId}/limits/customers/${customer_id}`, options);
         },
         getLimitIncreaseRequests(
-            customer_id: GetLimitIncreaseRequestsInput
+            customer_id: GetLimitIncreaseRequestsInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetLimitIncreaseRequestsResponse>> {
-            return client.get(`/instances/${instanceId}/customers/${customer_id}/limit-increase`);
+            return client.get(
+                `/instances/${instanceId}/customers/${customer_id}/limit-increase`,
+                options
+            );
         },
         requestLimitIncrease(
             { customer_id, ...data }: RequestLimitIncreaseInput,

@@ -157,14 +157,23 @@ export type CreateEvmPayinResponse = Pick<
 
 export function createPayinsResource(instanceId: string, client: InternalApiClient) {
     return {
-        list(params?: ListPayinsInput): Promise<BlindpayApiResponse<ListPayinsResponse>> {
-            return client.get(`/instances/${instanceId}/payins${toQueryString(params)}`);
+        list(
+            params?: ListPayinsInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<ListPayinsResponse>> {
+            return client.get(`/instances/${instanceId}/payins${toQueryString(params)}`, options);
         },
-        get(payinId: GetPayinInput): Promise<BlindpayApiResponse<GetPayinResponse>> {
-            return client.get(`/instances/${instanceId}/payins/${payinId}`);
+        get(
+            payinId: GetPayinInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetPayinResponse>> {
+            return client.get(`/instances/${instanceId}/payins/${payinId}`, options);
         },
-        getTrack(payinId: GetPayinTrackInput): Promise<BlindpayApiResponse<GetPayinTrackResponse>> {
-            return client.get(`/e/payins/${payinId}`);
+        getTrack(
+            payinId: GetPayinTrackInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetPayinTrackResponse>> {
+            return client.get(`/e/payins/${payinId}`, options);
         },
         createEvm(
             payin_quote_id: CreateEvmPayinInput,

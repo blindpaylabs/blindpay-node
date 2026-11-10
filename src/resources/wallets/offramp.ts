@@ -63,12 +63,13 @@ export type GetOfframpWalletResponse = OfframpWallet;
 
 export function createOfframpWalletsResource(instanceId: string, client: InternalApiClient) {
     return {
-        list({
-            bank_account_id,
-            customer_id,
-        }: ListOfframpWalletsInput): Promise<BlindpayApiResponse<ListOfframpWalletsResponse>> {
+        list(
+            { bank_account_id, customer_id }: ListOfframpWalletsInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<ListOfframpWalletsResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets`
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets`,
+                options
             );
         },
         create(
@@ -81,13 +82,13 @@ export function createOfframpWalletsResource(instanceId: string, client: Interna
                 options
             );
         },
-        get({
-            customer_id,
-            bank_account_id,
-            id,
-        }: GetOfframpWalletInput): Promise<BlindpayApiResponse<GetOfframpWalletResponse>> {
+        get(
+            { customer_id, bank_account_id, id }: GetOfframpWalletInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetOfframpWalletResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets/${id}`
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets/${id}`,
+                options
             );
         },
     };
