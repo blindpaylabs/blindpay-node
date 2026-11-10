@@ -72,6 +72,14 @@ const operations: OperationCase[] = [
                 limit: "10",
             }),
     },
+    {
+        operation: "POST /v1/upload",
+        call: (b) => b.upload.upload({ file: new Blob(["%PDF"]), bucket: "documents" }),
+    },
+    {
+        operation: "POST /v1/upload/analyze",
+        call: (b) => b.upload.analyze({ file: new Blob(["%PDF"]), type: "invoice" }),
+    },
 ];
 
 describe("Spec fixtures", () => {

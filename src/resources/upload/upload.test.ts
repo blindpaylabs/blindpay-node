@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "../../client";
 import type { PresignResponse, UploadAnalyzeResponse, UploadResponse } from ".";
@@ -213,6 +215,92 @@ describe("Upload", () => {
             expect(JSON.parse(init?.body as string)).toEqual({
                 file_url: "https://storage.blindpay.com/uploads/abc123.pdf",
             });
+        });
+    });
+
+    describe("Multipart failures resolve to { error } instead of rejecting", () => {
+        const file = new Blob(["test content"], { type: "text/plain" });
+        const multipartCalls = [
+            { name: "upload", call: () => blindpay.upload.upload({ file, bucket: "documents" }) },
+            { name: "analyze", call: () => blindpay.upload.analyze({ file, type: "invoice" }) },
+        ];
+
+        type ErrorFixture = {
+            status: number;
+            headers?: Record<string, string>;
+            body?: Record<string, unknown>;
+            raw_body?: string;
+        };
+        const errorsDir = join(__dirname, "../../../test/fixtures/spec/errors");
+        const envelopeFixtures = readdirSync(errorsDir)
+            .map((name): [string, ErrorFixture] => [
+                name,
+                JSON.parse(readFileSync(join(errorsDir, name), "utf8")),
+            ])
+            .filter(([, fixture]) => fixture.body !== undefined);
+
+        describe.each(multipartCalls)("$name", ({ call }) => {
+            it("returns a network failure as error", async () => {
+                fetchMock.mockRejectOnce(new TypeError("fetch failed"));
+
+                const { data, error } = await call();
+
+                expect(data).toBeNull();
+                expect(error).toStrictEqual({ message: "fetch failed" });
+            });
+
+            it("returns a non-JSON error body as an error naming the status", async () => {
+                const fixture: ErrorFixture = JSON.parse(
+                    readFileSync(join(errorsDir, "non_json_502.json"), "utf8")
+                );
+                fetchMock.mockResponseOnce(fixture.raw_body ?? "", {
+                    status: fixture.status,
+                    statusText: "Bad Gateway",
+                    headers: fixture.headers,
+                });
+
+                const { data, error } = await call();
+
+                expect(data).toBeNull();
+                expect(error).toStrictEqual({ message: "HTTP 502 Bad Gateway" });
+            });
+
+            it("returns a 2xx body that isn't JSON as an error", async () => {
+                fetchMock.mockResponseOnce("<html>ok</html>", { status: 200 });
+
+                const { data, error } = await call();
+
+                expect(data).toBeNull();
+                expect(error).toStrictEqual({
+                    message: "HTTP 200: the response body is not valid JSON",
+                });
+            });
+
+            it("returns an empty 2xx body as data null", async () => {
+                fetchMock.mockResponseOnce(() => new Response(null, { status: 204 }));
+
+                const { data, error } = await call();
+
+                expect(error).toBeNull();
+                expect(data).toBeNull();
+            });
+
+            it.each(envelopeFixtures)(
+                "maps the %s error envelope",
+                async (_name, { status, headers, body }) => {
+                    fetchMock.mockResponseOnce(JSON.stringify(body), {
+                        status,
+                        headers: { "Content-Type": "application/json", ...headers },
+                    });
+
+                    const { data, error } = await call();
+
+                    expect(data).toBeNull();
+                    expect(error?.message).toBe(body?.message);
+                    expect(error?.code).toBe(body?.code);
+                    expect(error?.trace_id).toBe(body?.trace_id);
+                }
+            );
         });
     });
 });

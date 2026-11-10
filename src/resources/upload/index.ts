@@ -62,12 +62,59 @@ export type PresignResponse = {
     expires_at: string;
 };
 
+const NOT_JSON = Symbol("not JSON");
+
+/** Parses the body once; an empty body is `null` and an unparsable one is `NOT_JSON`. */
+async function readJsonBody(response: Response): Promise<unknown> {
+    const text = await response.text();
+    if (!text) return null;
+    try {
+        return JSON.parse(text);
+    } catch {
+        return NOT_JSON;
+    }
+}
+
+function statusLine(response: Response): string {
+    return response.statusText
+        ? `HTTP ${response.status} ${response.statusText}`
+        : `HTTP ${response.status}`;
+}
+
+async function toMultipartResult<T>(response: Response): Promise<BlindpayApiResponse<T>> {
+    const body = await readJsonBody(response);
+    if (!response.ok) {
+        const error = body === NOT_JSON ? { message: statusLine(response) } : toErrorResponse(body);
+        return { data: null, error };
+    }
+    if (body === NOT_JSON) {
+        return {
+            data: null,
+            error: { message: `HTTP ${response.status}: the response body is not valid JSON` },
+        };
+    }
+    return { data: body as T, error: null };
+}
+
+function messageOf(error: unknown): string {
+    if (error instanceof Error) return error.message;
+    if (error && typeof error === "object" && "message" in error) {
+        const { message } = error as { message: unknown };
+        if (typeof message === "string") return message;
+    }
+    return "Unknown error";
+}
+
 export function createUploadResource(
     instanceId: string,
     baseUrl: string,
     headers: Record<string, string>,
     client: InternalApiClient
 ) {
+    /**
+     * Multipart requests skip `client` (it only sends JSON), so this keeps the same contract:
+     * failures resolve to `{ data: null, error }` and never reject.
+     */
     async function postMultipart<T>(
         path: string,
         formData: FormData,
@@ -77,22 +124,16 @@ export function createUploadResource(
 
         const { "Content-Type": _, ...headersWithoutContentType } = headers;
 
-        const response = await fetch(`${baseUrl}${path}${queryParams}`, {
-            method: "POST",
-            headers: headersWithoutContentType,
-            body: formData,
-        });
-
-        if (!response.ok) {
-            return { data: null, error: toErrorResponse(await response.json()) };
+        try {
+            const response = await fetch(`${baseUrl}${path}${queryParams}`, {
+                method: "POST",
+                headers: headersWithoutContentType,
+                body: formData,
+            });
+            return await toMultipartResult<T>(response);
+        } catch (error) {
+            return { data: null, error: { message: messageOf(error) } };
         }
-
-        const data = await response.json();
-
-        return {
-            data,
-            error: null,
-        };
     }
 
     return {
