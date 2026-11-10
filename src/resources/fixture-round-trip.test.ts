@@ -1,35 +1,19 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import type { BlindpayApiResponse } from "../../types";
 import { BlindPay } from "../client";
+import { responseVariants } from "../internal/test-fixtures";
 
 /**
- * Round-trips the shared spec-shaped fixtures (test/fixtures/spec, generated from the public
- * spec) through SDK methods: every variant must come back as `data`, untouched, with no `error`.
- * TypeScript types aren't validated at runtime, so this proves the transport decodes each
- * shape the API can send (envelope and bare array, nullable and absent fields, unknown enums).
+ * Transport round-trip, NOT a type check: each shared spec-shaped fixture variant
+ * (test/fixtures/spec) is served as the response and must come back as `data`, byte-for-byte
+ * equal, with `error: null`. That proves the transport handles every shape the API can send
+ * (envelope and bare array, empty and nullable fields), but `toEqual` can't fail on a field the
+ * SDK *types* get wrong, because TypeScript types aren't checked at runtime.
+ *
+ * TODO(M3, sdk-parity C8): add a generated `.ts` type test, run by `check-types`, that assigns
+ * every op's `required_only` and `nullables_null` variants to its SDK response type with
+ * `satisfies` (skipping `unknown_enum`: runtime strings are open, TS unions are closed).
  */
-
-const FIXTURES = join(__dirname, "../../test/fixtures/spec");
-
-type FixtureIndex = { operations: Record<string, string> };
-type ResponseFixture = {
-    responses: Record<string, { variants?: Record<string, unknown>; empty_body?: boolean }>;
-};
-
-function readJson<T>(relativePath: string): T {
-    return JSON.parse(readFileSync(join(FIXTURES, relativePath), "utf8")) as T;
-}
-
-const index = readJson<FixtureIndex>("index.json");
-
-function variantsFor(operation: string): [string, unknown][] {
-    const file = index.operations[operation];
-    if (!file) throw new Error(`no fixture for ${operation}`);
-    const ok = readJson<ResponseFixture>(file).responses["200"];
-    return Object.entries(ok?.variants ?? {});
-}
 
 type OperationCase = {
     operation: string;
@@ -82,19 +66,19 @@ const operations: OperationCase[] = [
     },
 ];
 
-describe("Spec fixtures", () => {
+describe("Spec fixture transport round-trip", () => {
     afterEach(() => fetchMock.resetMocks());
 
     const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     describe.each(operations)("$operation", ({ operation, call }) => {
-        const variants = variantsFor(operation);
+        const variants = responseVariants(operation);
 
         it("has fixture variants", () => {
             expect(variants.length).toBeGreaterThan(0);
         });
 
-        it.each(variants)("decodes the %s variant", async (_name, body) => {
+        it.each(variants)("returns the %s variant unchanged as data", async (_name, body) => {
             fetchMock.mockResponseOnce(JSON.stringify(body), {
                 headers: { "Content-Type": "application/json" },
             });

@@ -1,7 +1,6 @@
-import { readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "../../client";
+import { type ErrorFixture, errorFixtures, readFixture } from "../../internal/test-fixtures";
 import type { PresignResponse, UploadAnalyzeResponse, UploadResponse } from ".";
 
 describe("Upload", () => {
@@ -225,19 +224,7 @@ describe("Upload", () => {
             { name: "analyze", call: () => blindpay.upload.analyze({ file, type: "invoice" }) },
         ];
 
-        type ErrorFixture = {
-            status: number;
-            headers?: Record<string, string>;
-            body?: Record<string, unknown>;
-            raw_body?: string;
-        };
-        const errorsDir = join(__dirname, "../../../test/fixtures/spec/errors");
-        const envelopeFixtures = readdirSync(errorsDir)
-            .map((name): [string, ErrorFixture] => [
-                name,
-                JSON.parse(readFileSync(join(errorsDir, name), "utf8")),
-            ])
-            .filter(([, fixture]) => fixture.body !== undefined);
+        const envelopeFixtures = errorFixtures().filter(([, fixture]) => fixture.body);
 
         describe.each(multipartCalls)("$name", ({ call }) => {
             it("returns a network failure as error", async () => {
@@ -250,9 +237,7 @@ describe("Upload", () => {
             });
 
             it("returns a non-JSON error body as an error naming the status", async () => {
-                const fixture: ErrorFixture = JSON.parse(
-                    readFileSync(join(errorsDir, "non_json_502.json"), "utf8")
-                );
+                const fixture = readFixture<ErrorFixture>("errors/non_json_502.json");
                 fetchMock.mockResponseOnce(fixture.raw_body ?? "", {
                     status: fixture.status,
                     statusText: "Bad Gateway",

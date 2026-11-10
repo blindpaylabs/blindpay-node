@@ -32,6 +32,7 @@ blindpay-node/
       blindpay-error.ts                 # BlindPayError class
       error-response.ts                 # toErrorResponse: API error envelope -> ErrorResponse
       query.ts                          # toQueryString: list filters -> "?a=b", skipping absent values
+      test-fixtures.ts                  # Test-only loader for test/fixtures/spec (never import from SDK code)
       helpers/strict-omit.ts            # StrictOmit<T, K> utility type
       vitest-fetch-mock.d.ts            # Type declaration for fetch mock
     resources/
@@ -40,7 +41,7 @@ blindpay-node/
         {resource-name}.test.ts         # Tests (colocated with resource)
       request-options.test.ts           # Fails on a mutation that doesn't forward RequestOptions
       list-query.test.ts                # Exact query string each list method sends
-      spec-fixtures.test.ts             # Round-trips test/fixtures/spec variants through methods
+      fixture-round-trip.test.ts        # Transport round-trip of test/fixtures/spec variants (not a type check)
       wallets/                          # Grouped sub-resources (no index.ts)
         blockchain.ts                   # createBlockchainWalletsResource
         blockchain.test.ts
