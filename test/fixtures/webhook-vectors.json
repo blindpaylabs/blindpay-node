@@ -1,0 +1,176 @@
+{
+  "description": "Shared Svix webhook verification vectors for every BlindPay SDK. Generated and self-verified with the official svix npm package. Each SDK verifier MUST accept an injectable clock (now, unix seconds) and MUST return the `expect` outcome for every vector with the default 300s tolerance. Headers are given lowercase; SDKs must match header names case-insensitively.",
+  "tolerance_seconds": 300,
+  "generated_with": "svix (npm) via blindpay-node/node_modules",
+  "vectors": [
+    {
+      "name": "valid",
+      "secret": "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw",
+      "headers": {
+        "svix-id": "msg_2tYxkQ6wY1bQ9gC8u3m0kVnZpLr",
+        "svix-timestamp": "1762790400",
+        "svix-signature": "v1,nb7Gge9ZrF+BaXOnOuygb9GBeoUoF0FhEML36z+34aY="
+      },
+      "payload": "{\"webhook_event\":\"payout.complete\",\"id\":\"pa_000000000000\",\"status\":\"completed\",\"sender_amount\":100000,\"receiver_amount\":512345,\"customer_id\":\"re_000000000000\",\"created_at\":\"2025-11-10T15:59:30.000Z\"}",
+      "now": 1762790400,
+      "expect": "valid",
+      "event": "payout.complete"
+    },
+    {
+      "name": "valid_multiple_signatures_second_matches",
+      "secret": "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw",
+      "headers": {
+        "svix-id": "msg_2tYxkQ6wY1bQ9gC8u3m0kVnZpLr",
+        "svix-timestamp": "1762790400",
+        "svix-signature": "v1,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= v1,nb7Gge9ZrF+BaXOnOuygb9GBeoUoF0FhEML36z+34aY="
+      },
+      "payload": "{\"webhook_event\":\"payout.complete\",\"id\":\"pa_000000000000\",\"status\":\"completed\",\"sender_amount\":100000,\"receiver_amount\":512345,\"customer_id\":\"re_000000000000\",\"created_at\":\"2025-11-10T15:59:30.000Z\"}",
+      "now": 1762790400,
+      "expect": "valid"
+    },
+    {
+      "name": "valid_within_tolerance_past_299s",
+      "secret": "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw",
+      "headers": {
+        "svix-id": "msg_2tYxkQ6wY1bQ9gC8u3m0kVnZpLr",
+        "svix-timestamp": "1762790101",
+        "svix-signature": "v1,hBkRIqmLx2ZyR5dOUCpZbgFOBbueL37VfeRSN3zwdtA="
+      },
+      "payload": "{\"webhook_event\":\"payout.complete\",\"id\":\"pa_000000000000\",\"status\":\"completed\",\"sender_amount\":100000,\"receiver_amount\":512345,\"customer_id\":\"re_000000000000\",\"created_at\":\"2025-11-10T15:59:30.000Z\"}",
+      "now": 1762790400,
+      "expect": "valid"
+    },
+    {
+      "name": "valid_unknown_event_type_does_not_throw",
+      "secret": "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw",
+      "headers": {
+        "svix-id": "msg_2tYxkQ6wY1bQ9gC8u3m0kVnZpLr",
+        "svix-timestamp": "1762790400",
+        "svix-signature": "v1,1vairpKzyszq9QWJBFpGQQwILpWMuGrunT+um3TNyCM="
+      },
+      "payload": "{\"webhook_event\":\"future.event\",\"id\":\"xx_000000000000\"}",
+      "now": 1762790400,
+      "expect": "valid",
+      "event": "future.event"
+    },
+    {
+      "name": "invalid_tampered_payload",
+      "secret": "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw",
+      "headers": {
+        "svix-id": "msg_2tYxkQ6wY1bQ9gC8u3m0kVnZpLr",
+        "svix-timestamp": "1762790400",
+        "svix-signature": "v1,nb7Gge9ZrF+BaXOnOuygb9GBeoUoF0FhEML36z+34aY="
+      },
+      "payload": "{\"webhook_event\":\"payout.complete\",\"id\":\"pa_000000000000\",\"status\":\"completed\",\"sender_amount\":100001,\"receiver_amount\":512345,\"customer_id\":\"re_000000000000\",\"created_at\":\"2025-11-10T15:59:30.000Z\"}",
+      "now": 1762790400,
+      "expect": "invalid"
+    },
+    {
+      "name": "invalid_wrong_secret",
+      "secret": "whsec_YS1jb21wbGV0ZWx5LWRpZmZlcmVudC1zZWNyZXQta2V5",
+      "headers": {
+        "svix-id": "msg_2tYxkQ6wY1bQ9gC8u3m0kVnZpLr",
+        "svix-timestamp": "1762790400",
+        "svix-signature": "v1,nb7Gge9ZrF+BaXOnOuygb9GBeoUoF0FhEML36z+34aY="
+      },
+      "payload": "{\"webhook_event\":\"payout.complete\",\"id\":\"pa_000000000000\",\"status\":\"completed\",\"sender_amount\":100000,\"receiver_amount\":512345,\"customer_id\":\"re_000000000000\",\"created_at\":\"2025-11-10T15:59:30.000Z\"}",
+      "now": 1762790400,
+      "expect": "invalid"
+    },
+    {
+      "name": "invalid_timestamp_too_old_301s",
+      "secret": "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw",
+      "headers": {
+        "svix-id": "msg_2tYxkQ6wY1bQ9gC8u3m0kVnZpLr",
+        "svix-timestamp": "1762790099",
+        "svix-signature": "v1,oEJzG3u6VK8FhUmajv2/UpktSw69t6MugBbrzkmP810="
+      },
+      "payload": "{\"webhook_event\":\"payout.complete\",\"id\":\"pa_000000000000\",\"status\":\"completed\",\"sender_amount\":100000,\"receiver_amount\":512345,\"customer_id\":\"re_000000000000\",\"created_at\":\"2025-11-10T15:59:30.000Z\"}",
+      "now": 1762790400,
+      "expect": "invalid"
+    },
+    {
+      "name": "invalid_timestamp_too_new_301s",
+      "secret": "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw",
+      "headers": {
+        "svix-id": "msg_2tYxkQ6wY1bQ9gC8u3m0kVnZpLr",
+        "svix-timestamp": "1762790701",
+        "svix-signature": "v1,m+MO/TwbRd8X+0/IxEeyKt2sZVRV3db4zifE85Y+PGo="
+      },
+      "payload": "{\"webhook_event\":\"payout.complete\",\"id\":\"pa_000000000000\",\"status\":\"completed\",\"sender_amount\":100000,\"receiver_amount\":512345,\"customer_id\":\"re_000000000000\",\"created_at\":\"2025-11-10T15:59:30.000Z\"}",
+      "now": 1762790400,
+      "expect": "invalid"
+    },
+    {
+      "name": "invalid_id_mismatch",
+      "secret": "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw",
+      "headers": {
+        "svix-id": "msg_other",
+        "svix-timestamp": "1762790400",
+        "svix-signature": "v1,nb7Gge9ZrF+BaXOnOuygb9GBeoUoF0FhEML36z+34aY="
+      },
+      "payload": "{\"webhook_event\":\"payout.complete\",\"id\":\"pa_000000000000\",\"status\":\"completed\",\"sender_amount\":100000,\"receiver_amount\":512345,\"customer_id\":\"re_000000000000\",\"created_at\":\"2025-11-10T15:59:30.000Z\"}",
+      "now": 1762790400,
+      "expect": "invalid"
+    },
+    {
+      "name": "invalid_bare_signature_without_v1_prefix",
+      "secret": "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw",
+      "headers": {
+        "svix-id": "msg_2tYxkQ6wY1bQ9gC8u3m0kVnZpLr",
+        "svix-timestamp": "1762790400",
+        "svix-signature": "nb7Gge9ZrF+BaXOnOuygb9GBeoUoF0FhEML36z+34aY="
+      },
+      "payload": "{\"webhook_event\":\"payout.complete\",\"id\":\"pa_000000000000\",\"status\":\"completed\",\"sender_amount\":100000,\"receiver_amount\":512345,\"customer_id\":\"re_000000000000\",\"created_at\":\"2025-11-10T15:59:30.000Z\"}",
+      "now": 1762790400,
+      "expect": "invalid"
+    },
+    {
+      "name": "invalid_unsupported_version_v2",
+      "secret": "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw",
+      "headers": {
+        "svix-id": "msg_2tYxkQ6wY1bQ9gC8u3m0kVnZpLr",
+        "svix-timestamp": "1762790400",
+        "svix-signature": "v2,nb7Gge9ZrF+BaXOnOuygb9GBeoUoF0FhEML36z+34aY="
+      },
+      "payload": "{\"webhook_event\":\"payout.complete\",\"id\":\"pa_000000000000\",\"status\":\"completed\",\"sender_amount\":100000,\"receiver_amount\":512345,\"customer_id\":\"re_000000000000\",\"created_at\":\"2025-11-10T15:59:30.000Z\"}",
+      "now": 1762790400,
+      "expect": "invalid"
+    },
+    {
+      "name": "invalid_truncated_signature_length_mismatch",
+      "secret": "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw",
+      "headers": {
+        "svix-id": "msg_2tYxkQ6wY1bQ9gC8u3m0kVnZpLr",
+        "svix-timestamp": "1762790400",
+        "svix-signature": "v1,nb7Gge9ZrF+BaXOnO"
+      },
+      "payload": "{\"webhook_event\":\"payout.complete\",\"id\":\"pa_000000000000\",\"status\":\"completed\",\"sender_amount\":100000,\"receiver_amount\":512345,\"customer_id\":\"re_000000000000\",\"created_at\":\"2025-11-10T15:59:30.000Z\"}",
+      "now": 1762790400,
+      "expect": "invalid"
+    },
+    {
+      "name": "invalid_missing_signature_header",
+      "secret": "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw",
+      "headers": {
+        "svix-id": "msg_2tYxkQ6wY1bQ9gC8u3m0kVnZpLr",
+        "svix-timestamp": "1762790400"
+      },
+      "payload": "{\"webhook_event\":\"payout.complete\",\"id\":\"pa_000000000000\",\"status\":\"completed\",\"sender_amount\":100000,\"receiver_amount\":512345,\"customer_id\":\"re_000000000000\",\"created_at\":\"2025-11-10T15:59:30.000Z\"}",
+      "now": 1762790400,
+      "expect": "invalid"
+    },
+    {
+      "name": "invalid_non_numeric_timestamp",
+      "secret": "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw",
+      "headers": {
+        "svix-id": "msg_2tYxkQ6wY1bQ9gC8u3m0kVnZpLr",
+        "svix-timestamp": "yesterday",
+        "svix-signature": "v1,nb7Gge9ZrF+BaXOnOuygb9GBeoUoF0FhEML36z+34aY="
+      },
+      "payload": "{\"webhook_event\":\"payout.complete\",\"id\":\"pa_000000000000\",\"status\":\"completed\",\"sender_amount\":100000,\"receiver_amount\":512345,\"customer_id\":\"re_000000000000\",\"created_at\":\"2025-11-10T15:59:30.000Z\"}",
+      "now": 1762790400,
+      "expect": "invalid"
+    }
+  ]
+}

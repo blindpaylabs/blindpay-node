@@ -28,6 +28,8 @@ blindpay-node/
     index.ts                            # Re-exports the client, BlindPayError, listed shared types and all resources
     client.ts                           # BlindPay class (BlindPayOptions, resource wiring) over internal/http.ts
     transport.test.ts                   # Transport contract: config, errors, the retry table, on a fake clock
+    webhooks.ts                         # Standalone verifyWebhook / constructWebhookEvent (Svix), no client needed
+    webhooks.test.ts                    # The 14 shared webhook vectors + every webhook fixture
     internal/
       api-client.ts                     # InternalApiClient interface (get/post/put/patch/delete)
       blindpay-error.ts                 # BlindPayError class
@@ -35,6 +37,7 @@ blindpay-node/
       http.ts                           # send(): the one transport (timeouts, idempotency keys, retries, error parsing)
       query.ts                          # toQueryString: list filters -> "?a=b", skipping absent values
       paginate.ts                       # autoPage: async iterator behind every listAutoPaging
+      webhook-event-names.ts            # Runtime copy of the WebhookEvents union (kept equal by a type test)
       test-fixtures.ts                  # Test-only loader for test/fixtures/spec (never import from SDK code)
       helpers/strict-omit.ts            # StrictOmit<T, K> utility type
       vitest-fetch-mock.d.ts            # Type declaration for fetch mock
@@ -137,6 +140,12 @@ Every request, JSON or multipart, goes through `send()`; resources never call `f
 - `Content-Type: application/json` only when there is a body.
 
 Retry tests use `vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] })`; never let a test sleep for real. A client in a test that mocks a 5xx GET and doesn't test retries should pass `maxRetries: 0`.
+
+## Webhooks (`src/webhooks.ts`)
+
+Verification uses the official `svix` package (sdk-parity D20). The standalone `verifyWebhook(payload, headers, secret)` (never throws) and `constructWebhookEvent(payload, headers, secret)` (throws `BlindPayError`) need no client; the client's `verifyWebhookSignature` / `constructWebhookEvent` methods delegate to them and keep their old signatures and return types. The standalone `constructWebhookEvent` returns an event this SDK doesn't know as `UnknownWebhookEvent` (`{ webhook_event, raw }`); callers check `isUnknownWebhookEvent` before a `switch`. Never add a `string` member to the `WebhookEvent` union: it would stop the switch from narrowing.
+
+When a webhook event is added to the `WebhookEvents` union, add it to `src/internal/webhook-event-names.ts` too (a type test fails otherwise). The 14 vectors in `test/fixtures/webhook-vectors.json` run with only `Date` faked (`vi.useFakeTimers({ toFake: ["Date"] })` + `vi.setSystemTime`).
 
 ## Generate before you hand-write
 

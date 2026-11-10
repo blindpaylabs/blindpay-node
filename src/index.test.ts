@@ -17,8 +17,16 @@ import type {
     StablecoinToken,
     SuccessResponse,
     TransactionStatus,
+    UnknownWebhookEvent,
+    WebhookHeaders,
 } from ".";
-import { BlindPay, BlindPayError } from ".";
+import {
+    BlindPay,
+    BlindPayError,
+    constructWebhookEvent,
+    isUnknownWebhookEvent,
+    verifyWebhook,
+} from ".";
 
 describe("Package entry", () => {
     it("exports BlindPayError, named after its class", () => {
@@ -28,6 +36,14 @@ describe("Package entry", () => {
         expect(error).toBeInstanceOf(BlindPayError);
         expect(error.name).toBe("BlindPayError");
         expect(error.message).toBe("boom");
+    });
+
+    it("exports the standalone webhook helpers, which need no client", () => {
+        expect(typeof verifyWebhook).toBe("function");
+        expect(typeof constructWebhookEvent).toBe("function");
+        expect(typeof isUnknownWebhookEvent).toBe("function");
+        expectTypeOf<UnknownWebhookEvent>().toHaveProperty("raw");
+        expectTypeOf<WebhookHeaders>().toExtend<object>();
     });
 
     it("throws the exported BlindPayError from the client", () => {
