@@ -1,9 +1,13 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
+import type * as Entry from ".";
 import type {
+    BlindPayOptions,
     BlindpayApiResponse,
     Country,
     Currency,
     ErrorResponse,
+    InitiateInput,
+    InitiateResponse,
     Network,
     PaginationMetadata,
     PaginationParams,
@@ -43,5 +47,23 @@ describe("Package entry", () => {
         expectTypeOf<"BR">().toExtend<Country>();
         expectTypeOf<"USDC">().toExtend<StablecoinToken>();
         expectTypeOf<"completed">().toExtend<TransactionStatus>();
+        expectTypeOf<BlindPayOptions>().toEqualTypeOf<{ apiKey: string; instanceId: string }>();
+        expectTypeOf<InitiateInput>().toHaveProperty("idempotency_key").toEqualTypeOf<string>();
+        expectTypeOf<InitiateResponse>().toHaveProperty("url").toEqualTypeOf<string>();
+    });
+
+    it("keeps dead or stale shared types out of the public API", () => {
+        // Checked by `bun run check-types`: each name must fail to resolve, so the expect-error
+        // directive below it becomes a build error the day one of these gets exported.
+        // @ts-expect-error stale payout tracking field type (removed from the spec)
+        expectTypeOf<Entry.PayoutForcedProvider>();
+        // @ts-expect-error stale payout tracking field type (removed from the spec)
+        expectTypeOf<Entry.PayoutProviderIntegration>();
+        // @ts-expect-error not used by any SDK type
+        expectTypeOf<Entry.EstimatedTimeOfArrival>();
+        // @ts-expect-error the BlindpayApiResponse branches aren't meant to be named
+        expectTypeOf<Entry.BlindpayErrorResponse>();
+        // @ts-expect-error the BlindpayApiResponse branches aren't meant to be named
+        expectTypeOf<Entry.BlindpaySuccessResponse>();
     });
 });

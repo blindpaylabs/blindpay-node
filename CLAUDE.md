@@ -25,7 +25,7 @@ blindpay-node/
   types/index.d.ts                      # Shared types (BlindpayApiResponse, enums, pagination)
   test/fixtures/spec/                   # Shared spec-shaped fixtures (copied from sdk-parity; don't hand-edit)
   src/
-    index.ts                            # Re-exports the client, BlindPayError, shared types and all resources
+    index.ts                            # Re-exports the client, BlindPayError, listed shared types and all resources
     client.ts                           # BlindPay class (constructor, HTTP methods, resource wiring)
     internal/
       api-client.ts                     # InternalApiClient interface (get/post/put/patch/delete)
@@ -422,7 +422,7 @@ Change the field name in the type definition. This is a breaking change -- use a
 
 ### Shared types
 
-Types like `Currency`, `Network`, `StablecoinToken`, `TransactionStatus`, `PaginationParams`, `PaginationMetadata`, `BlindpayApiResponse`, and `Country` live in `types/index.d.ts`. If a new enum value needs to be added to a shared type (e.g., a new network), edit it there. `src/index.ts` re-exports the whole file with `export type * from "../types"` (type-only, so esbuild never tries to load the `.d.ts` at runtime), so every shared type is importable from `@blindpay/node`. If a resource declares a type with the same name, TypeScript reports TS2308; resolve it with an explicit `export type { X } from "./resources/..."` in `src/index.ts`. `src/index.test.ts` asserts the entry's exports.
+Types like `Currency`, `Network`, `StablecoinToken`, `TransactionStatus`, `PaginationParams`, `PaginationMetadata`, `BlindpayApiResponse`, and `Country` live in `types/index.d.ts`. If a new enum value needs to be added to a shared type (e.g., a new network), edit it there. `src/index.ts` re-exports them with an explicit `export type { ... } from "../types"` list (type-only, so esbuild never tries to load the `.d.ts` at runtime). When a resource starts using a new shared type, add it to that list; never re-export the whole file, so dead or stale types (e.g. `PayoutForcedProvider`) don't become public API. `src/index.test.ts` asserts what the entry exports and what it must not.
 
 ## How to: Remove a Resource
 

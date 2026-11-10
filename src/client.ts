@@ -39,6 +39,14 @@ export type WebhookVerificationInput = {
     payload: string;
 };
 
+/** Options for `new BlindPay(...)`. */
+export type BlindPayOptions = {
+    /** Secret API key from the BlindPay dashboard. */
+    apiKey: string;
+    /** Instance the client acts on; every instance-scoped path uses it. */
+    instanceId: string;
+};
+
 export class BlindPay {
     // Options
     private readonly baseUrl = "https://api.blindpay.com/v1";
@@ -76,13 +84,7 @@ export class BlindPay {
         custodial: ReturnType<typeof createCustodialWalletsResource>;
     };
 
-    constructor({
-        apiKey,
-        instanceId,
-    }: {
-        apiKey: string;
-        instanceId: string;
-    }) {
+    constructor({ apiKey, instanceId }: BlindPayOptions) {
         if (!apiKey) {
             throw new BlindPayError("Api key not provided, get your api key on blindpay dashboard");
         }
