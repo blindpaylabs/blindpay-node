@@ -1,6 +1,7 @@
 import type { BlindpayApiResponse, RequestOptions } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import { toErrorResponse } from "../../internal/error-response";
+import { toQueryString } from "../../internal/query";
 
 export type UploadBucket = "avatar" | "onboarding" | "limit_increase" | "documents";
 
@@ -120,12 +121,10 @@ export function createUploadResource(
         formData: FormData,
         instance_id: string
     ): Promise<BlindpayApiResponse<T>> {
-        const queryParams = `?${new URLSearchParams({ instance_id })}`;
-
         const { "Content-Type": _, ...headersWithoutContentType } = headers;
 
         try {
-            const response = await fetch(`${baseUrl}${path}${queryParams}`, {
+            const response = await fetch(`${baseUrl}${path}${toQueryString({ instance_id })}`, {
                 method: "POST",
                 headers: headersWithoutContentType,
                 body: formData,
@@ -168,7 +167,7 @@ export function createUploadResource(
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<PresignResponse>> {
             return client.post(
-                `/presign?${new URLSearchParams({ instance_id: instance_id ?? instanceId })}`,
+                `/presign${toQueryString({ instance_id: instance_id ?? instanceId })}`,
                 data,
                 options
             );
