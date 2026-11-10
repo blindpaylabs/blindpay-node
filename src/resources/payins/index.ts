@@ -80,6 +80,7 @@ export type Payin = {
     token: StablecoinToken;
     partner_fee_id?: string | null;
     partner_fee_amount?: number | null;
+    /** Total fee as a decimal token amount (e.g. `1.5` = 1.5 USDC), not integer cents. */
     total_fee_amount?: number | null;
     commercial_quotation: number | null;
     blindpay_quotation: number | null;
