@@ -6,6 +6,7 @@ import type {
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { StrictOmit } from "../../internal/helpers/strict-omit";
+import { toQueryString } from "../../internal/query";
 import type { CreateAchInput, CreateWireInput } from "../bank-accounts";
 
 export type PayableCurrency = "BRL" | "USD" | "MXN" | "COP" | "ARS" | "EUR" | "GBP";
@@ -125,8 +126,7 @@ export type DeletePayableResponse = Payable;
 export function createPayablesResource(instanceId: string, client: InternalApiClient) {
     return {
         list(params?: ListPayablesInput): Promise<BlindpayApiResponse<ListPayablesResponse>> {
-            const queryParams = params ? `?${new URLSearchParams(params)}` : "";
-            return client.get(`/instances/${instanceId}/payables${queryParams}`);
+            return client.get(`/instances/${instanceId}/payables${toQueryString(params)}`);
         },
         create(
             { ...data }: CreatePayableInput,

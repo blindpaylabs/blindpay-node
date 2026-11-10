@@ -9,6 +9,7 @@ import type {
     WalletToken,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { toQueryString } from "../../internal/query";
 
 export type TransferTrackingStep = {
     step: TrackingStatus;
@@ -136,8 +137,7 @@ export function createTransfersResource(instanceId: string, client: InternalApiC
             return client.post(`/instances/${instanceId}/transfers`, data, options);
         },
         list(params?: ListTransfersInput): Promise<BlindpayApiResponse<ListTransfersResponse>> {
-            const queryParams = params ? `?${new URLSearchParams(params)}` : "";
-            return client.get(`/instances/${instanceId}/transfers${queryParams}`);
+            return client.get(`/instances/${instanceId}/transfers${toQueryString(params)}`);
         },
         get(transferId: GetTransferInput): Promise<BlindpayApiResponse<GetTransferResponse>> {
             return client.get(`/instances/${instanceId}/transfers/${transferId}`);

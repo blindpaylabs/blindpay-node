@@ -22,6 +22,7 @@ import type {
     TransactionStatus,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { toQueryString } from "../../internal/query";
 
 export type SpeiProtocol = "clabe" | "debitcard" | "phonenum";
 
@@ -277,8 +278,7 @@ export type CreateSolanaPayoutResponse = {
 export function createPayoutsResource(instanceId: string, client: InternalApiClient) {
     return {
         list(params?: ListPayoutsInput): Promise<BlindpayApiResponse<ListPayoutsResponse>> {
-            const queryParams = params ? `?${new URLSearchParams(params)}` : "";
-            return client.get(`/instances/${instanceId}/payouts${queryParams}`);
+            return client.get(`/instances/${instanceId}/payouts${toQueryString(params)}`);
         },
         get(payoutId: GetPayoutInput): Promise<BlindpayApiResponse<GetPayoutResponse>> {
             return client.get(`/instances/${instanceId}/payouts/${payoutId}`);

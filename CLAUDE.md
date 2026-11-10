@@ -22,6 +22,7 @@ blindpay-node/
   vitest.setup.mts                      # Enables vitest-fetch-mock globally
   .changeset/config.json                # Changeset config (public access, main branch)
   types/index.d.ts                      # Shared types (BlindpayApiResponse, enums, pagination)
+  test/fixtures/spec/                   # Shared spec-shaped fixtures (copied from sdk-parity; don't hand-edit)
   src/
     index.ts                            # Re-exports all resources + client
     client.ts                           # BlindPay class (constructor, HTTP methods, resource wiring)
@@ -29,6 +30,7 @@ blindpay-node/
       api-client.ts                     # InternalApiClient interface (get/post/put/patch/delete)
       blindpay-error.ts                 # BlindPayError class
       error-response.ts                 # toErrorResponse: API error envelope -> ErrorResponse
+      query.ts                          # toQueryString: list filters -> "?a=b", skipping absent values
       helpers/strict-omit.ts            # StrictOmit<T, K> utility type
       vitest-fetch-mock.d.ts            # Type declaration for fetch mock
     resources/
@@ -36,6 +38,8 @@ blindpay-node/
         index.ts                        # Types + factory function for the resource
         {resource-name}.test.ts         # Tests (colocated with resource)
       request-options.test.ts           # Fails on a mutation that doesn't forward RequestOptions
+      list-query.test.ts                # Exact query string each list method sends
+      spec-fixtures.test.ts             # Round-trips test/fixtures/spec variants through methods
       wallets/                          # Grouped sub-resources (no index.ts)
         blockchain.ts                   # createBlockchainWalletsResource
         blockchain.test.ts
@@ -107,6 +111,7 @@ Examples: `createPayinsResource`, `createPartnerFeesResource`, `createBlockchain
 - Always use `import type` for type-only imports (enforced by biome `useImportType`).
 - Shared types come from `../../../types` (the `types/index.d.ts` file).
 - Internal API client: `import type { InternalApiClient } from "../../internal/api-client";`
+- Query strings: `import { toQueryString } from "../../internal/query";` (never `new URLSearchParams(params)` on an input object: it sends unset filters as the text `"undefined"`).
 - Path depth depends on file location. Resources at `src/resources/{name}/index.ts` use `../../internal/...` and `../../../types`.
 
 ### Code style
@@ -156,6 +161,7 @@ import type {
     SuccessResponse,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { toQueryString } from "../../internal/query";
 
 // -- Entity type --
 export type Widget = {
@@ -200,8 +206,7 @@ export type DeleteWidgetInput = string;
 export function createWidgetsResource(instanceId: string, client: InternalApiClient) {
     return {
         list(params?: ListWidgetsInput): Promise<BlindpayApiResponse<ListWidgetsResponse>> {
-            const queryParams = params ? `?${new URLSearchParams(params)}` : "";
-            return client.get(`/instances/${instanceId}/widgets${queryParams}`);
+            return client.get(`/instances/${instanceId}/widgets${toQueryString(params)}`);
         },
         create(
             { ...data }: CreateWidgetInput,
@@ -747,14 +752,15 @@ export type ListWidgetsInput = PaginationParams & {
 };
 ```
 
-The method builds query params with `URLSearchParams`:
+The method builds the query string with the shared `toQueryString` helper (`src/internal/query.ts`). It skips `undefined`, `null` and `""`, so an unset filter is never sent as `"undefined"`, and it returns `""` (no bare `?`) when nothing is set. Path ids are destructured out first:
 
 ```typescript
 list(params?: ListWidgetsInput): Promise<BlindpayApiResponse<ListWidgetsResponse>> {
-    const queryParams = params ? `?${new URLSearchParams(params)}` : "";
-    return client.get(`/instances/${instanceId}/widgets${queryParams}`);
+    return client.get(`/instances/${instanceId}/widgets${toQueryString(params)}`);
 },
 ```
+
+`src/resources/list-query.test.ts` asserts the exact URL every list method sends. Add a case there for a new list method.
 
 ### Path parameters
 

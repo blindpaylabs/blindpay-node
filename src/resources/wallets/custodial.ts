@@ -7,6 +7,7 @@ import type {
     WalletToken,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { toQueryString } from "../../internal/query";
 
 export type YieldStatus = "disabled" | "enabled" | "disabling";
 
@@ -96,15 +97,6 @@ export type GetCustodialWalletDepositsResponse = {
     data: WalletDeposit[];
     pagination: PaginationMetadata;
 };
-
-function toQueryString(params: Record<string, string | undefined>): string {
-    const query = new URLSearchParams();
-    for (const [key, value] of Object.entries(params)) {
-        if (value !== undefined) query.append(key, value);
-    }
-    const serialized = query.toString();
-    return serialized ? `?${serialized}` : "";
-}
 
 export function createCustodialWalletsResource(instanceId: string, client: InternalApiClient) {
     return {
