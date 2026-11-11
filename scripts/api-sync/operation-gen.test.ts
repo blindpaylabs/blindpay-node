@@ -450,3 +450,87 @@ export function createTermsOfServiceResource(instanceId: string, client: Interna
         ).toBe(true);
     });
 });
+
+describe("reusing an already-modeled whole schema", () => {
+    function putReturning(ref: string): Spec {
+        return {
+            paths: {
+                "/v1/instances/{instance_id}/widgets/{id}": {
+                    put: {
+                        parameters: [
+                            { name: "id", in: "path", required: true, schema: { type: "string" } },
+                        ],
+                        requestBody: {
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: { name: { type: ["string", "null"] } },
+                                    },
+                                },
+                            },
+                        },
+                        responses: {
+                            "200": {
+                                content: {
+                                    "application/json": {
+                                        schema: { $ref: `#/components/schemas/${ref}` },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            components: {
+                schemas: {
+                    [ref]: {
+                        type: "object",
+                        properties: { success: { type: "boolean" } },
+                        required: ["success"],
+                    },
+                },
+            },
+        };
+    }
+
+    function mapWith(schema: string, file: string, symbol: string): SpecMap {
+        return {
+            ...emptyMap(),
+            types: [{ spec: { schema }, sdk: [{ file, symbol }], notes: null }],
+        };
+    }
+
+    it("aliases a types/index.d.ts symbol and asks for its shared import", () => {
+        const repoRoot = makeRepo(baseFiles());
+        const result = classifyNewOperation(
+            putReturning("Success"),
+            "put",
+            "/v1/instances/{instance_id}/widgets/{id}",
+            mapWith("Success", "types/index.d.ts", "SuccessResponse"),
+            repoRoot,
+            loadCanonicalEnums(repoRoot)
+        );
+        if (!result.standard) throw new Error("expected STANDARD");
+        expect(result.change.typeDecls).toContain(
+            "export type UpdateWidgetResponse = SuccessResponse;"
+        );
+        expect(result.change.importsNeeded).toContain("SuccessResponse");
+    });
+
+    it("synthesizes the shape inline when the symbol lives in another resource file", () => {
+        const repoRoot = makeRepo(baseFiles());
+        const result = classifyNewOperation(
+            putReturning("Gadget"),
+            "put",
+            "/v1/instances/{instance_id}/widgets/{id}",
+            mapWith("Gadget", "src/resources/gadgets/index.ts", "Gadget"),
+            repoRoot,
+            loadCanonicalEnums(repoRoot)
+        );
+        if (!result.standard) throw new Error("expected STANDARD");
+        expect(result.change.typeDecls).toContain("success: boolean;");
+        expect(result.change.typeDecls).not.toContain("= Gadget;");
+        expect(result.change.importsNeeded).not.toContain("Gadget");
+    });
+});

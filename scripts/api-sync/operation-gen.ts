@@ -72,6 +72,25 @@ function jsonContentOnly(content: Record<string, unknown> | undefined): "none" |
 
 type Field = { name: string; tsType: string; required: boolean };
 
+const SHARED_TYPES_FILE = "types/index.d.ts";
+
+/**
+ * The whole-schema symbols a generated declaration in `currentFile` can reuse: those declared in
+ * that same file, or in types/index.d.ts (reached through the file's shared `import type`). A
+ * symbol owned by another resource file is left out, so the schema is synthesized inline there,
+ * as reconcile.ts's field inserts already do, instead of naming a type the file can't see.
+ */
+function importableWholeSchemas(
+    whole: Map<string, { file: string; symbol: string }>,
+    currentFile: string
+): Map<string, { file: string; symbol: string }> {
+    return new Map(
+        [...whole].filter(
+            ([, site]) => site.file === currentFile || site.file === SHARED_TYPES_FILE
+        )
+    );
+}
+
 /** True if `declareNamedType({refName: ref, pure, currentFile, ...})` will end up emitting a
  * bare alias to an already-modeled symbol, without ever looking at `fields`: mirrors exactly
  * the condition inside `declareNamedType` itself, checked before doing the (possibly deeply
@@ -114,7 +133,12 @@ function declareNamedType(params: {
     currentFile: string;
     alreadyWholeMapped: Map<string, { file: string; symbol: string }>;
     pathLocator: { path: string; method: string; location: string } | null;
-}): { decl: string; mapEntry: OperationInsertChange["newMapEntries"][number] | null } {
+}): {
+    decl: string;
+    mapEntry: OperationInsertChange["newMapEntries"][number] | null;
+    /** A types/index.d.ts symbol the declaration aliases, which the resource file must import. */
+    sharedImport?: string;
+} {
     const {
         symbolName,
         fields,
@@ -130,7 +154,11 @@ function declareNamedType(params: {
         const regeneratingSelf =
             !!existing && existing.symbol === symbolName && existing.file === currentFile;
         if (pure && existing && !regeneratingSelf) {
-            return { decl: `export type ${symbolName} = ${existing.symbol};`, mapEntry: null };
+            return {
+                decl: `export type ${symbolName} = ${existing.symbol};`,
+                mapEntry: null,
+                sharedImport: existing.file === SHARED_TYPES_FILE ? existing.symbol : undefined,
+            };
         }
         if (existing && (regeneratingSelf || !pure)) {
             // Either regenerating the exact site the existing entry already points at, or a
@@ -295,7 +323,7 @@ export function classifyNewOperation(
     const resourcePascal = pascalCase(singularize(resourceSegment));
     const typePrefix = pascalCase(methodName) + resourcePascal;
 
-    const wholeSchemas = loadWholeSchemaSymbols(map);
+    const wholeSchemas = importableWholeSchemas(loadWholeSchemaSymbols(map), resourceFile);
     const ctx: TypegenContext = { spec, canonicalEnums, wholeSchemas, importsNeeded: new Set() };
 
     const newMapEntries: OperationInsertChange["newMapEntries"] = [];
@@ -356,7 +384,7 @@ export function classifyNewOperation(
     if (inputKind === "scalar") {
         typeDecls += `export type ${inputSymbol} = string;\n\n`;
     } else if (inputKind === "object") {
-        const { decl, mapEntry } = declareNamedType({
+        const { decl, mapEntry, sharedImport } = declareNamedType({
             symbolName: inputSymbol,
             fields: mergedFields,
             refName: bodyRefName,
@@ -369,6 +397,7 @@ export function classifyNewOperation(
         });
         typeDecls += `${decl}\n\n`;
         if (mapEntry) newMapEntries.push(mapEntry);
+        if (sharedImport) ctx.importsNeeded.add(sharedImport);
     }
 
     // --- response ---
@@ -389,7 +418,7 @@ export function classifyNewOperation(
         )
             ? null
             : synthesizeObjectFields(ctx, responseResolved);
-        const { decl, mapEntry } = declareNamedType({
+        const { decl, mapEntry, sharedImport } = declareNamedType({
             symbolName: outputSymbol,
             fields: responseFields,
             refName: responseRefName,
@@ -402,6 +431,7 @@ export function classifyNewOperation(
         });
         typeDecls += `${decl}\n\n`;
         if (mapEntry) newMapEntries.push(mapEntry);
+        if (sharedImport) ctx.importsNeeded.add(sharedImport);
     }
 
     const pathTemplate = buildPathTemplate(path, inputKind, scalarArgName);

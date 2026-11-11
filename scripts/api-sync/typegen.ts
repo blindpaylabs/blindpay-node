@@ -97,7 +97,8 @@ export function synthesizeType(ctx: TypegenContext, node: JsonValue): string {
     if (named) {
         const whole = ctx.wholeSchemas.get(named);
         if (whole) {
-            ctx.importsNeeded.add(whole.symbol);
+            // Same-file symbols need no import; only shared types/index.d.ts ones are imported.
+            if (whole.file === "types/index.d.ts") ctx.importsNeeded.add(whole.symbol);
             return whole.symbol;
         }
     }
