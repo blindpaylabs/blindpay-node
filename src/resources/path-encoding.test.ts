@@ -16,7 +16,7 @@ async function urlOf(call: () => Promise<unknown>): Promise<string> {
 describe("path segments", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new BlindPay({ apiKey: "test_key", instanceId: "in_000000000000" });
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     it("percent-encodes a caller-supplied id, so a slash can't change the route", async () => {
         expect(await urlOf(() => blindpay.payouts.get("a/b"))).toBe(
@@ -43,7 +43,7 @@ describe("path segments", () => {
     });
 
     it("encodes the configured instance id once, in paths and in upload's query", async () => {
-        const odd = new BlindPay({ apiKey: "test_key", instanceId: "in/0" });
+        const odd = new BlindPay({ apiKey: "test-key", instanceId: "in/0" });
         expect(await urlOf(() => odd.payouts.get("po_000000000000"))).toBe(
             `${API}/instances/in%2F0/payouts/po_000000000000`
         );

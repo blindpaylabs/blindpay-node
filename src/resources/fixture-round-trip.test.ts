@@ -36,7 +36,7 @@ describe("SDK operation coverage", () => {
 describe("Spec fixture round-trip", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new BlindPay({ apiKey: "test_key", instanceId: "in_000000000000" });
+    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
 
     describe.each(OPERATIONS)("$operation via $method", ({ operation, call }) => {
         const variants = responseVariants(operation);

@@ -33,7 +33,7 @@ blindpay-node/
     webhooks.ts                         # Standalone verifyWebhook / constructWebhookEvent (Svix), no client needed
     webhooks.test.ts                    # The 14 shared webhook vectors + every webhook fixture
     internal/
-      api-client.ts                     # InternalApiClient interface (get/post/put/patch/delete)
+      api-client.ts                     # InternalApiClient interface (get/post/put/patch/delete/postMultipart)
       blindpay-error.ts                 # BlindPayError class
       error-response.ts                 # toErrorResponse: API error envelope -> ErrorResponse
       http.ts                           # send(): the one transport (timeouts, idempotency keys, retries, error parsing)
@@ -49,7 +49,7 @@ blindpay-node/
       {resource-name}/
         index.ts                        # Types + factory function for the resource
         {resource-name}.test.ts         # Tests (colocated with resource)
-      request-options.test.ts           # Fails on a mutation that doesn't forward RequestOptions
+      request-options.test.ts           # Fails on any client.* call that doesn't forward options
       list-query.test.ts                # Exact query string each list method sends
       auto-paging.test.ts               # Every auto-pager: cursor following, errors, guards
       fixture-round-trip.test.ts        # Op coverage: all 94 ops hit their method + path, every fixture variant round-trips
@@ -256,19 +256,29 @@ export function createWidgetsResource(instanceId: string, client: InternalApiCli
             id: GetWidgetInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetWidgetResponse>> {
-            return client.get(`/instances/${instanceId}/widgets/${encodeURIComponent(id)}`, options);
+            return client.get(
+                `/instances/${instanceId}/widgets/${encodeURIComponent(id)}`,
+                options
+            );
         },
         update(
             { widget_id, ...data }: UpdateWidgetInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.put(`/instances/${instanceId}/widgets/${encodeURIComponent(widget_id)}`, data, options);
+            return client.put(
+                `/instances/${instanceId}/widgets/${encodeURIComponent(widget_id)}`,
+                data,
+                options
+            );
         },
         delete(
             id: DeleteWidgetInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}/widgets/${encodeURIComponent(id)}`, options);
+            return client.delete(
+                `/instances/${instanceId}/widgets/${encodeURIComponent(id)}`,
+                options
+            );
         },
     };
 }
@@ -420,7 +430,11 @@ export function createWidgetsResource(instanceId: string, client: InternalApiCli
             id: ActivateWidgetInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<ActivateWidgetResponse>> {
-            return client.post(`/instances/${instanceId}/widgets/${encodeURIComponent(id)}/activate`, {}, options);
+            return client.post(
+                `/instances/${instanceId}/widgets/${encodeURIComponent(id)}/activate`,
+                {},
+                options
+            );
         },
     };
 }
@@ -848,28 +862,34 @@ update(
     { widget_id, ...data }: UpdateWidgetInput,
     options?: RequestOptions
 ): Promise<BlindpayApiResponse<SuccessResponse>> {
-    return client.put(`/instances/${instanceId}/widgets/${encodeURIComponent(widget_id)}`, data, options);
+    return client.put(
+        `/instances/${instanceId}/widgets/${encodeURIComponent(widget_id)}`,
+        data,
+        options
+    );
 },
 ```
 
 3. **Nested resource IDs**: all IDs come from the input object.
 ```typescript
-export type GetOfframpWalletInput = {
+export type GetCustodialWalletInput = {
     customer_id: string;
-    bank_account_id: string;
     id: string;
 };
 
 get(
-    { customer_id, bank_account_id, id }: GetOfframpWalletInput,
+    { customer_id, id }: GetCustodialWalletInput,
     options?: RequestOptions
-): Promise<BlindpayApiResponse<GetOfframpWalletResponse>> {
+): Promise<BlindpayApiResponse<GetCustodialWalletResponse>> {
+    const customer = encodeURIComponent(customer_id);
     return client.get(
-        `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts/${encodeURIComponent(bank_account_id)}/offramp-wallets/${encodeURIComponent(id)}`,
+        `/instances/${instanceId}/customers/${customer}/wallets/${encodeURIComponent(id)}`,
         options
     );
 },
 ```
+
+Keep the path one template literal (api-sync's coverage scan reads it as one string; never `+` pieces). Each `${...}` must stay a single expression without braces inside.
 
 ### Return type
 
