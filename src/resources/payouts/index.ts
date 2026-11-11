@@ -148,6 +148,7 @@ export type ListPayoutsResponse =
       }
     | Payout[];
 
+/** @deprecated No method takes this type and no payout route accepts this shape: create a quote, then `payouts.createEvm` / `createSolana` / `createStellar`. Removed in the next major. */
 export type CreatePayoutInput = {
     customer_id: string;
     bank_account_id: string;
