@@ -49,7 +49,7 @@
     ],
     "scripts": {
         "build": "tsup",
-        "check-types": "tsc --noEmit",
+        "check-types": "tsc --noEmit && tsc --noEmit -p examples",
         "contract-check": "node scripts/contract-check.mjs",
         "lint:check": "biome check .",
         "lint:fix": "biome check --write .",

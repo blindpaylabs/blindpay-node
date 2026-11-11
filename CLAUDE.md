@@ -6,7 +6,7 @@
 bun run build              # Build with tsup (CJS + ESM + DTS; config in tsup.config.ts)
 bun run test               # Run tests with vitest
 bun run test:coverage      # Run tests with coverage
-bun run check-types        # TypeScript type-check (no emit)
+bun run check-types        # TypeScript type-check (no emit): src, then examples/
 bun run lint:check         # Biome lint + format check
 bun run lint:fix           # Biome auto-fix
 ```
@@ -24,6 +24,7 @@ blindpay-node/
   .changeset/config.json                # Changeset config (public access, main branch)
   types/index.d.ts                      # Shared types (BlindpayApiResponse, enums, pagination)
   test/fixtures/spec/                   # Shared spec-shaped fixtures (copied from sdk-parity; don't hand-edit)
+  examples/                             # README workflows (webhooks, managed-wallet payout, fiat payin, reconciliation); type-checked by check-types against ../src, never published, never call the API
   src/
     index.ts                            # Re-exports the client, BlindPayError, listed shared types and all resources
     client.ts                           # BlindPay class (BlindPayOptions, resource wiring) over internal/http.ts
