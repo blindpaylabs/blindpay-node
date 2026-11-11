@@ -77,6 +77,8 @@ function pathShape(segments: string[]): string {
             // A whole-segment param, either OpenAPI's `{name}` or a JS template's `${name}`.
             if (/^\{[^}]*\}$/.test(seg) || /^\$\{[^}]*\}$/.test(seg)) return "{}";
             if (i === segments.length - 1) {
+                // A path param followed by a query spread, e.g. `${payinId}${toQueryString(params)}`.
+                if (/^\$\{[^}]*\}\$\{/.test(seg)) return "{}";
                 // A trailing spread with no slash of its own, e.g. `payins${queryParams}`
                 // (query string, not a path segment): keep only its literal prefix.
                 const idx = seg.indexOf("${");

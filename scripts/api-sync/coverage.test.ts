@@ -75,4 +75,19 @@ export function createWidgetsResource(instanceId: string, client: InternalApiCli
             "GET /v1/instances/{instance_id}/widgets"
         );
     });
+
+    it("reads a path param followed by a query spread as that param", () => {
+        const repo = repoWith(`
+export function createWidgetsResource(instanceId: string, client: InternalApiClient) {
+    return {
+        get(id, params, options) {
+            return client.get(\`/instances/\${instanceId}/widgets/\${id}\${toQueryString(params)}\`, options);
+        },
+    };
+}
+`);
+        expect(computeCoverageGaps(spec, repo)).not.toContain(
+            "GET /v1/instances/{instance_id}/widgets/{id}"
+        );
+    });
 });
