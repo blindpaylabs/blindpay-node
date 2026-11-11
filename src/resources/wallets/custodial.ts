@@ -87,7 +87,8 @@ export type WalletDeposit = {
 export type GetCustodialWalletDepositsInput = {
     customer_id: string;
     id: string;
-    limit?: "5" | "10" | "50" | "100" | "200";
+    /** Page size; sent as a string either way. */
+    limit?: "5" | "10" | "50" | "100" | "200" | 5 | 10 | 50 | 100 | 200;
     starting_after?: string;
     ending_before?: string;
     token?: WalletToken;

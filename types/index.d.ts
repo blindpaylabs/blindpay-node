@@ -350,7 +350,9 @@ export type Country =
         | "AX";
 
 export type PaginationParams = {
-    limit?: '10' | '50' | '100' | '200' | '500' | '1000';
+    /** Page size; sent as a string either way. Passing it returns the `{ data, pagination }` envelope. */
+    limit?: '10' | '50' | '100' | '200' | '500' | '1000' | 10 | 50 | 100 | 200 | 500 | 1000;
+    /** @deprecated Ignored by the API; page with `starting_after` (or `listAutoPaging`). */
     offset?: '0' | '10' | '50' | '100' | '200' | '500' | '1000';
     starting_after?: string;
     ending_before?: string;

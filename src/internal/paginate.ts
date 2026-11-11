@@ -4,7 +4,7 @@ import { BlindPayError } from "./blindpay-error";
 /** A list response: the `{ data, pagination }` envelope, or a bare array (no pagination sent). */
 export type Page<T> = { data: T[]; pagination: PaginationMetadata } | T[];
 
-type CursorParams = { limit?: string; starting_after?: string; ending_before?: string };
+type CursorParams = { limit?: string | number; starting_after?: string; ending_before?: string };
 
 /**
  * Iterates every item of a cursor-paginated list (sdk-parity C5/D4): sends `limit` (default
