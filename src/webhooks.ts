@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 import { Webhook } from "svix";
 import { BlindPayError } from "./internal/blindpay-error";
 import { WEBHOOK_EVENT_NAMES } from "./internal/webhook-event-names";
@@ -27,9 +28,16 @@ export type UnknownWebhookEvent = {
 
 const KNOWN_EVENTS: ReadonlySet<string> = new Set(WEBHOOK_EVENT_NAMES);
 
+const DEFAULT_TOLERANCE_SECONDS = 300;
+
+export type WebhookVerifyOptions = {
+    /** How far `svix-timestamp` may be from now, in seconds, either way. Defaults to 300 (5 minutes). */
+    tolerance?: number;
+};
+
 /**
- * Checks a BlindPay webhook's Svix signature and timestamp (5 minute tolerance). Needs no API
- * key or client. Never throws.
+ * Checks a BlindPay webhook's Svix signature and timestamp (within `options.tolerance` seconds,
+ * 5 minutes by default). Needs no API key or client. Never throws.
  *
  * @param payload The raw request body, exactly as received: a string, or the bytes (a `Buffer`
  *   from `express.raw()` is fine); re-serialised JSON has different bytes and fails.
@@ -41,10 +49,11 @@ const KNOWN_EVENTS: ReadonlySet<string> = new Set(WEBHOOK_EVENT_NAMES);
 export function verifyWebhook(
     payload: string | Uint8Array,
     headers: WebhookHeaders,
-    secret: string
+    secret: string,
+    options?: WebhookVerifyOptions
 ): boolean {
     try {
-        verifyWithSvix(payload, headers, secret);
+        verifySignature(payload, headers, secret, options);
         return true;
     } catch {
         return false;
@@ -61,9 +70,10 @@ export function verifyWebhook(
 export function constructWebhookEvent(
     payload: string | Uint8Array,
     headers: WebhookHeaders,
-    secret: string
+    secret: string,
+    options?: WebhookVerifyOptions
 ): WebhookEvent | UnknownWebhookEvent {
-    const body = verifyOrThrow(payload, headers, secret);
+    const body = verifyOrThrow(payload, headers, secret, options);
     if (
         isRecord(body) &&
         typeof body.webhook_event === "string" &&
@@ -89,10 +99,11 @@ export function isUnknownWebhookEvent(
 export function verifyOrThrow(
     payload: string | Uint8Array,
     headers: WebhookHeaders,
-    secret: string
+    secret: string,
+    options?: WebhookVerifyOptions
 ): unknown {
     try {
-        return verifyWithSvix(payload, headers, secret);
+        return verifySignature(payload, headers, secret, options);
     } catch (error) {
         throw new BlindPayError(
             `Webhook verification failed: ${error instanceof Error ? error.message : String(error)}`
@@ -100,17 +111,44 @@ export function verifyOrThrow(
     }
 }
 
-function verifyWithSvix(
+/**
+ * Svix verification (sdk-parity A4) with a configurable tolerance: svix's own `verify` fixes it
+ * at 5 minutes, so this checks the headers and timestamp itself and uses svix's `sign` for the
+ * HMAC, comparing each `v1,` signature in constant time. Returns the parsed body or throws.
+ */
+function verifySignature(
     payload: string | Uint8Array,
     headers: WebhookHeaders,
-    secret: string
+    secret: string,
+    options: WebhookVerifyOptions = {}
 ): unknown {
+    const tolerance = options.tolerance ?? DEFAULT_TOLERANCE_SECONDS;
+    const h = toHeaderRecord(headers);
+    const id = h["svix-id"] ?? h["webhook-id"];
+    const timestamp = h["svix-timestamp"] ?? h["webhook-timestamp"];
+    const signatures = h["svix-signature"] ?? h["webhook-signature"];
+    if (!id || !timestamp || !signatures) throw new Error("Missing required headers");
+    if (!/^\d+$/.test(timestamp)) throw new Error("Invalid timestamp");
+    const seconds = Number(timestamp);
+    if (Math.abs(Math.floor(Date.now() / 1000) - seconds) > tolerance) {
+        throw new Error("Message timestamp is outside the tolerance");
+    }
     // svix takes a string or a Buffer; a Buffer view over the same bytes avoids a copy.
     const body =
         typeof payload === "string"
             ? payload
             : Buffer.from(payload.buffer, payload.byteOffset, payload.byteLength);
-    return new Webhook(secret).verify(body, toHeaderRecord(headers));
+    const expected = Buffer.from(
+        new Webhook(secret).sign(id, new Date(seconds * 1000), body).split(",")[1] ?? ""
+    );
+    const matches = signatures.split(" ").some((entry) => {
+        const comma = entry.indexOf(",");
+        if (comma < 0 || entry.slice(0, comma) !== "v1") return false;
+        const candidate = Buffer.from(entry.slice(comma + 1));
+        return candidate.length === expected.length && timingSafeEqual(candidate, expected);
+    });
+    if (!matches) throw new Error("No matching signature found");
+    return JSON.parse(body.toString());
 }
 
 function toHeaderRecord(headers: WebhookHeaders): Record<string, string> {

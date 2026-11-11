@@ -37,6 +37,8 @@ export type WebhookVerificationInput = {
     };
     /** The raw request body: re-serialized JSON changes the bytes and fails verification. */
     payload: string;
+    /** Allowed distance of the timestamp from now, in seconds (default 300). */
+    tolerance?: number;
 };
 
 /** Options for `new BlindPay(...)`. */
@@ -282,7 +284,9 @@ export class BlindPay {
      * @returns {boolean} True if the signature is valid, false otherwise
      */
     verifyWebhookSignature(params: WebhookVerificationInput): boolean {
-        return verifyWebhook(params.payload, svixHeaders(params), params.secret);
+        return verifyWebhook(params.payload, svixHeaders(params), params.secret, {
+            tolerance: params.tolerance,
+        });
     }
 
     /**
@@ -295,7 +299,9 @@ export class BlindPay {
      * @throws {BlindPayError} When the signature or timestamp does not verify
      */
     constructWebhookEvent(params: WebhookVerificationInput): WebhookEvent {
-        return verifyOrThrow(params.payload, svixHeaders(params), params.secret) as WebhookEvent;
+        return verifyOrThrow(params.payload, svixHeaders(params), params.secret, {
+            tolerance: params.tolerance,
+        }) as WebhookEvent;
     }
 }
 

@@ -181,7 +181,7 @@ app.post('/webhooks/blindpay', express.raw({ type: 'application/json' }), (req, 
 });
 ```
 
-`verifyWebhook(payload, headers, secret)` returns a boolean instead. Never log the `whsec_` secret. The client methods `blindpay.constructWebhookEvent({ secret, headers, payload })` and `blindpay.verifyWebhookSignature(...)` keep working as before.
+`verifyWebhook(payload, headers, secret)` returns a boolean instead. Both accept `{ tolerance }` (seconds, default 300) as a last argument. Never log the `whsec_` secret. The client methods `blindpay.constructWebhookEvent({ secret, headers, payload })` and `blindpay.verifyWebhookSignature(...)` keep working as before.
 
 ## Tracking endpoints
 

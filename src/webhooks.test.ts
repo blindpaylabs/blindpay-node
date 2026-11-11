@@ -43,6 +43,40 @@ afterEach(() => {
     vi.useRealTimers();
 });
 
+describe("tolerance", () => {
+    const byName = (name: string) => {
+        const vector = vectors.find((v) => v.name === name);
+        if (!vector) throw new Error(`no vector ${name}`);
+        return vector;
+    };
+    afterEach(() => vi.useRealTimers());
+
+    it("accepts an older timestamp when the tolerance allows it, and rejects with a tighter one", () => {
+        const old = byName("invalid_timestamp_too_old_301s");
+        const recent = byName("valid_within_tolerance_past_299s");
+        vi.useFakeTimers({ toFake: ["Date"] });
+        vi.setSystemTime(old.now * 1000);
+        expect(verifyWebhook(old.payload, old.headers, old.secret, { tolerance: 301 })).toBe(true);
+        expect(() =>
+            constructWebhookEvent(old.payload, old.headers, old.secret, { tolerance: 600 })
+        ).not.toThrow();
+        vi.setSystemTime(recent.now * 1000);
+        expect(verifyWebhook(recent.payload, recent.headers, recent.secret)).toBe(true);
+        expect(
+            verifyWebhook(recent.payload, recent.headers, recent.secret, { tolerance: 298 })
+        ).toBe(false);
+    });
+
+    it("still needs a matching signature however wide the tolerance", () => {
+        const tampered = byName("invalid_tampered_payload");
+        vi.useFakeTimers({ toFake: ["Date"] });
+        vi.setSystemTime(tampered.now * 1000);
+        expect(
+            verifyWebhook(tampered.payload, tampered.headers, tampered.secret, { tolerance: 1e9 })
+        ).toBe(false);
+    });
+});
+
 describe("webhook test vectors (sdk-parity, 14 cases)", () => {
     it("has all 14 vectors", () => {
         expect(vectors).toHaveLength(14);
