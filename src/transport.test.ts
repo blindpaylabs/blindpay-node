@@ -38,6 +38,17 @@ const json = (body: unknown, status = 200, headers: Record<string, string> = {})
 
 const header = (call: Call, name: string) => new Headers(call.init.headers).get(name);
 
+/** A response whose status line arrives but whose body stream then fails. */
+const brokenBody = (status: number) =>
+    new Response(
+        new ReadableStream({
+            start(controller) {
+                controller.error(new Error("socket reset while reading the body"));
+            },
+        }),
+        { status }
+    );
+
 function client(fetchFn: typeof fetch, options: Partial<BlindPayOptions> = {}) {
     return new BlindPay({
         apiKey: "test-key",
@@ -115,6 +126,51 @@ describe("client configuration (C1)", () => {
         expect(header(calls[0], "X-Trace")).toBe("abc");
         expect(header(calls[0], "Authorization")).toBe("Bearer test-key");
     });
+
+    it("ignores Authorization, User-Agent, Accept and Content-Type in per-call headers, in any casing", async () => {
+        const { fetch, calls } = fakeFetch(json({}));
+
+        await client(fetch).payouts.createEvm(payout, {
+            headers: {
+                authorization: "Bearer other",
+                "user-agent": "spoof",
+                ACCEPT: "text/html",
+                "content-type": "text/plain",
+            },
+        });
+
+        const sent = new Headers(calls[0].init.headers);
+        expect(sent.get("Authorization")).toBe("Bearer test-key");
+        expect(sent.get("User-Agent")).toMatch(/^blindpay-node\//);
+        expect(sent.get("Accept")).toBe("application/json");
+        expect(sent.get("Content-Type")).toBe("application/json");
+    });
+
+    it.each(["idempotency-key", "Idempotency-Key", "IDEMPOTENCY-KEY"])(
+        "rejects an %s header without sending: the key goes in options.idempotencyKey",
+        async (name) => {
+            const { fetch, calls } = fakeFetch();
+
+            const { error } = await client(fetch).payouts.createEvm(payout, {
+                headers: { [name]: "key-1" },
+            });
+
+            expect(calls).toHaveLength(0);
+            expect(error).toMatchObject({ type: "invalid_request", status: 0, retryable: false });
+        }
+    );
+
+    it.each([" ", "   ", " key-1", "key-1\n"])(
+        "rejects the idempotency key %j (blank or padded) without sending",
+        async (idempotencyKey) => {
+            const { fetch, calls } = fakeFetch();
+
+            const { error } = await client(fetch).payouts.createEvm(payout, { idempotencyKey });
+
+            expect(calls).toHaveLength(0);
+            expect(error).toMatchObject({ type: "invalid_request", status: 0 });
+        }
+    );
 
     it("applies per-call options on GETs too", async () => {
         const { fetch, calls } = fakeFetch(json([]), "hang");
@@ -312,6 +368,16 @@ describe("retries (C3, Appendix A2)", () => {
             for (const call of calls) expect(header(call, "Idempotency-Key")).toBeNull();
         });
 
+        it("is retried on a 503 whose body fails to read, by its status", async () => {
+            const { fetch, calls } = fakeFetch(brokenBody(503), json({ id: "pa_000000000000" }));
+
+            const { data, error } = await settle(getPayout(client(fetch)));
+
+            expect(calls).toHaveLength(2);
+            expect(error).toBeNull();
+            expect(data).toEqual({ id: "pa_000000000000" });
+        });
+
         it("is retried on a non-JSON 502", async () => {
             const html = new Response("<html>502</html>", {
                 status: 502,
@@ -371,6 +437,31 @@ describe("retries (C3, Appendix A2)", () => {
                 expect(error).toMatchObject({ status, retryable: true, idempotency_key: key });
             }
         );
+
+        it("is never retried on a 5xx whose body fails to read: it is judged by its status", async () => {
+            const { fetch, calls } = fakeFetch(brokenBody(503));
+
+            const { error } = await settle(createPayout(client(fetch)));
+
+            expect(calls).toHaveLength(1);
+            expect(error).toMatchObject({
+                status: 503,
+                type: "api_error",
+                retryable: true,
+                idempotency_key: header(calls[0], "Idempotency-Key"),
+            });
+            expect(error?.message).toContain("could not be read");
+        });
+
+        it("is not resent after a 2xx whose body fails to read: the call happened", async () => {
+            const { fetch, calls } = fakeFetch(brokenBody(200));
+
+            const { data, error } = await settle(createPayout(client(fetch)));
+
+            expect(calls).toHaveLength(1);
+            expect(data).toBeNull();
+            expect(error).toMatchObject({ status: 200, type: "invalid_response", retryable: true });
+        });
 
         it("is retried after a timeout and reuses the same generated key", async () => {
             const { fetch, calls } = fakeFetch("hang", json({ id: "pa_000000000000" }));

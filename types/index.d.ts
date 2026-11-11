@@ -61,13 +61,18 @@ export type RequestOptions = {
      * Sent as the `Idempotency-Key` header on POST, PUT, PATCH and DELETE (1 to 255 characters;
      * a UUID is a good default). Retrying with the same key and the exact same body replays the
      * original response instead of acting twice; keys are kept for 24 hours. When you don't
-     * pass one and retries are on, the SDK generates one. An empty or longer key is rejected
-     * without sending anything. Ignored on GETs and file uploads.
+     * pass one and retries are on, the SDK generates one. An empty, blank or longer key, or one
+     * with leading or trailing whitespace, is rejected without sending anything. Ignored on GETs
+     * and file uploads.
      */
     idempotencyKey?: string;
     /** Per-attempt timeout in milliseconds for this call; defaults to the client's `timeoutMs`. */
     timeoutMs?: number;
-    /** Extra request headers. `Authorization`, `User-Agent` and `Idempotency-Key` can't be overridden. */
+    /**
+     * Extra request headers. `Authorization`, `User-Agent`, `Accept` and `Content-Type` are the
+     * SDK's: matching names are dropped, in any casing. An `Idempotency-Key` header is rejected
+     * without sending anything; pass `idempotencyKey` instead.
+     */
     headers?: Record<string, string>;
     /** Aborts the call, including a pending retry wait. */
     signal?: AbortSignal;

@@ -29,10 +29,18 @@ const MAX_RETRY_AFTER_SECONDS = 60;
 const TERMINAL_5XX_CODES = new Set(["PAYINS_CARD_PAYMENT_PENDING"]);
 const RETRYABLE_GET_STATUSES = new Set([408, 429, 500, 502, 503, 504]);
 
-/** What one attempt produced: an HTTP response (body already read) or no response at all. */
+/**
+ * What one attempt produced: an HTTP response (body already read, or `bodyError` when reading
+ * it failed after the status line arrived) or no response at all.
+ */
 type Attempt =
-    | { kind: "response"; response: Response; text: string }
+    | { kind: "response"; response: Response; text: string; bodyError?: string }
     | { kind: "failure"; type: "connection_error" | "timeout_error" | "aborted"; message: string };
+
+const ABORTED_MESSAGE = "The request was aborted";
+
+/** Headers the SDK owns: per-call `options.headers` can't set them, in any casing. */
+const RESERVED_HEADERS = new Set(["authorization", "user-agent", "accept", "content-type"]);
 
 type Decision = {
     /** Safe to send the same request again (same bytes, same Idempotency-Key). */
@@ -56,26 +64,29 @@ export async function send<T>(
     const isMutation = method !== "GET";
     const isMultipart = form !== undefined;
 
+    const callerHeaders = Object.entries(options.headers ?? {});
+    if (callerHeaders.some(([name]) => name.toLowerCase() === "idempotency-key")) {
+        return invalidRequest(
+            "Pass the idempotency key as options.idempotencyKey, not as a header, so it is validated and reused on retries"
+        );
+    }
+
     let idempotencyKey: string | undefined;
     if (isMutation && !isMultipart) {
         idempotencyKey = options.idempotencyKey;
-        if (
-            idempotencyKey !== undefined &&
-            (idempotencyKey === "" || idempotencyKey.length > MAX_IDEMPOTENCY_KEY_LENGTH)
-        ) {
-            return failure({
-                message: `idempotencyKey must be 1 to ${MAX_IDEMPOTENCY_KEY_LENGTH} characters; the API ignores an empty key and rejects a longer one`,
-                type: "invalid_request",
-                status: 0,
-                retryable: false,
-            });
+        if (idempotencyKey !== undefined && !isValidIdempotencyKey(idempotencyKey)) {
+            return invalidRequest(
+                `idempotencyKey must be 1 to ${MAX_IDEMPOTENCY_KEY_LENGTH} characters with no leading or trailing whitespace; the API ignores an empty key and rejects a longer one`
+            );
         }
         // Generated before the first attempt: that attempt may already have executed.
         if (idempotencyKey === undefined && config.maxRetries > 0) idempotencyKey = randomUUID();
     }
 
     const headers: Record<string, string> = {
-        ...options.headers,
+        ...Object.fromEntries(
+            callerHeaders.filter(([name]) => !RESERVED_HEADERS.has(name.toLowerCase()))
+        ),
         Accept: "application/json",
         "User-Agent": config.userAgent,
         Authorization: `Bearer ${config.apiKey}`,
@@ -97,7 +108,7 @@ export async function send<T>(
             options.signal
         );
 
-        if (result.kind === "response" && result.response.ok) {
+        if (result.kind === "response" && result.response.ok && !result.bodyError) {
             return toSuccess<T>(result, idempotencyKey);
         }
 
@@ -118,9 +129,7 @@ export async function send<T>(
             const delayMs = decision.retryAfterMs ?? backoffMs(attempt);
             if (await sleep(delayMs, options.signal)) continue;
             return failure({
-                message: "The request was aborted",
-                type: "aborted",
-                status: 0,
+                ...abortedError(),
                 retryable: false,
                 idempotency_key: idempotencyKey,
             });
@@ -142,9 +151,7 @@ async function sendOnce(
     timeoutMs: number,
     callerSignal?: AbortSignal
 ): Promise<Attempt> {
-    if (callerSignal?.aborted) {
-        return { kind: "failure", type: "aborted", message: "The request was aborted" };
-    }
+    if (callerSignal?.aborted) return abortedAttempt();
     // Node 18 has no AbortSignal.any, so the caller's signal is forwarded by hand.
     const controller = new AbortController();
     let timedOut = false;
@@ -155,25 +162,52 @@ async function sendOnce(
     const onCallerAbort = () => controller.abort();
     callerSignal?.addEventListener("abort", onCallerAbort);
     try {
-        const response = await fetchFn(url, { ...init, signal: controller.signal });
-        const text = await response.text();
-        return { kind: "response", response, text };
-    } catch (error) {
-        if (callerSignal?.aborted) {
-            return { kind: "failure", type: "aborted", message: "The request was aborted" };
+        let response: Response;
+        try {
+            response = await fetchFn(url, { ...init, signal: controller.signal });
+        } catch (error) {
+            if (callerSignal?.aborted) return abortedAttempt();
+            if (timedOut) {
+                return {
+                    kind: "failure",
+                    type: "timeout_error",
+                    message: `The request timed out after ${timeoutMs} ms`,
+                };
+            }
+            return { kind: "failure", type: "connection_error", message: messageOf(error) };
         }
-        if (timedOut) {
-            return {
-                kind: "failure",
-                type: "timeout_error",
-                message: `The request timed out after ${timeoutMs} ms`,
-            };
+        // The status line has arrived: from here on the attempt is judged by its status (A2),
+        // even when reading the body fails, so a 5xx mutation is never resent.
+        try {
+            return { kind: "response", response, text: await response.text() };
+        } catch (error) {
+            if (callerSignal?.aborted) return abortedAttempt();
+            const bodyError = timedOut
+                ? `reading the body timed out after ${timeoutMs} ms`
+                : messageOf(error);
+            return { kind: "response", response, text: "", bodyError };
         }
-        return { kind: "failure", type: "connection_error", message: messageOf(error) };
     } finally {
         clearTimeout(timer);
         callerSignal?.removeEventListener("abort", onCallerAbort);
     }
+}
+
+function abortedAttempt(): Attempt {
+    return { kind: "failure", type: "aborted", message: ABORTED_MESSAGE };
+}
+
+function abortedError(): ErrorResponse & { type: ErrorType } {
+    return { message: ABORTED_MESSAGE, type: "aborted", status: 0 };
+}
+
+function invalidRequest(message: string): { data: null; error: ErrorResponse } {
+    return failure({ message, type: "invalid_request", status: 0, retryable: false });
+}
+
+/** 1 to 255 characters and no surrounding whitespace (a padded key would be a different key). */
+function isValidIdempotencyKey(key: string): boolean {
+    return key !== "" && key === key.trim() && key.length <= MAX_IDEMPOTENCY_KEY_LENGTH;
 }
 
 /**
@@ -200,6 +234,9 @@ function decide(ctx: {
     }
 
     const { status } = attempt.response;
+    // A 2xx whose body couldn't be read: the call happened. Not resent automatically; the
+    // caller may resend (a keyed mutation replays the stored response).
+    if (attempt.response.ok) return { retryable: resendable, autoRetry: false };
     const retryAfterMs = parseRetryAfter(attempt.response.headers.get("Retry-After"));
 
     if (status === 409 && ctx.message === "idempotency_key_in_flight") {
@@ -273,7 +310,14 @@ function toSuccess<T>(
 function toApiError(
     result: Extract<Attempt, { kind: "response" }>
 ): ErrorResponse & { type: ErrorType } {
-    const { response, text } = result;
+    const { response, text, bodyError } = result;
+    if (bodyError) {
+        return {
+            message: `${statusLine(response)} (the response body could not be read: ${bodyError})`,
+            ...responseMeta(response),
+            type: response.ok ? "invalid_response" : "api_error",
+        };
+    }
     let parsed: unknown = null;
     let isJson = true;
     if (text) {
