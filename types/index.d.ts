@@ -10,7 +10,40 @@ export type ErrorResponse = {
     errors?: string[];
     /** Request trace ID; include it when contacting BlindPay support. */
     trace_id?: string;
+    /** HTTP status of the response; `0` when no response arrived (or the SDK refused to send). */
+    status?: number;
+    /** The `X-Request-Id` response header. */
+    request_id?: string;
+    /**
+     * The `Idempotency-Key` the request carried, yours or the one the SDK generated. After a
+     * timeout or a 5xx on a create, look the resource up first, then resend with this key.
+     */
+    idempotency_key?: string;
+    /**
+     * `true` when sending the same request again (same input, same `idempotency_key`) is safe
+     * and may succeed. The SDK already retried what it could; a mutation that got a 5xx is
+     * never resent automatically, because the API may have acted before failing.
+     */
+    retryable?: boolean;
+    /** What went wrong; see `ErrorType`. */
+    type?: ErrorType;
 }
+
+/**
+ * - `api_error`: the API answered with a non-2xx status.
+ * - `connection_error`: no response arrived (DNS, TLS, connection reset...).
+ * - `timeout_error`: no complete response within `timeoutMs`.
+ * - `aborted`: the caller's `signal` aborted the request.
+ * - `invalid_request`: the SDK refused to send it (e.g. an empty `idempotencyKey`).
+ * - `invalid_response`: a 2xx response whose body isn't JSON.
+ */
+export type ErrorType =
+    | "api_error"
+    | "connection_error"
+    | "timeout_error"
+    | "aborted"
+    | "invalid_request"
+    | "invalid_response";
 
 export type BlindpayErrorResponse = {
     data: null
@@ -22,14 +55,27 @@ export type BlindpaySuccessResponse<T> = {
     error: null;
 }
 
-/** Per-call options for methods that change something (POST, PUT, PATCH, DELETE). */
+/** Per-call options, the last argument of every method. */
 export type RequestOptions = {
     /**
-     * Sent as the `Idempotency-Key` header (up to 255 characters, a UUID is a good default).
-     * Retrying with the same key and the exact same body replays the original response
-     * instead of acting twice; keys are kept for 24 hours. Ignored on file uploads.
+     * Sent as the `Idempotency-Key` header on POST, PUT, PATCH and DELETE (1 to 255 characters;
+     * a UUID is a good default). Retrying with the same key and the exact same body replays the
+     * original response instead of acting twice; keys are kept for 24 hours. When you don't
+     * pass one and retries are on, the SDK generates one. An empty, blank or longer key, or one
+     * with leading or trailing whitespace, is rejected without sending anything. Ignored on GETs
+     * and file uploads.
      */
     idempotencyKey?: string;
+    /** Per-attempt timeout in milliseconds for this call; defaults to the client's `timeoutMs`. */
+    timeoutMs?: number;
+    /**
+     * Extra request headers. `Authorization`, `User-Agent`, `Accept` and `Content-Type` are the
+     * SDK's: matching names are dropped, in any casing. An `Idempotency-Key` header is rejected
+     * without sending anything; pass `idempotencyKey` instead.
+     */
+    headers?: Record<string, string>;
+    /** Aborts the call, including a pending retry wait. */
+    signal?: AbortSignal;
 }
 
 /** Body of every endpoint whose only answer is `{ success: true }` (deletes, most updates). */
@@ -309,7 +355,9 @@ export type Country =
         | "AX";
 
 export type PaginationParams = {
-    limit?: '10' | '50' | '100' | '200' | '500' | '1000';
+    /** Page size; sent as a string either way. Passing it returns the `{ data, pagination }` envelope. */
+    limit?: '10' | '50' | '100' | '200' | '500' | '1000' | 10 | 50 | 100 | 200 | 500 | 1000;
+    /** @deprecated Ignored by the API; page with `starting_after` (or `listAutoPaging`). */
     offset?: '0' | '10' | '50' | '100' | '200' | '500' | '1000';
     starting_after?: string;
     ending_before?: string;
@@ -367,6 +415,9 @@ export type PayinTrackingTransaction = {
     card_instruction?: {
         provider: string;
         tokenization_key: string;
+        checkout_public_key?: string | null;
+        checkout_token?: string | null;
+        checkout_url?: string | null;
     } | null;
     end_to_end_id?: string | null;
     provider_name?: string | null;
@@ -901,8 +952,10 @@ export type PayerRules = {
     pse_bank_code?: string | null;
 }
 
+/** @deprecated Only typed the removed `PayoutTrackingPayment.provider_integration`. */
 export type PayoutProviderIntegration = "veem" | "zenus" | "checkbook" | "onemoney" | "bitso" | "starkbank" | "triplea" | "infinitus" | "portage_g";
 
+/** @deprecated Only typed the removed `PayoutTrackingPayment.forced_provider`. */
 export type PayoutForcedProvider = "zenus" | "veem" | "infinitus_portage";
 
 export type TrackingStatus = 'processing' | 'on_hold' | 'completed' | 'pending_review' | "pending_refund_review";
@@ -933,6 +986,7 @@ export type PayoutTrackingPayment = {
     recipient_account_type?: string | null ;
     estimated_time_of_arrival?: EstimatedTimeOfArrival | null ;
     completed_at?: string | null ;
+    /** @deprecated No longer in the API's payout tracking (spec 66144f3b2); always absent. Kept so existing code compiles; removed in the next major. */
     forced_provider?: PayoutForcedProvider | null;
     refund_review_actioned_at?: string | null;
     refund_review_detected_at?: string | null;
@@ -946,6 +1000,7 @@ export type PayoutTrackingPayment = {
     provider_clearing_system?: string | null;
     provider_error_reason?: string | null;
     provider_imad?: string | null;
+    /** @deprecated No longer in the API's payout tracking (spec 66144f3b2); always absent. Kept so existing code compiles; removed in the next major. */
     provider_integration?: PayoutProviderIntegration | null;
     provider_reference?: string | null;
     provider_uetr?: string | null;

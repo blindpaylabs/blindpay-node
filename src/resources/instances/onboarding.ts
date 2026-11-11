@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse, Country } from "../../../types";
+import type { BlindpayApiResponse, Country, RequestOptions } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { IdentificationDocument, OwnerRole, ProofOfAddressDocType } from "../customers";
 
@@ -92,16 +92,20 @@ export type GetInstanceOwnershipDocumentsResponse = {
 
 export function createInstanceOnboardingResource(instanceId: string, client: InternalApiClient) {
     return {
-        getBusinessDetails(): Promise<BlindpayApiResponse<GetInstanceBusinessDetailsResponse>> {
-            return client.get(`/instances/${instanceId}/onboarding/business_details`);
+        getBusinessDetails(
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetInstanceBusinessDetailsResponse>> {
+            return client.get(`/instances/${instanceId}/onboarding/business_details`, options);
         },
-        getBusinessProfile(): Promise<BlindpayApiResponse<GetInstanceBusinessProfileResponse>> {
-            return client.get(`/instances/${instanceId}/onboarding/business_profile`);
+        getBusinessProfile(
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetInstanceBusinessProfileResponse>> {
+            return client.get(`/instances/${instanceId}/onboarding/business_profile`, options);
         },
-        getOwnershipDocuments(): Promise<
-            BlindpayApiResponse<GetInstanceOwnershipDocumentsResponse>
-        > {
-            return client.get(`/instances/${instanceId}/onboarding/ownership_documents`);
+        getOwnershipDocuments(
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetInstanceOwnershipDocumentsResponse>> {
+            return client.get(`/instances/${instanceId}/onboarding/ownership_documents`, options);
         },
     };
 }

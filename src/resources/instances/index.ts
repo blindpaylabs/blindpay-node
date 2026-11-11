@@ -71,11 +71,13 @@ export type MigrateInstanceOwnershipResponse = SuccessResponse;
 
 export function createInstancesResource(instanceId: string, client: InternalApiClient) {
     return {
-        get(): Promise<BlindpayApiResponse<GetInstanceResponse>> {
-            return client.get(`/instances/${instanceId}`);
+        get(options?: RequestOptions): Promise<BlindpayApiResponse<GetInstanceResponse>> {
+            return client.get(`/instances/${instanceId}`, options);
         },
-        getMembers(): Promise<BlindpayApiResponse<GetInstanceMembersResponse>> {
-            return client.get(`/instances/${instanceId}/members`);
+        getMembers(
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetInstanceMembersResponse>> {
+            return client.get(`/instances/${instanceId}/members`, options);
         },
         update(
             { ...data }: UpdateInstanceInput,
@@ -90,14 +92,17 @@ export function createInstancesResource(instanceId: string, client: InternalApiC
             memberId: DeleteInstanceMemberInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}/members/${memberId}`, options);
+            return client.delete(
+                `/instances/${instanceId}/members/${encodeURIComponent(memberId)}`,
+                options
+            );
         },
         updateMemberRole(
             { memberId, role }: UpdateInstanceMemberRoleInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.put(
-                `/instances/${instanceId}/members/${memberId}`,
+                `/instances/${instanceId}/members/${encodeURIComponent(memberId)}`,
                 { user_role: role },
                 options
             );

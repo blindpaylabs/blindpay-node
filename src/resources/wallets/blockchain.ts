@@ -114,10 +114,12 @@ export type MintUsdbSolanaResponse = {
 export function createBlockchainWalletsResource(instanceId: string, client: InternalApiClient) {
     return {
         list(
-            customer_id: ListBlockchainWalletsInput
+            customer_id: ListBlockchainWalletsInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<ListBlockchainWalletsResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets`
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/blockchain-wallets`,
+                options
             );
         },
         createWithAddress(
@@ -125,7 +127,7 @@ export function createBlockchainWalletsResource(instanceId: string, client: Inte
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateBlockchainWalletResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/blockchain-wallets`,
                 {
                     ...data,
                     is_account_abstraction: true,
@@ -138,7 +140,7 @@ export function createBlockchainWalletsResource(instanceId: string, client: Inte
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateBlockchainWalletResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/blockchain-wallets`,
                 {
                     ...data,
                     is_account_abstraction: false,
@@ -147,18 +149,21 @@ export function createBlockchainWalletsResource(instanceId: string, client: Inte
             );
         },
         getWalletMessage(
-            customer_id: GetBlockchainWalletMessage
+            customer_id: GetBlockchainWalletMessage,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetBlockchainWalletMessageResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets/sign-message`
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/blockchain-wallets/sign-message`,
+                options
             );
         },
-        get({
-            customer_id,
-            id,
-        }: GetBlockchainWalletInput): Promise<BlindpayApiResponse<GetBlockchainWalletResponse>> {
+        get(
+            { customer_id, id }: GetBlockchainWalletInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetBlockchainWalletResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets/${id}`
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/blockchain-wallets/${encodeURIComponent(id)}`,
+                options
             );
         },
         delete(
@@ -166,7 +171,7 @@ export function createBlockchainWalletsResource(instanceId: string, client: Inte
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.delete(
-                `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets/${id}`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/blockchain-wallets/${encodeURIComponent(id)}`,
                 options
             );
         },
@@ -175,7 +180,7 @@ export function createBlockchainWalletsResource(instanceId: string, client: Inte
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SetBlockchainWalletSelfCustodyResponse>> {
             return client.patch(
-                `/instances/${instanceId}/customers/${customer_id}/blockchain-wallets/${id}`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/blockchain-wallets/${encodeURIComponent(id)}`,
                 data,
                 options
             );

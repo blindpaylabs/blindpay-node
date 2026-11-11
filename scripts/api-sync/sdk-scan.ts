@@ -148,7 +148,45 @@ export function extractTopLevelKeys(
         }
     }
 
+    if (lookupOther) {
+        for (const name of intersectedNames(declText)) {
+            for (const key of lookupOther(name) ?? []) keys.add(key);
+        }
+    }
+
     return keys;
+}
+
+/**
+ * Named types joined with `&` in a declaration (`Base & { ... }`, `{ ... } & Base`). Only names
+ * next to `&`: a bare alias (`= Payin;`) is not an intersection.
+ */
+function intersectedNames(declText: string): string[] {
+    const rhs = declText.slice(declText.indexOf("=") + 1);
+    const named = /(?:^\s*([A-Z]\w*)\s*&)|(?:&\s*([A-Z]\w*)\s*(?=&|;|$))/g;
+    return [...rhs.matchAll(named)].map((m) => m[1] ?? m[2]);
+}
+
+/**
+ * extractTopLevelFields plus the fields of same-file named types joined with `&`, so a field
+ * declared once on a shared base type is compared like one declared inline.
+ */
+export function extractResolvedFields(
+    repoRoot: string,
+    file: string,
+    declText: string
+): Map<string, FieldInfo> {
+    const fields = new Map<string, FieldInfo>();
+    for (const name of intersectedNames(declText)) {
+        try {
+            const span = findDeclarationSpan(readSource(repoRoot, file), name);
+            for (const [k, v] of extractTopLevelFields(span.text)) fields.set(k, v);
+        } catch {
+            // Declared elsewhere (e.g. types/index.d.ts): not resolved, as before.
+        }
+    }
+    for (const [k, v] of extractTopLevelFields(declText)) fields.set(k, v);
+    return fields;
 }
 
 /** String-literal union members of an `export type X = "a" | "b" | ...;` declaration, or null. */

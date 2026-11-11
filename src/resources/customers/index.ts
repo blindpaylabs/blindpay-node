@@ -19,6 +19,7 @@ import type {
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { StrictOmit } from "../../internal/helpers/strict-omit";
+import { autoPage } from "../../internal/paginate";
 import { toQueryString } from "../../internal/query";
 
 export type ProofOfAddressDocType =
@@ -190,6 +191,7 @@ export type AdditionalInfoItem = {
 
 export type IndividualWithStandardKYC = {
     id: string;
+    /** Only `customers.get` returns it; `customers.list` and the customer webhooks leave it out. */
     is_tos_accepted: boolean | null;
     type: Extract<AccountClass, "individual">;
     kyc_type: Extract<KycType, "standard">;
@@ -259,6 +261,7 @@ export type IndividualWithStandardKYC = {
 
 export type IndividualWithEnhancedKYC = {
     id: string;
+    /** Only `customers.get` returns it; `customers.list` and the customer webhooks leave it out. */
     is_tos_accepted: boolean | null;
     type: Extract<AccountClass, "individual">;
     kyc_type: Extract<KycType, "enhanced">;
@@ -330,6 +333,7 @@ export type IndividualWithEnhancedKYC = {
 
 export type BusinessWithStandardKYB = {
     id: string;
+    /** Only `customers.get` returns it; `customers.list` and the customer webhooks leave it out. */
     is_tos_accepted: boolean | null;
     is_fbo: boolean | null;
     type: Extract<AccountClass, "business">;
@@ -694,8 +698,29 @@ export type RequestLimitIncreaseResponse = {
 
 export function createCustomersResource(instanceId: string, client: InternalApiClient) {
     return {
-        list(params?: ListCustomersInput): Promise<BlindpayApiResponse<ListCustomersResponse>> {
-            return client.get(`/instances/${instanceId}/customers${toQueryString(params)}`);
+        list(
+            params?: ListCustomersInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<ListCustomersResponse>> {
+            return client.get(
+                `/instances/${instanceId}/customers${toQueryString(params)}`,
+                options
+            );
+        },
+        /**
+         * Every customer matching `params`, fetched page by page (`limit` defaults to 100):
+         * `for await (const item of blindpay.customers.listAutoPaging()) { ... }`. Forward only, so
+         * `ending_before` is rejected. A failed page throws a `BlindPayError` carrying the error.
+         */
+        listAutoPaging(
+            params?: Omit<ListCustomersInput, "ending_before">,
+            options?: RequestOptions
+        ): AsyncGenerator<Customer, void, undefined> {
+            return autoPage<Customer, ListCustomersInput>(
+                (page) =>
+                    client.get(`/instances/${instanceId}/customers${toQueryString(page)}`, options),
+                params
+            );
         },
         createIndividualWithStandardKYC(
             data: CreateIndividualWithStandardKYCInput,
@@ -739,37 +764,58 @@ export function createCustomersResource(instanceId: string, client: InternalApiC
                 options
             );
         },
-        get(customer_id: GetCustomerInput): Promise<BlindpayApiResponse<GetCustomerResponse>> {
-            return client.get(`/instances/${instanceId}/customers/${customer_id}`);
+        get(
+            customer_id: GetCustomerInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetCustomerResponse>> {
+            return client.get(
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}`,
+                options
+            );
         },
         update(
             { customer_id, ...data }: UpdateCustomerInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.put(`/instances/${instanceId}/customers/${customer_id}`, data, options);
+            return client.put(
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}`,
+                data,
+                options
+            );
         },
         delete(
             customer_id: DeleteCustomerInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}/customers/${customer_id}`, options);
+            return client.delete(
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}`,
+                options
+            );
         },
         getLimits(
-            customer_id: GetCustomerLimitsInput
+            customer_id: GetCustomerLimitsInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetCustomerLimitsResponse>> {
-            return client.get(`/instances/${instanceId}/limits/customers/${customer_id}`);
+            return client.get(
+                `/instances/${instanceId}/limits/customers/${encodeURIComponent(customer_id)}`,
+                options
+            );
         },
         getLimitIncreaseRequests(
-            customer_id: GetLimitIncreaseRequestsInput
+            customer_id: GetLimitIncreaseRequestsInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetLimitIncreaseRequestsResponse>> {
-            return client.get(`/instances/${instanceId}/customers/${customer_id}/limit-increase`);
+            return client.get(
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/limit-increase`,
+                options
+            );
         },
         requestLimitIncrease(
             { customer_id, ...data }: RequestLimitIncreaseInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<RequestLimitIncreaseResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/limit-increase`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/limit-increase`,
                 data,
                 options
             );

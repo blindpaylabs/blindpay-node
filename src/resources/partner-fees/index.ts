@@ -46,8 +46,8 @@ export type DeletePartnerFeeInput = string;
 
 export function createPartnerFeesResource(instanceId: string, client: InternalApiClient) {
     return {
-        list(): Promise<BlindpayApiResponse<ListPartnerFeesResponse>> {
-            return client.get(`/instances/${instanceId}/partner-fees`);
+        list(options?: RequestOptions): Promise<BlindpayApiResponse<ListPartnerFeesResponse>> {
+            return client.get(`/instances/${instanceId}/partner-fees`, options);
         },
         create(
             { ...data }: CreatePartnerFeeInput,
@@ -55,14 +55,23 @@ export function createPartnerFeesResource(instanceId: string, client: InternalAp
         ): Promise<BlindpayApiResponse<CreatePartnerFeeResponse>> {
             return client.post(`/instances/${instanceId}/partner-fees`, data, options);
         },
-        get(id: GetPartnerFeeInput): Promise<BlindpayApiResponse<GetPartnerFeeResponse>> {
-            return client.get(`/instances/${instanceId}/partner-fees/${id}`);
+        get(
+            id: GetPartnerFeeInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetPartnerFeeResponse>> {
+            return client.get(
+                `/instances/${instanceId}/partner-fees/${encodeURIComponent(id)}`,
+                options
+            );
         },
         delete(
             id: DeletePartnerFeeInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}/partner-fees/${id}`, options);
+            return client.delete(
+                `/instances/${instanceId}/partner-fees/${encodeURIComponent(id)}`,
+                options
+            );
         },
     };
 }

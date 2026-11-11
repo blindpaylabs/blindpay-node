@@ -152,3 +152,28 @@ describe("a deliberately compatible case", () => {
         expect(compareTypeSignatures(spec, sdk, { skipEnumValues: false })).toEqual([]);
     });
 });
+
+describe("nullable enum written as enum: [..., null]", () => {
+    const node = { type: ["string", "null"], enum: ["pending", "completed", null] };
+
+    it("reads null as nullability, not as a missing member", () => {
+        const spec = specTypeSignature(node);
+        expect(spec.enumValues).toEqual(["pending", "completed"]);
+        expect(spec.nullable).toBe(true);
+    });
+
+    it("accepts the SDK union with | null", () => {
+        const spec = specTypeSignature(node);
+        const sdk = classifySdkType('"pending" | "completed" | null', "/unused", "unused.ts");
+        expect(compareTypeSignatures(spec, sdk, { skipEnumValues: false })).toEqual([]);
+    });
+
+    it("is nullable from the null member alone, even without a null type", () => {
+        const spec = specTypeSignature({ type: "string", enum: ["a", null] });
+        expect(spec.nullable).toBe(true);
+        const sdk = classifySdkType('"a"', "/unused", "unused.ts");
+        expect(compareTypeSignatures(spec, sdk, { skipEnumValues: false })).toEqual([
+            'spec allows null but the SDK type has no "| null"',
+        ]);
+    });
+});

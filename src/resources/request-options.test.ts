@@ -12,20 +12,35 @@ function sourceFiles(dir: string): string[] {
     });
 }
 
-/** Every `client.post|put|patch|delete(...)` call whose last argument isn't `options`. */
-function mutationsWithoutOptions(): string[] {
+/** The argument text of the call whose `(` is at `open`, found by balancing parentheses. */
+function callArguments(source: string, open: number): string {
+    let depth = 0;
+    for (let i = open; i < source.length; i++) {
+        if (source[i] === "(") depth++;
+        else if (source[i] === ")" && --depth === 0) return source.slice(open + 1, i);
+    }
+    throw new Error(`unbalanced call at offset ${open}`);
+}
+
+/** Every `client.<method>(...)` call whose last argument isn't `options`. */
+function callsWithoutOptions(): string[] {
     return sourceFiles(RESOURCES).flatMap((file) => {
         const source = readFileSync(file, "utf8");
-        const calls = source.matchAll(/client\.(post|put|patch|delete)\(([\s\S]*?)\);/g);
+        const calls = source.matchAll(/client\.(get|post|put|patch|delete|postMultipart)\(/g);
         return [...calls]
-            .filter(([, , args]) => !args.trim().startsWith("`/e/"))
-            .filter(([, , args]) => !/\boptions,?$/.test(args.trim()))
-            .map(([call]) => `${relative(RESOURCES, file)}: ${call.split("\n")[0]}`);
+            .map((call) => ({
+                call,
+                args: callArguments(source, (call.index ?? 0) + call[0].length - 1),
+            }))
+            .filter(({ args }) => !/\boptions,?$/.test(args.trim()))
+            .map(
+                ({ call, args }) => `${relative(RESOURCES, file)}: ${call[0]}${args.split("\n")[0]}`
+            );
     });
 }
 
 describe("RequestOptions", () => {
-    it("is forwarded by every authenticated mutation, so each one can send an Idempotency-Key", () => {
-        expect(mutationsWithoutOptions()).toEqual([]);
+    it("is forwarded by every method, so each one can take an Idempotency-Key, timeout, headers or signal", () => {
+        expect(callsWithoutOptions()).toEqual([]);
     });
 });

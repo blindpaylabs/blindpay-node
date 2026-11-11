@@ -84,8 +84,8 @@ export type SubmitCustomerRfiInput = {
 export function createInstanceRfiResource(instanceId: string, client: InternalApiClient) {
     return {
         /** Returns the open (pending) RFI for this instance, or null if there is none. */
-        get(): Promise<BlindpayApiResponse<GetInstanceRfiResponse>> {
-            return client.get(`/instances/${instanceId}/rfi`);
+        get(options?: RequestOptions): Promise<BlindpayApiResponse<GetInstanceRfiResponse>> {
+            return client.get(`/instances/${instanceId}/rfi`, options);
         },
         /** On `{ success: false }` there is no pending RFI: refetch with `get` instead of retrying. */
         submit(
@@ -100,8 +100,14 @@ export function createInstanceRfiResource(instanceId: string, client: InternalAp
 export function createCustomerRfiResource(instanceId: string, client: InternalApiClient) {
     return {
         /** Returns the open (pending) RFI for this customer, or null if there is none. */
-        get(customerId: GetCustomerRfiInput): Promise<BlindpayApiResponse<GetCustomerRfiResponse>> {
-            return client.get(`/instances/${instanceId}/customers/${customerId}/rfi`);
+        get(
+            customerId: GetCustomerRfiInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetCustomerRfiResponse>> {
+            return client.get(
+                `/instances/${instanceId}/customers/${encodeURIComponent(customerId)}/rfi`,
+                options
+            );
         },
         /** On success the customer's kyc_status flips back to verifying. On `{ success: false }`, refetch with `get` instead of retrying. */
         submit(
@@ -109,7 +115,7 @@ export function createCustomerRfiResource(instanceId: string, client: InternalAp
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SubmitRfiResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/rfi`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/rfi`,
                 response,
                 options
             );

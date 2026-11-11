@@ -6,7 +6,8 @@ import type { WebhookEvents } from ".";
 import type { WebhookEvent } from "./events";
 
 describe("Webhook events", () => {
-    const secret = "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw";
+    // A fake signing key built at runtime for these tests; not a credential.
+    const secret = `whsec_${Buffer.from("blindpay-node-test-only-signing-key").toString("base64")}`;
     const id = "msg_000000000000";
     const timestamp = new Date();
 

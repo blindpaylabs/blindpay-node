@@ -9,6 +9,7 @@ import type {
     WalletToken,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { autoPage } from "../../internal/paginate";
 import { toQueryString } from "../../internal/query";
 
 export type TransferTrackingStep = {
@@ -136,16 +137,48 @@ export function createTransfersResource(instanceId: string, client: InternalApiC
         ): Promise<BlindpayApiResponse<CreateTransferResponse>> {
             return client.post(`/instances/${instanceId}/transfers`, data, options);
         },
-        list(params?: ListTransfersInput): Promise<BlindpayApiResponse<ListTransfersResponse>> {
-            return client.get(`/instances/${instanceId}/transfers${toQueryString(params)}`);
+        list(
+            params?: ListTransfersInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<ListTransfersResponse>> {
+            return client.get(
+                `/instances/${instanceId}/transfers${toQueryString(params)}`,
+                options
+            );
         },
-        get(transferId: GetTransferInput): Promise<BlindpayApiResponse<GetTransferResponse>> {
-            return client.get(`/instances/${instanceId}/transfers/${transferId}`);
+        /**
+         * Every transfer matching `params`, fetched page by page (`limit` defaults to 100):
+         * `for await (const item of blindpay.transfers.listAutoPaging()) { ... }`. Forward only, so
+         * `ending_before` is rejected. A failed page throws a `BlindPayError` carrying the error.
+         */
+        listAutoPaging(
+            params?: Omit<ListTransfersInput, "ending_before">,
+            options?: RequestOptions
+        ): AsyncGenerator<Transfer, void, undefined> {
+            return autoPage<Transfer, ListTransfersInput>(
+                (page) =>
+                    client.get(`/instances/${instanceId}/transfers${toQueryString(page)}`, options),
+                params
+            );
         },
+        get(
+            transferId: GetTransferInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetTransferResponse>> {
+            return client.get(
+                `/instances/${instanceId}/transfers/${encodeURIComponent(transferId)}`,
+                options
+            );
+        },
+        /**
+         * Public tracking endpoint for BlindPay's web and iOS apps: server-side calls get a 401 in
+         * production. Use `transfers.get(id)` instead.
+         */
         getTrack(
-            transferId: GetTransferTrackInput
+            transferId: GetTransferTrackInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetTransferTrackResponse>> {
-            return client.get(`/e/transfers/${transferId}`);
+            return client.get(`/e/transfers/${encodeURIComponent(transferId)}`, options);
         },
     };
 }

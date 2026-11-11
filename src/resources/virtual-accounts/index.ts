@@ -112,6 +112,7 @@ export type GetVirtualAccountInput = {
     id: string;
 };
 
+/** An unknown id answers 200 with a `null` body (blindpay-v2 get...virtual-accounts.[id].ts:46), so `data` can be `null` with no `error`; typed as nullable in the next major. */
 export type GetVirtualAccountResponse = VirtualAccount;
 
 export type UpdateVirtualAccountInput = {
@@ -125,16 +126,21 @@ export type UpdateVirtualAccountInput = {
 export function createVirtualAccountsResource(instanceId: string, client: InternalApiClient) {
     return {
         list(
-            customer_id: ListVirtualAccountsInput
+            customer_id: ListVirtualAccountsInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<ListVirtualAccountsResponse>> {
-            return client.get(`/instances/${instanceId}/customers/${customer_id}/virtual-accounts`);
-        },
-        get({
-            customer_id,
-            id,
-        }: GetVirtualAccountInput): Promise<BlindpayApiResponse<GetVirtualAccountResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/virtual-accounts/${id}`
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/virtual-accounts`,
+                options
+            );
+        },
+        get(
+            { customer_id, id }: GetVirtualAccountInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetVirtualAccountResponse>> {
+            return client.get(
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/virtual-accounts/${encodeURIComponent(id)}`,
+                options
             );
         },
         create(
@@ -142,7 +148,7 @@ export function createVirtualAccountsResource(instanceId: string, client: Intern
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateVirtualAccountResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/virtual-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/virtual-accounts`,
                 data,
                 options
             );
@@ -152,7 +158,7 @@ export function createVirtualAccountsResource(instanceId: string, client: Intern
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.put(
-                `/instances/${instanceId}/customers/${customer_id}/virtual-accounts/${id}`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/virtual-accounts/${encodeURIComponent(id)}`,
                 data,
                 options
             );

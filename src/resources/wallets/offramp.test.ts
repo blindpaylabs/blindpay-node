@@ -114,4 +114,49 @@ describe("Offramp wallets", () => {
             expect(data).toEqual(mockedOfframpWallet);
         });
     });
+
+    describe("Update offramp wallet", () => {
+        const ids = {
+            customer_id: "re_000000000000",
+            bank_account_id: "ba_000000000000",
+            id: "ow_000000000000",
+        };
+
+        async function sentRequest(
+            input: Parameters<typeof blindpay.wallets.offramp.update>[0]
+        ): Promise<{ method: string; url: string; body: unknown }> {
+            fetchMock.mockResponseOnce(JSON.stringify({ success: true }), {
+                headers: { "Content-Type": "application/json" },
+            });
+            const { data, error } = await blindpay.wallets.offramp.update(input);
+            expect(error).toBeNull();
+            expect(data).toEqual({ success: true });
+            expect(fetchMock.mock.calls).toHaveLength(1);
+            const [url, init] = fetchMock.mock.calls[0];
+            return {
+                method: String(init?.method),
+                url: String(url),
+                body: JSON.parse(String(init?.body)),
+            };
+        }
+
+        it("PUTs to the wallet's path and sends a partner fee id as-is", async () => {
+            const sent = await sentRequest({ ...ids, partner_fee_id: "pf_000000000000" });
+            expect(sent.method).toBe("PUT");
+            expect(sent.url).toBe(
+                "https://api.blindpay.com/v1/instances/in_000000000000/customers/re_000000000000/bank-accounts/ba_000000000000/offramp-wallets/ow_000000000000"
+            );
+            expect(sent.body).toEqual({ partner_fee_id: "pf_000000000000" });
+        });
+
+        it("sends an explicit null, which removes the partner fee", async () => {
+            const sent = await sentRequest({ ...ids, partner_fee_id: null });
+            expect(sent.body).toEqual({ partner_fee_id: null });
+        });
+
+        it("omits partner_fee_id when it isn't set, which leaves it unchanged", async () => {
+            const sent = await sentRequest(ids);
+            expect(sent.body).toEqual({});
+        });
+    });
 });

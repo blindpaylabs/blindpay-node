@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse, RequestOptions } from "../../../types";
+import type { BlindpayApiResponse, RequestOptions, SuccessResponse } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type OfframpWalletNetwork =
@@ -29,6 +29,7 @@ export type OfframpWallet = {
     created_at: string | null;
     updated_at: string | null;
     circle_wallet_id?: string | null;
+    partner_fee_id?: string | null;
 };
 
 export type ListOfframpWalletsInput = {
@@ -43,6 +44,7 @@ export type CreateOfframpWalletInput = {
     bank_account_id: string;
     external_id?: string | null;
     network: OfframpWalletNetwork;
+    partner_fee_id?: string | null;
 };
 
 export type CreateOfframpWalletResponse = {
@@ -51,6 +53,7 @@ export type CreateOfframpWalletResponse = {
     circle_wallet_id?: string | null;
     network: OfframpWalletNetwork;
     address: string;
+    partner_fee_id?: string | null;
 };
 
 export type GetOfframpWalletInput = {
@@ -61,14 +64,25 @@ export type GetOfframpWalletInput = {
 
 export type GetOfframpWalletResponse = OfframpWallet;
 
+export type UpdateOfframpWalletInput = {
+    customer_id: string;
+    bank_account_id: string;
+    id: string;
+    /** Omit to leave the partner fee unchanged; `null` removes it. */
+    partner_fee_id?: string | null;
+};
+
+export type UpdateOfframpWalletResponse = SuccessResponse;
+
 export function createOfframpWalletsResource(instanceId: string, client: InternalApiClient) {
     return {
-        list({
-            bank_account_id,
-            customer_id,
-        }: ListOfframpWalletsInput): Promise<BlindpayApiResponse<ListOfframpWalletsResponse>> {
+        list(
+            { bank_account_id, customer_id }: ListOfframpWalletsInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<ListOfframpWalletsResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets`
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts/${encodeURIComponent(bank_account_id)}/offramp-wallets`,
+                options
             );
         },
         create(
@@ -76,18 +90,29 @@ export function createOfframpWalletsResource(instanceId: string, client: Interna
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateOfframpWalletResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts/${encodeURIComponent(bank_account_id)}/offramp-wallets`,
                 data,
                 options
             );
         },
-        get({
-            customer_id,
-            bank_account_id,
-            id,
-        }: GetOfframpWalletInput): Promise<BlindpayApiResponse<GetOfframpWalletResponse>> {
+        get(
+            { customer_id, bank_account_id, id }: GetOfframpWalletInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetOfframpWalletResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets/${id}`
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts/${encodeURIComponent(bank_account_id)}/offramp-wallets/${encodeURIComponent(id)}`,
+                options
+            );
+        },
+
+        update(
+            { customer_id, bank_account_id, id, ...data }: UpdateOfframpWalletInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<UpdateOfframpWalletResponse>> {
+            return client.put(
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts/${encodeURIComponent(bank_account_id)}/offramp-wallets/${encodeURIComponent(id)}`,
+                data,
+                options
             );
         },
     };

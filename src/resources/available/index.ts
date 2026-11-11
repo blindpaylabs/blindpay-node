@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse, Country, Rail } from "../../../types";
+import type { BlindpayApiResponse, Country, Rail, RequestOptions } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type BankDetailKey =
@@ -212,19 +212,25 @@ export type GetSwiftCodeBankDetailsResponse = Array<{
 
 export function createAvailableResource(client: InternalApiClient) {
     return {
-        getBankDetails(rail: Rail): Promise<BlindpayApiResponse<GetBankDetailsResponse>> {
-            return client.get(`/available/bank-details?rail=${rail}`);
+        getBankDetails(
+            rail: Rail,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetBankDetailsResponse>> {
+            return client.get(`/available/bank-details?rail=${encodeURIComponent(rail)}`, options);
         },
-        getRails(): Promise<BlindpayApiResponse<GetRailsResponse>> {
-            return client.get("/available/rails");
+        getRails(options?: RequestOptions): Promise<BlindpayApiResponse<GetRailsResponse>> {
+            return client.get("/available/rails", options);
         },
-        getNaicsCodes(): Promise<BlindpayApiResponse<GetNaicsCodesResponse>> {
-            return client.get("/available/naics");
+        getNaicsCodes(
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetNaicsCodesResponse>> {
+            return client.get("/available/naics", options);
         },
         getSwiftCodeBankDetails(
-            swift: GetSwiftCodeBankDetailsInput
+            swift: GetSwiftCodeBankDetailsInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetSwiftCodeBankDetailsResponse>> {
-            return client.get(`/available/swift/${swift}`);
+            return client.get(`/available/swift/${encodeURIComponent(swift)}`, options);
         },
     };
 }

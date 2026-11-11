@@ -151,7 +151,7 @@ function main(): void {
         // string (e.g. the Rfi family, POST /v1/upload/analyze). Never gates CI.
         const gaps = computeCoverageGaps(spec, REPO_ROOT);
         console.log(
-            `[api-sync] coverage: ${gaps.length} spec operation(s) with no SDK endpoint string (non-blocking).`
+            `[api-sync] coverage: ${gaps.length} spec operation(s) with no SDK method (non-blocking).`
         );
         for (const g of gaps) console.log(`  - ${g}`);
         if (args.reportPath) writeFileSync(args.reportPath, `${JSON.stringify(gaps, null, 2)}\n`);

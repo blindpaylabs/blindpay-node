@@ -6,6 +6,7 @@ import type {
     Country,
     Currency,
     ErrorResponse,
+    ErrorType,
     InitiateInput,
     InitiateResponse,
     Network,
@@ -16,8 +17,16 @@ import type {
     StablecoinToken,
     SuccessResponse,
     TransactionStatus,
+    UnknownWebhookEvent,
+    WebhookHeaders,
 } from ".";
-import { BlindPay, BlindPayError } from ".";
+import {
+    BlindPay,
+    BlindPayError,
+    constructWebhookEvent,
+    isUnknownWebhookEvent,
+    verifyWebhook,
+} from ".";
 
 describe("Package entry", () => {
     it("exports BlindPayError, named after its class", () => {
@@ -29,6 +38,14 @@ describe("Package entry", () => {
         expect(error.message).toBe("boom");
     });
 
+    it("exports the standalone webhook helpers, which need no client", () => {
+        expect(typeof verifyWebhook).toBe("function");
+        expect(typeof constructWebhookEvent).toBe("function");
+        expect(typeof isUnknownWebhookEvent).toBe("function");
+        expectTypeOf<UnknownWebhookEvent>().toHaveProperty("raw");
+        expectTypeOf<WebhookHeaders>().toExtend<object>();
+    });
+
     it("throws the exported BlindPayError from the client", () => {
         expect(() => new BlindPay({ apiKey: "", instanceId: "in_000000000000" })).toThrow(
             BlindPayError
@@ -36,7 +53,10 @@ describe("Package entry", () => {
     });
 
     it("exports the shared types", () => {
-        expectTypeOf<RequestOptions>().toEqualTypeOf<{ idempotencyKey?: string }>();
+        expectTypeOf<RequestOptions>().toHaveProperty("idempotencyKey");
+        expectTypeOf<RequestOptions>().toHaveProperty("timeoutMs");
+        expectTypeOf<ErrorResponse>().toHaveProperty("status");
+        expectTypeOf<"timeout_error">().toExtend<ErrorType>();
         expectTypeOf<ErrorResponse>().toHaveProperty("message").toEqualTypeOf<string>();
         expectTypeOf<BlindpayApiResponse<SuccessResponse>>().toHaveProperty("error");
         expectTypeOf<PaginationParams>().toHaveProperty("starting_after");
@@ -47,7 +67,8 @@ describe("Package entry", () => {
         expectTypeOf<"BR">().toExtend<Country>();
         expectTypeOf<"USDC">().toExtend<StablecoinToken>();
         expectTypeOf<"completed">().toExtend<TransactionStatus>();
-        expectTypeOf<BlindPayOptions>().toEqualTypeOf<{ apiKey: string; instanceId: string }>();
+        expectTypeOf<BlindPayOptions>().toHaveProperty("apiKey").toEqualTypeOf<string>();
+        expectTypeOf<BlindPayOptions>().toHaveProperty("maxRetries");
         expectTypeOf<InitiateInput>().toHaveProperty("idempotency_key").toEqualTypeOf<string>();
         expectTypeOf<InitiateResponse>().toHaveProperty("url").toEqualTypeOf<string>();
     });

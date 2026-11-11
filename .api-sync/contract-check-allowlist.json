@@ -6,6 +6,36 @@
         "owner": "thayto@blindpay.com"
     },
     {
+        "schema": "ErrorResponse",
+        "field": "request_id",
+        "reason": "SDK-side error metadata, not a body field: copied from the X-Request-Id response header every API response carries.",
+        "owner": "thayto@blindpay.com"
+    },
+    {
+        "schema": "ErrorResponse",
+        "field": "retryable",
+        "reason": "SDK-side error metadata, not a body field: whether resending the same request (same Idempotency-Key) is safe, computed by the client's retry policy.",
+        "owner": "thayto@blindpay.com"
+    },
+    {
+        "schema": "RequestOptions",
+        "field": "timeoutMs",
+        "reason": "Client-side per-call option, not a body field: the per-attempt timeout.",
+        "owner": "thayto@blindpay.com"
+    },
+    {
+        "schema": "RequestOptions",
+        "field": "headers",
+        "reason": "Client-side per-call option, not a body field: extra request headers.",
+        "owner": "thayto@blindpay.com"
+    },
+    {
+        "schema": "RequestOptions",
+        "field": "signal",
+        "reason": "Client-side per-call option, not a body field: an AbortSignal that cancels the call.",
+        "owner": "thayto@blindpay.com"
+    },
+    {
         "schema": "CreatePayoutInput",
         "field": "reference",
         "reason": "Stale surface: v2 PR #1925 prunes unreachable schemas from the public spec and this field no longer appears anywhere in it, but the SDK still exposes it on CreatePayoutInput. Remove in next major.",
@@ -112,5 +142,47 @@
         "field": "is_self_custody",
         "reason": "Added by blindpay-v2 PR #2632 (BCB Resolution 588 self-custody flag); not in the spec snapshot until that ships and api-sync refreshes it. Remove once the snapshot contains is_self_custody.",
         "owner": "darlan@blindpay.com"
+    },
+    {
+        "schema": "PayoutTrackingPayment",
+        "field": "forced_provider",
+        "reason": "Removed from the public API at blindpay-v2@66144f3b2; kept as an optional @deprecated field until the next major (sdk-parity D13) so existing code compiles. The API strips it via internalTrackingPaymentKeys (packages/api-contract/src/payout.schema.ts:243).",
+        "owner": "thayto@blindpay.com"
+    },
+    {
+        "schema": "PayoutTrackingPayment",
+        "field": "provider_integration",
+        "reason": "Removed from the public API at blindpay-v2@66144f3b2; kept as an optional @deprecated field until the next major (sdk-parity D13) so existing code compiles. The API strips it via internalTrackingPaymentKeys (packages/api-contract/src/payout.schema.ts:243).",
+        "owner": "thayto@blindpay.com"
+    },
+    {
+        "schema": "GetFeesResponse",
+        "field": "partner_wallet_address",
+        "reason": "Removed from the public API at blindpay-v2@66144f3b2; kept as an optional @deprecated field until the next major (sdk-parity D13) so existing code compiles. Replaced by the per-network partner_wallets map (packages/api-contract/src/yield.schema.ts:105).",
+        "owner": "thayto@blindpay.com"
+    },
+    {
+        "schema": "UploadInput",
+        "field": "filename",
+        "reason": "Client-side upload option, not a form field: the name of the multipart file part built from bytes (sdk-parity C9).",
+        "owner": "thayto@blindpay.com"
+    },
+    {
+        "schema": "UploadInput",
+        "field": "contentType",
+        "reason": "Client-side upload option, not a form field: the MIME type of the multipart file part built from bytes (sdk-parity C9).",
+        "owner": "thayto@blindpay.com"
+    },
+    {
+        "schema": "UploadAnalyzeInput",
+        "field": "filename",
+        "reason": "Client-side upload option, not a form field: the name of the multipart file part built from bytes (sdk-parity C9).",
+        "owner": "thayto@blindpay.com"
+    },
+    {
+        "schema": "UploadAnalyzeInput",
+        "field": "contentType",
+        "reason": "Client-side upload option, not a form field: the MIME type of the multipart file part built from bytes (sdk-parity C9).",
+        "owner": "thayto@blindpay.com"
     }
 ]

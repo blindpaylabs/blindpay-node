@@ -181,7 +181,7 @@ export function resolveEnumMembers(spec: Spec, loc: SchemaLocatorWithEnum): Set<
         if (!Array.isArray(values)) {
             throw new Error(`no items.enum found for "${loc.schema}.${loc.property}"`);
         }
-        return new Set(values);
+        return new Set(enumMembers(values));
     }
     const node = resolveSchemaNode(spec, loc.schema, loc.property);
     const values = node?.enum;
@@ -190,7 +190,21 @@ export function resolveEnumMembers(spec: Spec, loc: SchemaLocatorWithEnum): Set<
             `no enum found for "${loc.schema}${loc.property ? `.${loc.property}` : ""}"`
         );
     }
-    return new Set(values);
+    return new Set(enumMembers(values));
+}
+
+/**
+ * The members of a spec `enum` array. blindpay-v2 writes a nullable enum as `enum: [..., null]`:
+ * null there is nullability (see `enumAllowsNull`), not a member. Shared by spec.ts,
+ * type-check.ts and typegen.ts so the three can't disagree.
+ */
+export function enumMembers<T>(values: readonly (T | null)[]): T[] {
+    return values.filter((v): v is T => v !== null);
+}
+
+/** True when `values` is an `enum` array that lists null, i.e. a nullable enum. */
+export function enumAllowsNull(values: unknown): boolean {
+    return Array.isArray(values) && values.includes(null);
 }
 
 type SchemaLocatorWithEnum = { schema: string; property?: string; itemsEnum?: boolean };

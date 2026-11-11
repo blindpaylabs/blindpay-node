@@ -1,8 +1,11 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { extractEnumMembers, findDeclarationSpan } from "./sdk-scan";
-import type { JsonValue, Spec } from "./spec";
+import { enumAllowsNull, enumMembers, type JsonValue, type Spec } from "./spec";
 import type { SpecMap } from "./types";
+
+/** The shared types file every resource imports from (`import type { ... } from ".../types"`). */
+export const SHARED_TYPES_FILE = "types/index.d.ts";
 
 function resolveRef(spec: Spec, node: JsonValue): JsonValue {
     if (node && typeof node === "object" && typeof node.$ref === "string") {
@@ -34,7 +37,7 @@ function refName(node: JsonValue): string | null {
  * comma-joined signature of its member values, so an inline spec enum with the same value set
  * can be pointed at the canonical shared symbol instead of a fresh inline literal union. */
 export function loadCanonicalEnums(repoRoot: string): Map<string, string> {
-    const path = join(repoRoot, "types/index.d.ts");
+    const path = join(repoRoot, SHARED_TYPES_FILE);
     const content = readFileSync(path, "utf8");
     const out = new Map<string, string>();
     const declRe = /^export type ([A-Za-z_][A-Za-z0-9_]*)\b/gm;
@@ -97,7 +100,8 @@ export function synthesizeType(ctx: TypegenContext, node: JsonValue): string {
     if (named) {
         const whole = ctx.wholeSchemas.get(named);
         if (whole) {
-            ctx.importsNeeded.add(whole.symbol);
+            // Same-file symbols need no import; only shared types/index.d.ts ones are imported.
+            if (whole.file === SHARED_TYPES_FILE) ctx.importsNeeded.add(whole.symbol);
             return whole.symbol;
         }
     }
@@ -108,12 +112,14 @@ export function synthesizeType(ctx: TypegenContext, node: JsonValue): string {
 function synthesizeResolvedType(ctx: TypegenContext, node: JsonValue): string {
     if (node === undefined || node === null) return "unknown";
 
-    if (Array.isArray(node.enum) && node.enum.length > 0) {
-        const sig = [...node.enum].map(String).sort().join(",");
+    const members: unknown[] = Array.isArray(node.enum) ? enumMembers(node.enum) : [];
+    if (members.length > 0) {
+        const sig = [...members].map(String).sort().join(",");
         const canonical = ctx.canonicalEnums.get(sig);
-        const base = canonical ?? quoteUnion(node.enum);
+        const base = canonical ?? quoteUnion(members);
         if (canonical) ctx.importsNeeded.add(canonical);
-        return nullableSuffix(node, base);
+        const typed = nullableSuffix(node, base);
+        return enumAllowsNull(node.enum) && !typed.endsWith(" | null") ? `${typed} | null` : typed;
     }
 
     const rawTypes: string[] = Array.isArray(node.type) ? node.type : node.type ? [node.type] : [];

@@ -64,8 +64,8 @@ export type GetPortalAccessUrlResponse = {
 
 export function createWebhookEndpointsResource(instanceId: string, client: InternalApiClient) {
     return {
-        list(): Promise<BlindpayApiResponse<ListWebhookEndpointsResponse>> {
-            return client.get(`/instances/${instanceId}/webhook-endpoints`);
+        list(options?: RequestOptions): Promise<BlindpayApiResponse<ListWebhookEndpointsResponse>> {
+            return client.get(`/instances/${instanceId}/webhook-endpoints`, options);
         },
         create(
             { ...data }: CreateWebhookEndpointInput,
@@ -77,15 +77,24 @@ export function createWebhookEndpointsResource(instanceId: string, client: Inter
             id: DeleteWebhookEndpointInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}/webhook-endpoints/${id}`, options);
+            return client.delete(
+                `/instances/${instanceId}/webhook-endpoints/${encodeURIComponent(id)}`,
+                options
+            );
         },
         getSecret(
-            id: GetWebhookEndpointSecretInput
+            id: GetWebhookEndpointSecretInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetWebhookEndpointSecretResponse>> {
-            return client.get(`/instances/${instanceId}/webhook-endpoints/${id}/secret`);
+            return client.get(
+                `/instances/${instanceId}/webhook-endpoints/${encodeURIComponent(id)}/secret`,
+                options
+            );
         },
-        getPortalAccessUrl(): Promise<BlindpayApiResponse<GetPortalAccessUrlResponse>> {
-            return client.get(`/instances/${instanceId}/webhook-endpoints/portal-access`);
+        getPortalAccessUrl(
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetPortalAccessUrlResponse>> {
+            return client.get(`/instances/${instanceId}/webhook-endpoints/portal-access`, options);
         },
     };
 }

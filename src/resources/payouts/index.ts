@@ -22,6 +22,7 @@ import type {
     TransactionStatus,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { autoPage } from "../../internal/paginate";
 import { toQueryString } from "../../internal/query";
 
 export type SpeiProtocol = "clabe" | "debitcard" | "phonenum";
@@ -38,6 +39,7 @@ export type Payout = {
     tracking_payment: PayoutTrackingPayment;
     tracking_liquidity: PayoutTrackingLiquidity | null;
     tracking_complete: PayoutTrackingComplete;
+    /** @deprecated The API doesn't return this (blindpay-v2 payout.schema.ts:274): it is always absent at runtime. Read `partner_fee` for the amount. It becomes optional, then goes, in the next major. */
     tracking_partner_fee: PayoutTrackingPartnerFee;
     created_at: string | null;
     updated_at: string | null;
@@ -91,6 +93,7 @@ export type Payout = {
     swift_account_number_iban?: string | null;
     transfers_account?: string | null;
     transfers_type: "CVU" | "CBU" | "ALIAS" | null;
+    /** Returned by `payouts.get` and `payouts.getTrack`; `payouts.list` leaves it out. */
     has_virtual_account: boolean | null;
     billing_fee_amount?: number | null;
     cpn_payment_id?: string | null;
@@ -145,6 +148,7 @@ export type ListPayoutsResponse =
       }
     | Payout[];
 
+/** @deprecated No method takes this type and no payout route accepts this shape: create a quote, then `payouts.createEvm` / `createSolana` / `createStellar`. Removed in the next major. */
 export type CreatePayoutInput = {
     customer_id: string;
     bank_account_id: string;
@@ -184,11 +188,17 @@ export type AuthorizeStellarTokenResponse = {
     transaction_hash: string;
 };
 
-export type CreateStellarPayoutInput = {
-    quote_id: string;
+/** Where a payout's stablecoins come from: send exactly one of the two fields (sdk-parity D23). */
+export type PayoutSourceWallet = {
+    /** Wallet the stablecoins are sent from. Send exactly one of `sender_wallet_address` and `wallet_id`; the API returns 400 otherwise. */
     sender_wallet_address?: string;
-    signed_transaction?: string | null;
+    /** A BlindPay managed wallet (`wa_...`) to pay from, instead of `sender_wallet_address` (exactly one of the two). */
     wallet_id?: string;
+};
+
+export type CreateStellarPayoutInput = PayoutSourceWallet & {
+    quote_id: string;
+    signed_transaction?: string | null;
 };
 
 export type CreateStellarPayoutResponse = {
@@ -198,8 +208,10 @@ export type CreateStellarPayoutResponse = {
     tracking_complete?: PayoutTrackingComplete;
     tracking_payment?: PayoutTrackingPayment;
     tracking_transaction?: PayoutTrackingTransaction;
+    /** @deprecated The API doesn't return this (blindpay-v2 payout.schema.ts:274): it is always absent at runtime. Read `partner_fee` for the amount. It becomes optional, then goes, in the next major. */
     tracking_partner_fee?: PayoutTrackingPartnerFee;
     tracking_liquidity?: PayoutTrackingLiquidity | null;
+    /** The create calls don't return this (blindpay-v2 build-payout-response.ts): read it from `payouts.get` or the `payout.new` webhook. It becomes optional in the next major. */
     customer_id: string | null;
     payable_id?: string | null;
     bank_account_id?: string | null;
@@ -215,10 +227,8 @@ export type CreateStellarPayoutResponse = {
     transaction_fee_amount?: number | null;
 };
 
-export type CreateEvmPayoutInput = {
+export type CreateEvmPayoutInput = PayoutSourceWallet & {
     quote_id: string;
-    sender_wallet_address?: string;
-    wallet_id?: string;
 };
 
 export type CreateEvmPayoutResponse = {
@@ -228,8 +238,10 @@ export type CreateEvmPayoutResponse = {
     tracking_complete?: PayoutTrackingComplete;
     tracking_payment?: PayoutTrackingPayment;
     tracking_transaction?: PayoutTrackingTransaction;
+    /** @deprecated The API doesn't return this (blindpay-v2 payout.schema.ts:274): it is always absent at runtime. Read `partner_fee` for the amount. It becomes optional, then goes, in the next major. */
     tracking_partner_fee?: PayoutTrackingPartnerFee;
     tracking_liquidity?: PayoutTrackingLiquidity | null;
+    /** The create calls don't return this (blindpay-v2 build-payout-response.ts): read it from `payouts.get` or the `payout.new` webhook. It becomes optional in the next major. */
     customer_id: string | null;
     payable_id?: string | null;
     bank_account_id?: string | null;
@@ -245,11 +257,9 @@ export type CreateEvmPayoutResponse = {
     transaction_fee_amount?: number | null;
 };
 
-export type CreateSolanaPayoutInput = {
+export type CreateSolanaPayoutInput = PayoutSourceWallet & {
     quote_id: string;
-    sender_wallet_address?: string;
     signed_transaction?: string | null;
-    wallet_id?: string;
 };
 
 export type CreateSolanaPayoutResponse = {
@@ -259,8 +269,10 @@ export type CreateSolanaPayoutResponse = {
     tracking_complete: PayoutTrackingComplete;
     tracking_payment: PayoutTrackingPayment;
     tracking_transaction: PayoutTrackingTransaction;
+    /** @deprecated The API doesn't return this (blindpay-v2 payout.schema.ts:274): it is always absent at runtime. Read `partner_fee` for the amount. It becomes optional, then goes, in the next major. */
     tracking_partner_fee?: PayoutTrackingPartnerFee | null;
     tracking_liquidity?: PayoutTrackingLiquidity | null;
+    /** The create calls don't return this (blindpay-v2 build-payout-response.ts): read it from `payouts.get` or the `payout.new` webhook. It becomes optional in the next major. */
     customer_id: string | null;
     payable_id?: string | null;
     bank_account_id?: string | null;
@@ -278,16 +290,45 @@ export type CreateSolanaPayoutResponse = {
 
 export function createPayoutsResource(instanceId: string, client: InternalApiClient) {
     return {
-        list(params?: ListPayoutsInput): Promise<BlindpayApiResponse<ListPayoutsResponse>> {
-            return client.get(`/instances/${instanceId}/payouts${toQueryString(params)}`);
+        list(
+            params?: ListPayoutsInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<ListPayoutsResponse>> {
+            return client.get(`/instances/${instanceId}/payouts${toQueryString(params)}`, options);
         },
-        get(payoutId: GetPayoutInput): Promise<BlindpayApiResponse<GetPayoutResponse>> {
-            return client.get(`/instances/${instanceId}/payouts/${payoutId}`);
+        /**
+         * Every payout matching `params`, fetched page by page (`limit` defaults to 100):
+         * `for await (const item of blindpay.payouts.listAutoPaging()) { ... }`. Forward only, so
+         * `ending_before` is rejected. A failed page throws a `BlindPayError` carrying the error.
+         */
+        listAutoPaging(
+            params?: Omit<ListPayoutsInput, "ending_before">,
+            options?: RequestOptions
+        ): AsyncGenerator<Payout, void, undefined> {
+            return autoPage<Payout, ListPayoutsInput>(
+                (page) =>
+                    client.get(`/instances/${instanceId}/payouts${toQueryString(page)}`, options),
+                params
+            );
         },
+        get(
+            payoutId: GetPayoutInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetPayoutResponse>> {
+            return client.get(
+                `/instances/${instanceId}/payouts/${encodeURIComponent(payoutId)}`,
+                options
+            );
+        },
+        /**
+         * Public tracking endpoint for BlindPay's web and iOS apps: server-side calls get a 401 in
+         * production. Use `payouts.get(id)` instead.
+         */
         getTrack(
-            payoutId: GetPayoutTrackInput
+            payoutId: GetPayoutTrackInput,
+            options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetPayoutTrackResponse>> {
-            return client.get(`/e/payouts/${payoutId}`);
+            return client.get(`/e/payouts/${encodeURIComponent(payoutId)}`, options);
         },
         authorizeStellarToken(
             { ...data }: AuthorizeStellarTokenInput,
@@ -318,7 +359,7 @@ export function createPayoutsResource(instanceId: string, client: InternalApiCli
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SubmitPayoutDocumentsResponse>> {
             return client.post(
-                `/instances/${instanceId}/payouts/${payout_id}/documents`,
+                `/instances/${instanceId}/payouts/${encodeURIComponent(payout_id)}/documents`,
                 data,
                 options
             );

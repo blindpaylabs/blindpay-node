@@ -14,6 +14,7 @@ export type {
     Currency,
     CurrencyType,
     ErrorResponse,
+    ErrorType,
     EstimatedAnnualRevenue,
     KycStatus,
     Network,
@@ -67,3 +68,10 @@ export * from "./resources/wallets/custodial";
 export * from "./resources/wallets/offramp";
 export * from "./resources/webhooks";
 export * from "./resources/webhooks/events";
+export type {
+    UnknownWebhookEvent,
+    UnknownWebhookEventName,
+    WebhookHeaders,
+    WebhookVerifyOptions,
+} from "./webhooks";
+export { constructWebhookEvent, isUnknownWebhookEvent, verifyWebhook } from "./webhooks";

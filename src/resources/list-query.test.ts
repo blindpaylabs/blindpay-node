@@ -135,3 +135,19 @@ describe("List query strings", () => {
         });
     });
 });
+
+describe("limit as a number", () => {
+    afterEach(() => fetchMock.resetMocks());
+
+    it("is sent as the same decimal string (sdk-parity D6)", async () => {
+        const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
+        fetchMock.mockResponseOnce(JSON.stringify([]));
+        await blindpay.payouts.list({ limit: 50 });
+        fetchMock.mockResponseOnce(JSON.stringify({ data: [], pagination: { has_more: false } }));
+        await blindpay.wallets.custodial.getDeposits({ customer_id: "re_1", id: "wa_1", limit: 5 });
+        expect(fetchMock.mock.calls.map(([url]) => new URL(String(url)).search)).toEqual([
+            "?limit=50",
+            "?limit=5",
+        ]);
+    });
+});

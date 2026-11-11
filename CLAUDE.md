@@ -6,7 +6,7 @@
 bun run build              # Build with tsup (CJS + ESM + DTS; config in tsup.config.ts)
 bun run test               # Run tests with vitest
 bun run test:coverage      # Run tests with coverage
-bun run check-types        # TypeScript type-check (no emit)
+bun run check-types        # TypeScript type-check (no emit): src, then examples/
 bun run lint:check         # Biome lint + format check
 bun run lint:fix           # Biome auto-fix
 ```
@@ -24,24 +24,37 @@ blindpay-node/
   .changeset/config.json                # Changeset config (public access, main branch)
   types/index.d.ts                      # Shared types (BlindpayApiResponse, enums, pagination)
   test/fixtures/spec/                   # Shared spec-shaped fixtures (copied from sdk-parity; don't hand-edit)
+  examples/                             # README workflows (webhooks, managed-wallet payout, fiat payin, reconciliation); type-checked by check-types against ../src, never published, never call the API
   src/
     index.ts                            # Re-exports the client, BlindPayError, listed shared types and all resources
-    client.ts                           # BlindPay class (constructor, HTTP methods, resource wiring)
+    client.ts                           # BlindPay class (BlindPayOptions, resource wiring) over internal/http.ts
+    client-secrets.test.ts              # The API key never shows in inspect, JSON or errors (C13)
+    transport.test.ts                   # Transport contract: config, errors, the retry table, on a fake clock
+    webhooks.ts                         # Standalone verifyWebhook / constructWebhookEvent (Svix), no client needed
+    webhooks.test.ts                    # The 14 shared webhook vectors + every webhook fixture
     internal/
-      api-client.ts                     # InternalApiClient interface (get/post/put/patch/delete)
+      api-client.ts                     # InternalApiClient interface (get/post/put/patch/delete/postMultipart)
       blindpay-error.ts                 # BlindPayError class
       error-response.ts                 # toErrorResponse: API error envelope -> ErrorResponse
+      http.ts                           # send(): the one transport (timeouts, idempotency keys, retries, error parsing)
       query.ts                          # toQueryString: list filters -> "?a=b", skipping absent values
+      paginate.ts                       # autoPage: async iterator behind every listAutoPaging
+      webhook-event-names.ts            # Runtime copy of the WebhookEvents union (kept equal by a type test)
       test-fixtures.ts                  # Test-only loader for test/fixtures/spec (never import from SDK code)
+      test-operations.ts                # Test-only: every spec op -> the client method(s) implementing it
+      fixture-divergences.ts            # Test-only: source-verified differences between SDK types and spec fixtures
       helpers/strict-omit.ts            # StrictOmit<T, K> utility type
       vitest-fetch-mock.d.ts            # Type declaration for fetch mock
     resources/
       {resource-name}/
         index.ts                        # Types + factory function for the resource
         {resource-name}.test.ts         # Tests (colocated with resource)
-      request-options.test.ts           # Fails on a mutation that doesn't forward RequestOptions
+      request-options.test.ts           # Fails on any client.* call that doesn't forward options
       list-query.test.ts                # Exact query string each list method sends
-      fixture-round-trip.test.ts        # Transport round-trip of test/fixtures/spec variants (not a type check)
+      auto-paging.test.ts               # Every auto-pager: cursor following, errors, guards
+      fixture-round-trip.test.ts        # Op coverage: all 94 ops hit their method + path, every fixture variant round-trips
+      fixture-types.test.ts             # C8 type check: every fixture variant assigned to its method's declared type (TS compiler API)
+      path-encoding.test.ts             # Path ids are percent-encoded
       wallets/                          # Grouped sub-resources (no index.ts)
         blockchain.ts                   # createBlockchainWalletsResource
         blockchain.test.ts
@@ -122,6 +135,26 @@ Examples: `createPayinsResource`, `createPartnerFeesResource`, `createBlockchain
 - Linter: Biome recommended rules. No unused variables (error). `import type` required (error). No explicit `any` (warn).
 - TypeScript: `verbatimModuleSyntax: true` (must use `import type` for type-only imports). `strict: true`.
 
+## Transport (`src/internal/http.ts`)
+
+Every request, JSON or multipart, goes through `send()`; resources never call `fetch`. It owns:
+
+- **Config** (`BlindPayOptions`): `baseUrl` (default `https://api.blindpay.com`, paths start `/v1`), `timeoutMs` (60 s per attempt, body read included), `maxRetries` (2), `fetch` (injectable; tests pass a fake one).
+- **Idempotency**: an `idempotencyKey` that is empty, longer than 255 characters or not equal to its trimmed form, or an `Idempotency-Key` in `options.headers` (any casing), is rejected with `type: "invalid_request"` before anything is sent. Per-call headers named `Authorization`, `User-Agent`, `Accept` or `Content-Type` (any casing) are dropped. With retries on, a non-multipart mutation without a key gets a `randomUUID()` key **before the first attempt**. Multipart never sends one.
+- **Attempts**: a `fetch()` failure is "no response"; once the status line has arrived, a failure while reading the body is judged by that status (A2), so a 5xx mutation is never resent and a 2xx whose body can't be read is an `invalid_response` error, not a retry.
+- **Retries** follow the sdk-parity Appendix A2 table in `decide()`, which also sets `error.retryable`, so the two can't drift. GETs: no response, 408, 429, 500/502/503/504. Mutations: only no response, 429 and `409 idempotency_key_in_flight`, and **never a 5xx** (the API releases the key on a 5xx, so a resend re-executes). `Retry-After` is honoured when it is an integer of at most 60 s; otherwise `min(8 s, 0.5 s * 2^attempt)` with jitter. Rows 2-3 come first: a multipart or unkeyed mutation is never `retryable`, whatever the status. The body is serialised once. Jitter comes from `node:crypto` `randomInt`. Sleeps stop on the caller's `signal`, returning the API error that caused the wait (with its key). A per-call `timeoutMs` that isn't positive is rejected.
+- **Errors** never throw: an API error envelope always yields `errors` (`[]` when the body has none), and `ErrorResponse` gains `status` (0 without a response), `request_id` (`X-Request-Id`), `idempotency_key`, `retryable` and `type`, each set only when known. A non-JSON error body becomes `HTTP <status> <text>`.
+- `Content-Type: application/json` only when there is a body.
+- **Secrets** (sdk-parity C13): the transport config, which holds the API key, lives in the client's ECMAScript-private `#transport`, and `BlindPay` defines `toJSON()` / `util.inspect.custom` returning the configuration with `apiKey: "[redacted]"`. Never store the key on a normal property or a resource, and never put it, or a request body, in an error message. `src/client-secrets.test.ts` checks inspect (with `showHidden`), `JSON.stringify` and error results.
+
+Retry tests use `vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] })`; never let a test sleep for real. A client in a test that mocks a 5xx GET and doesn't test retries should pass `maxRetries: 0`.
+
+## Webhooks (`src/webhooks.ts`)
+
+Verification uses the official `svix` package for the HMAC (sdk-parity D20): `verifySignature` checks the headers and the timestamp against `options.tolerance` (seconds, default 300; svix's own `verify` hard-codes 5 minutes), signs with svix's `sign` and compares each `v1,` signature in constant time. The standalone `verifyWebhook(payload, headers, secret, options?)` (never throws) and `constructWebhookEvent(payload, headers, secret, options?)` (throws `BlindPayError`) need no client; the client's `verifyWebhookSignature` / `constructWebhookEvent` methods delegate to them and keep their old signatures and return types. The standalone `constructWebhookEvent` returns an event this SDK doesn't know as `UnknownWebhookEvent` (`{ webhook_event, raw }`); callers check `isUnknownWebhookEvent` before a `switch`. Never add a `string` member to the `WebhookEvent` union: it would stop the switch from narrowing.
+
+When a webhook event is added to the `WebhookEvents` union, add it to `src/internal/webhook-event-names.ts` too (a type test fails otherwise). The 14 vectors in `test/fixtures/webhook-vectors.json` run with only `Date` faked (`vi.useFakeTimers({ toFake: ["Date"] })` + `vi.setSystemTime`).
+
 ## Generate before you hand-write
 
 `scripts/api-sync/` is a deterministic patcher (no LLM) that reconciles the SDK against the OpenAPI spec. Anything it can produce must come from it, not from a hand-written (or model-written) edit:
@@ -143,6 +176,8 @@ mkdir -p /tmp/v2 && git archive origin/main apps/api/openapi.json apps/api/src/s
 Normally the api-sync workflow does this for you: blindpay-v2's `sdk-sync.yml` delivers the spec and dispatches the run. A successful `--apply` also refreshes the snapshot.
 
 It applies three kinds of change on its own: new enum members, new optional fields, and new methods for standard operations on an existing resource (instance-scoped path, JSON request and response, an existing `create{X}Resource(instanceId, client)` factory). For anything else it prints the exact reason it stopped. Only then use the manual recipes below: a brand-new resource, non-instance paths (`/available/*`, `/e/*`), multipart uploads, non-GET operations with query parameters, and resource files with a non-standard factory. After a manual change, `bun run sync:check` names any `.api-sync/spec-map.json` entry still missing.
+
+A type may share fields through a same-file base joined with `&` (`BankAccountCreateCommon & { ... }`, `PayoutSourceWallet & { ... }`): api-sync resolves those fields (`extractResolvedFields` in `sdk-scan.ts`). A base from another file is not resolved, so keep shared bases next to their users.
 
 Deliberate differences from the spec are recorded in `.api-sync/unmodeled.json` with an owner and a reason. Never silence a finding by editing that file without the reason being true.
 
@@ -207,8 +242,11 @@ export type DeleteWidgetInput = string;
 // -- Factory function --
 export function createWidgetsResource(instanceId: string, client: InternalApiClient) {
     return {
-        list(params?: ListWidgetsInput): Promise<BlindpayApiResponse<ListWidgetsResponse>> {
-            return client.get(`/instances/${instanceId}/widgets${toQueryString(params)}`);
+        list(
+            params?: ListWidgetsInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<ListWidgetsResponse>> {
+            return client.get(`/instances/${instanceId}/widgets${toQueryString(params)}`, options);
         },
         create(
             { ...data }: CreateWidgetInput,
@@ -216,20 +254,33 @@ export function createWidgetsResource(instanceId: string, client: InternalApiCli
         ): Promise<BlindpayApiResponse<CreateWidgetResponse>> {
             return client.post(`/instances/${instanceId}/widgets`, data, options);
         },
-        get(id: GetWidgetInput): Promise<BlindpayApiResponse<GetWidgetResponse>> {
-            return client.get(`/instances/${instanceId}/widgets/${id}`);
+        get(
+            id: GetWidgetInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetWidgetResponse>> {
+            return client.get(
+                `/instances/${instanceId}/widgets/${encodeURIComponent(id)}`,
+                options
+            );
         },
         update(
             { widget_id, ...data }: UpdateWidgetInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.put(`/instances/${instanceId}/widgets/${widget_id}`, data, options);
+            return client.put(
+                `/instances/${instanceId}/widgets/${encodeURIComponent(widget_id)}`,
+                data,
+                options
+            );
         },
         delete(
             id: DeleteWidgetInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}/widgets/${id}`, options);
+            return client.delete(
+                `/instances/${instanceId}/widgets/${encodeURIComponent(id)}`,
+                options
+            );
         },
     };
 }
@@ -240,8 +291,8 @@ For a resource NOT scoped to an instance (like `available`), omit `instanceId` f
 ```typescript
 export function createAvailableResource(client: InternalApiClient) {
     return {
-        getRails(): Promise<BlindpayApiResponse<GetRailsResponse>> {
-            return client.get("/available/rails");
+        getRails(options?: RequestOptions): Promise<BlindpayApiResponse<GetRailsResponse>> {
+            return client.get("/available/rails", options);
         },
     };
 }
@@ -381,7 +432,11 @@ export function createWidgetsResource(instanceId: string, client: InternalApiCli
             id: ActivateWidgetInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<ActivateWidgetResponse>> {
-            return client.post(`/instances/${instanceId}/widgets/${id}/activate`, {}, options);
+            return client.post(
+                `/instances/${instanceId}/widgets/${encodeURIComponent(id)}/activate`,
+                {},
+                options
+            );
         },
     };
 }
@@ -424,6 +479,16 @@ Change the field name in the type definition. This is a breaking change -- use a
 ### Shared types
 
 Types like `Currency`, `Network`, `StablecoinToken`, `TransactionStatus`, `PaginationParams`, `PaginationMetadata`, `BlindpayApiResponse`, and `Country` live in `types/index.d.ts`. If a new enum value needs to be added to a shared type (e.g., a new network), edit it there. `src/index.ts` re-exports them with an explicit `export type { ... } from "../types"` list (type-only, so esbuild never tries to load the `.d.ts` at runtime). When a resource starts using a new shared type, add it to that list; never re-export the whole file, so dead or stale types (e.g. `PayoutForcedProvider`) don't become public API. `src/index.test.ts` asserts what the entry exports and what it must not.
+
+## Deferred to the next major
+
+The repo's semver rules make widening or narrowing a response type a major change, so these known gaps stay as released, documented on the type and listed in `src/internal/fixture-divergences.ts` (reason `NEXT MAJOR`):
+
+- Fields the API never sends but the type requires: `Payout.tracking_partner_fee` (`@deprecated`), `customer_id` on the payout create responses, `is_tos_accepted` on `customers.list` and the customer webhooks, `has_virtual_account` on `payouts.list`.
+- Fields the API can omit: payin `tracking_transaction.external_id`, transfer `tracking_*.error_message`, a development instance's virtual-account `blockchain_wallet`.
+- `virtualAccounts.get` answers an unknown id with `200 null`: `data` should be nullable.
+- Narrowings the spec allows (node audit 9.10): `Transfer.status` without `on_hold`, required tracking fields on the EVM and Stellar payout create responses.
+- Removals: the `@deprecated` fields and types (`forced_provider`, `provider_integration`, fees `yield.partner_wallet_address`, `CreatePayoutInput`, `offset`), and `UpdateInstanceMemberRoleInput` to snake_case.
 
 ## How to: Remove a Resource
 
@@ -565,6 +630,10 @@ Key rules:
 - Use `fetchMock.mockResponseOnce` with `JSON.stringify` and content-type header.
 - Destructure `{ data, error }` from the result.
 - Assert `error` is null and `data` matches the mock.
+
+### Spec fixtures and response types
+
+`src/internal/test-operations.ts` lists every spec operation with the client method(s) that implement it; add a row with every new method. Two tests run over it: `fixture-round-trip.test.ts` (method, path and every fixture variant through the transport) and `fixture-types.test.ts`, which type-checks every `full`, `required_only`, `nullables_null` and `decimals` variant (responses and webhooks) against the method's declared response type with the repo's tsconfig. When it reports a type error, check the API source (blindpay-v2) before touching the type: a field the API never sends is made optional (and `@deprecated` if it was dropped); a field the handler always sends, or one that can be omitted but whose widening would break callers, goes into `src/internal/fixture-divergences.ts` with the reason. Entries that stop matching a real difference fail the test.
 
 ### Running
 
@@ -757,21 +826,30 @@ export type ListWidgetsInput = PaginationParams & {
 The method builds the query string with the shared `toQueryString` helper (`src/internal/query.ts`). It skips `undefined`, `null` and `""`, so an unset filter is never sent as `"undefined"`, and it returns `""` (no bare `?`) when nothing is set. Path ids are destructured out first:
 
 ```typescript
-list(params?: ListWidgetsInput): Promise<BlindpayApiResponse<ListWidgetsResponse>> {
-    return client.get(`/instances/${instanceId}/widgets${toQueryString(params)}`);
+list(
+    params?: ListWidgetsInput,
+    options?: RequestOptions
+): Promise<BlindpayApiResponse<ListWidgetsResponse>> {
+    return client.get(`/instances/${instanceId}/widgets${toQueryString(params)}`, options);
 },
 ```
 
 `src/resources/list-query.test.ts` asserts the exact URL every list method sends. Add a case there for a new list method. The api-sync generator emits the same `toQueryString(params)` call and adds the import (`ensureQueryStringImport` in `scripts/api-sync/apply.ts`).
 
+### Auto-pagination
+
+Every list whose spec op accepts `starting_after` (payouts, payins, customers, payables, transfers, wallet deposits) has an auto-pager next to it: `listAutoPaging(params?, options?)` (`getDepositsAutoPaging` for deposits), returning `AsyncGenerator<Entity>`. It is one call to `autoPage()` in `src/internal/paginate.ts` with the same path as `list`; never use `this`, since resources are spread into the client. `autoPage` sends `limit` (default `"100"`), follows `pagination.next_page` as `starting_after` while `has_more`, rejects `ending_before`, stops on a bare array, throws a `BlindPayError` (with `.error`) on a failed page, and throws when the cursor doesn't advance. Add a case to `src/resources/auto-paging.test.ts` for a new pager, with hand-written pages (the shared `.b0` fixtures never stop).
+
 ### Path parameters
+
+Every caller-supplied value interpolated into a request path is wrapped in `encodeURIComponent(...)`, so an id containing `/`, `?` or `#` can't change the route (`payouts.get("a/b")` requests `/payouts/a%2Fb`; `src/resources/path-encoding.test.ts`). `instanceId` is the exception: the client percent-encodes it once and hands the encoded value to every resource factory, so templates use `${instanceId}` as-is (upload, which sends it as a query param, gets the raw value and lets `toQueryString` encode it). api-sync's generator emits the same shape.
 
 Path parameters that are resource IDs are handled in two ways:
 
 1. **Single ID (the resource's own ID)**: passed as a plain string argument.
 ```typescript
-get(id: GetWidgetInput): Promise<BlindpayApiResponse<GetWidgetResponse>> {
-    return client.get(`/instances/${instanceId}/widgets/${id}`);
+get(id: GetWidgetInput, options?: RequestOptions): Promise<BlindpayApiResponse<GetWidgetResponse>> {
+    return client.get(`/instances/${instanceId}/widgets/${encodeURIComponent(id)}`, options);
 },
 ```
 
@@ -786,28 +864,34 @@ update(
     { widget_id, ...data }: UpdateWidgetInput,
     options?: RequestOptions
 ): Promise<BlindpayApiResponse<SuccessResponse>> {
-    return client.put(`/instances/${instanceId}/widgets/${widget_id}`, data, options);
+    return client.put(
+        `/instances/${instanceId}/widgets/${encodeURIComponent(widget_id)}`,
+        data,
+        options
+    );
 },
 ```
 
 3. **Nested resource IDs**: all IDs come from the input object.
 ```typescript
-export type GetOfframpWalletInput = {
+export type GetCustodialWalletInput = {
     customer_id: string;
-    bank_account_id: string;
     id: string;
 };
 
-get({
-    customer_id,
-    bank_account_id,
-    id,
-}: GetOfframpWalletInput): Promise<BlindpayApiResponse<GetOfframpWalletResponse>> {
+get(
+    { customer_id, id }: GetCustodialWalletInput,
+    options?: RequestOptions
+): Promise<BlindpayApiResponse<GetCustodialWalletResponse>> {
+    const customer = encodeURIComponent(customer_id);
     return client.get(
-        `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets/${id}`
+        `/instances/${instanceId}/customers/${customer}/wallets/${encodeURIComponent(id)}`,
+        options
     );
 },
 ```
+
+Keep the path one template literal (api-sync's coverage scan reads it as one string; never `+` pieces). Each `${...}` must stay a single expression without braces inside.
 
 ### Return type
 
@@ -822,7 +906,7 @@ When the spec's 200 response is `$ref Success`, use `Promise<BlindpayApiResponse
 
 ### Request options (Idempotency-Key)
 
-Every method that sends a POST, PUT, PATCH or DELETE takes a trailing `options?: RequestOptions` and passes it to the client as the last argument; `options.idempotencyKey` becomes the `Idempotency-Key` header. GET methods never take it, and neither do unauthenticated `/e/` routes (the API ignores the header there). `src/resources/request-options.test.ts` fails on a mutation that doesn't forward it, and the api-sync generator emits the same signature.
+Every method, GETs and `/e/` routes included, takes a trailing `options?: RequestOptions` and passes it to the client as the last argument: `timeoutMs`, `headers` and `signal` apply to every call, and on POST, PUT, PATCH and DELETE `options.idempotencyKey` becomes the `Idempotency-Key` header (the API protects `POST /e/instances/{id}/tos` too, since a server SDK reaches it with the API key). `src/resources/request-options.test.ts` fails on any `client.*(...)` call that doesn't forward it, and the api-sync generator emits the same signature.
 
 ### Discriminated/variant creation
 

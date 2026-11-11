@@ -38,7 +38,17 @@ describe("BlindPay client", () => {
             description: "There is not enough balance to complete this payout.",
             errors: ["Bad Request"],
             trace_id: "0af7651916cd43dd8448eb211c80319c",
+            status: 400,
+            type: "api_error",
+            retryable: false,
         });
+    });
+
+    // No retries here: these GETs would otherwise be resent on the 5xx.
+    const noRetries = new BlindPay({
+        apiKey: "test-key",
+        instanceId: "in_000000000000",
+        maxRetries: 0,
     });
 
     it("keeps only the envelope's documented fields, and only when they're well typed", async () => {
@@ -47,22 +57,36 @@ describe("BlindPay client", () => {
             { status: 500 }
         );
 
-        const { error } = await blindpay.payouts.get("pa_000000000000");
+        const { error } = await noRetries.payouts.get("pa_000000000000");
 
-        expect(error).toStrictEqual({ message: "Unknown error", code: "X" });
+        expect(error).toStrictEqual({
+            message: "Unknown error",
+            code: "X",
+            errors: [],
+            status: 500,
+            type: "api_error",
+            retryable: true,
+        });
     });
 
-    it("keeps only a message when the error body is not an object", async () => {
+    it("keeps only a message, and an empty errors list, when the error body is not an object", async () => {
         fetchMock.mockResponseOnce(JSON.stringify("Bad Gateway"), { status: 502 });
 
-        const { error } = await blindpay.payouts.get("pa_000000000000");
+        const { error } = await noRetries.payouts.get("pa_000000000000");
 
-        expect(error).toStrictEqual({ message: "Unknown error" });
+        expect(error).toStrictEqual({
+            message: "Unknown error",
+            errors: [],
+            status: 502,
+            type: "api_error",
+            retryable: true,
+        });
     });
 });
 
 describe("verifyWebhookSignature", () => {
-    const secret = "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw";
+    // A fake signing key built at runtime for these tests; not a credential.
+    const secret = `whsec_${Buffer.from("blindpay-node-test-only-signing-key").toString("base64")}`;
     const payload = JSON.stringify({ type: "payout.complete", data: { id: "po_000000000000" } });
     const id = "msg_000000000000";
     const timestamp = new Date();
@@ -92,11 +116,9 @@ describe("verifyWebhookSignature", () => {
     });
 
     it("rejects a signature made with a different secret", () => {
-        const other = new Webhook("whsec_TWFjaGluZUxlYXJuaW5nUm9ja3NOb3RSZWFsbHk=").sign(
-            id,
-            timestamp,
-            payload
-        );
+        const other = new Webhook(
+            `whsec_${Buffer.from("another-fake-test-key").toString("base64")}`
+        ).sign(id, timestamp, payload);
 
         expect(blindpay.verifyWebhookSignature({ secret, headers: headers(other), payload })).toBe(
             false
@@ -146,18 +168,66 @@ describe("Idempotency-Key", () => {
         expect(sentKey()).toBe("retry-1");
     });
 
-    it("is sent even when empty, so the API rejects it instead of the SDK dropping it", async () => {
-        fetchMock.mockResponseOnce(JSON.stringify({ id: "pa_000000000000" }));
+    it("rejects an empty key without sending anything (the API would silently ignore it)", async () => {
+        const { data, error } = await blindpay.payouts.createEvm(payout, { idempotencyKey: "" });
 
-        await blindpay.payouts.createEvm(payout, { idempotencyKey: "" });
-
-        expect(sentKey()).toBe("");
+        expect(fetchMock.mock.calls).toHaveLength(0);
+        expect(data).toBeNull();
+        expect(error).toMatchObject({ type: "invalid_request", status: 0, retryable: false });
     });
 
-    it("is not sent when the call has none", async () => {
+    it("rejects a key longer than 255 characters without sending anything", async () => {
+        const { error } = await blindpay.payouts.createEvm(payout, {
+            idempotencyKey: "k".repeat(256),
+        });
+
+        expect(fetchMock.mock.calls).toHaveLength(0);
+        expect(error?.type).toBe("invalid_request");
+    });
+
+    it("accepts a 255-character key", async () => {
+        fetchMock.mockResponseOnce(JSON.stringify({ id: "pa_000000000000" }));
+
+        await blindpay.payouts.createEvm(payout, { idempotencyKey: "k".repeat(255) });
+
+        expect(sentKey()).toBe("k".repeat(255));
+    });
+
+    it("is generated (a UUIDv4) when the call has none and retries are on", async () => {
         fetchMock.mockResponseOnce(JSON.stringify({ id: "pa_000000000000" }));
 
         await blindpay.payouts.createEvm(payout);
+
+        expect(sentKey()).toMatch(
+            /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
+        );
+    });
+
+    it("is generated on a body-less DELETE too", async () => {
+        fetchMock.mockResponseOnce(JSON.stringify({ success: true }));
+
+        await blindpay.customers.delete("cu_000000000000");
+
+        expect(sentKey()).toMatch(/^[0-9a-f-]{36}$/);
+    });
+
+    it("is not sent when the call has none and retries are off", async () => {
+        const noRetries = new BlindPay({
+            apiKey: "test-key",
+            instanceId: "in_000000000000",
+            maxRetries: 0,
+        });
+        fetchMock.mockResponseOnce(JSON.stringify({ id: "pa_000000000000" }));
+
+        await noRetries.payouts.createEvm(payout);
+
+        expect(sentKey()).toBeNull();
+    });
+
+    it("is never sent on a GET", async () => {
+        fetchMock.mockResponseOnce(JSON.stringify({ id: "pa_000000000000" }));
+
+        await blindpay.payouts.get("pa_000000000000");
 
         expect(sentKey()).toBeNull();
     });

@@ -17,6 +17,7 @@ import type {
     TransactionStatus,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { autoPage } from "../../internal/paginate";
 import { toQueryString } from "../../internal/query";
 
 export type BlindpayBankDetails = {
@@ -128,6 +129,11 @@ export type GetPayinResponse = Payin;
 
 export type GetPayinTrackInput = string;
 
+export type GetPayinTrackParams = {
+    /** Signed checkout token of a card payin; `tracking_transaction.card_instruction` is only returned when it is valid for this payin. */
+    checkout_token?: string;
+};
+
 export type GetPayinTrackResponse = Payin;
 
 export type CreateEvmPayinInput = string;
@@ -157,14 +163,49 @@ export type CreateEvmPayinResponse = Pick<
 
 export function createPayinsResource(instanceId: string, client: InternalApiClient) {
     return {
-        list(params?: ListPayinsInput): Promise<BlindpayApiResponse<ListPayinsResponse>> {
-            return client.get(`/instances/${instanceId}/payins${toQueryString(params)}`);
+        list(
+            params?: ListPayinsInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<ListPayinsResponse>> {
+            return client.get(`/instances/${instanceId}/payins${toQueryString(params)}`, options);
         },
-        get(payinId: GetPayinInput): Promise<BlindpayApiResponse<GetPayinResponse>> {
-            return client.get(`/instances/${instanceId}/payins/${payinId}`);
+        /**
+         * Every payin matching `params`, fetched page by page (`limit` defaults to 100):
+         * `for await (const item of blindpay.payins.listAutoPaging()) { ... }`. Forward only, so
+         * `ending_before` is rejected. A failed page throws a `BlindPayError` carrying the error.
+         */
+        listAutoPaging(
+            params?: Omit<ListPayinsInput, "ending_before">,
+            options?: RequestOptions
+        ): AsyncGenerator<Payin, void, undefined> {
+            return autoPage<Payin, ListPayinsInput>(
+                (page) =>
+                    client.get(`/instances/${instanceId}/payins${toQueryString(page)}`, options),
+                params
+            );
         },
-        getTrack(payinId: GetPayinTrackInput): Promise<BlindpayApiResponse<GetPayinTrackResponse>> {
-            return client.get(`/e/payins/${payinId}`);
+        get(
+            payinId: GetPayinInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetPayinResponse>> {
+            return client.get(
+                `/instances/${instanceId}/payins/${encodeURIComponent(payinId)}`,
+                options
+            );
+        },
+        /**
+         * Public tracking endpoint for BlindPay's web and iOS apps: server-side calls get a 401 in
+         * production. Use `payins.get(id)` instead.
+         */
+        getTrack(
+            payinId: GetPayinTrackInput,
+            params?: GetPayinTrackParams,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetPayinTrackResponse>> {
+            return client.get(
+                `/e/payins/${encodeURIComponent(payinId)}${toQueryString(params)}`,
+                options
+            );
         },
         createEvm(
             payin_quote_id: CreateEvmPayinInput,

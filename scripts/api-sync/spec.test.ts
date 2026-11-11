@@ -6,6 +6,7 @@ import {
     loadSpec,
     operationKeys,
     reachableSchemas,
+    resolveEnumMembers,
     resolveProperties,
     type Spec,
     sdkSurface,
@@ -116,5 +117,29 @@ describe("resolveProperties", () => {
             location: "response:200",
         };
         expect([...resolveProperties(spec, loc)].sort()).toEqual(["data", "pagination"]);
+    });
+});
+
+describe("resolveEnumMembers", () => {
+    it("drops null from a nullable enum: it is nullability, not a member to insert", () => {
+        const spec: Spec = {
+            paths: {},
+            components: {
+                schemas: {
+                    PayinOut: {
+                        type: "object",
+                        properties: {
+                            manual_execution_status: {
+                                type: ["string", "null"],
+                                enum: ["pending", "executed", null],
+                            },
+                        },
+                    },
+                },
+            },
+        };
+        expect(
+            resolveEnumMembers(spec, { schema: "PayinOut", property: "manual_execution_status" })
+        ).toEqual(new Set(["pending", "executed"]));
     });
 });

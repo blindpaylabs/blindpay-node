@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { isKnownEnumDivergence, isKnownTypeMismatchDivergence, isUnmodeledProperty } from "./map";
 import {
     extractEnumMembers,
-    extractTopLevelFields,
+    extractResolvedFields,
     extractTopLevelKeys,
     type FieldInfo,
     findDeclarationSpan,
@@ -264,7 +264,7 @@ export function reconcile(
                 }
                 const keys = extractTopLevelKeys(span.text, makeLookup(repoRoot, site.file));
                 for (const k of keys) union.add(k);
-                fieldsBySite.set(siteKey, extractTopLevelFields(span.text));
+                fieldsBySite.set(siteKey, extractResolvedFields(repoRoot, site.file, span.text));
             } catch (err) {
                 if (pendingSites.has(siteKey)) {
                     opaqueSites.add(siteKey); // about to be (re)created; nothing to compare yet

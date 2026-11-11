@@ -1,14 +1,17 @@
-import { allResourceSource, hasCoarseSdkEndpointString } from "./coverage";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import {
     buildSegmentIndex,
     findResourceInfo,
     operationIsImplemented,
+    operationIsImplementedAnywhere,
     resourceSegmentOf,
 } from "./resource-registry";
 import type { JsonValue, Spec } from "./spec";
 import {
     loadCanonicalEnums,
     loadWholeSchemaSymbols,
+    SHARED_TYPES_FILE,
     synthesizeObjectFields,
     synthesizeType,
     type TypegenContext,
@@ -72,6 +75,44 @@ function jsonContentOnly(content: Record<string, unknown> | undefined): "none" |
 
 type Field = { name: string; tsType: string; required: boolean };
 
+/** The symbol spec-map.json records for `method path` at `location` in `file`, if that file still
+ * declares it. */
+function mappedResponseSymbol(
+    map: SpecMap,
+    repoRoot: string,
+    file: string,
+    method: string,
+    path: string,
+    location: string
+): string | null {
+    for (const entry of map.types) {
+        const loc = entry.spec as { path?: string; method?: string; location?: string };
+        if (loc.path !== path || loc.method !== method || loc.location !== location) continue;
+        const site = entry.sdk.find((s) => s.file === file);
+        if (!site) continue;
+        const content = readFileSync(join(repoRoot, file), "utf8");
+        if (new RegExp(`export type ${site.symbol}\\b`).test(content)) return site.symbol;
+    }
+    return null;
+}
+
+/**
+ * The whole-schema symbols a generated declaration in `currentFile` can reuse: those declared in
+ * that same file, or in types/index.d.ts (reached through the file's shared `import type`). A
+ * symbol owned by another resource file is left out, so the schema is synthesized inline there,
+ * as reconcile.ts's field inserts already do, instead of naming a type the file can't see.
+ */
+function importableWholeSchemas(
+    whole: Map<string, { file: string; symbol: string }>,
+    currentFile: string
+): Map<string, { file: string; symbol: string }> {
+    return new Map(
+        [...whole].filter(
+            ([, site]) => site.file === currentFile || site.file === SHARED_TYPES_FILE
+        )
+    );
+}
+
 /** True if `declareNamedType({refName: ref, pure, currentFile, ...})` will end up emitting a
  * bare alias to an already-modeled symbol, without ever looking at `fields`: mirrors exactly
  * the condition inside `declareNamedType` itself, checked before doing the (possibly deeply
@@ -114,7 +155,12 @@ function declareNamedType(params: {
     currentFile: string;
     alreadyWholeMapped: Map<string, { file: string; symbol: string }>;
     pathLocator: { path: string; method: string; location: string } | null;
-}): { decl: string; mapEntry: OperationInsertChange["newMapEntries"][number] | null } {
+}): {
+    decl: string;
+    mapEntry: OperationInsertChange["newMapEntries"][number] | null;
+    /** A types/index.d.ts symbol the declaration aliases, which the resource file must import. */
+    sharedImport?: string;
+} {
     const {
         symbolName,
         fields,
@@ -130,7 +176,11 @@ function declareNamedType(params: {
         const regeneratingSelf =
             !!existing && existing.symbol === symbolName && existing.file === currentFile;
         if (pure && existing && !regeneratingSelf) {
-            return { decl: `export type ${symbolName} = ${existing.symbol};`, mapEntry: null };
+            return {
+                decl: `export type ${symbolName} = ${existing.symbol};`,
+                mapEntry: null,
+                sharedImport: existing.file === SHARED_TYPES_FILE ? existing.symbol : undefined,
+            };
         }
         if (existing && (regeneratingSelf || !pure)) {
             // Either regenerating the exact site the existing entry already points at, or a
@@ -187,11 +237,9 @@ export function classifyNewOperation(
 
     if (!/^\/v1\/instances\/\{instance_id\}\//.test(path)) {
         // Outside the generator's template shape by construction (available/*, upload, the
-        // instances resource's own CRUD keyed by {id} rather than a wrapping instanceId, ...).
-        // Reuse the coarse coverage.ts heuristic here (imprecise, but this SDK already accepted
-        // that trade-off for its non-blocking report) so an already-hand-implemented one of
-        // these doesn't turn into a needs-human finding on every single run.
-        if (hasCoarseSdkEndpointString(path, allResourceSource(repoRoot))) {
+        // instances resource's own CRUD keyed by {id} rather than a wrapping instanceId, ...):
+        // a hand-implemented one isn't a finding; a missing one is a needs-human gap.
+        if (operationIsImplementedAnywhere(repoRoot, method, path)) {
             return { standard: false, alreadyImplemented: true };
         }
         return {
@@ -297,7 +345,7 @@ export function classifyNewOperation(
     const resourcePascal = pascalCase(singularize(resourceSegment));
     const typePrefix = pascalCase(methodName) + resourcePascal;
 
-    const wholeSchemas = loadWholeSchemaSymbols(map);
+    const wholeSchemas = importableWholeSchemas(loadWholeSchemaSymbols(map), resourceFile);
     const ctx: TypegenContext = { spec, canonicalEnums, wholeSchemas, importsNeeded: new Set() };
 
     const newMapEntries: OperationInsertChange["newMapEntries"] = [];
@@ -358,7 +406,7 @@ export function classifyNewOperation(
     if (inputKind === "scalar") {
         typeDecls += `export type ${inputSymbol} = string;\n\n`;
     } else if (inputKind === "object") {
-        const { decl, mapEntry } = declareNamedType({
+        const { decl, mapEntry, sharedImport } = declareNamedType({
             symbolName: inputSymbol,
             fields: mergedFields,
             refName: bodyRefName,
@@ -371,11 +419,25 @@ export function classifyNewOperation(
         });
         typeDecls += `${decl}\n\n`;
         if (mapEntry) newMapEntries.push(mapEntry);
+        if (sharedImport) ctx.importsNeeded.add(sharedImport);
     }
 
     // --- response ---
     let outputSymbol = "void";
-    if (responseKind === "json") {
+    const mappedResponse = mappedResponseSymbol(
+        map,
+        repoRoot,
+        resourceFile,
+        method,
+        path,
+        `response:${successCode}`
+    );
+    if (responseKind === "json" && mappedResponse) {
+        // The map already ties this response to a type that still exists in the file (e.g. a
+        // list's envelope | bare-array union): reuse it, so a regenerated method keeps the
+        // shape the SDK chose instead of a fresh synthesis of the spec's anyOf.
+        outputSymbol = mappedResponse;
+    } else if (responseKind === "json") {
         outputSymbol = `${typePrefix}Response`;
         const responseSchemaRaw = op.responses[successCode].content["application/json"].schema;
         const responseRefName = refName(responseSchemaRaw);
@@ -391,7 +453,7 @@ export function classifyNewOperation(
         )
             ? null
             : synthesizeObjectFields(ctx, responseResolved);
-        const { decl, mapEntry } = declareNamedType({
+        const { decl, mapEntry, sharedImport } = declareNamedType({
             symbolName: outputSymbol,
             fields: responseFields,
             refName: responseRefName,
@@ -404,6 +466,7 @@ export function classifyNewOperation(
         });
         typeDecls += `${decl}\n\n`;
         if (mapEntry) newMapEntries.push(mapEntry);
+        if (sharedImport) ctx.importsNeeded.add(sharedImport);
     }
 
     const pathTemplate = buildPathTemplate(path, inputKind, scalarArgName);
@@ -430,10 +493,7 @@ export function classifyNewOperation(
             methodName,
             typeDecls: typeDecls.trimEnd(),
             methodSource,
-            importsNeeded: [
-                ...ctx.importsNeeded,
-                ...(method === "get" ? [] : ["RequestOptions"]),
-            ].sort(),
+            importsNeeded: [...new Set([...ctx.importsNeeded, "RequestOptions"])].sort(),
             // GETs with query fields serialise them with src/internal/query.ts (see buildMethodSource).
             usesQueryString: method === "get" && inputKind === "object" && queryFields.length > 0,
             newMapEntries,
@@ -451,11 +511,12 @@ function buildPathTemplate(
     const rendered = segs.map((seg) => {
         if (!seg.startsWith("{")) return seg;
         const name = seg.slice(1, -1);
+        // Caller-supplied ids are percent-encoded; instanceId already is (the client encodes it once).
         if (inputKind === "scalar" && !scalarUsed) {
             scalarUsed = true;
-            return `\${${scalarArgName}}`;
+            return `\${encodeURIComponent(${scalarArgName})}`;
         }
-        return `\${${name}}`;
+        return `\${encodeURIComponent(${name})}`;
     });
     return `/instances/\${instanceId}/${rendered.join("/")}`;
 }
@@ -485,11 +546,12 @@ function buildMethodSource(args: {
         pathTemplate,
     } = args;
     const returnType = `Promise<BlindpayApiResponse<${outputSymbol}>>`;
-    // Every mutation takes RequestOptions last (its Idempotency-Key header); a GET never does.
+    // Every method takes RequestOptions last (timeout, headers, signal; the Idempotency-Key
+    // header on mutations) and forwards it to the client.
     const params = (input: string) =>
-        method === "get" ? input : [input, "options?: RequestOptions"].filter(Boolean).join(", ");
+        [input, "options?: RequestOptions"].filter(Boolean).join(", ");
     const call = (body: "data" | "{}") => {
-        if (method === "get") return `client.get(\`${pathTemplate}\`)`;
+        if (method === "get") return `client.get(\`${pathTemplate}\`, options)`;
         if (method === "delete") return `client.delete(\`${pathTemplate}\`, options)`;
         return `client.${method}(\`${pathTemplate}\`, ${body}, options)`;
     };
@@ -509,15 +571,15 @@ function buildMethodSource(args: {
     // inputKind === "object"
     if (method === "get" && pathFieldNames.length === 0 && queryFieldNames.length > 0) {
         return (
-            `${methodName}(params?: ${inputSymbol}): ${returnType} {\n` +
-            `            return client.get(\`${pathTemplate}\${toQueryString(params)}\`);\n` +
+            `${methodName}(${params(`params?: ${inputSymbol}`)}): ${returnType} {\n` +
+            `            return client.get(\`${pathTemplate}\${toQueryString(params)}\`, options);\n` +
             `        },`
         );
     }
     if (method === "get" && pathFieldNames.length > 0 && queryFieldNames.length > 0) {
         return (
-            `${methodName}({ ${pathFieldNames.join(", ")}, ...params }: ${inputSymbol}): ${returnType} {\n` +
-            `            return client.get(\`${pathTemplate}\${toQueryString(params)}\`);\n` +
+            `${methodName}(${params(`{ ${pathFieldNames.join(", ")}, ...params }: ${inputSymbol}`)}): ${returnType} {\n` +
+            `            return client.get(\`${pathTemplate}\${toQueryString(params)}\`, options);\n` +
             `        },`
         );
     }

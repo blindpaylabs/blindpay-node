@@ -1,6 +1,11 @@
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+    clearSourceCache,
     extractEnumMembers,
+    extractResolvedFields,
     extractTopLevelFields,
     extractTopLevelKeys,
     findDeclarationSpan,
@@ -123,5 +128,53 @@ describe("extractEnumMembers", () => {
     it("returns null for an object-literal (not a string union)", () => {
         const decl = "export type X = { a: string };";
         expect(extractEnumMembers(decl)).toBeNull();
+    });
+});
+
+describe("named intersection members", () => {
+    const source = [
+        "export type Base = { a?: string; b: number };",
+        "",
+        "export type Left = Base & { c: string };",
+        "",
+        "export type Right = { c: string } & Base;",
+        "",
+        "export type Alias = Base;",
+        "",
+    ].join("\n");
+    const lookup = (name: string) =>
+        name === "Base" ? extractTopLevelKeys(findDeclarationSpan(source, "Base").text) : null;
+    const keys = (symbol: string) =>
+        [...extractTopLevelKeys(findDeclarationSpan(source, symbol).text, lookup)].sort();
+
+    it("adds a same-file base type's keys on either side of &", () => {
+        expect(keys("Left")).toEqual(["a", "b", "c"]);
+        expect(keys("Right")).toEqual(["a", "b", "c"]);
+    });
+
+    it("leaves a bare alias alone", () => {
+        expect(keys("Alias")).toEqual([]);
+    });
+
+    it("resolves the base type's fields with their types for comparison", () => {
+        const dir = mkdtempSync(join(tmpdir(), "sdk-scan-"));
+        try {
+            mkdirSync(join(dir, "src"));
+            writeFileSync(join(dir, "src/x.ts"), source);
+            clearSourceCache();
+            const fields = extractResolvedFields(
+                dir,
+                "src/x.ts",
+                findDeclarationSpan(source, "Left").text
+            );
+            expect(Object.fromEntries(fields)).toEqual({
+                a: { optional: true, typeExpr: "string" },
+                b: { optional: false, typeExpr: "number" },
+                c: { optional: false, typeExpr: "string" },
+            });
+        } finally {
+            clearSourceCache();
+            rmSync(dir, { recursive: true, force: true });
+        }
     });
 });

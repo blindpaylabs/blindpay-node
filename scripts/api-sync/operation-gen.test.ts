@@ -93,9 +93,11 @@ describe("operation-insert classifier", () => {
         if (!result.standard) throw new Error("unreachable");
         expect(result.change.methodName).toBe("get");
         expect(result.change.site.file).toBe("src/resources/widgets/index.ts");
-        expect(result.change.methodSource).toContain("get(widgetId: GetWidgetInput)");
         expect(result.change.methodSource).toContain(
-            "client.get(`/instances/${instanceId}/widgets/${widgetId}`)"
+            "get(widgetId: GetWidgetInput, options?: RequestOptions)"
+        );
+        expect(result.change.methodSource).toContain(
+            "client.get(`/instances/${instanceId}/widgets/${encodeURIComponent(widgetId)}`, options)"
         );
     });
 
@@ -129,7 +131,7 @@ describe("operation-insert classifier", () => {
         expect(result.change.typeDecls).toContain("customer_id: string;");
         expect(result.change.methodSource).toContain("customer_id,");
         expect(result.change.methodSource).toContain(
-            "`/instances/${instanceId}/customers/${customer_id}/widgets/plaid`"
+            "`/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/widgets/plaid`"
         );
     });
 
@@ -172,7 +174,7 @@ describe("operation-insert classifier", () => {
             });
             expect(change.methodSource).toContain(", options?: RequestOptions)");
             expect(change.methodSource).toContain(
-                "client.delete(`/instances/${instanceId}/widgets/${widgetId}`, options);"
+                "client.delete(`/instances/${instanceId}/widgets/${encodeURIComponent(widgetId)}`, options);"
             );
         });
 
@@ -201,13 +203,19 @@ describe("operation-insert classifier", () => {
             expect(result.standard).toBe(false);
         });
 
-        it("is never added to a GET", () => {
+        it("is the last parameter of a GET too, for its timeout, headers and signal", () => {
             const change = classify("get", "/v1/instances/{instance_id}/widgets/{id}", {
                 parameters: [{ name: "id", in: "path", required: true }],
                 responses: { "200": json(object) },
             });
-            expect(change.methodSource).not.toContain("RequestOptions");
-            expect(change.importsNeeded).not.toContain("RequestOptions");
+            expect(change.methodSource).toContain(
+                "get(widgetId: GetWidgetInput, options?: RequestOptions)"
+            );
+            expect(change.methodSource).toContain(
+                // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts generated source text
+                "client.get(`/instances/${instanceId}/widgets/${encodeURIComponent(widgetId)}`, options);"
+            );
+            expect(change.importsNeeded).toContain("RequestOptions");
         });
     });
 
@@ -240,7 +248,7 @@ describe("operation-insert classifier", () => {
             ]);
             expect(change.methodSource).toContain(
                 // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts generated source text
-                "return client.get(`/instances/${instanceId}/widgets/archived${toQueryString(params)}`);"
+                "return client.get(`/instances/${instanceId}/widgets/archived${toQueryString(params)}`, options);"
             );
             expect(change.methodSource).not.toContain("URLSearchParams");
             expect(change.usesQueryString).toBe(true);
@@ -256,7 +264,7 @@ describe("operation-insert classifier", () => {
             expect(change.methodSource).toContain("{ customer_id, ...params }");
             expect(change.methodSource).toContain(
                 // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts generated source text
-                "/customers/${customer_id}/widgets${toQueryString(params)}`);"
+                "/customers/${encodeURIComponent(customer_id)}/widgets${toQueryString(params)}`, options);"
             );
             expect(change.methodSource).not.toContain("URLSearchParams");
             expect(change.usesQueryString).toBe(true);
@@ -300,7 +308,9 @@ describe("operation-insert classifier", () => {
         expect(result.standard).toBe(true);
         if (!result.standard) throw new Error("unreachable");
         expect(result.change.methodSource).toContain("(customerId: ");
-        expect(result.change.methodSource).toContain("/customers/${customerId}/widgets");
+        expect(result.change.methodSource).toContain(
+            "/customers/${encodeURIComponent(customerId)}/widgets"
+        );
     });
 
     it("keeps an acronym path segment like `tos` whole when naming the generated types", () => {
@@ -440,5 +450,152 @@ export function createTermsOfServiceResource(instanceId: string, client: Interna
                     e.symbol === "CreateWidgetInput"
             )
         ).toBe(true);
+    });
+});
+
+describe("reusing an already-modeled whole schema", () => {
+    function putReturning(ref: string): Spec {
+        return {
+            paths: {
+                "/v1/instances/{instance_id}/widgets/{id}": {
+                    put: {
+                        parameters: [
+                            { name: "id", in: "path", required: true, schema: { type: "string" } },
+                        ],
+                        requestBody: {
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: { name: { type: ["string", "null"] } },
+                                    },
+                                },
+                            },
+                        },
+                        responses: {
+                            "200": {
+                                content: {
+                                    "application/json": {
+                                        schema: { $ref: `#/components/schemas/${ref}` },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            components: {
+                schemas: {
+                    [ref]: {
+                        type: "object",
+                        properties: { success: { type: "boolean" } },
+                        required: ["success"],
+                    },
+                },
+            },
+        };
+    }
+
+    function mapWith(schema: string, file: string, symbol: string): SpecMap {
+        return {
+            ...emptyMap(),
+            types: [{ spec: { schema }, sdk: [{ file, symbol }], notes: null }],
+        };
+    }
+
+    it("aliases a types/index.d.ts symbol and asks for its shared import", () => {
+        const repoRoot = makeRepo(baseFiles());
+        const result = classifyNewOperation(
+            putReturning("Success"),
+            "put",
+            "/v1/instances/{instance_id}/widgets/{id}",
+            mapWith("Success", "types/index.d.ts", "SuccessResponse"),
+            repoRoot,
+            loadCanonicalEnums(repoRoot)
+        );
+        if (!result.standard) throw new Error("expected STANDARD");
+        expect(result.change.typeDecls).toContain(
+            "export type UpdateWidgetResponse = SuccessResponse;"
+        );
+        expect(result.change.importsNeeded).toContain("SuccessResponse");
+    });
+
+    it("synthesizes the shape inline when the symbol lives in another resource file", () => {
+        const repoRoot = makeRepo(baseFiles());
+        const result = classifyNewOperation(
+            putReturning("Gadget"),
+            "put",
+            "/v1/instances/{instance_id}/widgets/{id}",
+            mapWith("Gadget", "src/resources/gadgets/index.ts", "Gadget"),
+            repoRoot,
+            loadCanonicalEnums(repoRoot)
+        );
+        if (!result.standard) throw new Error("expected STANDARD");
+        expect(result.change.typeDecls).toContain("success: boolean;");
+        expect(result.change.typeDecls).not.toContain("= Gadget;");
+        expect(result.change.importsNeeded).not.toContain("Gadget");
+    });
+});
+
+describe("reusing a response type the map records for the operation", () => {
+    it("returns the mapped symbol and declares no new response type", () => {
+        const resource = WIDGETS_RESOURCE.replace(
+            "export type ListWidgetsResponse = { id: string }[];",
+            "export type ListWidgetsResponse = { id: string }[] | { data: { id: string }[] };"
+        ).replace(
+            // A GET-by-id stays, so the file still owns the "widgets" segment; the list is gone.
+            // biome-ignore lint/suspicious/noTemplateCurlyInString: replaces generated source text
+            "list(): Promise<BlindpayApiResponse<ListWidgetsResponse>> {\n            return client.get(`/instances/${instanceId}/widgets`);",
+            // biome-ignore lint/suspicious/noTemplateCurlyInString: replaces generated source text
+            "get(id: string): Promise<BlindpayApiResponse<unknown>> {\n            return client.get(`/instances/${instanceId}/widgets/${id}`);"
+        );
+        const repoRoot = makeRepo({ ...baseFiles(), "src/resources/widgets/index.ts": resource });
+        const spec: Spec = {
+            paths: {
+                "/v1/instances/{instance_id}/widgets": {
+                    get: {
+                        responses: {
+                            "200": {
+                                content: {
+                                    "application/json": {
+                                        schema: { anyOf: [{ type: "array" }, { type: "object" }] },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            components: { schemas: {} },
+        };
+        const map: SpecMap = {
+            ...emptyMap(),
+            types: [
+                {
+                    spec: {
+                        path: "/v1/instances/{instance_id}/widgets",
+                        method: "get",
+                        location: "response:200",
+                    },
+                    sdk: [
+                        { file: "src/resources/widgets/index.ts", symbol: "ListWidgetsResponse" },
+                    ],
+                    notes: null,
+                },
+            ],
+        };
+        const result = classifyNewOperation(
+            spec,
+            "get",
+            "/v1/instances/{instance_id}/widgets",
+            map,
+            repoRoot,
+            loadCanonicalEnums(repoRoot)
+        );
+        if (!result.standard) throw new Error("expected STANDARD");
+        expect(result.change.methodSource).toContain(
+            "Promise<BlindpayApiResponse<ListWidgetsResponse>>"
+        );
+        expect(result.change.typeDecls).not.toContain("Response");
     });
 });

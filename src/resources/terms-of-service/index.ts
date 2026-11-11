@@ -1,4 +1,4 @@
-import type { BlindpayApiResponse } from "../../../types";
+import type { BlindpayApiResponse, RequestOptions } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type InitiateInput = {
@@ -13,16 +13,19 @@ export type InitiateResponse = {
 
 export function createTermsOfServiceResource(instanceId: string, client: InternalApiClient) {
     return {
-        initiate({
-            idempotency_key,
-            customer_id,
-            redirect_url,
-        }: InitiateInput): Promise<BlindpayApiResponse<InitiateResponse>> {
-            return client.post(`/e/instances/${instanceId}/tos`, {
-                idempotency_key,
-                customer_id,
-                redirect_url,
-            });
+        /**
+         * `idempotency_key` here is a body field the API requires for the ToS flow; it is not the
+         * `Idempotency-Key` header, which `options.idempotencyKey` sets (or the SDK generates).
+         */
+        initiate(
+            { idempotency_key, customer_id, redirect_url }: InitiateInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<InitiateResponse>> {
+            return client.post(
+                `/e/instances/${instanceId}/tos`,
+                { idempotency_key, customer_id, redirect_url },
+                options
+            );
         },
     };
 }

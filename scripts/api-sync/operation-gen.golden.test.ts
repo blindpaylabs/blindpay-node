@@ -54,7 +54,11 @@ function deleteTwoOperations(dir: string): void {
         "export type GetPayinInput = string;",
         "export type GetPayinTrackInput"
     );
-    payins = deleteSpan(payins, "        get(payinId: GetPayinInput)", "        getTrack(");
+    payins = deleteSpan(
+        payins,
+        "        get(\n            payinId: GetPayinInput,",
+        "        getTrack("
+    );
     writeFileSync(payinsPath, payins);
 
     const quotesPath = join(dir, "src/resources/quotes/index.ts");
@@ -70,13 +74,18 @@ function deleteTwoOperations(dir: string): void {
 
 /**
  * Deletes payables.list and its toQueryString import (its Input/Response types stay: spec-map
- * maps the list response onto ListPayablesResponse), so the regenerated method has to bring
- * the query helper import back on its own.
+ * maps the list response onto ListPayablesResponse). The hand-written listAutoPaging stays: it
+ * pages the list op without implementing it, so the generator must regenerate list next to it
+ * and bring the import back.
  */
 function deleteListMethod(dir: string): void {
     const payablesPath = join(dir, "src/resources/payables/index.ts");
     let payables = readFileSync(payablesPath, "utf8");
-    payables = deleteSpan(payables, "        list(params?: ListPayablesInput)", "        create(");
+    payables = deleteSpan(
+        payables,
+        "        list(\n            params?: ListPayablesInput,",
+        "        /**\n         * Every payable matching"
+    );
     payables = payables.replace('import { toQueryString } from "../../internal/query";\n', "");
     writeFileSync(payablesPath, payables);
 }
@@ -109,10 +118,10 @@ describe("operation-insert golden self-test", () => {
         expect(payins).toContain("export type GetPayinInput = string;");
         expect(payins).toContain("export type GetPayinResponse = Payin;");
         expect(payins).toContain(
-            "get(payinId: GetPayinInput): Promise<BlindpayApiResponse<GetPayinResponse>> {"
+            "get(payinId: GetPayinInput, options?: RequestOptions): Promise<BlindpayApiResponse<GetPayinResponse>> {"
         );
         expect(payins).toContain(
-            "return client.get(`/instances/${instanceId}/payins/${payinId}`);"
+            "return client.get(`/instances/${instanceId}/payins/${encodeURIComponent(payinId)}`, options);"
         );
 
         const quotes = readFileSync(join(dir, "src/resources/quotes/index.ts"), "utf8");
@@ -130,9 +139,12 @@ describe("operation-insert golden self-test", () => {
         expect(payables).toContain('import { toQueryString } from "../../internal/query";');
         expect(payables).toContain(
             // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts generated source text
-            "return client.get(`/instances/${instanceId}/payables${toQueryString(params)}`);"
+            "return client.get(`/instances/${instanceId}/payables${toQueryString(params)}`, options);"
         );
         expect(payables).not.toContain("URLSearchParams");
+        expect(payables).toContain("listAutoPaging(");
+        // The map ties the list response to the envelope | bare-array union: it is reused.
+        expect(payables).toContain("Promise<BlindpayApiResponse<ListPayablesResponse>>");
 
         execFileSync("bun", ["run", "check-types"], { cwd: dir, stdio: "pipe" });
         execFileSync("bun", ["run", "test"], { cwd: dir, stdio: "pipe" });

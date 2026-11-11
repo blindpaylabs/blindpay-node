@@ -29,6 +29,16 @@ export type RecipientRelationship =
 
 export type BankAccountStatus = "verifying" | "approved" | "rejected" | "deprecated";
 
+/** Fields every rail's create response carries: the API returns the whole bank account. */
+export type BankAccountCreateCommon = {
+    business_industry?: BusinessIndustry | null;
+    phone_number?: string | null;
+    tax_id?: string | null;
+    date_of_birth?: string | null;
+    tron_wallet_hash?: string | null;
+    status?: BankAccountStatus | null;
+};
+
 export type ListBankAccountsInput = {
     customer_id: string;
     status?: BankAccountStatus;
@@ -162,7 +172,7 @@ export type CreatePixInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreatePixResponse = {
+export type CreatePixResponse = BankAccountCreateCommon & {
     id: string;
     type: "pix";
     name: string;
@@ -203,7 +213,7 @@ export type CreatePixSafeInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreatePixSafeResponse = {
+export type CreatePixSafeResponse = BankAccountCreateCommon & {
     id: string;
     type: "pix_safe";
     name: string;
@@ -246,7 +256,7 @@ export type CreateArgentinaTransfersInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateArgentinaTransfersResponse = {
+export type CreateArgentinaTransfersResponse = BankAccountCreateCommon & {
     id: string;
     type: "transfers_bitso";
     name: string;
@@ -287,7 +297,7 @@ export type CreateSpeiInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateSpeiResponse = {
+export type CreateSpeiResponse = BankAccountCreateCommon & {
     id: string;
     type: "spei_bitso";
     name: string;
@@ -333,7 +343,7 @@ export type CreateColombiaAchInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateColombiaAchResponse = {
+export type CreateColombiaAchResponse = BankAccountCreateCommon & {
     id: string;
     type: "ach_cop_bitso";
     name: string;
@@ -391,7 +401,7 @@ export type CreateAchInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateAchResponse = {
+export type CreateAchResponse = BankAccountCreateCommon & {
     id: string;
     type: "ach";
     name: string;
@@ -459,7 +469,7 @@ export type CreateWireInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateWireResponse = {
+export type CreateWireResponse = BankAccountCreateCommon & {
     id: string;
     type: "wire";
     name: string;
@@ -532,7 +542,7 @@ export type CreateInternationalSwiftInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateInternationalSwiftResponse = {
+export type CreateInternationalSwiftResponse = BankAccountCreateCommon & {
     id: string;
     type: "international_swift";
     name: string;
@@ -612,7 +622,7 @@ export type CreateRtpInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateRtpResponse = {
+export type CreateRtpResponse = BankAccountCreateCommon & {
     id: string;
     type: "rtp";
     name: string;
@@ -667,7 +677,7 @@ export type CreateSepaInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateSepaResponse = {
+export type CreateSepaResponse = BankAccountCreateCommon & {
     id: string;
     type: "sepa";
     name: string;
@@ -718,7 +728,7 @@ export type CreateTedInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateTedResponse = {
+export type CreateTedResponse = BankAccountCreateCommon & {
     id: string;
     type: "ted";
     name: string;
@@ -757,7 +767,7 @@ export type CreateFasterPaymentsInput = {
     faster_payments_beneficiary_country: Country | null;
 };
 
-export type CreateFasterPaymentsResponse = {
+export type CreateFasterPaymentsResponse = BankAccountCreateCommon & {
     id: string;
     type: "faster_payments";
     name: string;
@@ -785,20 +795,22 @@ export type CreatePlaidBankAccountResponse = {
 
 export function createBankAccountsResource(instanceId: string, client: InternalApiClient) {
     return {
-        list({
-            customer_id,
-            ...params
-        }: ListBankAccountsInput): Promise<BlindpayApiResponse<ListBankAccountsResponse>> {
+        list(
+            { customer_id, ...params }: ListBankAccountsInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<ListBankAccountsResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts${toQueryString(params)}`
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts${toQueryString(params)}`,
+                options
             );
         },
-        get({
-            customer_id,
-            id,
-        }: GetBankAccountInput): Promise<BlindpayApiResponse<GetBankAccountResponse>> {
+        get(
+            { customer_id, id }: GetBankAccountInput,
+            options?: RequestOptions
+        ): Promise<BlindpayApiResponse<GetBankAccountResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${id}`
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts/${encodeURIComponent(id)}`,
+                options
             );
         },
         delete(
@@ -806,7 +818,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.delete(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${id}`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts/${encodeURIComponent(id)}`,
                 options
             );
         },
@@ -815,7 +827,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreatePixResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "pix",
                     ...data,
@@ -828,7 +840,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreatePixSafeResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "pix_safe",
                     ...data,
@@ -841,7 +853,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateArgentinaTransfersResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "transfers_bitso",
                     ...data,
@@ -854,7 +866,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateSpeiResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "spei_bitso",
                     ...data,
@@ -867,7 +879,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateColombiaAchResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "ach_cop_bitso",
                     ...data,
@@ -880,7 +892,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateAchResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "ach",
                     ...data,
@@ -893,7 +905,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateWireResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "wire",
                     ...data,
@@ -906,7 +918,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateInternationalSwiftResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "international_swift",
                     ...data,
@@ -919,7 +931,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateRtpResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "rtp",
                     ...data,
@@ -932,7 +944,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateTedResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "ted",
                     ...data,
@@ -945,7 +957,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateSepaResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "sepa",
                     ...data,
@@ -958,7 +970,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateFasterPaymentsResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "faster_payments",
                     ...data,
@@ -972,7 +984,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreatePlaidBankAccountResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/plaid`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts/plaid`,
                 data,
                 options
             );

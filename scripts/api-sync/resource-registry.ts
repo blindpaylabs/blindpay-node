@@ -77,6 +77,8 @@ function pathShape(segments: string[]): string {
             // A whole-segment param, either OpenAPI's `{name}` or a JS template's `${name}`.
             if (/^\{[^}]*\}$/.test(seg) || /^\$\{[^}]*\}$/.test(seg)) return "{}";
             if (i === segments.length - 1) {
+                // A path param followed by a query spread, e.g. `${payinId}${toQueryString(params)}`.
+                if (/^\$\{[^}]*\}\$\{/.test(seg)) return "{}";
                 // A trailing spread with no slash of its own, e.g. `payins${queryParams}`
                 // (query string, not a path segment): keep only its literal prefix.
                 const idx = seg.indexOf("${");
@@ -87,14 +89,59 @@ function pathShape(segments: string[]): string {
         .join("/");
 }
 
+/** A `client.<method>(...)` request in a resource file, with the factory method it sits in. */
+type SdkCall = { method: string; template: string; enclosingMethod: string | null };
+
 /**
- * Precise (not the coarse "does this literal segment appear anywhere" heuristic coverage.ts
- * uses for its non-blocking report): true only if `resourceFile` has a `client.<method>(...)`
- * call whose path template has the exact same literal/dynamic segment shape as `path`, after
- * dropping the `instances/{instance_id}` prefix both sides share. Sensitive to a single method
- * disappearing even when its resource file still implements sibling operations on the same
- * literal segment (unlike the coarse heuristic), which is what makes it safe to use as the
- * operation-insert discovery signal instead of only a diff against the previous spec.
+ * Every `client.<verb>(<path>...)` call in `content`, path given as a template literal or a
+ * plain string. `postMultipart` counts as a POST. `enclosingMethod` is the factory method the
+ * call sits in (the nearest preceding 8-space-indented `name(`), so a hand-written auto-pager
+ * can be told apart from the list method it pages.
+ */
+function sdkCalls(content: string): SdkCall[] {
+    const methodStarts = [...content.matchAll(/^ {8}(?:async )?(\w+)\(/gm)];
+    const calls = content.matchAll(
+        /client\.(get|post|put|patch|delete|postMultipart)\(\s*([`"])([^`"]*)\2/g
+    );
+    return [...calls].map((m) => {
+        const at = m.index ?? 0;
+        let enclosingMethod: string | null = null;
+        for (const start of methodStarts) {
+            if ((start.index ?? 0) > at) break;
+            enclosingMethod = start[1];
+        }
+        const method = m[1] === "postMultipart" ? "post" : m[1];
+        return { method, template: m[3], enclosingMethod };
+    });
+}
+
+/**
+ * A request's path shape, comparable between a spec path (`/v1/instances/{instance_id}/x`) and a
+ * hand-written template (`/instances/${instanceId}/x${toQueryString(params)}`): no `/v1`, no
+ * query string, every `{param}` / `${expr}` segment collapsed to `{}`.
+ */
+export function requestShape(pathOrTemplate: string): string {
+    return pathShape(
+        pathOrTemplate
+            .replace(/^\/v1(?=\/)/, "")
+            .split("?")[0]
+            .split("/")
+            .filter((s) => s.length > 0)
+    );
+}
+
+/** An auto-pager pages a list op but doesn't implement it: the `list` method does. */
+function implementsOperation(call: SdkCall, method: string, shape: string): boolean {
+    if (call.enclosingMethod && /AutoPaging$/.test(call.enclosingMethod)) return false;
+    return call.method === method && requestShape(call.template) === shape;
+}
+
+/**
+ * Precise and method-aware (unlike a "does this literal segment appear anywhere" check): true
+ * only if `resourceFile` has a `client.<method>(...)` call, outside an auto-pager, whose path
+ * has the exact same literal/dynamic segment shape as `path`. Sensitive to a single method
+ * disappearing even when the file still implements sibling operations on the same path,
+ * which is what makes it safe to use as the operation-insert discovery signal.
  */
 export function operationIsImplemented(
     repoRoot: string,
@@ -102,23 +149,20 @@ export function operationIsImplemented(
     path: string,
     resourceFile: string
 ): boolean {
-    const expected = pathShape(
-        path
-            .replace(/^\/v1\/?/, "")
-            .replace(/^instances\/\{[^}]+\}\/?/, "")
-            .split("/")
-            .filter((s) => s.length > 0)
-    );
+    const shape = requestShape(path);
     const content = readFileSync(join(repoRoot, resourceFile), "utf8");
-    const calls = content.matchAll(new RegExp(`client\\.${method}\\(\\s*\`([^\`]*)\``, "g"));
-    for (const m of calls) {
-        const template = m[1]
-            .replace(/^\/instances\/\$\{[^}]+\}\/?/, "")
-            .split("/")
-            .filter((s) => s.length > 0);
-        if (pathShape(template) === expected) return true;
-    }
-    return false;
+    return sdkCalls(content).some((call) => implementsOperation(call, method, shape));
+}
+
+/** `operationIsImplemented` across every resource file (for paths outside the instance template). */
+export function operationIsImplementedAnywhere(
+    repoRoot: string,
+    method: string,
+    path: string
+): boolean {
+    return listResourceFiles(repoRoot).some((full) =>
+        operationIsImplemented(repoRoot, method, path, relative(repoRoot, full))
+    );
 }
 
 export function findResourceInfo(repoRoot: string, file: string): ResourceInfo | null {

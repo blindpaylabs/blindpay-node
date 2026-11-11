@@ -75,6 +75,61 @@ describe("Upload", () => {
         });
     });
 
+    describe("File input (C9)", () => {
+        /** The `file` part of the single multipart request sent. */
+        async function sentFile(call: () => Promise<unknown>): Promise<File> {
+            fetchMock.mockResponseOnce(JSON.stringify({ file_url: "https://x" }));
+            await call();
+            const body = fetchMock.mock.calls[0][1]?.body as FormData;
+            expect(String(fetchMock.mock.calls[0][0])).toContain("?instance_id=in_000000000000");
+            return body.get("file") as File;
+        }
+
+        it.each([
+            ["a Uint8Array", new TextEncoder().encode("%PDF-1.7")],
+            ["an ArrayBuffer", new TextEncoder().encode("%PDF-1.7").buffer],
+        ])("sends %s with its filename and content type", async (_label, bytes) => {
+            const part = await sentFile(() =>
+                blindpay.upload.upload({
+                    file: bytes,
+                    filename: "contract.pdf",
+                    contentType: "application/pdf",
+                    bucket: "documents",
+                })
+            );
+            expect(part.name).toBe("contract.pdf");
+            expect(part.type).toBe("application/pdf");
+            expect(await part.text()).toBe("%PDF-1.7");
+        });
+
+        it("names bare bytes `upload` as application/octet-stream by default", async () => {
+            const part = await sentFile(() =>
+                blindpay.upload.analyze({ file: new Uint8Array([1, 2, 3]), type: "invoice" })
+            );
+            expect(part.name).toBe("upload");
+            expect(part.type).toBe("application/octet-stream");
+        });
+
+        it("keeps a Blob's own type and lets filename and contentType override it", async () => {
+            const blob = new Blob(["x"], { type: "text/plain" });
+            const kept = await sentFile(() =>
+                blindpay.upload.upload({ file: blob, bucket: "documents" })
+            );
+            expect(kept.type).toBe("text/plain");
+            fetchMock.resetMocks();
+            const renamed = await sentFile(() =>
+                blindpay.upload.upload({
+                    file: blob,
+                    filename: "notes.csv",
+                    contentType: "text/csv",
+                    bucket: "documents",
+                })
+            );
+            expect(renamed.name).toBe("notes.csv");
+            expect(renamed.type).toBe("text/csv");
+        });
+    });
+
     describe("Analyze document", () => {
         it("should analyze a document", async () => {
             const mockedAnalysis: UploadAnalyzeResponse = {
@@ -161,6 +216,9 @@ describe("Upload", () => {
                 message: "Unsupported file",
                 errors: [],
                 trace_id: "0af7651916cd43dd8448eb211c80319c",
+                status: 400,
+                type: "api_error",
+                retryable: false,
             });
         });
     });
@@ -233,7 +291,12 @@ describe("Upload", () => {
                 const { data, error } = await call();
 
                 expect(data).toBeNull();
-                expect(error).toStrictEqual({ message: "fetch failed" });
+                expect(error).toStrictEqual({
+                    message: "fetch failed",
+                    status: 0,
+                    type: "connection_error",
+                    retryable: false,
+                });
             });
 
             it("returns a non-JSON error body as an error naming the status", async () => {
@@ -247,7 +310,12 @@ describe("Upload", () => {
                 const { data, error } = await call();
 
                 expect(data).toBeNull();
-                expect(error).toStrictEqual({ message: "HTTP 502 Bad Gateway" });
+                expect(error).toStrictEqual({
+                    message: "HTTP 502 Bad Gateway",
+                    status: 502,
+                    type: "api_error",
+                    retryable: false,
+                });
             });
 
             it("returns a 2xx body that isn't JSON as an error", async () => {
@@ -258,6 +326,9 @@ describe("Upload", () => {
                 expect(data).toBeNull();
                 expect(error).toStrictEqual({
                     message: "HTTP 200: the response body is not valid JSON",
+                    status: 200,
+                    type: "invalid_response",
+                    retryable: false,
                 });
             });
 
