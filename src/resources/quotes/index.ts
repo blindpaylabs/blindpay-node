@@ -9,15 +9,18 @@ import type {
 import type { InternalApiClient } from "../../internal/api-client";
 
 export type CreateQuoteInput = {
+    /** Bank account to pay out to. Send exactly one of `bank_account_id` and `payable_id`. */
     bank_account_id?: string | null;
     currency_type?: CurrencyType;
     cover_fees?: boolean | null;
+    /** Integer cents of the `currency_type` side (1000 = 10.00). */
     request_amount?: number | null;
     network: Network;
     token: StablecoinToken;
     description?: string | null;
     partner_fee_id?: string | null;
     refund_wallet_address?: string | null;
+    /** Payable to settle, instead of `bank_account_id` (exactly one of the two). */
     payable_id?: string | null;
 };
 export type CreateQuoteResponse = {

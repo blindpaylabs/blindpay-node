@@ -13,6 +13,7 @@ export type CreatePayinQuoteInput = {
     blockchain_wallet_id?: string | null;
     currency_type: CurrencyType;
     payment_method: PaymentMethod;
+    /** Integer cents of the `currency_type` side (1000 = 10.00). */
     request_amount: number;
     token: StablecoinToken;
     is_otc?: boolean | null;
@@ -47,6 +48,7 @@ export type GetPayinFxRateInput = {
     currency_type: CurrencyType;
     from: Extract<Currency, "BRL" | "USD" | "MXN" | "COP" | "ARS" | "EUR" | "GBP">;
     to: Extract<Currency, "USDC" | "USDT" | "USDB">;
+    /** Integer cents (1000 = 10.00). With `currency_type: "sender"` and a whole-unit `from` currency, a multiple of 100. */
     request_amount: number;
 };
 

@@ -188,8 +188,10 @@ export type AuthorizeStellarTokenResponse = {
 
 export type CreateStellarPayoutInput = {
     quote_id: string;
+    /** Wallet the stablecoins are sent from. Send exactly one of `sender_wallet_address` and `wallet_id`; the API returns 400 otherwise. */
     sender_wallet_address?: string;
     signed_transaction?: string | null;
+    /** A BlindPay managed wallet (`wa_...`) to pay from, instead of `sender_wallet_address` (exactly one of the two). */
     wallet_id?: string;
 };
 
@@ -220,7 +222,9 @@ export type CreateStellarPayoutResponse = {
 
 export type CreateEvmPayoutInput = {
     quote_id: string;
+    /** Wallet the stablecoins are sent from. Send exactly one of `sender_wallet_address` and `wallet_id`; the API returns 400 otherwise. */
     sender_wallet_address?: string;
+    /** A BlindPay managed wallet (`wa_...`) to pay from, instead of `sender_wallet_address` (exactly one of the two). */
     wallet_id?: string;
 };
 
@@ -251,8 +255,10 @@ export type CreateEvmPayoutResponse = {
 
 export type CreateSolanaPayoutInput = {
     quote_id: string;
+    /** Wallet the stablecoins are sent from. Send exactly one of `sender_wallet_address` and `wallet_id`; the API returns 400 otherwise. */
     sender_wallet_address?: string;
     signed_transaction?: string | null;
+    /** A BlindPay managed wallet (`wa_...`) to pay from, instead of `sender_wallet_address` (exactly one of the two). */
     wallet_id?: string;
 };
 
