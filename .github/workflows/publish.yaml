@@ -12,6 +12,9 @@ on:
   push:
     branches:
       - main
+  # Re-run the release by hand when a push-triggered run never started
+  # (a GitHub Actions incident can leave it queued forever).
+  workflow_dispatch:
 
 permissions: {}
 
@@ -21,6 +24,8 @@ concurrency:
 jobs:
   select-mode:
     name: Select release mode
+    # A manual run from another branch must never publish.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: read
