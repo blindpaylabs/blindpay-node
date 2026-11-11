@@ -143,6 +143,8 @@ describe("operation-insert golden self-test", () => {
         );
         expect(payables).not.toContain("URLSearchParams");
         expect(payables).toContain("listAutoPaging(");
+        // The map ties the list response to the envelope | bare-array union: it is reused.
+        expect(payables).toContain("Promise<BlindpayApiResponse<ListPayablesResponse>>");
 
         execFileSync("bun", ["run", "check-types"], { cwd: dir, stdio: "pipe" });
         execFileSync("bun", ["run", "test"], { cwd: dir, stdio: "pipe" });

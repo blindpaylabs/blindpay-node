@@ -536,3 +536,66 @@ describe("reusing an already-modeled whole schema", () => {
         expect(result.change.importsNeeded).not.toContain("Gadget");
     });
 });
+
+describe("reusing a response type the map records for the operation", () => {
+    it("returns the mapped symbol and declares no new response type", () => {
+        const resource = WIDGETS_RESOURCE.replace(
+            "export type ListWidgetsResponse = { id: string }[];",
+            "export type ListWidgetsResponse = { id: string }[] | { data: { id: string }[] };"
+        ).replace(
+            // A GET-by-id stays, so the file still owns the "widgets" segment; the list is gone.
+            // biome-ignore lint/suspicious/noTemplateCurlyInString: replaces generated source text
+            "list(): Promise<BlindpayApiResponse<ListWidgetsResponse>> {\n            return client.get(`/instances/${instanceId}/widgets`);",
+            // biome-ignore lint/suspicious/noTemplateCurlyInString: replaces generated source text
+            "get(id: string): Promise<BlindpayApiResponse<unknown>> {\n            return client.get(`/instances/${instanceId}/widgets/${id}`);"
+        );
+        const repoRoot = makeRepo({ ...baseFiles(), "src/resources/widgets/index.ts": resource });
+        const spec: Spec = {
+            paths: {
+                "/v1/instances/{instance_id}/widgets": {
+                    get: {
+                        responses: {
+                            "200": {
+                                content: {
+                                    "application/json": {
+                                        schema: { anyOf: [{ type: "array" }, { type: "object" }] },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            components: { schemas: {} },
+        };
+        const map: SpecMap = {
+            ...emptyMap(),
+            types: [
+                {
+                    spec: {
+                        path: "/v1/instances/{instance_id}/widgets",
+                        method: "get",
+                        location: "response:200",
+                    },
+                    sdk: [
+                        { file: "src/resources/widgets/index.ts", symbol: "ListWidgetsResponse" },
+                    ],
+                    notes: null,
+                },
+            ],
+        };
+        const result = classifyNewOperation(
+            spec,
+            "get",
+            "/v1/instances/{instance_id}/widgets",
+            map,
+            repoRoot,
+            loadCanonicalEnums(repoRoot)
+        );
+        if (!result.standard) throw new Error("expected STANDARD");
+        expect(result.change.methodSource).toContain(
+            "Promise<BlindpayApiResponse<ListWidgetsResponse>>"
+        );
+        expect(result.change.typeDecls).not.toContain("Response");
+    });
+});

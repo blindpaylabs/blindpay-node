@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import {
     buildSegmentIndex,
     findResourceInfo,
@@ -73,6 +75,27 @@ function jsonContentOnly(content: Record<string, unknown> | undefined): "none" |
 type Field = { name: string; tsType: string; required: boolean };
 
 const SHARED_TYPES_FILE = "types/index.d.ts";
+
+/** The symbol spec-map.json records for `method path` at `location` in `file`, if that file still
+ * declares it. */
+function mappedResponseSymbol(
+    map: SpecMap,
+    repoRoot: string,
+    file: string,
+    method: string,
+    path: string,
+    location: string
+): string | null {
+    for (const entry of map.types) {
+        const loc = entry.spec as { path?: string; method?: string; location?: string };
+        if (loc.path !== path || loc.method !== method || loc.location !== location) continue;
+        const site = entry.sdk.find((s) => s.file === file);
+        if (!site) continue;
+        const content = readFileSync(join(repoRoot, file), "utf8");
+        if (new RegExp(`export type ${site.symbol}\\b`).test(content)) return site.symbol;
+    }
+    return null;
+}
 
 /**
  * The whole-schema symbols a generated declaration in `currentFile` can reuse: those declared in
@@ -402,7 +425,20 @@ export function classifyNewOperation(
 
     // --- response ---
     let outputSymbol = "void";
-    if (responseKind === "json") {
+    const mappedResponse = mappedResponseSymbol(
+        map,
+        repoRoot,
+        resourceFile,
+        method,
+        path,
+        `response:${successCode}`
+    );
+    if (responseKind === "json" && mappedResponse) {
+        // The map already ties this response to a type that still exists in the file (e.g. a
+        // list's envelope | bare-array union): reuse it, so a regenerated method keeps the
+        // shape the SDK chose instead of a fresh synthesis of the spec's anyOf.
+        outputSymbol = mappedResponse;
+    } else if (responseKind === "json") {
         outputSymbol = `${typePrefix}Response`;
         const responseSchemaRaw = op.responses[successCode].content["application/json"].schema;
         const responseRefName = refName(responseSchemaRaw);
