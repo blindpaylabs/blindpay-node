@@ -1,50 +1,18 @@
-import { readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { operationIsImplementedAnywhere } from "./resource-registry";
 import { operationKeys, type Spec } from "./spec";
 
-function allResourceSource(repoRoot: string): string {
-    const dir = join(repoRoot, "src/resources");
-    const parts: string[] = [];
-    const walk = (d: string) => {
-        for (const entry of readdirSync(d, { withFileTypes: true })) {
-            const full = join(d, entry.name);
-            if (entry.isDirectory()) walk(full);
-            else if (entry.name.endsWith(".ts") && !entry.name.endsWith(".test.ts")) {
-                parts.push(readFileSync(full, "utf8"));
-            }
-        }
-    };
-    walk(dir);
-    return parts.join("\n");
-}
-
 /**
- * Non-blocking heuristic: an operation "has SDK coverage" if the last literal (non-`{param}`)
- * path segment appears anywhere in the resource sources' request-building template strings.
- * Approximate by design, its job is to make gaps like the RFI resource show up on every run
- * instead of silently. Used both by the standalone --coverage report and, for the handful of
- * operations outside operation-gen.ts's instance-scoped template (its precise per-operation
- * matcher covers everything else), as the operation-insert discovery signal.
+ * Spec operations no SDK method implements: method-aware ("PUT /x" isn't covered by a "GET /x")
+ * and path-shape exact, with auto-pagers not counting as the list op they page. The standalone
+ * --coverage report and the --check/--apply report both use it.
  */
-export function hasCoarseSdkEndpointString(path: string, source: string): boolean {
-    const segments = path
-        .replace(/^\/v1\//, "")
-        .split("/")
-        .filter((seg) => seg.length > 0 && !seg.startsWith("{"));
-    const needle = segments[segments.length - 1];
-    return !!needle && source.includes(needle);
-}
-
 export function computeCoverageGaps(spec: Spec, repoRoot: string): string[] {
-    const source = allResourceSource(repoRoot);
     const gaps: string[] = [];
     for (const key of operationKeys(spec)) {
         const [method, path] = key.split(" ");
-        if (!hasCoarseSdkEndpointString(path, source)) {
+        if (!operationIsImplementedAnywhere(repoRoot, method, path)) {
             gaps.push(`${method.toUpperCase()} ${path}`);
         }
     }
     return gaps.sort();
 }
-
-export { allResourceSource };

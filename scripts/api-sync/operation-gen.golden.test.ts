@@ -73,11 +73,10 @@ function deleteTwoOperations(dir: string): void {
 }
 
 /**
- * Deletes payables.list and its toQueryString import, so the regenerated method has to bring
- * the import back on its own (its Input/Response types stay: spec-map maps the list response
- * onto ListPayablesResponse). The hand-written listAutoPaging goes too, along with its case in
- * auto-paging.test.ts: its own client.get on the same path would count as implementing the
- * GET, and the generator doesn't emit pagers.
+ * Deletes payables.list and its toQueryString import (its Input/Response types stay: spec-map
+ * maps the list response onto ListPayablesResponse). The hand-written listAutoPaging stays: it
+ * pages the list op without implementing it, so the generator must regenerate list next to it
+ * and bring the import back.
  */
 function deleteListMethod(dir: string): void {
     const payablesPath = join(dir, "src/resources/payables/index.ts");
@@ -85,20 +84,10 @@ function deleteListMethod(dir: string): void {
     payables = deleteSpan(
         payables,
         "        list(\n            params?: ListPayablesInput,",
-        "        create("
+        "        /**\n         * Every payable matching"
     );
-    payables = payables
-        .replace('import { autoPage } from "../../internal/paginate";\n', "")
-        .replace('import { toQueryString } from "../../internal/query";\n', "");
+    payables = payables.replace('import { toQueryString } from "../../internal/query";\n', "");
     writeFileSync(payablesPath, payables);
-
-    const pagerTestPath = join(dir, "src/resources/auto-paging.test.ts");
-    const pagerTest = deleteSpan(
-        readFileSync(pagerTestPath, "utf8"),
-        '    {\n        name: "payables.listAutoPaging",',
-        '    {\n        name: "transfers.listAutoPaging",'
-    );
-    writeFileSync(pagerTestPath, pagerTest);
 }
 
 function runSync(dir: string, ...args: string[]): { status: number; output: string } {
@@ -153,6 +142,7 @@ describe("operation-insert golden self-test", () => {
             "return client.get(`/instances/${instanceId}/payables${toQueryString(params)}`, options);"
         );
         expect(payables).not.toContain("URLSearchParams");
+        expect(payables).toContain("listAutoPaging(");
 
         execFileSync("bun", ["run", "check-types"], { cwd: dir, stdio: "pipe" });
         execFileSync("bun", ["run", "test"], { cwd: dir, stdio: "pipe" });

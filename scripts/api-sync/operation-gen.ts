@@ -1,8 +1,8 @@
-import { allResourceSource, hasCoarseSdkEndpointString } from "./coverage";
 import {
     buildSegmentIndex,
     findResourceInfo,
     operationIsImplemented,
+    operationIsImplementedAnywhere,
     resourceSegmentOf,
 } from "./resource-registry";
 import type { JsonValue, Spec } from "./spec";
@@ -187,11 +187,9 @@ export function classifyNewOperation(
 
     if (!/^\/v1\/instances\/\{instance_id\}\//.test(path)) {
         // Outside the generator's template shape by construction (available/*, upload, the
-        // instances resource's own CRUD keyed by {id} rather than a wrapping instanceId, ...).
-        // Reuse the coarse coverage.ts heuristic here (imprecise, but this SDK already accepted
-        // that trade-off for its non-blocking report) so an already-hand-implemented one of
-        // these doesn't turn into a needs-human finding on every single run.
-        if (hasCoarseSdkEndpointString(path, allResourceSource(repoRoot))) {
+        // instances resource's own CRUD keyed by {id} rather than a wrapping instanceId, ...):
+        // a hand-implemented one isn't a finding; a missing one is a needs-human gap.
+        if (operationIsImplementedAnywhere(repoRoot, method, path)) {
             return { standard: false, alreadyImplemented: true };
         }
         return {
