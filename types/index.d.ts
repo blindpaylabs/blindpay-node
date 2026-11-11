@@ -942,8 +942,10 @@ export type PayerRules = {
     pse_bank_code?: string | null;
 }
 
+/** @deprecated Only typed the removed `PayoutTrackingPayment.provider_integration`. */
 export type PayoutProviderIntegration = "veem" | "zenus" | "checkbook" | "onemoney" | "bitso" | "starkbank" | "triplea" | "infinitus" | "portage_g";
 
+/** @deprecated Only typed the removed `PayoutTrackingPayment.forced_provider`. */
 export type PayoutForcedProvider = "zenus" | "veem" | "infinitus_portage";
 
 export type TrackingStatus = 'processing' | 'on_hold' | 'completed' | 'pending_review' | "pending_refund_review";
@@ -974,6 +976,7 @@ export type PayoutTrackingPayment = {
     recipient_account_type?: string | null ;
     estimated_time_of_arrival?: EstimatedTimeOfArrival | null ;
     completed_at?: string | null ;
+    /** @deprecated No longer in the API's payout tracking (spec 66144f3b2); always absent. Kept so existing code compiles; removed in the next major. */
     forced_provider?: PayoutForcedProvider | null;
     refund_review_actioned_at?: string | null;
     refund_review_detected_at?: string | null;
@@ -987,6 +990,7 @@ export type PayoutTrackingPayment = {
     provider_clearing_system?: string | null;
     provider_error_reason?: string | null;
     provider_imad?: string | null;
+    /** @deprecated No longer in the API's payout tracking (spec 66144f3b2); always absent. Kept so existing code compiles; removed in the next major. */
     provider_integration?: PayoutProviderIntegration | null;
     provider_reference?: string | null;
     provider_uetr?: string | null;
