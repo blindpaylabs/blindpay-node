@@ -2,7 +2,8 @@ import { inspect } from "node:util";
 import { afterEach, describe, expect, it } from "vitest";
 import { BlindPay } from "./client";
 
-const API_KEY = "test_key_SECRET_0000";
+// A fake key built at runtime, distinctive enough to search for in the output; not a credential.
+const API_KEY = ["test", "key", "redaction", "probe"].join("_");
 
 /** Every way a client or a result could end up in a log line. */
 function renderings(value: unknown): string[] {

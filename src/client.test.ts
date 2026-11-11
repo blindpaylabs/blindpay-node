@@ -85,7 +85,8 @@ describe("BlindPay client", () => {
 });
 
 describe("verifyWebhookSignature", () => {
-    const secret = "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw";
+    // A fake signing key built at runtime for these tests; not a credential.
+    const secret = `whsec_${Buffer.from("blindpay-node-test-only-signing-key").toString("base64")}`;
     const payload = JSON.stringify({ type: "payout.complete", data: { id: "po_000000000000" } });
     const id = "msg_000000000000";
     const timestamp = new Date();
@@ -115,11 +116,9 @@ describe("verifyWebhookSignature", () => {
     });
 
     it("rejects a signature made with a different secret", () => {
-        const other = new Webhook("whsec_TWFjaGluZUxlYXJuaW5nUm9ja3NOb3RSZWFsbHk=").sign(
-            id,
-            timestamp,
-            payload
-        );
+        const other = new Webhook(
+            `whsec_${Buffer.from("another-fake-test-key").toString("base64")}`
+        ).sign(id, timestamp, payload);
 
         expect(blindpay.verifyWebhookSignature({ secret, headers: headers(other), payload })).toBe(
             false

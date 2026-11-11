@@ -27,7 +27,8 @@ type Vector = {
 
 const { vectors } = readFixture<{ vectors: Vector[] }>("../webhook-vectors.json");
 
-const SECRET = "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw";
+// A fake signing key built at runtime for these tests; not a credential.
+const SECRET = `whsec_${Buffer.from("blindpay-node-test-only-signing-key").toString("base64")}`;
 
 /** Signs `payload` the way BlindPay (Svix) does, at the current (fake) time. */
 function signed(payload: string, id = "msg_000000000000") {
