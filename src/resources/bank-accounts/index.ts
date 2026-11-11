@@ -179,6 +179,12 @@ export type CreatePixResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
+    business_industry?: BusinessIndustry | null;
+    phone_number?: string | null;
+    tax_id?: string | null;
+    date_of_birth?: string | null;
+    tron_wallet_hash?: string | null;
+    status?: BankAccountStatus | null;
 };
 
 export type CreatePixSafeInput = {
@@ -225,6 +231,12 @@ export type CreatePixSafeResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
+    business_industry?: BusinessIndustry | null;
+    phone_number?: string | null;
+    tax_id?: string | null;
+    date_of_birth?: string | null;
+    tron_wallet_hash?: string | null;
+    status?: BankAccountStatus | null;
 };
 
 export type CreateArgentinaTransfersInput = {
@@ -265,6 +277,12 @@ export type CreateArgentinaTransfersResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
+    business_industry?: BusinessIndustry | null;
+    phone_number?: string | null;
+    tax_id?: string | null;
+    date_of_birth?: string | null;
+    tron_wallet_hash?: string | null;
+    status?: BankAccountStatus | null;
 };
 
 export type CreateSpeiInput = {
@@ -307,6 +325,12 @@ export type CreateSpeiResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
+    business_industry?: BusinessIndustry | null;
+    phone_number?: string | null;
+    tax_id?: string | null;
+    date_of_birth?: string | null;
+    tron_wallet_hash?: string | null;
+    status?: BankAccountStatus | null;
 };
 
 export type CreateColombiaAchInput = {
@@ -357,6 +381,12 @@ export type CreateColombiaAchResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
+    business_industry?: BusinessIndustry | null;
+    phone_number?: string | null;
+    tax_id?: string | null;
+    date_of_birth?: string | null;
+    tron_wallet_hash?: string | null;
+    status?: BankAccountStatus | null;
 };
 
 export type CreateAchInput = {
@@ -426,6 +456,12 @@ export type CreateAchResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
+    business_industry?: BusinessIndustry | null;
+    phone_number?: string | null;
+    tax_id?: string | null;
+    date_of_birth?: string | null;
+    tron_wallet_hash?: string | null;
+    status?: BankAccountStatus | null;
 };
 
 export type CreateWireInput = {
@@ -486,6 +522,12 @@ export type CreateWireResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
+    business_industry?: BusinessIndustry | null;
+    phone_number?: string | null;
+    tax_id?: string | null;
+    date_of_birth?: string | null;
+    tron_wallet_hash?: string | null;
+    status?: BankAccountStatus | null;
 };
 
 export type CreateInternationalSwiftInput = {
@@ -579,6 +621,12 @@ export type CreateInternationalSwiftResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
+    business_industry?: BusinessIndustry | null;
+    phone_number?: string | null;
+    tax_id?: string | null;
+    date_of_birth?: string | null;
+    tron_wallet_hash?: string | null;
+    status?: BankAccountStatus | null;
 };
 
 export type CreateRtpInput = {
@@ -639,6 +687,12 @@ export type CreateRtpResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
+    business_industry?: BusinessIndustry | null;
+    phone_number?: string | null;
+    tax_id?: string | null;
+    date_of_birth?: string | null;
+    tron_wallet_hash?: string | null;
+    status?: BankAccountStatus | null;
 };
 
 export type CreateSepaInput = {
@@ -694,6 +748,12 @@ export type CreateSepaResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
+    business_industry?: BusinessIndustry | null;
+    phone_number?: string | null;
+    tax_id?: string | null;
+    date_of_birth?: string | null;
+    tron_wallet_hash?: string | null;
+    status?: BankAccountStatus | null;
 };
 
 export type CreateTedInput = {
@@ -740,6 +800,12 @@ export type CreateTedResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
+    business_industry?: BusinessIndustry | null;
+    phone_number?: string | null;
+    tax_id?: string | null;
+    date_of_birth?: string | null;
+    tron_wallet_hash?: string | null;
+    status?: BankAccountStatus | null;
 };
 
 export type CreateFasterPaymentsInput = {
@@ -772,6 +838,12 @@ export type CreateFasterPaymentsResponse = {
     faster_payments_beneficiary_postal_code: string | null;
     faster_payments_beneficiary_country: Country | null;
     created_at: string | null;
+    business_industry?: BusinessIndustry | null;
+    phone_number?: string | null;
+    tax_id?: string | null;
+    date_of_birth?: string | null;
+    tron_wallet_hash?: string | null;
+    status?: BankAccountStatus | null;
 };
 
 export type CreatePlaidBankAccountInput = {

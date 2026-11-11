@@ -14,3 +14,5 @@ Synced with the API spec at blindpay-v2@66144f3b2; the SDK now covers all 94 pub
 - **Fixed:** `customer_id` on the payout create responses was typed as always present, but the create calls never return it (read it from `payouts.get` or the `payout.new` webhook); it is now optional.
 - **Path ids are percent-encoded** (C9): `payouts.get("a/b")` now requests `/payouts/a%2Fb` instead of a different route. Well-formed BlindPay ids are unchanged on the wire.
 - `console.log(client)` and `JSON.stringify(client)` show the configuration with the API key redacted; the key is no longer reachable as a property.
+- Each rail's bank-account create response now also types `status`, `tax_id`, `phone_number`, `date_of_birth`, `business_industry` and `tron_wallet_hash` (optional; the API returns the whole bank account).
+- `CreatePayoutInput` is deprecated: no method takes it.
