@@ -167,6 +167,10 @@ export function createTransfersResource(instanceId: string, client: InternalApiC
         ): Promise<BlindpayApiResponse<GetTransferResponse>> {
             return client.get(`/instances/${instanceId}/transfers/${transferId}`, options);
         },
+        /**
+         * Public tracking endpoint for BlindPay's web and iOS apps: server-side calls get a 401 in
+         * production. Use `transfers.get(id)` instead.
+         */
         getTrack(
             transferId: GetTransferTrackInput,
             options?: RequestOptions

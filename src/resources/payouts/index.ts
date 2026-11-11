@@ -306,6 +306,10 @@ export function createPayoutsResource(instanceId: string, client: InternalApiCli
         ): Promise<BlindpayApiResponse<GetPayoutResponse>> {
             return client.get(`/instances/${instanceId}/payouts/${payoutId}`, options);
         },
+        /**
+         * Public tracking endpoint for BlindPay's web and iOS apps: server-side calls get a 401 in
+         * production. Use `payouts.get(id)` instead.
+         */
         getTrack(
             payoutId: GetPayoutTrackInput,
             options?: RequestOptions

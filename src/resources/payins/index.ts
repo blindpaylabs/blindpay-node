@@ -129,6 +129,11 @@ export type GetPayinResponse = Payin;
 
 export type GetPayinTrackInput = string;
 
+export type GetPayinTrackParams = {
+    /** Signed checkout token of a card payin; `tracking_transaction.card_instruction` is only returned when it is valid for this payin. */
+    checkout_token?: string;
+};
+
 export type GetPayinTrackResponse = Payin;
 
 export type CreateEvmPayinInput = string;
@@ -185,11 +190,16 @@ export function createPayinsResource(instanceId: string, client: InternalApiClie
         ): Promise<BlindpayApiResponse<GetPayinResponse>> {
             return client.get(`/instances/${instanceId}/payins/${payinId}`, options);
         },
+        /**
+         * Public tracking endpoint for BlindPay's web and iOS apps: server-side calls get a 401 in
+         * production. Use `payins.get(id)` instead.
+         */
         getTrack(
             payinId: GetPayinTrackInput,
+            params?: GetPayinTrackParams,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetPayinTrackResponse>> {
-            return client.get(`/e/payins/${payinId}`, options);
+            return client.get(`/e/payins/${payinId}${toQueryString(params)}`, options);
         },
         createEvm(
             payin_quote_id: CreateEvmPayinInput,

@@ -412,6 +412,24 @@ describe("Payins", () => {
 
             expect(error).toBeNull();
             expect(data).toEqual(mockedPayinTrack);
+            expect(String(fetchMock.mock.calls[0][0])).toBe(
+                "https://api.blindpay.com/v1/e/payins/pi_000000000000"
+            );
+        });
+
+        it("sends a card payin's checkout_token as a query parameter", async () => {
+            fetchMock.mockResponseOnce(JSON.stringify({ id: "pi_000000000000" }), {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const { error } = await blindpay.payins.getTrack("pi_000000000000", {
+                checkout_token: "cGlfMDAwMDAwMDAwMDAwLjE3OTM1NzQ0MDAuM2Y1YQ",
+            });
+
+            expect(error).toBeNull();
+            expect(String(fetchMock.mock.calls[0][0])).toBe(
+                "https://api.blindpay.com/v1/e/payins/pi_000000000000?checkout_token=cGlfMDAwMDAwMDAwMDAwLjE3OTM1NzQ0MDAuM2Y1YQ"
+            );
         });
     });
 
