@@ -62,19 +62,21 @@ describe("BlindPay client", () => {
         expect(error).toStrictEqual({
             message: "Unknown error",
             code: "X",
+            errors: [],
             status: 500,
             type: "api_error",
             retryable: true,
         });
     });
 
-    it("keeps only a message when the error body is not an object", async () => {
+    it("keeps only a message, and an empty errors list, when the error body is not an object", async () => {
         fetchMock.mockResponseOnce(JSON.stringify("Bad Gateway"), { status: 502 });
 
         const { error } = await noRetries.payouts.get("pa_000000000000");
 
         expect(error).toStrictEqual({
             message: "Unknown error",
+            errors: [],
             status: 502,
             type: "api_error",
             retryable: true,
