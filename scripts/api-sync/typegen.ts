@@ -108,12 +108,17 @@ export function synthesizeType(ctx: TypegenContext, node: JsonValue): string {
 function synthesizeResolvedType(ctx: TypegenContext, node: JsonValue): string {
     if (node === undefined || node === null) return "unknown";
 
-    if (Array.isArray(node.enum) && node.enum.length > 0) {
-        const sig = [...node.enum].map(String).sort().join(",");
+    const members: unknown[] = Array.isArray(node.enum)
+        ? node.enum.filter((v: unknown) => v !== null)
+        : [];
+    if (members.length > 0) {
+        const sig = [...members].map(String).sort().join(",");
         const canonical = ctx.canonicalEnums.get(sig);
-        const base = canonical ?? quoteUnion(node.enum);
+        const base = canonical ?? quoteUnion(members);
         if (canonical) ctx.importsNeeded.add(canonical);
-        return nullableSuffix(node, base);
+        // `enum: [..., null]` is how blindpay-v2 writes a nullable enum.
+        const typed = nullableSuffix(node, base);
+        return node.enum.includes(null) && !typed.endsWith(" | null") ? `${typed} | null` : typed;
     }
 
     const rawTypes: string[] = Array.isArray(node.type) ? node.type : node.type ? [node.type] : [];
