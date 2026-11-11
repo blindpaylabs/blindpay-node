@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { randomInt, randomUUID } from "node:crypto";
 import type { BlindpayApiResponse, ErrorResponse, ErrorType, RequestOptions } from "../../types";
 import { toErrorResponse } from "./error-response";
 
@@ -64,6 +64,9 @@ export async function send<T>(
     const isMutation = method !== "GET";
     const isMultipart = form !== undefined;
 
+    if (options.timeoutMs !== undefined && !(options.timeoutMs > 0)) {
+        return invalidRequest("timeoutMs must be a positive number of milliseconds");
+    }
     const callerHeaders = Object.entries(options.headers ?? {});
     if (callerHeaders.some(([name]) => name.toLowerCase() === "idempotency-key")) {
         return invalidRequest(
@@ -128,9 +131,10 @@ export async function send<T>(
         if (decision.autoRetry && attempt < config.maxRetries) {
             const delayMs = decision.retryAfterMs ?? backoffMs(attempt);
             if (await sleep(delayMs, options.signal)) continue;
+            // Cancelled while waiting: return what the API last said, with the key to resume.
             return failure({
-                ...abortedError(),
-                retryable: false,
+                ...(result.kind === "response" ? error : abortedError()),
+                retryable: decision.retryable,
                 idempotency_key: idempotencyKey,
             });
         }
@@ -228,30 +232,31 @@ function decide(ctx: {
     const resendable = isGet || (hasKey && !isMultipart);
     const no: Decision = { retryable: false, autoRetry: false };
 
-    if (attempt.kind === "failure") {
-        if (attempt.type === "aborted") return no;
-        return { retryable: resendable, autoRetry: resendable && !isMultipart };
-    }
+    if (attempt.kind === "failure" && attempt.type === "aborted") return no; // A2 row 1
+    // Rows 2-3, before any status rule: a multipart or unkeyed mutation is never safe to resend.
+    if (!resendable) return no;
+
+    if (attempt.kind === "failure") return { retryable: true, autoRetry: true };
 
     const { status } = attempt.response;
     // A 2xx whose body couldn't be read: the call happened. Not resent automatically; the
     // caller may resend (a keyed mutation replays the stored response).
-    if (attempt.response.ok) return { retryable: resendable, autoRetry: false };
+    if (attempt.response.ok) return { retryable: true, autoRetry: false };
     const retryAfterMs = parseRetryAfter(attempt.response.headers.get("Retry-After"));
 
     if (status === 409 && ctx.message === "idempotency_key_in_flight") {
-        return { retryable: true, autoRetry: resendable, retryAfterMs };
+        return { retryable: true, autoRetry: true, retryAfterMs };
     }
     // Produced before the idempotency middleware, so the handler never ran.
     if (status === 429) {
-        return { retryable: true, autoRetry: resendable && !isMultipart, retryAfterMs };
+        return { retryable: true, autoRetry: true, retryAfterMs };
     }
     if (status >= 500) {
         if (ctx.code && TERMINAL_5XX_CODES.has(ctx.code)) return no;
         if (!isGet) {
             // The API releases the key on a 5xx, so a resend re-executes the handler: the caller
             // checks state first and then resends deliberately with the same key.
-            return { retryable: hasKey && !isMultipart, autoRetry: false };
+            return { retryable: true, autoRetry: false };
         }
     }
     if (isGet && RETRYABLE_GET_STATUSES.has(status)) {
@@ -269,7 +274,8 @@ function parseRetryAfter(value: string | null): number | undefined {
 
 /** `min(8 s, 0.5 s * 2^attempt)` with jitter in [0.5, 1.0]. */
 function backoffMs(attempt: number): number {
-    return Math.min(8000, 500 * 2 ** attempt) * (0.5 + Math.random() * 0.5);
+    // Jitter from node:crypto rather than Math.random().
+    return Math.min(8000, 500 * 2 ** attempt) * (randomInt(500, 1001) / 1000);
 }
 
 /** Resolves `true` after `ms`, or `false` as soon as `signal` aborts (the timer is cleared). */

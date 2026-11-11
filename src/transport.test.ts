@@ -531,16 +531,16 @@ describe("retries (C3, Appendix A2)", () => {
         });
 
         it("uses backoff when Retry-After isn't an integer number of seconds", async () => {
-            vi.spyOn(Math, "random").mockReturnValue(0);
             const { fetch, calls } = fakeFetch(
                 json({ message: "rate_limited" }, 429, { "Retry-After": "1.5" }),
                 json({})
             );
             const call = createPayout(client(fetch));
 
+            // First backoff: 0.5 s times a jitter in [0.5, 1.0], so between 250 and 500 ms.
             await vi.advanceTimersByTimeAsync(249);
             expect(calls).toHaveLength(1);
-            await vi.advanceTimersByTimeAsync(1); // 0.5 s * 0.5 jitter
+            await vi.advanceTimersByTimeAsync(251);
             expect(calls).toHaveLength(2);
             await call;
         });
@@ -565,21 +565,86 @@ describe("retries (C3, Appendix A2)", () => {
             expect(error?.retryable).toBe(false);
         });
 
-        it("stops a pending retry wait when the caller aborts", async () => {
-            const { fetch, calls } = fakeFetch(
-                json({ message: "rate_limited" }, 429, { "Retry-After": "30" })
-            );
-            const controller = new AbortController();
-            const call = client(fetch).payouts.createEvm(payout, { signal: controller.signal });
+        it.each([
+            [
+                "a 429",
+                json({ code: "AUTH_RATE_LIMITED", message: "rate_limited" }, 429, {
+                    "Retry-After": "30",
+                }),
+            ],
+            [
+                "an in-flight 409",
+                json({ message: "idempotency_key_in_flight" }, 409, { "Retry-After": "30" }),
+            ],
+        ])(
+            "stops the wait after %s when the caller aborts, keeping the API's error and the key",
+            async (_label, response) => {
+                const { fetch, calls } = fakeFetch(response);
+                const controller = new AbortController();
+                const call = client(fetch).payouts.createEvm(payout, {
+                    signal: controller.signal,
+                    idempotencyKey: "key-1",
+                });
 
-            await vi.advanceTimersByTimeAsync(1_000);
-            controller.abort();
-            const { error } = await call;
+                await vi.advanceTimersByTimeAsync(1_000);
+                controller.abort();
+                const { error } = await call;
+
+                expect(calls).toHaveLength(1);
+                expect(error).toMatchObject({
+                    status: response.status,
+                    type: "api_error",
+                    retryable: true,
+                    idempotency_key: "key-1",
+                });
+                expect(vi.getTimerCount()).toBe(0);
+            }
+        );
+
+        it("without a key (retries off), a 5xx is not retryable: A2 row 3 comes first", async () => {
+            const { fetch, calls } = fakeFetch(json({ message: "boom" }, 503));
+
+            const { error } = await client(fetch, { maxRetries: 0 }).payouts.createEvm(payout);
 
             expect(calls).toHaveLength(1);
-            expect(error).toMatchObject({ type: "aborted", retryable: false });
-            expect(vi.getTimerCount()).toBe(0);
+            expect(header(calls[0], "Idempotency-Key")).toBeNull();
+            expect(error).toMatchObject({ status: 503, retryable: false });
+            expect(error?.idempotency_key).toBeUndefined();
         });
+
+        it("isn't retried, nor retryable, on a 408 (A2 row 10)", async () => {
+            const { fetch, calls } = fakeFetch(json({ message: "timeout" }, 408));
+
+            const { error } = await settle(createPayout(client(fetch)));
+
+            expect(calls).toHaveLength(1);
+            expect(error).toMatchObject({ status: 408, retryable: false });
+        });
+
+        it("keeps the status and the key when a 2xx body isn't JSON", async () => {
+            const { fetch, calls } = fakeFetch(new Response("<html>ok</html>", { status: 201 }));
+
+            const { data, error } = await settle(createPayout(client(fetch)));
+
+            expect(data).toBeNull();
+            expect(error).toMatchObject({
+                status: 201,
+                type: "invalid_response",
+                idempotency_key: header(calls[0], "Idempotency-Key"),
+            });
+        });
+
+        it.each([0, -1, Number.NaN])(
+            "rejects a per-call timeoutMs of %s without sending",
+            async (timeoutMs) => {
+                const { fetch, calls } = fakeFetch();
+
+                const { error } = await client(fetch).payouts.get("pa_000000000000", { timeoutMs });
+
+                expect(calls).toHaveLength(0);
+                expect(error).toMatchObject({ type: "invalid_request", status: 0 });
+            }
+        );
     });
 
     describe("maxRetries: 0", () => {
