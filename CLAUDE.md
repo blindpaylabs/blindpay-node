@@ -177,6 +177,8 @@ Normally the api-sync workflow does this for you: blindpay-v2's `sdk-sync.yml` d
 
 It applies three kinds of change on its own: new enum members, new optional fields, and new methods for standard operations on an existing resource (instance-scoped path, JSON request and response, an existing `create{X}Resource(instanceId, client)` factory). For anything else it prints the exact reason it stopped. Only then use the manual recipes below: a brand-new resource, non-instance paths (`/available/*`, `/e/*`), multipart uploads, non-GET operations with query parameters, and resource files with a non-standard factory. After a manual change, `bun run sync:check` names any `.api-sync/spec-map.json` entry still missing.
 
+A type may share fields through a same-file base joined with `&` (`BankAccountCreateCommon & { ... }`, `PayoutSourceWallet & { ... }`): api-sync resolves those fields (`extractResolvedFields` in `sdk-scan.ts`). A base from another file is not resolved, so keep shared bases next to their users.
+
 Deliberate differences from the spec are recorded in `.api-sync/unmodeled.json` with an owner and a reason. Never silence a finding by editing that file without the reason being true.
 
 ## How to: Add a New Resource
