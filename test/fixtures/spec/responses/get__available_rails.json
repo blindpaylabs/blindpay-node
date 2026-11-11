@@ -1,0 +1,46 @@
+{
+  "operation": "GET /v1/available/rails",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "AvailableRails",
+      "variants": {
+        "full": [
+          {
+            "label": "Domestic Wire",
+            "value": "wire",
+            "country": "US"
+          }
+        ],
+        "required_only": [
+          {
+            "label": "Domestic Wire",
+            "value": "wire",
+            "country": "US"
+          }
+        ],
+        "nullables_null": [
+          {
+            "label": "Domestic Wire",
+            "value": "wire",
+            "country": "US"
+          }
+        ],
+        "unknown_enum": [
+          {
+            "label": "Domestic Wire",
+            "value": "zz_unknown_value_from_future_api",
+            "country": "zz_unknown_value_from_future_api"
+          }
+        ],
+        "decimals": [
+          {
+            "label": "Domestic Wire",
+            "value": "wire",
+            "country": "US"
+          }
+        ]
+      }
+    }
+  }
+}

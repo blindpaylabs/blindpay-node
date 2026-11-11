@@ -1,0 +1,68 @@
+{
+  "operation": "POST /v1/instances/{instance_id}/transfer-quotes",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "CreateTransferQuoteOut",
+      "variants": {
+        "full": {
+          "id": "qu_000000000000",
+          "expires_at": 1712958191000,
+          "commercial_quotation": 100,
+          "blindpay_quotation": 100,
+          "receiver_amount": 1010,
+          "sender_amount": 5240,
+          "partner_fee_amount": 150,
+          "partner_percentage_fee": 150,
+          "partner_flat_fee": 50,
+          "flat_fee": 50
+        },
+        "required_only": {
+          "id": "qu_000000000000",
+          "expires_at": 1712958191000,
+          "commercial_quotation": 100,
+          "blindpay_quotation": 100,
+          "receiver_amount": 1010,
+          "sender_amount": 5240,
+          "flat_fee": 50
+        },
+        "nullables_null": {
+          "id": "qu_000000000000",
+          "expires_at": null,
+          "commercial_quotation": null,
+          "blindpay_quotation": null,
+          "receiver_amount": 1010,
+          "sender_amount": 5240,
+          "partner_fee_amount": null,
+          "partner_percentage_fee": 150,
+          "partner_flat_fee": 50,
+          "flat_fee": 50
+        },
+        "unknown_enum": {
+          "id": "qu_000000000000",
+          "expires_at": 1712958191000,
+          "commercial_quotation": 100,
+          "blindpay_quotation": 100,
+          "receiver_amount": 1010,
+          "sender_amount": 5240,
+          "partner_fee_amount": 150,
+          "partner_percentage_fee": 150,
+          "partner_flat_fee": 50,
+          "flat_fee": 50
+        },
+        "decimals": {
+          "id": "qu_000000000000",
+          "expires_at": 1712958191000,
+          "commercial_quotation": 1234.56,
+          "blindpay_quotation": 1234.56,
+          "receiver_amount": 1010,
+          "sender_amount": 5240,
+          "partner_fee_amount": 150,
+          "partner_percentage_fee": 150,
+          "partner_flat_fee": 50,
+          "flat_fee": 50
+        }
+      }
+    }
+  }
+}

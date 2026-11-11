@@ -1,0 +1,12 @@
+{
+  "event": "zz.future_event",
+  "schema_ref": null,
+  "variants": {
+    "full": {
+      "webhook_event": "zz.future_event",
+      "id": "xx_000000000000",
+      "some_new_field": 1
+    }
+  },
+  "sdk_behaviour": "constructEvent must return the unknown/generic event variant carrying raw JSON, not throw"
+}

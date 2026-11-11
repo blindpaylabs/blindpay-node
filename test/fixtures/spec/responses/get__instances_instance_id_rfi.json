@@ -1,0 +1,171 @@
+{
+  "operation": "GET /v1/instances/{instance_id}/rfi",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "InstanceRfi",
+      "variants": {
+        "full": {
+          "id": "xx_000000000000",
+          "instance_id": "xx_000000000000",
+          "status": "pending",
+          "request": [
+            {
+              "title": "sample_title",
+              "description": "sample_description",
+              "supporting_document": "https://example.com/resource",
+              "fields": [
+                {
+                  "key": "sample_key",
+                  "label": "sample_label",
+                  "regex": "sample_regex",
+                  "required": true,
+                  "items": [
+                    {
+                      "label": "sample_label",
+                      "value": "sample_value"
+                    }
+                  ],
+                  "multiple": true,
+                  "aiprise_document_type": "ADDRESS_PROOF_DOCUMENT"
+                }
+              ]
+            }
+          ],
+          "response": {
+            "sample_key": "sample_sample_key"
+          },
+          "expires_at": "2025-11-10T15:59:30.000Z",
+          "submitted_at": "2025-11-10T15:59:30.000Z",
+          "created_at": "2025-11-10T15:59:30.000Z"
+        },
+        "required_only": {
+          "id": "xx_000000000000",
+          "instance_id": "xx_000000000000",
+          "status": "pending",
+          "request": [
+            {
+              "title": "sample_title",
+              "description": "sample_description",
+              "fields": [
+                {
+                  "key": "sample_key",
+                  "label": "sample_label",
+                  "required": true
+                }
+              ]
+            }
+          ],
+          "response": {
+            "sample_key": "sample_sample_key"
+          },
+          "expires_at": "2025-11-10T15:59:30.000Z",
+          "submitted_at": "2025-11-10T15:59:30.000Z",
+          "created_at": "2025-11-10T15:59:30.000Z"
+        },
+        "nullables_null": {
+          "id": "xx_000000000000",
+          "instance_id": "xx_000000000000",
+          "status": "pending",
+          "request": [
+            {
+              "title": "sample_title",
+              "description": "sample_description",
+              "supporting_document": "https://example.com/resource",
+              "fields": [
+                {
+                  "key": "sample_key",
+                  "label": "sample_label",
+                  "regex": "sample_regex",
+                  "required": true,
+                  "items": [
+                    {
+                      "label": "sample_label",
+                      "value": "sample_value"
+                    }
+                  ],
+                  "multiple": true,
+                  "aiprise_document_type": "ADDRESS_PROOF_DOCUMENT"
+                }
+              ]
+            }
+          ],
+          "response": {
+            "sample_key": "sample_sample_key"
+          },
+          "expires_at": "2025-11-10T15:59:30.000Z",
+          "submitted_at": null,
+          "created_at": "2025-11-10T15:59:30.000Z"
+        },
+        "unknown_enum": {
+          "id": "xx_000000000000",
+          "instance_id": "xx_000000000000",
+          "status": "zz_unknown_value_from_future_api",
+          "request": [
+            {
+              "title": "sample_title",
+              "description": "sample_description",
+              "supporting_document": "https://example.com/resource",
+              "fields": [
+                {
+                  "key": "sample_key",
+                  "label": "sample_label",
+                  "regex": "sample_regex",
+                  "required": true,
+                  "items": [
+                    {
+                      "label": "sample_label",
+                      "value": "sample_value"
+                    }
+                  ],
+                  "multiple": true,
+                  "aiprise_document_type": "zz_unknown_value_from_future_api"
+                }
+              ]
+            }
+          ],
+          "response": {
+            "sample_key": "sample_sample_key"
+          },
+          "expires_at": "2025-11-10T15:59:30.000Z",
+          "submitted_at": "2025-11-10T15:59:30.000Z",
+          "created_at": "2025-11-10T15:59:30.000Z"
+        },
+        "decimals": {
+          "id": "xx_000000000000",
+          "instance_id": "xx_000000000000",
+          "status": "pending",
+          "request": [
+            {
+              "title": "sample_title",
+              "description": "sample_description",
+              "supporting_document": "https://example.com/resource",
+              "fields": [
+                {
+                  "key": "sample_key",
+                  "label": "sample_label",
+                  "regex": "sample_regex",
+                  "required": true,
+                  "items": [
+                    {
+                      "label": "sample_label",
+                      "value": "sample_value"
+                    }
+                  ],
+                  "multiple": true,
+                  "aiprise_document_type": "ADDRESS_PROOF_DOCUMENT"
+                }
+              ]
+            }
+          ],
+          "response": {
+            "sample_key": "sample_sample_key"
+          },
+          "expires_at": "2025-11-10T15:59:30.000Z",
+          "submitted_at": "2025-11-10T15:59:30.000Z",
+          "created_at": "2025-11-10T15:59:30.000Z"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "operation": "GET /v1/available/naics",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "AvailableNaicsList",
+      "variants": {
+        "full": [
+          {
+            "label": "(339910) Jewelry and Silverware Manufacturing",
+            "value": "339910"
+          }
+        ],
+        "required_only": [
+          {
+            "label": "(339910) Jewelry and Silverware Manufacturing",
+            "value": "339910"
+          }
+        ],
+        "nullables_null": [
+          {
+            "label": "(339910) Jewelry and Silverware Manufacturing",
+            "value": "339910"
+          }
+        ],
+        "unknown_enum": [
+          {
+            "label": "(339910) Jewelry and Silverware Manufacturing",
+            "value": "339910"
+          }
+        ],
+        "decimals": [
+          {
+            "label": "(339910) Jewelry and Silverware Manufacturing",
+            "value": "339910"
+          }
+        ]
+      }
+    }
+  }
+}

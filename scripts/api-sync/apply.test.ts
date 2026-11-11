@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { insertEnumMember, insertOptionalField } from "./apply";
+import { ensureQueryStringImport, insertEnumMember, insertOptionalField } from "./apply";
 
 describe("insertEnumMember", () => {
     it("inserts into a single-line union", () => {
@@ -142,5 +142,47 @@ describe("insertOptionalField", () => {
         );
         const result = insertOptionalField(src, "Foo", "c", "boolean");
         expect(result).toContain("a:    string;");
+    });
+});
+
+describe("ensureQueryStringImport", () => {
+    const resource = `import type { BlindpayApiResponse } from "../../../types";
+import type { InternalApiClient } from "../../internal/api-client";
+
+export function createWidgetsResource() {}
+`;
+
+    it("imports toQueryString after the InternalApiClient import, with the same relative prefix", () => {
+        expect(
+            ensureQueryStringImport(resource)
+        ).toBe(`import type { BlindpayApiResponse } from "../../../types";
+import type { InternalApiClient } from "../../internal/api-client";
+import { toQueryString } from "../../internal/query";
+
+export function createWidgetsResource() {}
+`);
+    });
+
+    it("keeps Biome's alphabetical order among the other internal imports", () => {
+        const withHelpers = `import type { InternalApiClient } from "../../internal/api-client";
+import type { StrictOmit } from "../../internal/helpers/strict-omit";
+import { toErrorResponse } from "../../internal/zz-later";
+`;
+        expect(
+            ensureQueryStringImport(withHelpers)
+        ).toBe(`import type { InternalApiClient } from "../../internal/api-client";
+import type { StrictOmit } from "../../internal/helpers/strict-omit";
+import { toQueryString } from "../../internal/query";
+import { toErrorResponse } from "../../internal/zz-later";
+`);
+    });
+
+    it("is idempotent", () => {
+        const once = ensureQueryStringImport(resource);
+        expect(ensureQueryStringImport(once)).toBe(once);
+    });
+
+    it("throws when there is no InternalApiClient import to anchor on", () => {
+        expect(() => ensureQueryStringImport("export const x = 1;\n")).toThrow(/InternalApiClient/);
     });
 });

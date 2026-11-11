@@ -1,0 +1,41 @@
+{
+  "operation": "GET /v1/instances/{id}",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "RetrieveInstanceOut",
+      "variants": {
+        "full": {
+          "id": "in_000000000000",
+          "name": "My Instance",
+          "type": "development",
+          "onboarding_step": "initial"
+        },
+        "required_only": {
+          "id": "in_000000000000",
+          "name": "My Instance",
+          "type": "development",
+          "onboarding_step": "initial"
+        },
+        "nullables_null": {
+          "id": "in_000000000000",
+          "name": "My Instance",
+          "type": "development",
+          "onboarding_step": "initial"
+        },
+        "unknown_enum": {
+          "id": "in_000000000000",
+          "name": "My Instance",
+          "type": "zz_unknown_value_from_future_api",
+          "onboarding_step": "zz_unknown_value_from_future_api"
+        },
+        "decimals": {
+          "id": "in_000000000000",
+          "name": "My Instance",
+          "type": "development",
+          "onboarding_step": "initial"
+        }
+      }
+    }
+  }
+}

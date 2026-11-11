@@ -1,0 +1,232 @@
+{
+  "operation": "GET /v1/instances/{instance_id}/payables/{id}",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "PayableOut",
+      "variants": {
+        "full": {
+          "id": "pb_000000000000",
+          "instance_id": "in_000000000000",
+          "customer_id": "re_000000000000",
+          "from": {
+            "legal_name": "Empresa de Servicos LTDA",
+            "address_line_1": "sample_address_line_1",
+            "address_line_2": "sample_address_line_2",
+            "city": "sample_city",
+            "state_province_region": "sample_state_province_region",
+            "postal_code": "sample_postal_code",
+            "country": "BR",
+            "tax_id": "12.345.678/0001-90"
+          },
+          "to": {
+            "legal_name": "Empresa de Servicos LTDA",
+            "address_line_1": "sample_address_line_1",
+            "address_line_2": "sample_address_line_2",
+            "city": "sample_city",
+            "state_province_region": "sample_state_province_region",
+            "postal_code": "sample_postal_code",
+            "country": "BR",
+            "tax_id": "12.345.678/0001-90"
+          },
+          "currency": "BRL",
+          "line_items": [
+            {
+              "name": "Consulting services",
+              "quantity": 2,
+              "price": 150000
+            }
+          ],
+          "note": "August retainer",
+          "discount": 0,
+          "taxes": 0,
+          "boleto_barcode": "34191.79001 01043.510047 91020.150008 1 84660000002000",
+          "pix_qrcode": "sample_pix_qrcode",
+          "document_file": "https://files.blindpay.com/1712345678901-boleto.pdf",
+          "due_date": "2026-08-10",
+          "scheduled_at": "2026-08-10T12:00:00.000Z",
+          "status": "draft",
+          "created_at": "2021-01-01T00:00:00Z",
+          "updated_at": "2021-01-01T00:00:00Z",
+          "amount": 300000,
+          "payout_id": "po_000000000000",
+          "bank_account": {
+            "type": "ach",
+            "beneficiary_name": "Northwind Cloud Services Inc",
+            "routing_number": "026009593",
+            "account_number": "000123456789",
+            "account_type": "checking"
+          },
+          "last_attempt_status": "failed",
+          "first_name": "sample_first_name",
+          "last_name": "sample_last_name",
+          "legal_name": "sample_legal_name"
+        },
+        "required_only": {
+          "id": "pb_000000000000",
+          "instance_id": "in_000000000000",
+          "customer_id": "re_000000000000",
+          "currency": "BRL",
+          "status": "draft",
+          "amount": 300000
+        },
+        "nullables_null": {
+          "id": "pb_000000000000",
+          "instance_id": "in_000000000000",
+          "customer_id": "re_000000000000",
+          "from": null,
+          "to": {
+            "legal_name": null,
+            "address_line_1": null,
+            "address_line_2": null,
+            "city": null,
+            "state_province_region": null,
+            "postal_code": null,
+            "country": null,
+            "tax_id": null
+          },
+          "currency": "BRL",
+          "line_items": [
+            {
+              "name": "Consulting services",
+              "quantity": 2,
+              "price": null
+            }
+          ],
+          "note": null,
+          "discount": null,
+          "taxes": null,
+          "boleto_barcode": null,
+          "pix_qrcode": null,
+          "document_file": null,
+          "due_date": null,
+          "scheduled_at": null,
+          "status": "draft",
+          "created_at": null,
+          "updated_at": null,
+          "amount": null,
+          "payout_id": null,
+          "bank_account": null,
+          "last_attempt_status": null,
+          "first_name": null,
+          "last_name": null,
+          "legal_name": null
+        },
+        "unknown_enum": {
+          "id": "pb_000000000000",
+          "instance_id": "in_000000000000",
+          "customer_id": "re_000000000000",
+          "from": {
+            "legal_name": "Empresa de Servicos LTDA",
+            "address_line_1": "sample_address_line_1",
+            "address_line_2": "sample_address_line_2",
+            "city": "sample_city",
+            "state_province_region": "sample_state_province_region",
+            "postal_code": "sample_postal_code",
+            "country": "BR",
+            "tax_id": "12.345.678/0001-90"
+          },
+          "to": {
+            "legal_name": "Empresa de Servicos LTDA",
+            "address_line_1": "sample_address_line_1",
+            "address_line_2": "sample_address_line_2",
+            "city": "sample_city",
+            "state_province_region": "sample_state_province_region",
+            "postal_code": "sample_postal_code",
+            "country": "BR",
+            "tax_id": "12.345.678/0001-90"
+          },
+          "currency": "zz_unknown_value_from_future_api",
+          "line_items": [
+            {
+              "name": "Consulting services",
+              "quantity": 2,
+              "price": 150000
+            }
+          ],
+          "note": "August retainer",
+          "discount": 0,
+          "taxes": 0,
+          "boleto_barcode": "34191.79001 01043.510047 91020.150008 1 84660000002000",
+          "pix_qrcode": "sample_pix_qrcode",
+          "document_file": "https://files.blindpay.com/1712345678901-boleto.pdf",
+          "due_date": "2026-08-10",
+          "scheduled_at": "2026-08-10T12:00:00.000Z",
+          "status": "zz_unknown_value_from_future_api",
+          "created_at": "2021-01-01T00:00:00Z",
+          "updated_at": "2021-01-01T00:00:00Z",
+          "amount": 300000,
+          "payout_id": "po_000000000000",
+          "bank_account": {
+            "type": "zz_unknown_value_from_future_api",
+            "beneficiary_name": "Northwind Cloud Services Inc",
+            "routing_number": "026009593",
+            "account_number": "000123456789",
+            "account_type": "checking"
+          },
+          "last_attempt_status": "zz_unknown_value_from_future_api",
+          "first_name": "sample_first_name",
+          "last_name": "sample_last_name",
+          "legal_name": "sample_legal_name"
+        },
+        "decimals": {
+          "id": "pb_000000000000",
+          "instance_id": "in_000000000000",
+          "customer_id": "re_000000000000",
+          "from": {
+            "legal_name": "Empresa de Servicos LTDA",
+            "address_line_1": "sample_address_line_1",
+            "address_line_2": "sample_address_line_2",
+            "city": "sample_city",
+            "state_province_region": "sample_state_province_region",
+            "postal_code": "sample_postal_code",
+            "country": "BR",
+            "tax_id": "12.345.678/0001-90"
+          },
+          "to": {
+            "legal_name": "Empresa de Servicos LTDA",
+            "address_line_1": "sample_address_line_1",
+            "address_line_2": "sample_address_line_2",
+            "city": "sample_city",
+            "state_province_region": "sample_state_province_region",
+            "postal_code": "sample_postal_code",
+            "country": "BR",
+            "tax_id": "12.345.678/0001-90"
+          },
+          "currency": "BRL",
+          "line_items": [
+            {
+              "name": "Consulting services",
+              "quantity": 2,
+              "price": 150000
+            }
+          ],
+          "note": "August retainer",
+          "discount": 0,
+          "taxes": 0,
+          "boleto_barcode": "34191.79001 01043.510047 91020.150008 1 84660000002000",
+          "pix_qrcode": "sample_pix_qrcode",
+          "document_file": "https://files.blindpay.com/1712345678901-boleto.pdf",
+          "due_date": "2026-08-10",
+          "scheduled_at": "2026-08-10T12:00:00.000Z",
+          "status": "draft",
+          "created_at": "2021-01-01T00:00:00Z",
+          "updated_at": "2021-01-01T00:00:00Z",
+          "amount": 300000,
+          "payout_id": "po_000000000000",
+          "bank_account": {
+            "type": "ach",
+            "beneficiary_name": "Northwind Cloud Services Inc",
+            "routing_number": "026009593",
+            "account_number": "000123456789",
+            "account_type": "checking"
+          },
+          "last_attempt_status": "failed",
+          "first_name": "sample_first_name",
+          "last_name": "sample_last_name",
+          "legal_name": "sample_legal_name"
+        }
+      }
+    }
+  }
+}

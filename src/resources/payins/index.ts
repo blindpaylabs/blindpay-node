@@ -17,6 +17,7 @@ import type {
     TransactionStatus,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { toQueryString } from "../../internal/query";
 
 export type BlindpayBankDetails = {
     routing_number: string;
@@ -79,6 +80,7 @@ export type Payin = {
     token: StablecoinToken;
     partner_fee_id?: string | null;
     partner_fee_amount?: number | null;
+    /** Total fee as a decimal token amount (e.g. `1.5` = 1.5 USDC), not integer cents. */
     total_fee_amount?: number | null;
     commercial_quotation: number | null;
     blindpay_quotation: number | null;
@@ -156,8 +158,7 @@ export type CreateEvmPayinResponse = Pick<
 export function createPayinsResource(instanceId: string, client: InternalApiClient) {
     return {
         list(params?: ListPayinsInput): Promise<BlindpayApiResponse<ListPayinsResponse>> {
-            const queryParams = params ? `?${new URLSearchParams(params)}` : "";
-            return client.get(`/instances/${instanceId}/payins${queryParams}`);
+            return client.get(`/instances/${instanceId}/payins${toQueryString(params)}`);
         },
         get(payinId: GetPayinInput): Promise<BlindpayApiResponse<GetPayinResponse>> {
             return client.get(`/instances/${instanceId}/payins/${payinId}`);

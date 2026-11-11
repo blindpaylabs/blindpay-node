@@ -1,0 +1,46 @@
+{
+  "operation": "POST /v1/instances/{instance_id}/payin-quotes/fx",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": null,
+      "variants": {
+        "full": {
+          "commercial_quotation": 495,
+          "blindpay_quotation": 505,
+          "result_amount": 1000,
+          "instance_flat_fee": 50,
+          "instance_percentage_fee": 1000
+        },
+        "required_only": {
+          "commercial_quotation": 495,
+          "blindpay_quotation": 505,
+          "result_amount": 1000,
+          "instance_flat_fee": 50,
+          "instance_percentage_fee": 1000
+        },
+        "nullables_null": {
+          "commercial_quotation": null,
+          "blindpay_quotation": null,
+          "result_amount": 1000,
+          "instance_flat_fee": null,
+          "instance_percentage_fee": 1000
+        },
+        "unknown_enum": {
+          "commercial_quotation": 495,
+          "blindpay_quotation": 505,
+          "result_amount": 1000,
+          "instance_flat_fee": 50,
+          "instance_percentage_fee": 1000
+        },
+        "decimals": {
+          "commercial_quotation": 1234.56,
+          "blindpay_quotation": 1234.56,
+          "result_amount": 1000,
+          "instance_flat_fee": 50,
+          "instance_percentage_fee": 1000
+        }
+      }
+    }
+  }
+}

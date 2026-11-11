@@ -1,0 +1,26 @@
+{
+  "operation": "GET /v1/instances/{instance_id}/customers/{customer_id}/blockchain-wallets/sign-message",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "BlockchainWalletMessageOut",
+      "variants": {
+        "full": {
+          "message": "sample_message"
+        },
+        "required_only": {
+          "message": "sample_message"
+        },
+        "nullables_null": {
+          "message": "sample_message"
+        },
+        "unknown_enum": {
+          "message": "sample_message"
+        },
+        "decimals": {
+          "message": "sample_message"
+        }
+      }
+    }
+  }
+}

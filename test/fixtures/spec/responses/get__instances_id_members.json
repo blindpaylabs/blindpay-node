@@ -1,0 +1,73 @@
+{
+  "operation": "GET /v1/instances/{id}/members",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": null,
+      "variants": {
+        "full": [
+          {
+            "id": "us_000000000000",
+            "email": "email@example.com",
+            "first_name": "Harry",
+            "middle_name": "James",
+            "last_name": "Potter",
+            "image_url": "https://example.com/image.png",
+            "created_at": "2021-01-01T00:00:00Z",
+            "has_passkey": true,
+            "role": "admin"
+          }
+        ],
+        "required_only": [
+          {
+            "id": "us_000000000000",
+            "email": "email@example.com",
+            "first_name": "Harry",
+            "last_name": "Potter",
+            "image_url": "https://example.com/image.png",
+            "role": "admin"
+          }
+        ],
+        "nullables_null": [
+          {
+            "id": "us_000000000000",
+            "email": "email@example.com",
+            "first_name": "Harry",
+            "middle_name": null,
+            "last_name": "Potter",
+            "image_url": "https://example.com/image.png",
+            "created_at": null,
+            "has_passkey": null,
+            "role": "admin"
+          }
+        ],
+        "unknown_enum": [
+          {
+            "id": "us_000000000000",
+            "email": "email@example.com",
+            "first_name": "Harry",
+            "middle_name": "James",
+            "last_name": "Potter",
+            "image_url": "https://example.com/image.png",
+            "created_at": "2021-01-01T00:00:00Z",
+            "has_passkey": true,
+            "role": "zz_unknown_value_from_future_api"
+          }
+        ],
+        "decimals": [
+          {
+            "id": "us_000000000000",
+            "email": "email@example.com",
+            "first_name": "Harry",
+            "middle_name": "James",
+            "last_name": "Potter",
+            "image_url": "https://example.com/image.png",
+            "created_at": "2021-01-01T00:00:00Z",
+            "has_passkey": true,
+            "role": "admin"
+          }
+        ]
+      }
+    }
+  }
+}

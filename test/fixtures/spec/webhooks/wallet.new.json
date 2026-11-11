@@ -1,0 +1,52 @@
+{
+  "event": "wallet.new",
+  "schema_ref": "WalletNewWebhookOut",
+  "variants": {
+    "full": {
+      "webhook_event": "wallet.new",
+      "id": "bl_000000000000",
+      "name": "Blindpay Wallet",
+      "external_id": "your-database-id",
+      "address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+      "network": "polygon",
+      "yield_status": "enabled",
+      "created_at": "2021-01-01T00:00:00Z"
+    },
+    "required_only": {
+      "webhook_event": "wallet.new",
+      "id": "bl_000000000000",
+      "name": "Blindpay Wallet",
+      "network": "polygon"
+    },
+    "nullables_null": {
+      "webhook_event": "wallet.new",
+      "id": "bl_000000000000",
+      "name": "Blindpay Wallet",
+      "external_id": null,
+      "address": null,
+      "network": "polygon",
+      "yield_status": "enabled",
+      "created_at": null
+    },
+    "unknown_enum": {
+      "webhook_event": "wallet.new",
+      "id": "bl_000000000000",
+      "name": "Blindpay Wallet",
+      "external_id": "your-database-id",
+      "address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+      "network": "zz_unknown_value_from_future_api",
+      "yield_status": "zz_unknown_value_from_future_api",
+      "created_at": "2021-01-01T00:00:00Z"
+    },
+    "decimals": {
+      "webhook_event": "wallet.new",
+      "id": "bl_000000000000",
+      "name": "Blindpay Wallet",
+      "external_id": "your-database-id",
+      "address": "0xDD6a3aD0949396e57C7738ba8FC1A46A5a1C372C",
+      "network": "polygon",
+      "yield_status": "enabled",
+      "created_at": "2021-01-01T00:00:00Z"
+    }
+  }
+}

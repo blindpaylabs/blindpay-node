@@ -365,7 +365,9 @@ export function classifyNewOperation(
             pure: inputIsPure,
             currentFile: resourceFile,
             alreadyWholeMapped: wholeSchemas,
-            pathLocator: bodyRefName ? null : { path, method, location: "requestBody" },
+            // Only an inline request body has a spec location to map; a GET's path + query
+            // input has none (a "requestBody" locator there fails spec-map validation).
+            pathLocator: bodyRefName || !hasBody ? null : { path, method, location: "requestBody" },
         });
         typeDecls += `${decl}\n\n`;
         if (mapEntry) newMapEntries.push(mapEntry);
@@ -432,6 +434,8 @@ export function classifyNewOperation(
                 ...ctx.importsNeeded,
                 ...(method === "get" ? [] : ["RequestOptions"]),
             ].sort(),
+            // GETs with query fields serialise them with src/internal/query.ts (see buildMethodSource).
+            usesQueryString: method === "get" && inputKind === "object" && queryFields.length > 0,
             newMapEntries,
         },
     };
@@ -506,18 +510,14 @@ function buildMethodSource(args: {
     if (method === "get" && pathFieldNames.length === 0 && queryFieldNames.length > 0) {
         return (
             `${methodName}(params?: ${inputSymbol}): ${returnType} {\n` +
-            `            const queryParams = params ? \`?\${new URLSearchParams(params)}\` : "";\n` +
-            `            return client.get(\`${pathTemplate}\${queryParams}\`);\n` +
+            `            return client.get(\`${pathTemplate}\${toQueryString(params)}\`);\n` +
             `        },`
         );
     }
     if (method === "get" && pathFieldNames.length > 0 && queryFieldNames.length > 0) {
         return (
             `${methodName}({ ${pathFieldNames.join(", ")}, ...params }: ${inputSymbol}): ${returnType} {\n` +
-            `            const queryParams = Object.keys(params).length\n` +
-            `                ? \`?\${new URLSearchParams(params as Record<string, string>)}\`\n` +
-            `                : "";\n` +
-            `            return client.get(\`${pathTemplate}\${queryParams}\`);\n` +
+            `            return client.get(\`${pathTemplate}\${toQueryString(params)}\`);\n` +
             `        },`
         );
     }

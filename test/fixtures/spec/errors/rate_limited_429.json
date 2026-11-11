@@ -1,0 +1,13 @@
+{
+  "status": 429,
+  "headers": {
+    "Retry-After": "2"
+  },
+  "body": {
+    "success": false,
+    "code": "AUTH_RATE_LIMITED",
+    "message": "rate_limited",
+    "errors": [],
+    "trace_id": "1bf7651916cd43dd8448eb211c80319c"
+  }
+}

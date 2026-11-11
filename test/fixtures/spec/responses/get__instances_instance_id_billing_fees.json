@@ -1,0 +1,673 @@
+{
+  "operation": "GET /v1/instances/{instance_id}/billing/fees",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "GetFeesOut",
+      "variants": {
+        "full": {
+          "id": "fe_000000000000",
+          "instance_id": "in_000000000000",
+          "ach": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "domestic_wire": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "rtp": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "international_swift": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "pix": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "pix_safe": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "ted": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "ach_colombia": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "transfers_3": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "spei": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "sepa": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "faster_payments": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "tron": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "ethereum": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "polygon": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "base": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "arbitrum": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "stellar": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "solana": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "yield": {
+            "blindpay_share_bps": 1500,
+            "partner_share_bps": 0,
+            "partner_wallets": {
+              "base": "sample_base",
+              "sepolia": "sample_sepolia",
+              "arbitrum_sepolia": "sample_arbitrum_sepolia",
+              "base_sepolia": "sample_base_sepolia",
+              "arbitrum": "sample_arbitrum",
+              "polygon": "0x0000000000000000000000000000000000000000",
+              "polygon_amoy": "sample_polygon_amoy",
+              "ethereum": "sample_ethereum",
+              "stellar": "sample_stellar",
+              "stellar_testnet": "sample_stellar_testnet",
+              "tron": "sample_tron",
+              "solana": "sample_solana",
+              "solana_devnet": "sample_solana_devnet",
+              "tempo": "sample_tempo",
+              "tempo_testnet": "sample_tempo_testnet",
+              "arc": "sample_arc",
+              "arc_testnet": "sample_arc_testnet"
+            }
+          },
+          "created_at": "2021-01-01T00:00:00Z",
+          "updated_at": "2021-01-01T00:00:00Z"
+        },
+        "required_only": {
+          "id": "fe_000000000000",
+          "instance_id": "in_000000000000",
+          "ach": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "domestic_wire": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "rtp": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "international_swift": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "pix": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "pix_safe": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "ach_colombia": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "transfers_3": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "spei": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "sepa": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "faster_payments": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "tron": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "ethereum": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "polygon": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "base": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "arbitrum": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "stellar": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "solana": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          }
+        },
+        "nullables_null": {
+          "id": "fe_000000000000",
+          "instance_id": "in_000000000000",
+          "ach": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "domestic_wire": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "rtp": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "international_swift": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "pix": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "pix_safe": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "ted": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "ach_colombia": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "transfers_3": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "spei": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "sepa": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "faster_payments": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "tron": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "ethereum": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "polygon": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "base": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "arbitrum": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "stellar": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "solana": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "yield": null,
+          "created_at": null,
+          "updated_at": null
+        },
+        "unknown_enum": {
+          "id": "fe_000000000000",
+          "instance_id": "in_000000000000",
+          "ach": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "domestic_wire": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "rtp": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "international_swift": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "pix": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "pix_safe": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "ted": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "ach_colombia": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "transfers_3": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "spei": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "sepa": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "faster_payments": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "tron": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "ethereum": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "polygon": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "base": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "arbitrum": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "stellar": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "solana": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "yield": {
+            "blindpay_share_bps": 1500,
+            "partner_share_bps": 0,
+            "partner_wallets": {
+              "base": "sample_base",
+              "sepolia": "sample_sepolia",
+              "arbitrum_sepolia": "sample_arbitrum_sepolia",
+              "base_sepolia": "sample_base_sepolia",
+              "arbitrum": "sample_arbitrum",
+              "polygon": "0x0000000000000000000000000000000000000000",
+              "polygon_amoy": "sample_polygon_amoy",
+              "ethereum": "sample_ethereum",
+              "stellar": "sample_stellar",
+              "stellar_testnet": "sample_stellar_testnet",
+              "tron": "sample_tron",
+              "solana": "sample_solana",
+              "solana_devnet": "sample_solana_devnet",
+              "tempo": "sample_tempo",
+              "tempo_testnet": "sample_tempo_testnet",
+              "arc": "sample_arc",
+              "arc_testnet": "sample_arc_testnet"
+            }
+          },
+          "created_at": "2021-01-01T00:00:00Z",
+          "updated_at": "2021-01-01T00:00:00Z"
+        },
+        "decimals": {
+          "id": "fe_000000000000",
+          "instance_id": "in_000000000000",
+          "ach": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "domestic_wire": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "rtp": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "international_swift": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "pix": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "pix_safe": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "ted": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "ach_colombia": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "transfers_3": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "spei": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "sepa": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "faster_payments": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "tron": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "ethereum": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "polygon": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "base": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "arbitrum": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "stellar": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "solana": {
+            "payin_flat": 40,
+            "payin_percentage": 50,
+            "payout_flat": 40,
+            "payout_percentage": 50
+          },
+          "yield": {
+            "blindpay_share_bps": 1500,
+            "partner_share_bps": 0,
+            "partner_wallets": {
+              "base": "sample_base",
+              "sepolia": "sample_sepolia",
+              "arbitrum_sepolia": "sample_arbitrum_sepolia",
+              "base_sepolia": "sample_base_sepolia",
+              "arbitrum": "sample_arbitrum",
+              "polygon": "0x0000000000000000000000000000000000000000",
+              "polygon_amoy": "sample_polygon_amoy",
+              "ethereum": "sample_ethereum",
+              "stellar": "sample_stellar",
+              "stellar_testnet": "sample_stellar_testnet",
+              "tron": "sample_tron",
+              "solana": "sample_solana",
+              "solana_devnet": "sample_solana_devnet",
+              "tempo": "sample_tempo",
+              "tempo_testnet": "sample_tempo_testnet",
+              "arc": "sample_arc",
+              "arc_testnet": "sample_arc_testnet"
+            }
+          },
+          "created_at": "2021-01-01T00:00:00Z",
+          "updated_at": "2021-01-01T00:00:00Z"
+        }
+      }
+    }
+  }
+}

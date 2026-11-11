@@ -1,0 +1,31 @@
+{
+  "operation": "POST /v1/presign",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "PresignOut",
+      "variants": {
+        "full": {
+          "file_url": "https://example.com/resource",
+          "expires_at": "2026-01-01T13:00:00.000Z"
+        },
+        "required_only": {
+          "file_url": "https://example.com/resource",
+          "expires_at": "2026-01-01T13:00:00.000Z"
+        },
+        "nullables_null": {
+          "file_url": "https://example.com/resource",
+          "expires_at": "2026-01-01T13:00:00.000Z"
+        },
+        "unknown_enum": {
+          "file_url": "https://example.com/resource",
+          "expires_at": "2026-01-01T13:00:00.000Z"
+        },
+        "decimals": {
+          "file_url": "https://example.com/resource",
+          "expires_at": "2026-01-01T13:00:00.000Z"
+        }
+      }
+    }
+  }
+}

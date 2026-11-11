@@ -1,0 +1,56 @@
+{
+  "operation": "GET /v1/instances/{instance_id}/partner-fees/{id}",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": null,
+      "variants": {
+        "full": {
+          "id": "fe_000000000000",
+          "instance_id": "in_000000000000",
+          "name": "Display Name",
+          "payout_percentage_fee": 100,
+          "payout_flat_fee": 200,
+          "payin_percentage_fee": 100,
+          "payin_flat_fee": 200
+        },
+        "required_only": {
+          "id": "fe_000000000000",
+          "instance_id": "in_000000000000",
+          "name": "Display Name",
+          "payout_percentage_fee": 100,
+          "payout_flat_fee": 200,
+          "payin_percentage_fee": 100,
+          "payin_flat_fee": 200
+        },
+        "nullables_null": {
+          "id": "fe_000000000000",
+          "instance_id": "in_000000000000",
+          "name": "Display Name",
+          "payout_percentage_fee": 100,
+          "payout_flat_fee": 200,
+          "payin_percentage_fee": 100,
+          "payin_flat_fee": 200
+        },
+        "unknown_enum": {
+          "id": "fe_000000000000",
+          "instance_id": "in_000000000000",
+          "name": "Display Name",
+          "payout_percentage_fee": 100,
+          "payout_flat_fee": 200,
+          "payin_percentage_fee": 100,
+          "payin_flat_fee": 200
+        },
+        "decimals": {
+          "id": "fe_000000000000",
+          "instance_id": "in_000000000000",
+          "name": "Display Name",
+          "payout_percentage_fee": 100,
+          "payout_flat_fee": 200,
+          "payin_percentage_fee": 100,
+          "payin_flat_fee": 200
+        }
+      }
+    }
+  }
+}

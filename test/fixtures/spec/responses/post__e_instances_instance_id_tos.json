@@ -1,0 +1,26 @@
+{
+  "operation": "POST /v1/e/instances/{instance_id}/tos",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "InitiateTosOut",
+      "variants": {
+        "full": {
+          "url": "https://app.blindpay.com/e/terms-of-service?session_token=SESSION_TOKEN_FROM_INITIATE_TOS_RESPONSE"
+        },
+        "required_only": {
+          "url": "https://app.blindpay.com/e/terms-of-service?session_token=SESSION_TOKEN_FROM_INITIATE_TOS_RESPONSE"
+        },
+        "nullables_null": {
+          "url": "https://app.blindpay.com/e/terms-of-service?session_token=SESSION_TOKEN_FROM_INITIATE_TOS_RESPONSE"
+        },
+        "unknown_enum": {
+          "url": "https://app.blindpay.com/e/terms-of-service?session_token=SESSION_TOKEN_FROM_INITIATE_TOS_RESPONSE"
+        },
+        "decimals": {
+          "url": "https://app.blindpay.com/e/terms-of-service?session_token=SESSION_TOKEN_FROM_INITIATE_TOS_RESPONSE"
+        }
+      }
+    }
+  }
+}

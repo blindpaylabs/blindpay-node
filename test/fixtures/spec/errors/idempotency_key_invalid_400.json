@@ -1,0 +1,12 @@
+{
+  "source": "idempotency.middleware.ts:76-78",
+  "status": 400,
+  "body": {
+    "success": false,
+    "message": "idempotency_key_invalid",
+    "errors": [
+      "Idempotency-Key must be at most 255 characters"
+    ]
+  },
+  "sdk_behaviour": "terminal; SDKs should reject >255 client-side before sending (plan C2)"
+}

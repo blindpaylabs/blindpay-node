@@ -1,0 +1,11 @@
+{
+  "source": "error-handler.ts:352-353 (query-builder failure shape: no `errors` array)",
+  "status": 500,
+  "body": {
+    "success": false,
+    "code": "INTERNAL_ERROR",
+    "message": "internal_error",
+    "trace_id": "2cf7651916cd43dd8448eb211c80319c"
+  },
+  "sdk_behaviour": "decode with errors absent; GET retryable; mutation NOT auto-retried (plan C3)"
+}

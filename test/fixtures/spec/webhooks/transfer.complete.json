@@ -1,0 +1,173 @@
+{
+  "event": "transfer.complete",
+  "schema_ref": "TransferCompleteWebhookOut",
+  "variants": {
+    "full": {
+      "webhook_event": "transfer.complete",
+      "id": "tr_000000000000",
+      "status": "processing",
+      "tracking_bridge_swap": {
+        "step": "on_hold",
+        "transaction_hash": "0x123...890",
+        "gas_fee": "100",
+        "completed_at": "2011-10-05T14:48:00.000Z",
+        "error_message": "Gas fee is too low"
+      },
+      "tracking_complete": {
+        "step": "on_hold",
+        "transaction_hash": "0x123...890",
+        "gas_fee": "100",
+        "completed_at": "2011-10-05T14:48:00.000Z",
+        "error_message": "Gas fee is too low"
+      },
+      "tracking_paymaster": {
+        "step": "on_hold",
+        "transaction_hash": "0x123...890",
+        "gas_fee": "100",
+        "completed_at": "2011-10-05T14:48:00.000Z",
+        "error_message": "Gas fee is too low"
+      },
+      "tracking_transaction_monitoring": {
+        "step": "processing",
+        "blockchain_screening": 1,
+        "risk_score": 1,
+        "completed_at": "2011-10-05T14:48:00.000Z"
+      },
+      "tracking_partner_fee": {
+        "step": "on_hold",
+        "transaction_hash": "0x123...890",
+        "gas_fee": "100",
+        "completed_at": "2011-10-05T14:48:00.000Z",
+        "error_message": "Gas fee is too low"
+      }
+    },
+    "required_only": {
+      "webhook_event": "transfer.complete",
+      "id": "tr_000000000000",
+      "status": "processing",
+      "tracking_bridge_swap": {
+        "step": "on_hold"
+      },
+      "tracking_complete": {
+        "step": "on_hold"
+      },
+      "tracking_paymaster": {
+        "step": "on_hold"
+      },
+      "tracking_transaction_monitoring": {
+        "step": "processing"
+      }
+    },
+    "nullables_null": {
+      "webhook_event": "transfer.complete",
+      "id": "tr_000000000000",
+      "status": "processing",
+      "tracking_bridge_swap": {
+        "step": "on_hold",
+        "transaction_hash": null,
+        "gas_fee": null,
+        "completed_at": null,
+        "error_message": null
+      },
+      "tracking_complete": {
+        "step": "on_hold",
+        "transaction_hash": null,
+        "gas_fee": null,
+        "completed_at": null,
+        "error_message": null
+      },
+      "tracking_paymaster": {
+        "step": "on_hold",
+        "transaction_hash": null,
+        "gas_fee": null,
+        "completed_at": null,
+        "error_message": null
+      },
+      "tracking_transaction_monitoring": {
+        "step": "processing",
+        "blockchain_screening": null,
+        "risk_score": null,
+        "completed_at": null
+      },
+      "tracking_partner_fee": null
+    },
+    "unknown_enum": {
+      "webhook_event": "transfer.complete",
+      "id": "tr_000000000000",
+      "status": "zz_unknown_value_from_future_api",
+      "tracking_bridge_swap": {
+        "step": "zz_unknown_value_from_future_api",
+        "transaction_hash": "0x123...890",
+        "gas_fee": "100",
+        "completed_at": "2011-10-05T14:48:00.000Z",
+        "error_message": "Gas fee is too low"
+      },
+      "tracking_complete": {
+        "step": "zz_unknown_value_from_future_api",
+        "transaction_hash": "0x123...890",
+        "gas_fee": "100",
+        "completed_at": "2011-10-05T14:48:00.000Z",
+        "error_message": "Gas fee is too low"
+      },
+      "tracking_paymaster": {
+        "step": "zz_unknown_value_from_future_api",
+        "transaction_hash": "0x123...890",
+        "gas_fee": "100",
+        "completed_at": "2011-10-05T14:48:00.000Z",
+        "error_message": "Gas fee is too low"
+      },
+      "tracking_transaction_monitoring": {
+        "step": "zz_unknown_value_from_future_api",
+        "blockchain_screening": 1,
+        "risk_score": 1,
+        "completed_at": "2011-10-05T14:48:00.000Z"
+      },
+      "tracking_partner_fee": {
+        "step": "zz_unknown_value_from_future_api",
+        "transaction_hash": "0x123...890",
+        "gas_fee": "100",
+        "completed_at": "2011-10-05T14:48:00.000Z",
+        "error_message": "Gas fee is too low"
+      }
+    },
+    "decimals": {
+      "webhook_event": "transfer.complete",
+      "id": "tr_000000000000",
+      "status": "processing",
+      "tracking_bridge_swap": {
+        "step": "on_hold",
+        "transaction_hash": "0x123...890",
+        "gas_fee": "100",
+        "completed_at": "2011-10-05T14:48:00.000Z",
+        "error_message": "Gas fee is too low"
+      },
+      "tracking_complete": {
+        "step": "on_hold",
+        "transaction_hash": "0x123...890",
+        "gas_fee": "100",
+        "completed_at": "2011-10-05T14:48:00.000Z",
+        "error_message": "Gas fee is too low"
+      },
+      "tracking_paymaster": {
+        "step": "on_hold",
+        "transaction_hash": "0x123...890",
+        "gas_fee": "100",
+        "completed_at": "2011-10-05T14:48:00.000Z",
+        "error_message": "Gas fee is too low"
+      },
+      "tracking_transaction_monitoring": {
+        "step": "processing",
+        "blockchain_screening": 1,
+        "risk_score": 1234.56,
+        "completed_at": "2011-10-05T14:48:00.000Z"
+      },
+      "tracking_partner_fee": {
+        "step": "on_hold",
+        "transaction_hash": "0x123...890",
+        "gas_fee": "100",
+        "completed_at": "2011-10-05T14:48:00.000Z",
+        "error_message": "Gas fee is too low"
+      }
+    }
+  }
+}

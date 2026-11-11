@@ -185,3 +185,34 @@ export function ensureSharedTypeImports(content: string, names: string[]): strin
         content.slice(0, match.index) + replacement + content.slice(match.index + match[0].length)
     );
 }
+
+/**
+ * Adds `import { toQueryString } from ".../internal/query";` among the file's other
+ * `.../internal/*` imports, in the alphabetical slot Biome's organizeImports expects, reusing
+ * the relative prefix of its `InternalApiClient` import. Idempotent: a no-op when the helper is
+ * already imported.
+ */
+export function ensureQueryStringImport(content: string): string {
+    if (/import \{[^}]*\btoQueryString\b[^}]*\} from "[./]*internal\/query";/.test(content)) {
+        return content;
+    }
+    const anchor = /import type \{ InternalApiClient \} from "([./]*)internal\/api-client";/.exec(
+        content
+    );
+    if (!anchor) {
+        throw new Error(
+            'apply: could not locate the "import type { InternalApiClient } ..." statement to add the toQueryString import next to'
+        );
+    }
+    const prefix = anchor[1];
+    const target = `${prefix}internal/query`;
+    // Insert after the last `${prefix}internal/...` import whose module sorts before ours.
+    let insertAt = anchor.index + anchor[0].length;
+    for (const m of content.matchAll(/^import [^;]* from "([^"]+)";$/gm)) {
+        const from = m[1];
+        if (from.startsWith(`${prefix}internal/`) && from < target && m.index !== undefined) {
+            insertAt = Math.max(insertAt, m.index + m[0].length);
+        }
+    }
+    return `${content.slice(0, insertAt)}\nimport { toQueryString } from "${target}";${content.slice(insertAt)}`;
+}

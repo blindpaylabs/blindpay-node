@@ -1,0 +1,34 @@
+{
+  "operation": "POST /v1/instances/{instance_id}/mint-usdb-solana",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": null,
+      "variants": {
+        "full": {
+          "success": true,
+          "signature": "sample_signature",
+          "error": "sample_error"
+        },
+        "required_only": {
+          "success": true
+        },
+        "nullables_null": {
+          "success": true,
+          "signature": "sample_signature",
+          "error": "sample_error"
+        },
+        "unknown_enum": {
+          "success": true,
+          "signature": "sample_signature",
+          "error": "sample_error"
+        },
+        "decimals": {
+          "success": true,
+          "signature": "sample_signature",
+          "error": "sample_error"
+        }
+      }
+    }
+  }
+}

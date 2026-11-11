@@ -19,6 +19,7 @@ import type {
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
 import type { StrictOmit } from "../../internal/helpers/strict-omit";
+import { toQueryString } from "../../internal/query";
 
 export type ProofOfAddressDocType =
     | "UTILITY_BILL"
@@ -694,8 +695,7 @@ export type RequestLimitIncreaseResponse = {
 export function createCustomersResource(instanceId: string, client: InternalApiClient) {
     return {
         list(params?: ListCustomersInput): Promise<BlindpayApiResponse<ListCustomersResponse>> {
-            const queryParams = params ? `?${new URLSearchParams(params)}` : "";
-            return client.get(`/instances/${instanceId}/customers${queryParams}`);
+            return client.get(`/instances/${instanceId}/customers${toQueryString(params)}`);
         },
         createIndividualWithStandardKYC(
             data: CreateIndividualWithStandardKYCInput,

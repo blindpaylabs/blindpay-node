@@ -44,10 +44,11 @@
     },
     "license": "MIT",
     "files": [
-        "dist/**"
+        "dist/**",
+        "!dist/**/*.test.*"
     ],
     "scripts": {
-        "build": "tsup src/index.ts src/resources/ --format cjs,esm --dts",
+        "build": "tsup",
         "check-types": "tsc --noEmit",
         "contract-check": "node scripts/contract-check.mjs",
         "lint:check": "biome check .",

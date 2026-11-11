@@ -1,0 +1,26 @@
+{
+  "operation": "POST /v1/instances/{instance_id}/create-asset-trustline",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": null,
+      "variants": {
+        "full": {
+          "xdr": "sample_xdr"
+        },
+        "required_only": {
+          "xdr": "sample_xdr"
+        },
+        "nullables_null": {
+          "xdr": "sample_xdr"
+        },
+        "unknown_enum": {
+          "xdr": "sample_xdr"
+        },
+        "decimals": {
+          "xdr": "sample_xdr"
+        }
+      }
+    }
+  }
+}

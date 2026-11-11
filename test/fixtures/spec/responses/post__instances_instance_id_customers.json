@@ -1,0 +1,31 @@
+{
+  "operation": "POST /v1/instances/{instance_id}/customers",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": null,
+      "variants": {
+        "full": {
+          "id": "xx_000000000000",
+          "customer_id": "xx_000000000000"
+        },
+        "required_only": {
+          "id": "xx_000000000000",
+          "customer_id": "xx_000000000000"
+        },
+        "nullables_null": {
+          "id": "xx_000000000000",
+          "customer_id": "xx_000000000000"
+        },
+        "unknown_enum": {
+          "id": "xx_000000000000",
+          "customer_id": "xx_000000000000"
+        },
+        "decimals": {
+          "id": "xx_000000000000",
+          "customer_id": "xx_000000000000"
+        }
+      }
+    }
+  }
+}

@@ -11,6 +11,7 @@ import type {
     SuccessResponse,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { toQueryString } from "../../internal/query";
 import type { SpeiProtocol } from "../payouts";
 import type { OfframpWalletNetwork } from "../wallets/offramp";
 
@@ -788,11 +789,8 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             customer_id,
             ...params
         }: ListBankAccountsInput): Promise<BlindpayApiResponse<ListBankAccountsResponse>> {
-            const queryParams = Object.keys(params).length
-                ? `?${new URLSearchParams(params as Record<string, string>)}`
-                : "";
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts${queryParams}`
+                `/instances/${instanceId}/customers/${customer_id}/bank-accounts${toQueryString(params)}`
             );
         },
         get({

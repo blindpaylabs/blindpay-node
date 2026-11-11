@@ -1,0 +1,205 @@
+{
+  "operation": "GET /v1/instances/{instance_id}/customers/{customer_id}/wallets/{id}/balance",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "WalletBalanceOut",
+      "variants": {
+        "full": {
+          "USDC": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          },
+          "USDT": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          },
+          "USDB": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          },
+          "EURC": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          },
+          "EURB": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          }
+        },
+        "required_only": {
+          "USDC": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          },
+          "USDT": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          },
+          "USDB": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          }
+        },
+        "nullables_null": {
+          "USDC": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          },
+          "USDT": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          },
+          "USDB": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          },
+          "EURC": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          },
+          "EURB": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          }
+        },
+        "unknown_enum": {
+          "USDC": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "zz_unknown_value_from_future_api",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          },
+          "USDT": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "zz_unknown_value_from_future_api",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          },
+          "USDB": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "zz_unknown_value_from_future_api",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          },
+          "EURC": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "zz_unknown_value_from_future_api",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          },
+          "EURB": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "zz_unknown_value_from_future_api",
+            "amount": 12.34,
+            "earning_amount": 0,
+            "total_amount": 0
+          }
+        },
+        "decimals": {
+          "USDC": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 1234.56,
+            "earning_amount": 1234.56,
+            "total_amount": 1234.56
+          },
+          "USDT": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 1234.56,
+            "earning_amount": 1234.56,
+            "total_amount": 1234.56
+          },
+          "USDB": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 1234.56,
+            "earning_amount": 1234.56,
+            "total_amount": 1234.56
+          },
+          "EURC": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 1234.56,
+            "earning_amount": 1234.56,
+            "total_amount": 1234.56
+          },
+          "EURB": {
+            "address": "sample_address",
+            "id": "xx_000000000000",
+            "symbol": "USDC",
+            "amount": 1234.56,
+            "earning_amount": 1234.56,
+            "total_amount": 1234.56
+          }
+        }
+      }
+    }
+  }
+}

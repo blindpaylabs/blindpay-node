@@ -22,6 +22,7 @@ import type {
     TransactionStatus,
 } from "../../../types";
 import type { InternalApiClient } from "../../internal/api-client";
+import { toQueryString } from "../../internal/query";
 
 export type SpeiProtocol = "clabe" | "debitcard" | "phonenum";
 
@@ -53,6 +54,7 @@ export type Payout = {
     partner_fee_amount: number | null;
     commercial_quotation: number | null;
     blindpay_quotation: number | null;
+    /** Total fee as a decimal token amount (e.g. `1.5` = 1.5 USDC), not integer cents. */
     total_fee_amount: number | null;
     customer_local_amount: number | null;
     currency: Exclude<Currency, "USDB" | "USDC" | "USDT">;
@@ -277,8 +279,7 @@ export type CreateSolanaPayoutResponse = {
 export function createPayoutsResource(instanceId: string, client: InternalApiClient) {
     return {
         list(params?: ListPayoutsInput): Promise<BlindpayApiResponse<ListPayoutsResponse>> {
-            const queryParams = params ? `?${new URLSearchParams(params)}` : "";
-            return client.get(`/instances/${instanceId}/payouts${queryParams}`);
+            return client.get(`/instances/${instanceId}/payouts${toQueryString(params)}`);
         },
         get(payoutId: GetPayoutInput): Promise<BlindpayApiResponse<GetPayoutResponse>> {
             return client.get(`/instances/${instanceId}/payouts/${payoutId}`);

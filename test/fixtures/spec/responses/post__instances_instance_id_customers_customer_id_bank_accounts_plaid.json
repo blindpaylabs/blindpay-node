@@ -1,0 +1,26 @@
+{
+  "operation": "POST /v1/instances/{instance_id}/customers/{customer_id}/bank-accounts/plaid",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "PlaidLinkOut",
+      "variants": {
+        "full": {
+          "url": "https://app.blindpay.com/e/plaid?token=eyJhbGciOiJIUzI1NiJ9..."
+        },
+        "required_only": {
+          "url": "https://app.blindpay.com/e/plaid?token=eyJhbGciOiJIUzI1NiJ9..."
+        },
+        "nullables_null": {
+          "url": "https://app.blindpay.com/e/plaid?token=eyJhbGciOiJIUzI1NiJ9..."
+        },
+        "unknown_enum": {
+          "url": "https://app.blindpay.com/e/plaid?token=eyJhbGciOiJIUzI1NiJ9..."
+        },
+        "decimals": {
+          "url": "https://app.blindpay.com/e/plaid?token=eyJhbGciOiJIUzI1NiJ9..."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "operation": "GET /v1/instances/{instance_id}/limits/customers/{id}",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "GetCustomerLimitsOut",
+      "variants": {
+        "full": {
+          "limits": {
+            "payin": {
+              "daily": 500000,
+              "monthly": 2000000
+            },
+            "payout": {
+              "daily": 300000,
+              "monthly": 1000000
+            }
+          }
+        },
+        "required_only": {
+          "limits": {
+            "payin": {
+              "daily": 500000,
+              "monthly": 2000000
+            },
+            "payout": {
+              "daily": 300000,
+              "monthly": 1000000
+            }
+          }
+        },
+        "nullables_null": {
+          "limits": {
+            "payin": {
+              "daily": 500000,
+              "monthly": 2000000
+            },
+            "payout": {
+              "daily": 300000,
+              "monthly": 1000000
+            }
+          }
+        },
+        "unknown_enum": {
+          "limits": {
+            "payin": {
+              "daily": 500000,
+              "monthly": 2000000
+            },
+            "payout": {
+              "daily": 300000,
+              "monthly": 1000000
+            }
+          }
+        },
+        "decimals": {
+          "limits": {
+            "payin": {
+              "daily": 500000,
+              "monthly": 2000000
+            },
+            "payout": {
+              "daily": 300000,
+              "monthly": 1000000
+            }
+          }
+        }
+      }
+    }
+  }
+}

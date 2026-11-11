@@ -1,0 +1,15 @@
+{
+  "source": "blindpay-v2/apps/api/src/shared/middlewares/idempotency.middleware.ts:235-236",
+  "status": 409,
+  "headers": {
+    "Retry-After": "1"
+  },
+  "body": {
+    "success": false,
+    "message": "idempotency_key_in_flight",
+    "errors": [
+      "A request with this Idempotency-Key is still being processed"
+    ]
+  },
+  "sdk_behaviour": "retryable (wait Retry-After, resend identical bytes with the same key)"
+}

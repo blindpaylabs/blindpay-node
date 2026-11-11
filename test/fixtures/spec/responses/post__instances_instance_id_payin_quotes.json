@@ -1,0 +1,90 @@
+{
+  "operation": "POST /v1/instances/{instance_id}/payin-quotes",
+  "operationId": null,
+  "responses": {
+    "200": {
+      "schema_ref": "CreatePayinQuoteOut",
+      "variants": {
+        "full": {
+          "id": "qu_000000000000",
+          "expires_at": 1712958191000,
+          "commercial_quotation": 495,
+          "blindpay_quotation": 505,
+          "receiver_amount": 1010,
+          "sender_amount": 5240,
+          "partner_fee_amount": 150,
+          "flat_fee": 50,
+          "billing_fee_amount": 50,
+          "is_otc": false,
+          "card_instruction": {
+            "provider": "nmi",
+            "tokenization_key": "KXypee-Vq3y2f-K6c7Dy-Wq92R5",
+            "checkout_public_key": "checkout_public_Ab12Cd34Ef56Gh78",
+            "checkout_token": "cGlfMDAwMDAwMDAwMDAwLjE3OTM1NzQ0MDAuM2Y1YQ",
+            "checkout_url": "https://app.blindpay.com/e/card/pi_000000000000?t=cGlfMDAwMDAwMDAwMDAwLjE3OTM1NzQ0MDAuM2Y1YQ"
+          }
+        },
+        "required_only": {
+          "id": "qu_000000000000",
+          "expires_at": 1712958191000,
+          "commercial_quotation": 495,
+          "blindpay_quotation": 505,
+          "receiver_amount": 1010,
+          "sender_amount": 5240,
+          "flat_fee": 50
+        },
+        "nullables_null": {
+          "id": "qu_000000000000",
+          "expires_at": null,
+          "commercial_quotation": null,
+          "blindpay_quotation": null,
+          "receiver_amount": null,
+          "sender_amount": null,
+          "partner_fee_amount": null,
+          "flat_fee": null,
+          "billing_fee_amount": null,
+          "is_otc": null,
+          "card_instruction": null
+        },
+        "unknown_enum": {
+          "id": "qu_000000000000",
+          "expires_at": 1712958191000,
+          "commercial_quotation": 495,
+          "blindpay_quotation": 505,
+          "receiver_amount": 1010,
+          "sender_amount": 5240,
+          "partner_fee_amount": 150,
+          "flat_fee": 50,
+          "billing_fee_amount": 50,
+          "is_otc": false,
+          "card_instruction": {
+            "provider": "nmi",
+            "tokenization_key": "KXypee-Vq3y2f-K6c7Dy-Wq92R5",
+            "checkout_public_key": "checkout_public_Ab12Cd34Ef56Gh78",
+            "checkout_token": "cGlfMDAwMDAwMDAwMDAwLjE3OTM1NzQ0MDAuM2Y1YQ",
+            "checkout_url": "https://app.blindpay.com/e/card/pi_000000000000?t=cGlfMDAwMDAwMDAwMDAwLjE3OTM1NzQ0MDAuM2Y1YQ"
+          }
+        },
+        "decimals": {
+          "id": "qu_000000000000",
+          "expires_at": 1712958191000,
+          "commercial_quotation": 1234.56,
+          "blindpay_quotation": 1234.56,
+          "receiver_amount": 1010,
+          "sender_amount": 5240,
+          "partner_fee_amount": 150,
+          "flat_fee": 50,
+          "billing_fee_amount": 50,
+          "is_otc": false,
+          "card_instruction": {
+            "provider": "nmi",
+            "tokenization_key": "KXypee-Vq3y2f-K6c7Dy-Wq92R5",
+            "checkout_public_key": "checkout_public_Ab12Cd34Ef56Gh78",
+            "checkout_token": "cGlfMDAwMDAwMDAwMDAwLjE3OTM1NzQ0MDAuM2Y1YQ",
+            "checkout_url": "https://app.blindpay.com/e/card/pi_000000000000?t=cGlfMDAwMDAwMDAwMDAwLjE3OTM1NzQ0MDAuM2Y1YQ"
+          }
+        }
+      }
+    }
+  }
+}
