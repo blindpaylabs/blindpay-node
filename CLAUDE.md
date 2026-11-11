@@ -463,6 +463,16 @@ Change the field name in the type definition. This is a breaking change -- use a
 
 Types like `Currency`, `Network`, `StablecoinToken`, `TransactionStatus`, `PaginationParams`, `PaginationMetadata`, `BlindpayApiResponse`, and `Country` live in `types/index.d.ts`. If a new enum value needs to be added to a shared type (e.g., a new network), edit it there. `src/index.ts` re-exports them with an explicit `export type { ... } from "../types"` list (type-only, so esbuild never tries to load the `.d.ts` at runtime). When a resource starts using a new shared type, add it to that list; never re-export the whole file, so dead or stale types (e.g. `PayoutForcedProvider`) don't become public API. `src/index.test.ts` asserts what the entry exports and what it must not.
 
+## Deferred to the next major
+
+The repo's semver rules make widening or narrowing a response type a major change, so these known gaps stay as released, documented on the type and listed in `src/internal/fixture-divergences.ts` (reason `NEXT MAJOR`):
+
+- Fields the API never sends but the type requires: `Payout.tracking_partner_fee` (`@deprecated`), `customer_id` on the payout create responses, `is_tos_accepted` on `customers.list` and the customer webhooks, `has_virtual_account` on `payouts.list`.
+- Fields the API can omit: payin `tracking_transaction.external_id`, transfer `tracking_*.error_message`, a development instance's virtual-account `blockchain_wallet`.
+- `virtualAccounts.get` answers an unknown id with `200 null`: `data` should be nullable.
+- Narrowings the spec allows (node audit 9.10): `Transfer.status` without `on_hold`, required tracking fields on the EVM and Stellar payout create responses.
+- Removals: the `@deprecated` fields and types (`forced_provider`, `provider_integration`, fees `yield.partner_wallet_address`, `CreatePayoutInput`, `offset`), and `UpdateInstanceMemberRoleInput` to snake_case.
+
 ## How to: Remove a Resource
 
 1. Delete the resource directory: `src/resources/{resource-name}/`.

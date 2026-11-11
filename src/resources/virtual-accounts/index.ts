@@ -112,6 +112,7 @@ export type GetVirtualAccountInput = {
     id: string;
 };
 
+/** An unknown id answers 200 with a `null` body (blindpay-v2 get...virtual-accounts.[id].ts:46), so `data` can be `null` with no `error`; typed as nullable in the next major. */
 export type GetVirtualAccountResponse = VirtualAccount;
 
 export type UpdateVirtualAccountInput = {

@@ -6,19 +6,22 @@
  *
  * `kind: "missing"`: the SDK types the key as present, the spec marks it optional.
  * `kind: "null"`: the SDK types the value as non-null, the spec allows null.
+ * `kind: "absent"`: the SDK types the key as present, but the API never sends it (no fixture
+ *   variant has it); `placeholder` is a value of the SDK's type, patched in to check the rest.
  * `targets`: client methods (`payouts.get`) or webhook events (`webhook:payout.new`).
  * `paths`: dot paths relative to the response, a list item, or an envelope's `data` item.
  */
 export type KnownDivergence = {
-    kind: "missing" | "null";
+    kind: "missing" | "null" | "absent";
     targets: string[];
     paths: string[];
     reason: string;
+    placeholder?: unknown;
 };
 
 // Classified per handler against blindpay-v2@66144f3b2; regenerate the groups when the spec moves.
 const C =
-    "OPEN QUESTION (C8 vs D21): the API can omit this key (payin tracking external_id: process-*-deposit.ts assign `?? undefined`; tracking_*.error_message: added only on failure, finalize-transfer-tracking.ts:37-39; blockchain_wallet: absent on development-instance creates, post...virtual-accounts.ts:141-147). Making it optional widens a response type, a breaking change under the repo rules, so it stays as typed pending the orchestrator.";
+    "NEXT MAJOR: the API can omit this key (payin tracking external_id: process-*-deposit.ts assign `?? undefined`; tracking_*.error_message: added only on failure, finalize-transfer-tracking.ts:37-39; blockchain_wallet: absent on development-instance creates, post...virtual-accounts.ts:141-147). Making it optional widens a response type, which the repo's semver rules make a major change (sdk-parity E4), so it stays as typed and becomes optional in the next major.";
 const PAGE =
     "Always sent (null when there is no page): every list handler sets both keys with `?? null` (e.g. modules/payouts/endpoints/get.instances.[instance_id].payouts.ts:151-152). Spec issue: the spec marks them optional.";
 const TS =
@@ -33,9 +36,25 @@ const ROW =
     "Always sent (null when unset): the handler zod-parses a full DB row (selectAll/returningAll) or an explicit select that includes the column, so the key is present. Spec issue: one schema covers every variant (e.g. every bank-account rail), so the spec marks the key optional.";
 
 const SHARED =
-    "OPEN QUESTION (C8 vs D21): never sent by this method, but the shared type is right for the method that does send it (is_tos_accepted: only customers.get computes it, get.instances.[instance_id].customers.[id].ts:36; has_virtual_account: payouts.get/getTrack set it, get.instances.[instance_id].payouts.[id].ts:159, while the list's use-payout.ts buildListBaseQuery never does). Widening the shared type would break those callers, so it stays required and documented.";
+    "NEXT MAJOR: never sent by this method, but the shared type is right for the method that does send it (is_tos_accepted: only customers.get computes it, get.instances.[instance_id].customers.[id].ts:36; has_virtual_account: payouts.get/getTrack set it, get.instances.[instance_id].payouts.[id].ts:159, while the list's use-payout.ts buildListBaseQuery never does). Widening the shared type is a major change for those callers, so it stays required and documented until the next major.";
+
+const NEVER =
+    "NEXT MAJOR: the API never sends it here, but the type was released as required, and widening a response type is a major change under the repo's semver rules (sdk-parity E4). Documented on the field (tracking_partner_fee: payout.schema.ts:274; create-response customer_id: build-payout-response.ts); optional in the next major.";
 
 export const KNOWN_DIVERGENCES: KnownDivergence[] = [
+    {
+        kind: "absent",
+        reason: NEVER,
+        targets: ["payouts.get", "payouts.getTrack", "payouts.list"],
+        paths: ["tracking_partner_fee"],
+        placeholder: { step: "processing" },
+    },
+    {
+        kind: "missing",
+        reason: NEVER,
+        targets: ["payouts.createEvm", "payouts.createSolana", "payouts.createStellar"],
+        paths: ["customer_id"],
+    },
     {
         kind: "missing",
         reason: SHARED,

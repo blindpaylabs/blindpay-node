@@ -39,8 +39,8 @@ export type Payout = {
     tracking_payment: PayoutTrackingPayment;
     tracking_liquidity: PayoutTrackingLiquidity | null;
     tracking_complete: PayoutTrackingComplete;
-    /** @deprecated The API no longer returns a payout's partner fee tracking (blindpay-v2 payout.schema.ts:274); always absent. Read `partner_fee` for the amount. Removed in the next major. */
-    tracking_partner_fee?: PayoutTrackingPartnerFee;
+    /** @deprecated The API doesn't return this (blindpay-v2 payout.schema.ts:274): it is always absent at runtime. Read `partner_fee` for the amount. It becomes optional, then goes, in the next major. */
+    tracking_partner_fee: PayoutTrackingPartnerFee;
     created_at: string | null;
     updated_at: string | null;
     image_url: string | null;
@@ -204,11 +204,11 @@ export type CreateStellarPayoutResponse = {
     tracking_complete?: PayoutTrackingComplete;
     tracking_payment?: PayoutTrackingPayment;
     tracking_transaction?: PayoutTrackingTransaction;
-    /** @deprecated The API no longer returns a payout's partner fee tracking (blindpay-v2 payout.schema.ts:274); always absent. Read `partner_fee` for the amount. Removed in the next major. */
+    /** @deprecated The API doesn't return this (blindpay-v2 payout.schema.ts:274): it is always absent at runtime. Read `partner_fee` for the amount. It becomes optional, then goes, in the next major. */
     tracking_partner_fee?: PayoutTrackingPartnerFee;
     tracking_liquidity?: PayoutTrackingLiquidity | null;
-    /** Not returned by the create call; read it from `payouts.get` or the `payout.new` webhook. */
-    customer_id?: string | null;
+    /** The create calls don't return this (blindpay-v2 build-payout-response.ts): read it from `payouts.get` or the `payout.new` webhook. It becomes optional in the next major. */
+    customer_id: string | null;
     payable_id?: string | null;
     bank_account_id?: string | null;
     billing_fee_amount?: number | null;
@@ -238,11 +238,11 @@ export type CreateEvmPayoutResponse = {
     tracking_complete?: PayoutTrackingComplete;
     tracking_payment?: PayoutTrackingPayment;
     tracking_transaction?: PayoutTrackingTransaction;
-    /** @deprecated The API no longer returns a payout's partner fee tracking (blindpay-v2 payout.schema.ts:274); always absent. Read `partner_fee` for the amount. Removed in the next major. */
+    /** @deprecated The API doesn't return this (blindpay-v2 payout.schema.ts:274): it is always absent at runtime. Read `partner_fee` for the amount. It becomes optional, then goes, in the next major. */
     tracking_partner_fee?: PayoutTrackingPartnerFee;
     tracking_liquidity?: PayoutTrackingLiquidity | null;
-    /** Not returned by the create call; read it from `payouts.get` or the `payout.new` webhook. */
-    customer_id?: string | null;
+    /** The create calls don't return this (blindpay-v2 build-payout-response.ts): read it from `payouts.get` or the `payout.new` webhook. It becomes optional in the next major. */
+    customer_id: string | null;
     payable_id?: string | null;
     bank_account_id?: string | null;
     billing_fee_amount?: number | null;
@@ -273,11 +273,11 @@ export type CreateSolanaPayoutResponse = {
     tracking_complete: PayoutTrackingComplete;
     tracking_payment: PayoutTrackingPayment;
     tracking_transaction: PayoutTrackingTransaction;
-    /** @deprecated The API no longer returns a payout's partner fee tracking (blindpay-v2 payout.schema.ts:274); always absent. Read `partner_fee` for the amount. Removed in the next major. */
+    /** @deprecated The API doesn't return this (blindpay-v2 payout.schema.ts:274): it is always absent at runtime. Read `partner_fee` for the amount. It becomes optional, then goes, in the next major. */
     tracking_partner_fee?: PayoutTrackingPartnerFee | null;
     tracking_liquidity?: PayoutTrackingLiquidity | null;
-    /** Not returned by the create call; read it from `payouts.get` or the `payout.new` webhook. */
-    customer_id?: string | null;
+    /** The create calls don't return this (blindpay-v2 build-payout-response.ts): read it from `payouts.get` or the `payout.new` webhook. It becomes optional in the next major. */
+    customer_id: string | null;
     payable_id?: string | null;
     bank_account_id?: string | null;
     billing_fee_amount?: number | null;

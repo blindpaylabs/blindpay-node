@@ -54,8 +54,8 @@ function valueAt(full: Json, path: string[]): Json | undefined {
 }
 
 /** Sets `path` from `full` wherever its parent exists; true if anything changed. */
-function restore(body: Json, full: Json, path: string[]): boolean {
-    const source = valueAt(full, path);
+function restore(body: Json, full: Json, path: string[], placeholder?: unknown): boolean {
+    const source = placeholder === undefined ? valueAt(full, path) : (placeholder as Json);
     if (source === undefined) return false;
     let changed = false;
     for (const container of containers(body)) {
@@ -95,7 +95,9 @@ function divergencesFor(target: string, variant: string): KnownDivergence[] {
         : variant.startsWith("nullables_null")
           ? "null"
           : null;
-    return KNOWN_DIVERGENCES.filter((d) => d.kind === kind && d.targets.includes(target));
+    return KNOWN_DIVERGENCES.filter(
+        (d) => (d.kind === kind || d.kind === "absent") && d.targets.includes(target)
+    );
 }
 
 /** `"<target> <path>"` of every divergence that patched at least one variant. */
@@ -120,17 +122,19 @@ function checksFor(target: string, variants: [string, unknown][]): Check[] {
         if (variant.startsWith("unknown_enum")) continue;
         const body = normalise(target, raw as Json);
         const full = fullOf(variant);
-        const paths = divergencesFor(target, variant).flatMap((d) =>
-            d.paths.map((p) => p.split("."))
+        const patches = divergencesFor(target, variant).flatMap((d) =>
+            d.paths.map((p) => ({ path: p.split("."), placeholder: d.placeholder }))
         );
-        const applied = paths.filter((p) => restore(body, full, p));
-        for (const path of applied) usedDivergences.add(`${target} ${path.join(".")}`);
+        const apply = (into: Json, patch: (typeof patches)[number]) =>
+            restore(into, full, patch.path, patch.placeholder);
+        const applied = patches.filter((patch) => apply(body, patch));
+        for (const { path } of applied) usedDivergences.add(`${target} ${path.join(".")}`);
         checks.push({ label: `${target} ${variant}`, target, body, expectError: false });
-        for (const path of applied) {
+        for (const patch of applied) {
             const without = normalise(target, raw as Json);
-            for (const other of applied) if (other !== path) restore(without, full, other);
+            for (const other of applied) if (other !== patch) apply(without, other);
             checks.push({
-                label: `${target} ${variant} divergence ${path.join(".")}`,
+                label: `${target} ${variant} divergence ${patch.path.join(".")}`,
                 target,
                 body: without,
                 expectError: true,
