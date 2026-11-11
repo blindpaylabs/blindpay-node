@@ -1,92 +1,70 @@
 import { afterEach, describe, expect, it } from "vitest";
-import type { BlindpayApiResponse } from "../../types";
 import { BlindPay } from "../client";
-import { responseVariants } from "../internal/test-fixtures";
+import { readFixture, responseVariants } from "../internal/test-fixtures";
+import { OPERATIONS } from "../internal/test-operations";
 
 /**
- * Transport round-trip, NOT a type check: each shared spec-shaped fixture variant
- * (test/fixtures/spec) is served as the response and must come back as `data`, byte-for-byte
- * equal, with `error: null`. That proves the transport handles every shape the API can send
- * (envelope and bare array, empty and nullable fields), but `toEqual` can't fail on a field the
- * SDK *types* get wrong, because TypeScript types aren't checked at runtime.
+ * The op-coverage test (sdk-parity A8): every SDK operation of the spec, through the method that
+ * implements it. Each call must hit the operation's method and path, and every shared
+ * spec-shaped fixture variant (test/fixtures/spec) served as its response must come back as
+ * `data`, unchanged, with `error: null`: envelope and bare array, required-only, nullable and
+ * unknown-enum shapes alike.
  *
- * TODO(M3, sdk-parity C8): add a generated `.ts` type test, run by `check-types`, that assigns
- * every op's `required_only` and `nullables_null` variants to its SDK response type with
- * `satisfies` (skipping `unknown_enum`: runtime strings are open, TS unions are closed).
+ * This is a transport round-trip, not a type check (TypeScript types aren't checked at runtime);
+ * fixture-types.test.ts assigns the same variants to each method's declared response type.
  */
 
-type OperationCase = {
-    operation: string;
-    call: (blindpay: BlindPay) => Promise<BlindpayApiResponse<unknown>>;
-};
+const operationsInFixtures = Object.keys(
+    readFixture<{ operations: Record<string, string> }>("index.json").operations
+);
 
-const CUSTOMER = "cu_000000000000";
+/** `/v1/instances/{instance_id}/x/{id}` -> a regex matching the request's pathname. */
+function pathPattern(operation: string): RegExp {
+    const path = operation.split(" ")[1].replace(/\{[^}]+\}/g, "[^/?]+");
+    return new RegExp(`^${path}$`);
+}
 
-const operations: OperationCase[] = [
-    {
-        operation: "GET /v1/instances/{instance_id}/payouts",
-        call: (b) => b.payouts.list({ limit: "10" }),
-    },
-    {
-        operation: "GET /v1/instances/{instance_id}/payins",
-        call: (b) => b.payins.list({ limit: "10" }),
-    },
-    {
-        operation: "GET /v1/instances/{instance_id}/customers",
-        call: (b) => b.customers.list({ limit: "10" }),
-    },
-    {
-        operation: "GET /v1/instances/{instance_id}/payables",
-        call: (b) => b.payables.list({ limit: "10" }),
-    },
-    {
-        operation: "GET /v1/instances/{instance_id}/transfers",
-        call: (b) => b.transfers.list({ limit: "10" }),
-    },
-    {
-        operation: "GET /v1/instances/{instance_id}/customers/{customer_id}/bank-accounts",
-        call: (b) => b.customers.bankAccounts.list({ customer_id: CUSTOMER }),
-    },
-    {
-        operation: "GET /v1/instances/{instance_id}/customers/{customer_id}/wallets/{id}/deposits",
-        call: (b) =>
-            b.wallets.custodial.getDeposits({
-                customer_id: CUSTOMER,
-                id: "wa_000000000000",
-                limit: "10",
-            }),
-    },
-    {
-        operation: "POST /v1/upload",
-        call: (b) => b.upload.upload({ file: new Blob(["%PDF"]), bucket: "documents" }),
-    },
-    {
-        operation: "POST /v1/upload/analyze",
-        call: (b) => b.upload.analyze({ file: new Blob(["%PDF"]), type: "invoice" }),
-    },
-];
+describe("SDK operation coverage", () => {
+    it("has a method for every operation in the spec fixtures, and nothing else", () => {
+        const covered = new Set(OPERATIONS.map((o) => o.operation));
+        expect(operationsInFixtures.filter((op) => !covered.has(op))).toEqual([]);
+        expect([...covered].filter((op) => !operationsInFixtures.includes(op))).toEqual([]);
+        expect(covered.size).toBe(94);
+    });
+});
 
-describe("Spec fixture transport round-trip", () => {
+describe("Spec fixture round-trip", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
+    const blindpay = new BlindPay({ apiKey: "test_key", instanceId: "in_000000000000" });
 
-    describe.each(operations)("$operation", ({ operation, call }) => {
+    describe.each(OPERATIONS)("$operation via $method", ({ operation, call }) => {
         const variants = responseVariants(operation);
+        const [verb] = operation.split(" ");
 
-        it("has fixture variants", () => {
-            expect(variants.length).toBeGreaterThan(0);
-        });
-
-        it.each(variants)("returns the %s variant unchanged as data", async (_name, body) => {
-            fetchMock.mockResponseOnce(JSON.stringify(body), {
+        it("sends the operation's method and path", async () => {
+            fetchMock.mockResponseOnce(JSON.stringify({}), {
                 headers: { "Content-Type": "application/json" },
             });
-
-            const { data, error } = await call(blindpay);
-
-            expect(error).toBeNull();
-            expect(data).toEqual(body);
+            await call(blindpay);
+            expect(fetchMock.mock.calls).toHaveLength(1);
+            const [url, init] = fetchMock.mock.calls[0];
+            expect(init?.method).toBe(verb);
+            expect(new URL(String(url)).pathname).toMatch(pathPattern(operation));
         });
+
+        it.runIf(variants.length > 0).each(variants)(
+            "returns the %s variant unchanged as data",
+            async (_name, body) => {
+                fetchMock.mockResponseOnce(JSON.stringify(body), {
+                    headers: { "Content-Type": "application/json" },
+                });
+
+                const { data, error } = await call(blindpay);
+
+                expect(error).toBeNull();
+                expect(data).toEqual(body);
+            }
+        );
     });
 });
