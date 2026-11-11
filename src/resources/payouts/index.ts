@@ -188,13 +188,17 @@ export type AuthorizeStellarTokenResponse = {
     transaction_hash: string;
 };
 
-export type CreateStellarPayoutInput = {
-    quote_id: string;
+/** Where a payout's stablecoins come from: send exactly one of the two fields (sdk-parity D23). */
+export type PayoutSourceWallet = {
     /** Wallet the stablecoins are sent from. Send exactly one of `sender_wallet_address` and `wallet_id`; the API returns 400 otherwise. */
     sender_wallet_address?: string;
-    signed_transaction?: string | null;
     /** A BlindPay managed wallet (`wa_...`) to pay from, instead of `sender_wallet_address` (exactly one of the two). */
     wallet_id?: string;
+};
+
+export type CreateStellarPayoutInput = PayoutSourceWallet & {
+    quote_id: string;
+    signed_transaction?: string | null;
 };
 
 export type CreateStellarPayoutResponse = {
@@ -223,12 +227,8 @@ export type CreateStellarPayoutResponse = {
     transaction_fee_amount?: number | null;
 };
 
-export type CreateEvmPayoutInput = {
+export type CreateEvmPayoutInput = PayoutSourceWallet & {
     quote_id: string;
-    /** Wallet the stablecoins are sent from. Send exactly one of `sender_wallet_address` and `wallet_id`; the API returns 400 otherwise. */
-    sender_wallet_address?: string;
-    /** A BlindPay managed wallet (`wa_...`) to pay from, instead of `sender_wallet_address` (exactly one of the two). */
-    wallet_id?: string;
 };
 
 export type CreateEvmPayoutResponse = {
@@ -257,13 +257,9 @@ export type CreateEvmPayoutResponse = {
     transaction_fee_amount?: number | null;
 };
 
-export type CreateSolanaPayoutInput = {
+export type CreateSolanaPayoutInput = PayoutSourceWallet & {
     quote_id: string;
-    /** Wallet the stablecoins are sent from. Send exactly one of `sender_wallet_address` and `wallet_id`; the API returns 400 otherwise. */
-    sender_wallet_address?: string;
     signed_transaction?: string | null;
-    /** A BlindPay managed wallet (`wa_...`) to pay from, instead of `sender_wallet_address` (exactly one of the two). */
-    wallet_id?: string;
 };
 
 export type CreateSolanaPayoutResponse = {
