@@ -59,13 +59,19 @@ export function createPartnerFeesResource(instanceId: string, client: InternalAp
             id: GetPartnerFeeInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetPartnerFeeResponse>> {
-            return client.get(`/instances/${instanceId}/partner-fees/${id}`, options);
+            return client.get(
+                `/instances/${instanceId}/partner-fees/${encodeURIComponent(id)}`,
+                options
+            );
         },
         delete(
             id: DeletePartnerFeeInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}/partner-fees/${id}`, options);
+            return client.delete(
+                `/instances/${instanceId}/partner-fees/${encodeURIComponent(id)}`,
+                options
+            );
         },
     };
 }

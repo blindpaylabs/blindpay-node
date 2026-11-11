@@ -81,7 +81,7 @@ export function createOfframpWalletsResource(instanceId: string, client: Interna
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<ListOfframpWalletsResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts/${encodeURIComponent(bank_account_id)}/offramp-wallets`,
                 options
             );
         },
@@ -90,7 +90,7 @@ export function createOfframpWalletsResource(instanceId: string, client: Interna
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateOfframpWalletResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts/${encodeURIComponent(bank_account_id)}/offramp-wallets`,
                 data,
                 options
             );
@@ -100,7 +100,7 @@ export function createOfframpWalletsResource(instanceId: string, client: Interna
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetOfframpWalletResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets/${id}`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts/${encodeURIComponent(bank_account_id)}/offramp-wallets/${encodeURIComponent(id)}`,
                 options
             );
         },
@@ -110,7 +110,7 @@ export function createOfframpWalletsResource(instanceId: string, client: Interna
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<UpdateOfframpWalletResponse>> {
             return client.put(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets/${id}`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts/${encodeURIComponent(bank_account_id)}/offramp-wallets/${encodeURIComponent(id)}`,
                 data,
                 options
             );

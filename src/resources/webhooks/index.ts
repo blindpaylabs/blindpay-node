@@ -77,13 +77,19 @@ export function createWebhookEndpointsResource(instanceId: string, client: Inter
             id: DeleteWebhookEndpointInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}/webhook-endpoints/${id}`, options);
+            return client.delete(
+                `/instances/${instanceId}/webhook-endpoints/${encodeURIComponent(id)}`,
+                options
+            );
         },
         getSecret(
             id: GetWebhookEndpointSecretInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetWebhookEndpointSecretResponse>> {
-            return client.get(`/instances/${instanceId}/webhook-endpoints/${id}/secret`, options);
+            return client.get(
+                `/instances/${instanceId}/webhook-endpoints/${encodeURIComponent(id)}/secret`,
+                options
+            );
         },
         getPortalAccessUrl(
             options?: RequestOptions

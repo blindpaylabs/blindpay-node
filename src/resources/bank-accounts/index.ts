@@ -790,7 +790,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<ListBankAccountsResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts${toQueryString(params)}`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts${toQueryString(params)}`,
                 options
             );
         },
@@ -799,7 +799,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetBankAccountResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${id}`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts/${encodeURIComponent(id)}`,
                 options
             );
         },
@@ -808,7 +808,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.delete(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${id}`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts/${encodeURIComponent(id)}`,
                 options
             );
         },
@@ -817,7 +817,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreatePixResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "pix",
                     ...data,
@@ -830,7 +830,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreatePixSafeResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "pix_safe",
                     ...data,
@@ -843,7 +843,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateArgentinaTransfersResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "transfers_bitso",
                     ...data,
@@ -856,7 +856,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateSpeiResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "spei_bitso",
                     ...data,
@@ -869,7 +869,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateColombiaAchResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "ach_cop_bitso",
                     ...data,
@@ -882,7 +882,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateAchResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "ach",
                     ...data,
@@ -895,7 +895,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateWireResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "wire",
                     ...data,
@@ -908,7 +908,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateInternationalSwiftResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "international_swift",
                     ...data,
@@ -921,7 +921,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateRtpResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "rtp",
                     ...data,
@@ -934,7 +934,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateTedResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "ted",
                     ...data,
@@ -947,7 +947,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateSepaResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "sepa",
                     ...data,
@@ -960,7 +960,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateFasterPaymentsResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts`,
                 {
                     type: "faster_payments",
                     ...data,
@@ -974,7 +974,7 @@ export function createBankAccountsResource(instanceId: string, client: InternalA
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreatePlaidBankAccountResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/bank-accounts/plaid`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts/plaid`,
                 data,
                 options
             );

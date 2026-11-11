@@ -104,7 +104,10 @@ export function createCustomerRfiResource(instanceId: string, client: InternalAp
             customerId: GetCustomerRfiInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetCustomerRfiResponse>> {
-            return client.get(`/instances/${instanceId}/customers/${customerId}/rfi`, options);
+            return client.get(
+                `/instances/${instanceId}/customers/${encodeURIComponent(customerId)}/rfi`,
+                options
+            );
         },
         /** On success the customer's kyc_status flips back to verifying. On `{ success: false }`, refetch with `get` instead of retrying. */
         submit(
@@ -112,7 +115,7 @@ export function createCustomerRfiResource(instanceId: string, client: InternalAp
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SubmitRfiResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/rfi`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/rfi`,
                 response,
                 options
             );

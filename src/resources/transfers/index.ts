@@ -165,7 +165,10 @@ export function createTransfersResource(instanceId: string, client: InternalApiC
             transferId: GetTransferInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetTransferResponse>> {
-            return client.get(`/instances/${instanceId}/transfers/${transferId}`, options);
+            return client.get(
+                `/instances/${instanceId}/transfers/${encodeURIComponent(transferId)}`,
+                options
+            );
         },
         /**
          * Public tracking endpoint for BlindPay's web and iOS apps: server-side calls get a 401 in
@@ -175,7 +178,7 @@ export function createTransfersResource(instanceId: string, client: InternalApiC
             transferId: GetTransferTrackInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetTransferTrackResponse>> {
-            return client.get(`/e/transfers/${transferId}`, options);
+            return client.get(`/e/transfers/${encodeURIComponent(transferId)}`, options);
         },
     };
 }

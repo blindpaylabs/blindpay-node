@@ -216,7 +216,7 @@ export function createAvailableResource(client: InternalApiClient) {
             rail: Rail,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetBankDetailsResponse>> {
-            return client.get(`/available/bank-details?rail=${rail}`, options);
+            return client.get(`/available/bank-details?rail=${encodeURIComponent(rail)}`, options);
         },
         getRails(options?: RequestOptions): Promise<BlindpayApiResponse<GetRailsResponse>> {
             return client.get("/available/rails", options);
@@ -230,7 +230,7 @@ export function createAvailableResource(client: InternalApiClient) {
             swift: GetSwiftCodeBankDetailsInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetSwiftCodeBankDetailsResponse>> {
-            return client.get(`/available/swift/${swift}`, options);
+            return client.get(`/available/swift/${encodeURIComponent(swift)}`, options);
         },
     };
 }

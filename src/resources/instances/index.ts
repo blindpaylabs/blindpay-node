@@ -92,14 +92,17 @@ export function createInstancesResource(instanceId: string, client: InternalApiC
             memberId: DeleteInstanceMemberInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}/members/${memberId}`, options);
+            return client.delete(
+                `/instances/${instanceId}/members/${encodeURIComponent(memberId)}`,
+                options
+            );
         },
         updateMemberRole(
             { memberId, role }: UpdateInstanceMemberRoleInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.put(
-                `/instances/${instanceId}/members/${memberId}`,
+                `/instances/${instanceId}/members/${encodeURIComponent(memberId)}`,
                 { user_role: role },
                 options
             );

@@ -248,19 +248,19 @@ export function createWidgetsResource(instanceId: string, client: InternalApiCli
             id: GetWidgetInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetWidgetResponse>> {
-            return client.get(`/instances/${instanceId}/widgets/${id}`, options);
+            return client.get(`/instances/${instanceId}/widgets/${encodeURIComponent(id)}`, options);
         },
         update(
             { widget_id, ...data }: UpdateWidgetInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.put(`/instances/${instanceId}/widgets/${widget_id}`, data, options);
+            return client.put(`/instances/${instanceId}/widgets/${encodeURIComponent(widget_id)}`, data, options);
         },
         delete(
             id: DeleteWidgetInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}/widgets/${id}`, options);
+            return client.delete(`/instances/${instanceId}/widgets/${encodeURIComponent(id)}`, options);
         },
     };
 }
@@ -412,7 +412,7 @@ export function createWidgetsResource(instanceId: string, client: InternalApiCli
             id: ActivateWidgetInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<ActivateWidgetResponse>> {
-            return client.post(`/instances/${instanceId}/widgets/${id}/activate`, {}, options);
+            return client.post(`/instances/${instanceId}/widgets/${encodeURIComponent(id)}/activate`, {}, options);
         },
     };
 }
@@ -804,12 +804,14 @@ Every list whose spec op accepts `starting_after` (payouts, payins, customers, p
 
 ### Path parameters
 
+Every caller-supplied value interpolated into a request path is wrapped in `encodeURIComponent(...)`, so an id containing `/`, `?` or `#` can't change the route (`payouts.get("a/b")` requests `/payouts/a%2Fb`; `src/resources/path-encoding.test.ts`). `instanceId` is the exception: the client percent-encodes it once and hands the encoded value to every resource factory, so templates use `${instanceId}` as-is (upload, which sends it as a query param, gets the raw value and lets `toQueryString` encode it). api-sync's generator emits the same shape.
+
 Path parameters that are resource IDs are handled in two ways:
 
 1. **Single ID (the resource's own ID)**: passed as a plain string argument.
 ```typescript
 get(id: GetWidgetInput, options?: RequestOptions): Promise<BlindpayApiResponse<GetWidgetResponse>> {
-    return client.get(`/instances/${instanceId}/widgets/${id}`, options);
+    return client.get(`/instances/${instanceId}/widgets/${encodeURIComponent(id)}`, options);
 },
 ```
 
@@ -824,7 +826,7 @@ update(
     { widget_id, ...data }: UpdateWidgetInput,
     options?: RequestOptions
 ): Promise<BlindpayApiResponse<SuccessResponse>> {
-    return client.put(`/instances/${instanceId}/widgets/${widget_id}`, data, options);
+    return client.put(`/instances/${instanceId}/widgets/${encodeURIComponent(widget_id)}`, data, options);
 },
 ```
 
@@ -841,7 +843,7 @@ get(
     options?: RequestOptions
 ): Promise<BlindpayApiResponse<GetOfframpWalletResponse>> {
     return client.get(
-        `/instances/${instanceId}/customers/${customer_id}/bank-accounts/${bank_account_id}/offramp-wallets/${id}`,
+        `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/bank-accounts/${encodeURIComponent(bank_account_id)}/offramp-wallets/${encodeURIComponent(id)}`,
         options
     );
 },

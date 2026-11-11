@@ -121,7 +121,7 @@ describe("operation-insert golden self-test", () => {
             "get(payinId: GetPayinInput, options?: RequestOptions): Promise<BlindpayApiResponse<GetPayinResponse>> {"
         );
         expect(payins).toContain(
-            "return client.get(`/instances/${instanceId}/payins/${payinId}`, options);"
+            "return client.get(`/instances/${instanceId}/payins/${encodeURIComponent(payinId)}`, options);"
         );
 
         const quotes = readFileSync(join(dir, "src/resources/quotes/index.ts"), "utf8");

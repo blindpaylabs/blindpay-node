@@ -304,7 +304,10 @@ export function createPayoutsResource(instanceId: string, client: InternalApiCli
             payoutId: GetPayoutInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetPayoutResponse>> {
-            return client.get(`/instances/${instanceId}/payouts/${payoutId}`, options);
+            return client.get(
+                `/instances/${instanceId}/payouts/${encodeURIComponent(payoutId)}`,
+                options
+            );
         },
         /**
          * Public tracking endpoint for BlindPay's web and iOS apps: server-side calls get a 401 in
@@ -314,7 +317,7 @@ export function createPayoutsResource(instanceId: string, client: InternalApiCli
             payoutId: GetPayoutTrackInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetPayoutTrackResponse>> {
-            return client.get(`/e/payouts/${payoutId}`, options);
+            return client.get(`/e/payouts/${encodeURIComponent(payoutId)}`, options);
         },
         authorizeStellarToken(
             { ...data }: AuthorizeStellarTokenInput,
@@ -345,7 +348,7 @@ export function createPayoutsResource(instanceId: string, client: InternalApiCli
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SubmitPayoutDocumentsResponse>> {
             return client.post(
-                `/instances/${instanceId}/payouts/${payout_id}/documents`,
+                `/instances/${instanceId}/payouts/${encodeURIComponent(payout_id)}/documents`,
                 data,
                 options
             );

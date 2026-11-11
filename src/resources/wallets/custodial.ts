@@ -105,14 +105,17 @@ export function createCustodialWalletsResource(instanceId: string, client: Inter
             customer_id: ListCustodialWalletsInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<ListCustodialWalletsResponse>> {
-            return client.get(`/instances/${instanceId}/customers/${customer_id}/wallets`, options);
+            return client.get(
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/wallets`,
+                options
+            );
         },
         get(
             { customer_id, id }: GetCustodialWalletInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetCustodialWalletResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/wallets/${id}`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/wallets/${encodeURIComponent(id)}`,
                 options
             );
         },
@@ -121,7 +124,7 @@ export function createCustodialWalletsResource(instanceId: string, client: Inter
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateCustodialWalletResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/wallets`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/wallets`,
                 data,
                 options
             );
@@ -131,7 +134,7 @@ export function createCustodialWalletsResource(instanceId: string, client: Inter
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetCustodialWalletBalanceResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/balance`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/wallets/${encodeURIComponent(id)}/balance`,
                 options
             );
         },
@@ -140,7 +143,7 @@ export function createCustodialWalletsResource(instanceId: string, client: Inter
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.delete(
-                `/instances/${instanceId}/customers/${customer_id}/wallets/${id}`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/wallets/${encodeURIComponent(id)}`,
                 options
             );
         },
@@ -149,7 +152,7 @@ export function createCustodialWalletsResource(instanceId: string, client: Inter
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetCustodialWalletDepositsResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/deposits${toQueryString(params)}`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/wallets/${encodeURIComponent(id)}/deposits${toQueryString(params)}`,
                 options
             );
         },
@@ -169,7 +172,7 @@ export function createCustodialWalletsResource(instanceId: string, client: Inter
             >(
                 (page) =>
                     client.get(
-                        `/instances/${instanceId}/customers/${customer_id}/wallets/${id}/deposits${toQueryString(page)}`,
+                        `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/wallets/${encodeURIComponent(id)}/deposits${toQueryString(page)}`,
                         options
                     ),
                 params

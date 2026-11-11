@@ -155,47 +155,52 @@ export class BlindPay {
             postMultipart: this.postMultipart.bind(this),
         };
 
+        // Resources interpolate the instance id into request paths, so they get it percent-encoded
+        // (a no-op for a well-formed `in_...` id). Upload sends it as a query param instead, where
+        // toQueryString encodes it, so it gets the raw value.
+        const pathInstanceId = encodeURIComponent(this.instanceId);
+
         this.available = createAvailableResource(this.api);
 
         this.instances = {
-            ...createInstancesResource(this.instanceId, this.api),
-            webhookEndpoints: createWebhookEndpointsResource(this.instanceId, this.api),
-            tos: createTermsOfServiceResource(this.instanceId, this.api),
-            onboarding: createInstanceOnboardingResource(this.instanceId, this.api),
-            rfi: createInstanceRfiResource(this.instanceId, this.api),
+            ...createInstancesResource(pathInstanceId, this.api),
+            webhookEndpoints: createWebhookEndpointsResource(pathInstanceId, this.api),
+            tos: createTermsOfServiceResource(pathInstanceId, this.api),
+            onboarding: createInstanceOnboardingResource(pathInstanceId, this.api),
+            rfi: createInstanceRfiResource(pathInstanceId, this.api),
         };
 
-        this.partnerFees = createPartnerFeesResource(this.instanceId, this.api);
+        this.partnerFees = createPartnerFeesResource(pathInstanceId, this.api);
 
-        this.payables = createPayablesResource(this.instanceId, this.api);
+        this.payables = createPayablesResource(pathInstanceId, this.api);
 
         this.payins = {
-            ...createPayinsResource(this.instanceId, this.api),
-            quotes: createPayinQuotesResource(this.instanceId, this.api),
+            ...createPayinsResource(pathInstanceId, this.api),
+            quotes: createPayinQuotesResource(pathInstanceId, this.api),
         };
 
-        this.quotes = createQuotesResource(this.instanceId, this.api);
+        this.quotes = createQuotesResource(pathInstanceId, this.api);
 
-        this.payouts = createPayoutsResource(this.instanceId, this.api);
+        this.payouts = createPayoutsResource(pathInstanceId, this.api);
 
-        this.transfers = createTransfersResource(this.instanceId, this.api);
+        this.transfers = createTransfersResource(pathInstanceId, this.api);
 
-        this.fees = createFeesResource(this.instanceId, this.api);
+        this.fees = createFeesResource(pathInstanceId, this.api);
 
         this.upload = createUploadResource(this.instanceId, this.transport.baseUrl, {}, this.api);
 
         this.customers = {
-            ...createCustomersResource(this.instanceId, this.api),
-            bankAccounts: createBankAccountsResource(this.instanceId, this.api),
-            rfi: createCustomerRfiResource(this.instanceId, this.api),
+            ...createCustomersResource(pathInstanceId, this.api),
+            bankAccounts: createBankAccountsResource(pathInstanceId, this.api),
+            rfi: createCustomerRfiResource(pathInstanceId, this.api),
         };
 
-        this.virtualAccounts = createVirtualAccountsResource(this.instanceId, this.api);
+        this.virtualAccounts = createVirtualAccountsResource(pathInstanceId, this.api);
 
         this.wallets = {
-            blockchain: createBlockchainWalletsResource(this.instanceId, this.api),
-            offramp: createOfframpWalletsResource(this.instanceId, this.api),
-            custodial: createCustodialWalletsResource(this.instanceId, this.api),
+            blockchain: createBlockchainWalletsResource(pathInstanceId, this.api),
+            offramp: createOfframpWalletsResource(pathInstanceId, this.api),
+            custodial: createCustodialWalletsResource(pathInstanceId, this.api),
         };
     }
 

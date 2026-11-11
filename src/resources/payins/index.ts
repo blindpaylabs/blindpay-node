@@ -188,7 +188,10 @@ export function createPayinsResource(instanceId: string, client: InternalApiClie
             payinId: GetPayinInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetPayinResponse>> {
-            return client.get(`/instances/${instanceId}/payins/${payinId}`, options);
+            return client.get(
+                `/instances/${instanceId}/payins/${encodeURIComponent(payinId)}`,
+                options
+            );
         },
         /**
          * Public tracking endpoint for BlindPay's web and iOS apps: server-side calls get a 401 in
@@ -199,7 +202,10 @@ export function createPayinsResource(instanceId: string, client: InternalApiClie
             params?: GetPayinTrackParams,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetPayinTrackResponse>> {
-            return client.get(`/e/payins/${payinId}${toQueryString(params)}`, options);
+            return client.get(
+                `/e/payins/${encodeURIComponent(payinId)}${toQueryString(params)}`,
+                options
+            );
         },
         createEvm(
             payin_quote_id: CreateEvmPayinInput,

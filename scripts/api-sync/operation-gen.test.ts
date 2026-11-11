@@ -97,7 +97,7 @@ describe("operation-insert classifier", () => {
             "get(widgetId: GetWidgetInput, options?: RequestOptions)"
         );
         expect(result.change.methodSource).toContain(
-            "client.get(`/instances/${instanceId}/widgets/${widgetId}`, options)"
+            "client.get(`/instances/${instanceId}/widgets/${encodeURIComponent(widgetId)}`, options)"
         );
     });
 
@@ -131,7 +131,7 @@ describe("operation-insert classifier", () => {
         expect(result.change.typeDecls).toContain("customer_id: string;");
         expect(result.change.methodSource).toContain("customer_id,");
         expect(result.change.methodSource).toContain(
-            "`/instances/${instanceId}/customers/${customer_id}/widgets/plaid`"
+            "`/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/widgets/plaid`"
         );
     });
 
@@ -174,7 +174,7 @@ describe("operation-insert classifier", () => {
             });
             expect(change.methodSource).toContain(", options?: RequestOptions)");
             expect(change.methodSource).toContain(
-                "client.delete(`/instances/${instanceId}/widgets/${widgetId}`, options);"
+                "client.delete(`/instances/${instanceId}/widgets/${encodeURIComponent(widgetId)}`, options);"
             );
         });
 
@@ -213,7 +213,7 @@ describe("operation-insert classifier", () => {
             );
             expect(change.methodSource).toContain(
                 // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts generated source text
-                "client.get(`/instances/${instanceId}/widgets/${widgetId}`, options);"
+                "client.get(`/instances/${instanceId}/widgets/${encodeURIComponent(widgetId)}`, options);"
             );
             expect(change.importsNeeded).toContain("RequestOptions");
         });
@@ -264,7 +264,7 @@ describe("operation-insert classifier", () => {
             expect(change.methodSource).toContain("{ customer_id, ...params }");
             expect(change.methodSource).toContain(
                 // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts generated source text
-                "/customers/${customer_id}/widgets${toQueryString(params)}`, options);"
+                "/customers/${encodeURIComponent(customer_id)}/widgets${toQueryString(params)}`, options);"
             );
             expect(change.methodSource).not.toContain("URLSearchParams");
             expect(change.usesQueryString).toBe(true);
@@ -308,7 +308,9 @@ describe("operation-insert classifier", () => {
         expect(result.standard).toBe(true);
         if (!result.standard) throw new Error("unreachable");
         expect(result.change.methodSource).toContain("(customerId: ");
-        expect(result.change.methodSource).toContain("/customers/${customerId}/widgets");
+        expect(result.change.methodSource).toContain(
+            "/customers/${encodeURIComponent(customerId)}/widgets"
+        );
     });
 
     it("keeps an acronym path segment like `tos` whole when naming the generated types", () => {

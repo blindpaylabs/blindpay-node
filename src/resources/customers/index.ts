@@ -765,32 +765,45 @@ export function createCustomersResource(instanceId: string, client: InternalApiC
             customer_id: GetCustomerInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetCustomerResponse>> {
-            return client.get(`/instances/${instanceId}/customers/${customer_id}`, options);
+            return client.get(
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}`,
+                options
+            );
         },
         update(
             { customer_id, ...data }: UpdateCustomerInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.put(`/instances/${instanceId}/customers/${customer_id}`, data, options);
+            return client.put(
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}`,
+                data,
+                options
+            );
         },
         delete(
             customer_id: DeleteCustomerInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
-            return client.delete(`/instances/${instanceId}/customers/${customer_id}`, options);
+            return client.delete(
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}`,
+                options
+            );
         },
         getLimits(
             customer_id: GetCustomerLimitsInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetCustomerLimitsResponse>> {
-            return client.get(`/instances/${instanceId}/limits/customers/${customer_id}`, options);
+            return client.get(
+                `/instances/${instanceId}/limits/customers/${encodeURIComponent(customer_id)}`,
+                options
+            );
         },
         getLimitIncreaseRequests(
             customer_id: GetLimitIncreaseRequestsInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetLimitIncreaseRequestsResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/limit-increase`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/limit-increase`,
                 options
             );
         },
@@ -799,7 +812,7 @@ export function createCustomersResource(instanceId: string, client: InternalApiC
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<RequestLimitIncreaseResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/limit-increase`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/limit-increase`,
                 data,
                 options
             );

@@ -157,13 +157,19 @@ export function createPayablesResource(instanceId: string, client: InternalApiCl
             id: GetPayableInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetPayableResponse>> {
-            return client.get(`/instances/${instanceId}/payables/${id}`, options);
+            return client.get(
+                `/instances/${instanceId}/payables/${encodeURIComponent(id)}`,
+                options
+            );
         },
         delete(
             id: DeletePayableInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<DeletePayableResponse>> {
-            return client.delete(`/instances/${instanceId}/payables/${id}`, options);
+            return client.delete(
+                `/instances/${instanceId}/payables/${encodeURIComponent(id)}`,
+                options
+            );
         },
     };
 }

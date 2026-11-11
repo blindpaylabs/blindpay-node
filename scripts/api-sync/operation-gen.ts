@@ -476,11 +476,12 @@ function buildPathTemplate(
     const rendered = segs.map((seg) => {
         if (!seg.startsWith("{")) return seg;
         const name = seg.slice(1, -1);
+        // Caller-supplied ids are percent-encoded; instanceId already is (the client encodes it once).
         if (inputKind === "scalar" && !scalarUsed) {
             scalarUsed = true;
-            return `\${${scalarArgName}}`;
+            return `\${encodeURIComponent(${scalarArgName})}`;
         }
-        return `\${${name}}`;
+        return `\${encodeURIComponent(${name})}`;
     });
     return `/instances/\${instanceId}/${rendered.join("/")}`;
 }

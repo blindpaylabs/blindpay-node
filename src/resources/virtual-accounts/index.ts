@@ -129,7 +129,7 @@ export function createVirtualAccountsResource(instanceId: string, client: Intern
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<ListVirtualAccountsResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/virtual-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/virtual-accounts`,
                 options
             );
         },
@@ -138,7 +138,7 @@ export function createVirtualAccountsResource(instanceId: string, client: Intern
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<GetVirtualAccountResponse>> {
             return client.get(
-                `/instances/${instanceId}/customers/${customer_id}/virtual-accounts/${id}`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/virtual-accounts/${encodeURIComponent(id)}`,
                 options
             );
         },
@@ -147,7 +147,7 @@ export function createVirtualAccountsResource(instanceId: string, client: Intern
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<CreateVirtualAccountResponse>> {
             return client.post(
-                `/instances/${instanceId}/customers/${customer_id}/virtual-accounts`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/virtual-accounts`,
                 data,
                 options
             );
@@ -157,7 +157,7 @@ export function createVirtualAccountsResource(instanceId: string, client: Intern
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<SuccessResponse>> {
             return client.put(
-                `/instances/${instanceId}/customers/${customer_id}/virtual-accounts/${id}`,
+                `/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/virtual-accounts/${encodeURIComponent(id)}`,
                 data,
                 options
             );
