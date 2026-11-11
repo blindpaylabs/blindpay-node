@@ -160,5 +160,29 @@
         "field": "partner_wallet_address",
         "reason": "Removed from the public API at blindpay-v2@66144f3b2; kept as an optional @deprecated field until the next major (sdk-parity D13) so existing code compiles. Replaced by the per-network partner_wallets map (packages/api-contract/src/yield.schema.ts:105).",
         "owner": "thayto@blindpay.com"
+    },
+    {
+        "schema": "UploadInput",
+        "field": "filename",
+        "reason": "Client-side upload option, not a form field: the name of the multipart file part built from bytes (sdk-parity C9).",
+        "owner": "thayto@blindpay.com"
+    },
+    {
+        "schema": "UploadInput",
+        "field": "contentType",
+        "reason": "Client-side upload option, not a form field: the MIME type of the multipart file part built from bytes (sdk-parity C9).",
+        "owner": "thayto@blindpay.com"
+    },
+    {
+        "schema": "UploadAnalyzeInput",
+        "field": "filename",
+        "reason": "Client-side upload option, not a form field: the name of the multipart file part built from bytes (sdk-parity C9).",
+        "owner": "thayto@blindpay.com"
+    },
+    {
+        "schema": "UploadAnalyzeInput",
+        "field": "contentType",
+        "reason": "Client-side upload option, not a form field: the MIME type of the multipart file part built from bytes (sdk-parity C9).",
+        "owner": "thayto@blindpay.com"
     }
 ]

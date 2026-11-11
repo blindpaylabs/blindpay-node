@@ -138,14 +138,14 @@ Auto-pagers exist for `payouts`, `payins`, `customers`, `payables` and `transfer
 ```typescript
 import { readFile } from 'node:fs/promises';
 
-const file = new Blob([await readFile('contract.pdf')], { type: 'application/pdf' });
+const file = { file: await readFile('contract.pdf'), filename: 'contract.pdf', contentType: 'application/pdf' };
 
-const uploaded = await blindpay.upload.upload({ file, bucket: 'documents' });
-const analysis = await blindpay.upload.analyze({ file, type: 'invoice' });
+const uploaded = await blindpay.upload.upload({ ...file, bucket: 'documents' });
+const analysis = await blindpay.upload.analyze({ ...file, type: 'invoice' });
 const link = await blindpay.upload.presign({ file_url: uploaded.data!.file_url });
 ```
 
-Uploads are sent as `multipart/form-data` for your own instance. The API requires a completed onboarding for them.
+`file` takes a `File`, a `Blob`, or raw bytes (a `Buffer`/`Uint8Array` or an `ArrayBuffer`); `filename` and `contentType` name and type it. Uploads are sent as `multipart/form-data` for the client's own instance (the `instance_id` input is deprecated). The API requires a completed onboarding for them.
 
 ## Webhooks
 

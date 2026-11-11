@@ -16,3 +16,4 @@ Synced with the API spec at blindpay-v2@66144f3b2; the SDK now covers all 94 pub
 - Each rail's bank-account create response now also types `status`, `tax_id`, `phone_number`, `date_of_birth`, `business_industry` and `tron_wallet_hash` (optional; the API returns the whole bank account).
 - `CreatePayoutInput` is deprecated: no method takes it.
 - `limit` also accepts a number (`{ limit: 50 }`); it is sent as the same string. `offset` is deprecated: the API ignores it, page with `starting_after` or `listAutoPaging`.
+- `upload.upload` and `upload.analyze` accept raw bytes (`Uint8Array`/`Buffer`, `ArrayBuffer`) as well as a `File` or `Blob`, with optional `filename` and `contentType`. The `instance_id` input on upload, analyze and presign is deprecated: they always use the client's instance.

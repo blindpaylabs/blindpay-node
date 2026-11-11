@@ -5,8 +5,14 @@ import { toQueryString } from "../../internal/query";
 export type UploadBucket = "avatar" | "onboarding" | "limit_increase" | "documents";
 
 export type UploadInput = {
-    file: File | Blob;
+    /** A `File` or `Blob`, or the raw bytes (`Uint8Array`, e.g. a `Buffer`, or `ArrayBuffer`). */
+    file: File | Blob | Uint8Array | ArrayBuffer;
+    /** Name sent with the file. Defaults to a `File`'s own name, `"blob"` for a `Blob`, `"upload"` for bytes. */
+    filename?: string;
+    /** MIME type, e.g. `"application/pdf"`. Defaults to the `Blob`'s own type, `application/octet-stream` for bytes. */
+    contentType?: string;
     bucket: UploadBucket;
+    /** @deprecated Uploads always go to the client's own instance (the API rejects any other with 401); leave this out. */
     instance_id?: string;
 };
 
@@ -41,9 +47,16 @@ export type UploadAnalyzeDocumentType =
 export type UploadAnalyzeApprovalRate = "low" | "medium" | "high";
 
 export type UploadAnalyzeInput = {
-    file: File | Blob;
+    /** A `File` or `Blob`, or the raw bytes (`Uint8Array`, e.g. a `Buffer`, or `ArrayBuffer`). */
+    file: File | Blob | Uint8Array | ArrayBuffer;
+    /** Name sent with the file. Defaults to a `File`'s own name, `"blob"` for a `Blob`, `"upload"` for bytes. */
+    filename?: string;
+    /** MIME type, e.g. `"application/pdf"`. Defaults to the `Blob`'s own type, `application/octet-stream` for bytes. */
+    contentType?: string;
     type: UploadAnalyzeDocumentType;
+    /** A JSON string with context for the analysis. */
     metadata?: string;
+    /** @deprecated Uploads always go to the client's own instance (the API rejects any other with 401); leave this out. */
     instance_id?: string;
 };
 
@@ -54,6 +67,7 @@ export type UploadAnalyzeResponse = {
 
 export type PresignInput = {
     file_url: string;
+    /** @deprecated Uploads always go to the client's own instance (the API rejects any other with 401); leave this out. */
     instance_id?: string;
 };
 
@@ -62,10 +76,30 @@ export type PresignResponse = {
     expires_at: string;
 };
 
+/** The multipart `file` part's content, name and type (shared by upload and analyze). */
+type FilePart = Pick<UploadInput, "file" | "filename" | "contentType">;
+
+/** Appends `file` to `form` as the multipart `file` part, named and typed as `FilePart` says. */
+function appendFile(form: FormData, { file, filename, contentType }: FilePart): void {
+    if (!(file instanceof Blob)) {
+        const bytes = new Blob([file as BlobPart], {
+            type: contentType ?? "application/octet-stream",
+        });
+        form.append("file", bytes, filename ?? "upload");
+        return;
+    }
+    const blob =
+        contentType && contentType !== file.type ? new Blob([file], { type: contentType }) : file;
+    const ownName = "name" in file && typeof file.name === "string" ? file.name : undefined;
+    const name = filename ?? ownName;
+    if (name === undefined) form.append("file", blob);
+    else form.append("file", blob, name);
+}
+
 /**
- * @param _baseUrl Unused: uploads go through `client`, which owns the base URL. Kept so the
- * exported factory's signature doesn't change.
- * @param _headers Unused, for the same reason.
+ * @param _baseUrl @deprecated Unused: uploads go through `client`, which owns the base URL.
+ *   Kept so the exported factory's signature doesn't change; removed in the next major.
+ * @param _headers @deprecated Unused, for the same reason.
  */
 export function createUploadResource(
     instanceId: string,
@@ -75,11 +109,11 @@ export function createUploadResource(
 ) {
     return {
         upload(
-            { file, bucket, instance_id }: UploadInput,
+            { bucket, instance_id, ...file }: UploadInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<UploadResponse>> {
             const formData = new FormData();
-            formData.append("file", file);
+            appendFile(formData, file);
             formData.append("bucket", bucket);
 
             return client.postMultipart(
@@ -89,11 +123,11 @@ export function createUploadResource(
             );
         },
         analyze(
-            { file, type, metadata, instance_id }: UploadAnalyzeInput,
+            { type, metadata, instance_id, ...file }: UploadAnalyzeInput,
             options?: RequestOptions
         ): Promise<BlindpayApiResponse<UploadAnalyzeResponse>> {
             const formData = new FormData();
-            formData.append("file", file);
+            appendFile(formData, file);
             formData.append("type", type);
             if (metadata !== undefined) {
                 formData.append("metadata", metadata);
