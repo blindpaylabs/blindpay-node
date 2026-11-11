@@ -1,5 +1,43 @@
 # @blindpay/node
 
+## 6.1.0
+
+### Minor Changes
+
+- [#86](https://github.com/blindpaylabs/blindpay-node/pull/86) [`5fba49f`](https://github.com/blindpaylabs/blindpay-node/commit/5fba49fff811e6d6a6a8a8a9c96628f5736ee01f) Thanks [@rafa-thayto](https://github.com/rafa-thayto)! - **Behaviour change: requests now time out after 60 seconds per attempt and are retried automatically (2 retries by default).** Pass `maxRetries: 0` to `new BlindPay(...)` to turn retries off and `timeoutMs` to change the timeout. Mutations are only retried under an `Idempotency-Key` (the SDK generates one when you don't pass one) and only when the API can't have acted: no response, 429, or a concurrent duplicate (409). A mutation that gets a 5xx is never resent automatically; its error has `retryable: true` and the `idempotency_key` to resend with after checking whether the resource was created.
+  
+  - **Client options**: `baseUrl`, `timeoutMs`, `maxRetries` and an injectable `fetch`.
+  - **Per-call options on every method**, GETs included: `idempotencyKey`, `timeoutMs`, `headers` and `signal`. An empty `idempotencyKey`, or one longer than 255 characters, is now rejected before anything is sent (the API silently ignored an empty one).
+  - **Errors** carry `status` (0 when no response arrived), `request_id`, `idempotency_key`, `retryable` and `type` (`api_error`, `connection_error`, `timeout_error`, `aborted`, `invalid_request`, `invalid_response`). A non-JSON error body (for example an HTML 502) gives `HTTP 502 Bad Gateway` instead of a JSON parse message. `Content-Type` is only sent with a body.
+  - **Auto-pagination**: `listAutoPaging()` on payouts, payins, customers, payables and transfers, and `wallets.custodial.getDepositsAutoPaging()`, as async iterators (`for await (const payout of blindpay.payouts.listAutoPaging()) {}`). A failed page throws a `BlindPayError` whose new `error` property holds the `ErrorResponse`.
+  - **Webhooks without a client**: `verifyWebhook(payload, headers, secret)` and `constructWebhookEvent(payload, headers, secret)`; an event newer than the SDK comes back as an `UnknownWebhookEvent` (check `isUnknownWebhookEvent`). The client methods keep working as before.
+  - `instances.tos.initiate` and the upload methods also take the trailing options argument.
+
+- [#85](https://github.com/blindpaylabs/blindpay-node/pull/85) [`d44823e`](https://github.com/blindpaylabs/blindpay-node/commit/d44823eaafc2e796a9388559ff3120e24f4dafd3) Thanks [@rafa-thayto](https://github.com/rafa-thayto)! - Runtime fixes, and the types you need are now importable from the package root:
+  
+  - List methods (`payouts`, `payins`, `customers`, `payables`, `transfers` and `customers.bankAccounts`) no longer send unset filters as the text `"undefined"` (`list({ status: undefined })` used to send `?status=undefined`), and `list({})` no longer adds a bare `?`.
+  - New root exports: the shared types (`RequestOptions`, `ErrorResponse`, `BlindpayApiResponse`, `SuccessResponse`, `Network`, `Currency`, `Rail`, `Country`, `PaginationParams`, `PaginationMetadata`, `TransactionStatus` and the other types the SDK's methods use), `BlindPayError`, `BlindPayOptions` (the constructor options) and the terms-of-service `InitiateInput` / `InitiateResponse`.
+  - `BlindPayError`'s `name` is now `"BlindPayError"`, matching the class; it used to be `"BlindpayError"`, so update any check against the old string.
+  - The published package no longer includes test bundles (17.6 MB unpacked down to about 0.5 MB).
+  - `upload.upload` and `upload.analyze` now resolve to `{ data: null, error }` on a network failure or a non-JSON response instead of rejecting, like every other method.
+
+- [#86](https://github.com/blindpaylabs/blindpay-node/pull/86) [`f5292fb`](https://github.com/blindpaylabs/blindpay-node/commit/f5292fbd82a47e392ca6973dc9a119a06643be68) Thanks [@rafa-thayto](https://github.com/rafa-thayto)! - Synced with the API spec at blindpay-v2@66144f3b2; the SDK now covers all 94 public SDK operations.
+  
+  - **New method `wallets.offramp.update({ customer_id, bank_account_id, id, partner_fee_id })`** (`PUT …/offramp-wallets/{id}`). Omit `partner_fee_id` to leave it unchanged, pass `null` to remove the partner fee.
+  - `payins.getTrack(id, { checkout_token })`: pass a card payin's signed checkout token to get its `card_instruction` back. The track methods (`payouts`, `payins`, `transfers`) are documented as what they are: public tracking endpoints for BlindPay's own apps, which return 401 to a server-side call in production; use `get(id)`.
+  - `partner_fee_id` on offramp wallets (create input, create response, `OfframpWallet`).
+  - `card_instruction` on the payin quote response, and `checkout_public_key`, `checkout_token` and `checkout_url` on the payin tracking `card_instruction`.
+  - `partner_wallets` (per-network EVM address) on the billing fees `yield` split.
+  - **Deprecated** (still typed as optional so your code compiles; the API no longer returns them): `PayoutTrackingPayment.forced_provider`, `PayoutTrackingPayment.provider_integration` (and the `PayoutForcedProvider` / `PayoutProviderIntegration` types), and the fees `yield.partner_wallet_address` (read `partner_wallets`).
+  - **Documented, unchanged types:** the API never returns `Payout.tracking_partner_fee` (now `@deprecated`) or `customer_id` on the payout create responses (read it from `payouts.get` or the `payout.new` webhook), only `customers.get` returns `is_tos_accepted`, and `payouts.list` leaves out `has_virtual_account`. The types stay as released; they become optional in the next major.
+  - **Path ids are percent-encoded** (C9): `payouts.get("a/b")` now requests `/payouts/a%2Fb` instead of a different route. Well-formed BlindPay ids are unchanged on the wire.
+  - `console.log(client)` and `JSON.stringify(client)` show the configuration with the API key redacted; the key is no longer reachable as a property.
+  - Each rail's bank-account create response now also types `status`, `tax_id`, `phone_number`, `date_of_birth`, `business_industry` and `tron_wallet_hash` (optional; the API returns the whole bank account).
+  - `CreatePayoutInput` is deprecated: no method takes it.
+  - `limit` also accepts a number (`{ limit: 50 }`); it is sent as the same string. `offset` is deprecated: the API ignores it, page with `starting_after` or `listAutoPaging`.
+  - `upload.upload` and `upload.analyze` accept raw bytes (`Uint8Array`/`Buffer`, `ArrayBuffer`) as well as a `File` or `Blob`, with optional `filename` and `contentType`. The `instance_id` input on upload, analyze and presign is deprecated: they always use the client's instance.
+  - `verifyWebhook` and `constructWebhookEvent` (and the client's webhook methods) accept a `tolerance` in seconds (default 300).
+
 ## 6.0.0
 
 ### Major Changes
