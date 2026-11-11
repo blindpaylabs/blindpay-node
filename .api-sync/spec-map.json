@@ -2745,7 +2745,7 @@
             },
             {
                 "name": "YieldFee",
-                "reason": "Only referenced by GetFeesOut.yield (billing fees resource, src/resources/fees/index.ts). GetFeesResponse does not model the yield fee split yet; see the GetFeesOut.yield entry in unmodeled.json properties."
+                "reason": "Only referenced by GetFeesOut.yield (billing fees resource). Modeled inline as GetFeesResponse.yield in src/resources/fees/index.ts (blindpay_share_bps, partner_share_bps, partner_wallets); the map is one level deep, so the named schema itself is not mapped."
             }
         ],
         "operations": []
