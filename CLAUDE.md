@@ -27,6 +27,7 @@ blindpay-node/
   src/
     index.ts                            # Re-exports the client, BlindPayError, listed shared types and all resources
     client.ts                           # BlindPay class (BlindPayOptions, resource wiring) over internal/http.ts
+    client-secrets.test.ts              # The API key never shows in inspect, JSON or errors (C13)
     transport.test.ts                   # Transport contract: config, errors, the retry table, on a fake clock
     webhooks.ts                         # Standalone verifyWebhook / constructWebhookEvent (Svix), no client needed
     webhooks.test.ts                    # The 14 shared webhook vectors + every webhook fixture
@@ -138,6 +139,7 @@ Every request, JSON or multipart, goes through `send()`; resources never call `f
 - **Retries** follow the sdk-parity Appendix A2 table in `decide()`, which also sets `error.retryable`, so the two can't drift. GETs: no response, 408, 429, 500/502/503/504. Mutations: only no response, 429 and `409 idempotency_key_in_flight`, and **never a 5xx** (the API releases the key on a 5xx, so a resend re-executes). `Retry-After` is honoured when it is an integer of at most 60 s; otherwise `min(8 s, 0.5 s * 2^attempt)` with jitter. The body is serialised once. Sleeps stop on the caller's `signal`.
 - **Errors** never throw: `ErrorResponse` gains `status` (0 without a response), `request_id` (`X-Request-Id`), `idempotency_key`, `retryable` and `type`, each set only when known. A non-JSON error body becomes `HTTP <status> <text>`.
 - `Content-Type: application/json` only when there is a body.
+- **Secrets** (sdk-parity C13): the transport config, which holds the API key, lives in the client's ECMAScript-private `#transport`, and `BlindPay` defines `toJSON()` / `util.inspect.custom` returning the configuration with `apiKey: "[redacted]"`. Never store the key on a normal property or a resource, and never put it, or a request body, in an error message. `src/client-secrets.test.ts` checks inspect (with `showHidden`), `JSON.stringify` and error results.
 
 Retry tests use `vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] })`; never let a test sleep for real. A client in a test that mocks a 5xx GET and doesn't test retries should pass `maxRetries: 0`.
 

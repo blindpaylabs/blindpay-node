@@ -69,7 +69,9 @@ const DEFAULT_MAX_RETRIES = 2;
 
 export class BlindPay {
     // Options
-    private readonly transport: TransportConfig;
+    // ECMAScript-private, so the API key never shows in util.inspect (even showHidden),
+    // JSON.stringify or a debugger's property list (sdk-parity C13).
+    readonly #transport: TransportConfig;
     private readonly instanceId: string;
     private readonly api: InternalApiClient;
 
@@ -135,7 +137,7 @@ export class BlindPay {
 
         this.instanceId = instanceId;
 
-        this.transport = {
+        this.#transport = {
             baseUrl: baseUrl.replace(/\/+$/, ""),
             apiKey,
             userAgent: `blindpay-node/${version}`,
@@ -187,7 +189,7 @@ export class BlindPay {
 
         this.fees = createFeesResource(pathInstanceId, this.api);
 
-        this.upload = createUploadResource(this.instanceId, this.transport.baseUrl, {}, this.api);
+        this.upload = createUploadResource(this.instanceId, this.#transport.baseUrl, {}, this.api);
 
         this.customers = {
             ...createCustomersResource(pathInstanceId, this.api),
@@ -204,13 +206,29 @@ export class BlindPay {
         };
     }
 
+    /** What `console.log(client)` shows: the configuration, never the API key. */
+    [Symbol.for("nodejs.util.inspect.custom")](): Record<string, unknown> {
+        return this.toJSON();
+    }
+
+    /** What `JSON.stringify(client)` gives: the configuration, never the API key. */
+    toJSON(): Record<string, unknown> {
+        return {
+            instanceId: this.instanceId,
+            baseUrl: this.#transport.baseUrl,
+            timeoutMs: this.#transport.timeoutMs,
+            maxRetries: this.#transport.maxRetries,
+            apiKey: "[redacted]",
+        };
+    }
+
     private request<T>(
         method: HttpMethod,
         path: string,
         body?: Record<string, unknown>,
         options?: RequestOptions
     ): Promise<BlindpayApiResponse<T>> {
-        return send<T>(this.transport, { method, path, json: body, options });
+        return send<T>(this.#transport, { method, path, json: body, options });
     }
 
     private get<T>(path: string, options?: RequestOptions): Promise<BlindpayApiResponse<T>> {
@@ -251,7 +269,7 @@ export class BlindPay {
         form: FormData,
         options?: RequestOptions
     ): Promise<BlindpayApiResponse<T>> {
-        return send<T>(this.transport, { method: "POST", path, form, options });
+        return send<T>(this.#transport, { method: "POST", path, form, options });
     }
 
     /**
