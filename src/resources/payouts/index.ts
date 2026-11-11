@@ -39,7 +39,8 @@ export type Payout = {
     tracking_payment: PayoutTrackingPayment;
     tracking_liquidity: PayoutTrackingLiquidity | null;
     tracking_complete: PayoutTrackingComplete;
-    tracking_partner_fee: PayoutTrackingPartnerFee;
+    /** @deprecated The API no longer returns a payout's partner fee tracking (blindpay-v2 payout.schema.ts:274); always absent. Read `partner_fee` for the amount. Removed in the next major. */
+    tracking_partner_fee?: PayoutTrackingPartnerFee;
     created_at: string | null;
     updated_at: string | null;
     image_url: string | null;
@@ -199,6 +200,7 @@ export type CreateStellarPayoutResponse = {
     tracking_complete?: PayoutTrackingComplete;
     tracking_payment?: PayoutTrackingPayment;
     tracking_transaction?: PayoutTrackingTransaction;
+    /** @deprecated The API no longer returns a payout's partner fee tracking (blindpay-v2 payout.schema.ts:274); always absent. Read `partner_fee` for the amount. Removed in the next major. */
     tracking_partner_fee?: PayoutTrackingPartnerFee;
     tracking_liquidity?: PayoutTrackingLiquidity | null;
     customer_id: string | null;
@@ -229,6 +231,7 @@ export type CreateEvmPayoutResponse = {
     tracking_complete?: PayoutTrackingComplete;
     tracking_payment?: PayoutTrackingPayment;
     tracking_transaction?: PayoutTrackingTransaction;
+    /** @deprecated The API no longer returns a payout's partner fee tracking (blindpay-v2 payout.schema.ts:274); always absent. Read `partner_fee` for the amount. Removed in the next major. */
     tracking_partner_fee?: PayoutTrackingPartnerFee;
     tracking_liquidity?: PayoutTrackingLiquidity | null;
     customer_id: string | null;
@@ -260,6 +263,7 @@ export type CreateSolanaPayoutResponse = {
     tracking_complete: PayoutTrackingComplete;
     tracking_payment: PayoutTrackingPayment;
     tracking_transaction: PayoutTrackingTransaction;
+    /** @deprecated The API no longer returns a payout's partner fee tracking (blindpay-v2 payout.schema.ts:274); always absent. Read `partner_fee` for the amount. Removed in the next major. */
     tracking_partner_fee?: PayoutTrackingPartnerFee | null;
     tracking_liquidity?: PayoutTrackingLiquidity | null;
     customer_id: string | null;
