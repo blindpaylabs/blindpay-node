@@ -29,6 +29,16 @@ export type RecipientRelationship =
 
 export type BankAccountStatus = "verifying" | "approved" | "rejected" | "deprecated";
 
+/** Fields every rail's create response carries: the API returns the whole bank account. */
+export type BankAccountCreateCommon = {
+    business_industry?: BusinessIndustry | null;
+    phone_number?: string | null;
+    tax_id?: string | null;
+    date_of_birth?: string | null;
+    tron_wallet_hash?: string | null;
+    status?: BankAccountStatus | null;
+};
+
 export type ListBankAccountsInput = {
     customer_id: string;
     status?: BankAccountStatus;
@@ -162,7 +172,7 @@ export type CreatePixInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreatePixResponse = {
+export type CreatePixResponse = BankAccountCreateCommon & {
     id: string;
     type: "pix";
     name: string;
@@ -179,12 +189,6 @@ export type CreatePixResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
-    business_industry?: BusinessIndustry | null;
-    phone_number?: string | null;
-    tax_id?: string | null;
-    date_of_birth?: string | null;
-    tron_wallet_hash?: string | null;
-    status?: BankAccountStatus | null;
 };
 
 export type CreatePixSafeInput = {
@@ -209,7 +213,7 @@ export type CreatePixSafeInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreatePixSafeResponse = {
+export type CreatePixSafeResponse = BankAccountCreateCommon & {
     id: string;
     type: "pix_safe";
     name: string;
@@ -231,12 +235,6 @@ export type CreatePixSafeResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
-    business_industry?: BusinessIndustry | null;
-    phone_number?: string | null;
-    tax_id?: string | null;
-    date_of_birth?: string | null;
-    tron_wallet_hash?: string | null;
-    status?: BankAccountStatus | null;
 };
 
 export type CreateArgentinaTransfersInput = {
@@ -258,7 +256,7 @@ export type CreateArgentinaTransfersInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateArgentinaTransfersResponse = {
+export type CreateArgentinaTransfersResponse = BankAccountCreateCommon & {
     id: string;
     type: "transfers_bitso";
     name: string;
@@ -277,12 +275,6 @@ export type CreateArgentinaTransfersResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
-    business_industry?: BusinessIndustry | null;
-    phone_number?: string | null;
-    tax_id?: string | null;
-    date_of_birth?: string | null;
-    tron_wallet_hash?: string | null;
-    status?: BankAccountStatus | null;
 };
 
 export type CreateSpeiInput = {
@@ -305,7 +297,7 @@ export type CreateSpeiInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateSpeiResponse = {
+export type CreateSpeiResponse = BankAccountCreateCommon & {
     id: string;
     type: "spei_bitso";
     name: string;
@@ -325,12 +317,6 @@ export type CreateSpeiResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
-    business_industry?: BusinessIndustry | null;
-    phone_number?: string | null;
-    tax_id?: string | null;
-    date_of_birth?: string | null;
-    tron_wallet_hash?: string | null;
-    status?: BankAccountStatus | null;
 };
 
 export type CreateColombiaAchInput = {
@@ -357,7 +343,7 @@ export type CreateColombiaAchInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateColombiaAchResponse = {
+export type CreateColombiaAchResponse = BankAccountCreateCommon & {
     id: string;
     type: "ach_cop_bitso";
     name: string;
@@ -381,12 +367,6 @@ export type CreateColombiaAchResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
-    business_industry?: BusinessIndustry | null;
-    phone_number?: string | null;
-    tax_id?: string | null;
-    date_of_birth?: string | null;
-    tron_wallet_hash?: string | null;
-    status?: BankAccountStatus | null;
 };
 
 export type CreateAchInput = {
@@ -421,7 +401,7 @@ export type CreateAchInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateAchResponse = {
+export type CreateAchResponse = BankAccountCreateCommon & {
     id: string;
     type: "ach";
     name: string;
@@ -456,12 +436,6 @@ export type CreateAchResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
-    business_industry?: BusinessIndustry | null;
-    phone_number?: string | null;
-    tax_id?: string | null;
-    date_of_birth?: string | null;
-    tron_wallet_hash?: string | null;
-    status?: BankAccountStatus | null;
 };
 
 export type CreateWireInput = {
@@ -495,7 +469,7 @@ export type CreateWireInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateWireResponse = {
+export type CreateWireResponse = BankAccountCreateCommon & {
     id: string;
     type: "wire";
     name: string;
@@ -522,12 +496,6 @@ export type CreateWireResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
-    business_industry?: BusinessIndustry | null;
-    phone_number?: string | null;
-    tax_id?: string | null;
-    date_of_birth?: string | null;
-    tron_wallet_hash?: string | null;
-    status?: BankAccountStatus | null;
 };
 
 export type CreateInternationalSwiftInput = {
@@ -574,7 +542,7 @@ export type CreateInternationalSwiftInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateInternationalSwiftResponse = {
+export type CreateInternationalSwiftResponse = BankAccountCreateCommon & {
     id: string;
     type: "international_swift";
     name: string;
@@ -621,12 +589,6 @@ export type CreateInternationalSwiftResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
-    business_industry?: BusinessIndustry | null;
-    phone_number?: string | null;
-    tax_id?: string | null;
-    date_of_birth?: string | null;
-    tron_wallet_hash?: string | null;
-    status?: BankAccountStatus | null;
 };
 
 export type CreateRtpInput = {
@@ -660,7 +622,7 @@ export type CreateRtpInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateRtpResponse = {
+export type CreateRtpResponse = BankAccountCreateCommon & {
     id: string;
     type: "rtp";
     name: string;
@@ -687,12 +649,6 @@ export type CreateRtpResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
-    business_industry?: BusinessIndustry | null;
-    phone_number?: string | null;
-    tax_id?: string | null;
-    date_of_birth?: string | null;
-    tron_wallet_hash?: string | null;
-    status?: BankAccountStatus | null;
 };
 
 export type CreateSepaInput = {
@@ -721,7 +677,7 @@ export type CreateSepaInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateSepaResponse = {
+export type CreateSepaResponse = BankAccountCreateCommon & {
     id: string;
     type: "sepa";
     name: string;
@@ -748,12 +704,6 @@ export type CreateSepaResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
-    business_industry?: BusinessIndustry | null;
-    phone_number?: string | null;
-    tax_id?: string | null;
-    date_of_birth?: string | null;
-    tron_wallet_hash?: string | null;
-    status?: BankAccountStatus | null;
 };
 
 export type CreateTedInput = {
@@ -778,7 +728,7 @@ export type CreateTedInput = {
     swift_ifsc_branch_code?: string | null;
 };
 
-export type CreateTedResponse = {
+export type CreateTedResponse = BankAccountCreateCommon & {
     id: string;
     type: "ted";
     name: string;
@@ -800,12 +750,6 @@ export type CreateTedResponse = {
     faster_payments_sort_code?: string | null;
     plaid_connected_at?: string | null;
     swift_ifsc_branch_code?: string | null;
-    business_industry?: BusinessIndustry | null;
-    phone_number?: string | null;
-    tax_id?: string | null;
-    date_of_birth?: string | null;
-    tron_wallet_hash?: string | null;
-    status?: BankAccountStatus | null;
 };
 
 export type CreateFasterPaymentsInput = {
@@ -823,7 +767,7 @@ export type CreateFasterPaymentsInput = {
     faster_payments_beneficiary_country: Country | null;
 };
 
-export type CreateFasterPaymentsResponse = {
+export type CreateFasterPaymentsResponse = BankAccountCreateCommon & {
     id: string;
     type: "faster_payments";
     name: string;
@@ -838,12 +782,6 @@ export type CreateFasterPaymentsResponse = {
     faster_payments_beneficiary_postal_code: string | null;
     faster_payments_beneficiary_country: Country | null;
     created_at: string | null;
-    business_industry?: BusinessIndustry | null;
-    phone_number?: string | null;
-    tax_id?: string | null;
-    date_of_birth?: string | null;
-    tron_wallet_hash?: string | null;
-    status?: BankAccountStatus | null;
 };
 
 export type CreatePlaidBankAccountInput = {
