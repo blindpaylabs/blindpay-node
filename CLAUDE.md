@@ -41,6 +41,8 @@ blindpay-node/
       paginate.ts                       # autoPage: async iterator behind every listAutoPaging
       webhook-event-names.ts            # Runtime copy of the WebhookEvents union (kept equal by a type test)
       test-fixtures.ts                  # Test-only loader for test/fixtures/spec (never import from SDK code)
+      test-operations.ts                # Test-only: every spec op -> the client method(s) implementing it
+      fixture-divergences.ts            # Test-only: source-verified differences between SDK types and spec fixtures
       helpers/strict-omit.ts            # StrictOmit<T, K> utility type
       vitest-fetch-mock.d.ts            # Type declaration for fetch mock
     resources/
@@ -50,7 +52,9 @@ blindpay-node/
       request-options.test.ts           # Fails on a mutation that doesn't forward RequestOptions
       list-query.test.ts                # Exact query string each list method sends
       auto-paging.test.ts               # Every auto-pager: cursor following, errors, guards
-      fixture-round-trip.test.ts        # Transport round-trip of test/fixtures/spec variants (not a type check)
+      fixture-round-trip.test.ts        # Op coverage: all 94 ops hit their method + path, every fixture variant round-trips
+      fixture-types.test.ts             # C8 type check: every fixture variant assigned to its method's declared type (TS compiler API)
+      path-encoding.test.ts             # Path ids are percent-encoded
       wallets/                          # Grouped sub-resources (no index.ts)
         blockchain.ts                   # createBlockchainWalletsResource
         blockchain.test.ts
@@ -599,6 +603,10 @@ Key rules:
 - Use `fetchMock.mockResponseOnce` with `JSON.stringify` and content-type header.
 - Destructure `{ data, error }` from the result.
 - Assert `error` is null and `data` matches the mock.
+
+### Spec fixtures and response types
+
+`src/internal/test-operations.ts` lists every spec operation with the client method(s) that implement it; add a row with every new method. Two tests run over it: `fixture-round-trip.test.ts` (method, path and every fixture variant through the transport) and `fixture-types.test.ts`, which type-checks every `full`, `required_only`, `nullables_null` and `decimals` variant (responses and webhooks) against the method's declared response type with the repo's tsconfig. When it reports a type error, check the API source (blindpay-v2) before touching the type: a field the API never sends is made optional (and `@deprecated` if it was dropped); a field the handler always sends, or one that can be omitted but whose widening would break callers, goes into `src/internal/fixture-divergences.ts` with the reason. Entries that stop matching a real difference fail the test.
 
 ### Running
 

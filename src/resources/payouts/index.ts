@@ -93,6 +93,7 @@ export type Payout = {
     swift_account_number_iban?: string | null;
     transfers_account?: string | null;
     transfers_type: "CVU" | "CBU" | "ALIAS" | null;
+    /** Returned by `payouts.get` and `payouts.getTrack`; `payouts.list` leaves it out. */
     has_virtual_account: boolean | null;
     billing_fee_amount?: number | null;
     cpn_payment_id?: string | null;
