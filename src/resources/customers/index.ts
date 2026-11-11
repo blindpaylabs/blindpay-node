@@ -191,6 +191,7 @@ export type AdditionalInfoItem = {
 
 export type IndividualWithStandardKYC = {
     id: string;
+    /** Only `customers.get` returns it; `customers.list` and the customer webhooks leave it out. */
     is_tos_accepted: boolean | null;
     type: Extract<AccountClass, "individual">;
     kyc_type: Extract<KycType, "standard">;
@@ -260,6 +261,7 @@ export type IndividualWithStandardKYC = {
 
 export type IndividualWithEnhancedKYC = {
     id: string;
+    /** Only `customers.get` returns it; `customers.list` and the customer webhooks leave it out. */
     is_tos_accepted: boolean | null;
     type: Extract<AccountClass, "individual">;
     kyc_type: Extract<KycType, "enhanced">;
@@ -331,6 +333,7 @@ export type IndividualWithEnhancedKYC = {
 
 export type BusinessWithStandardKYB = {
     id: string;
+    /** Only `customers.get` returns it; `customers.list` and the customer webhooks leave it out. */
     is_tos_accepted: boolean | null;
     is_fbo: boolean | null;
     type: Extract<AccountClass, "business">;

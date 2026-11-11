@@ -205,7 +205,8 @@ export type CreateStellarPayoutResponse = {
     /** @deprecated The API no longer returns a payout's partner fee tracking (blindpay-v2 payout.schema.ts:274); always absent. Read `partner_fee` for the amount. Removed in the next major. */
     tracking_partner_fee?: PayoutTrackingPartnerFee;
     tracking_liquidity?: PayoutTrackingLiquidity | null;
-    customer_id: string | null;
+    /** Not returned by the create call; read it from `payouts.get` or the `payout.new` webhook. */
+    customer_id?: string | null;
     payable_id?: string | null;
     bank_account_id?: string | null;
     billing_fee_amount?: number | null;
@@ -238,7 +239,8 @@ export type CreateEvmPayoutResponse = {
     /** @deprecated The API no longer returns a payout's partner fee tracking (blindpay-v2 payout.schema.ts:274); always absent. Read `partner_fee` for the amount. Removed in the next major. */
     tracking_partner_fee?: PayoutTrackingPartnerFee;
     tracking_liquidity?: PayoutTrackingLiquidity | null;
-    customer_id: string | null;
+    /** Not returned by the create call; read it from `payouts.get` or the `payout.new` webhook. */
+    customer_id?: string | null;
     payable_id?: string | null;
     bank_account_id?: string | null;
     billing_fee_amount?: number | null;
@@ -272,7 +274,8 @@ export type CreateSolanaPayoutResponse = {
     /** @deprecated The API no longer returns a payout's partner fee tracking (blindpay-v2 payout.schema.ts:274); always absent. Read `partner_fee` for the amount. Removed in the next major. */
     tracking_partner_fee?: PayoutTrackingPartnerFee | null;
     tracking_liquidity?: PayoutTrackingLiquidity | null;
-    customer_id: string | null;
+    /** Not returned by the create call; read it from `payouts.get` or the `payout.new` webhook. */
+    customer_id?: string | null;
     payable_id?: string | null;
     bank_account_id?: string | null;
     billing_fee_amount?: number | null;
