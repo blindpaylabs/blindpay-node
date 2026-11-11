@@ -1,6 +1,5 @@
 // Workflow 1: register a webhook endpoint, then verify and handle deliveries.
 // Verify against the RAW request body: a re-serialized object never matches the signature.
-import { createServer } from "node:http";
 import { BlindPay, constructWebhookEvent, isUnknownWebhookEvent } from "../src";
 
 const blindpay = new BlindPay({
@@ -23,27 +22,26 @@ export async function registerEndpoint(url: string): Promise<string> {
 /** Delivery ids already handled; Svix retries, so dedupe on `svix-id` (use your database). */
 const seen = new Set<string>();
 
-export function listen(secret: string): void {
-    createServer((req, res) => {
-        const chunks: Buffer[] = [];
-        req.on("data", (chunk: Buffer) => chunks.push(chunk));
-        req.on("end", () => {
-            const rawBody = Buffer.concat(chunks); // with Express: app.post(path, express.raw({ type: "application/json" }), ...)
-            let event: ReturnType<typeof constructWebhookEvent>;
-            try {
-                event = constructWebhookEvent(rawBody, req.headers, secret);
-            } catch {
-                res.writeHead(400).end();
-                return;
-            }
-            const deliveryId = String(req.headers["svix-id"]);
-            if (!seen.has(deliveryId)) {
-                seen.add(deliveryId);
-                handle(event);
-            }
-            res.writeHead(200).end();
-        });
-    }).listen(3000);
+/**
+ * A Web-standard handler (Request in, Response out). Mount it on any HTTPS endpoint:
+ * a Next.js route handler (`export const POST = (req: Request) => handleWebhook(req, secret)`),
+ * `Bun.serve`, Hono, Cloudflare Workers, or Express via an adapter. BlindPay only delivers to https URLs.
+ */
+export async function handleWebhook(request: Request, secret: string): Promise<Response> {
+    // Read the RAW body: with Express use express.raw({ type: "application/json" }), never express.json().
+    const rawBody = new Uint8Array(await request.arrayBuffer());
+    let event: ReturnType<typeof constructWebhookEvent>;
+    try {
+        event = constructWebhookEvent(rawBody, request.headers, secret);
+    } catch {
+        return new Response(null, { status: 400 });
+    }
+    const deliveryId = request.headers.get("svix-id") ?? "";
+    if (!seen.has(deliveryId)) {
+        seen.add(deliveryId);
+        handle(event);
+    }
+    return new Response(null, { status: 200 });
 }
 
 function handle(event: ReturnType<typeof constructWebhookEvent>): void {
