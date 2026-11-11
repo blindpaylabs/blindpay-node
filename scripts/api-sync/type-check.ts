@@ -7,7 +7,7 @@ import {
     QUOTED_UNION_LIST_SOURCE,
     readSource,
 } from "./sdk-scan";
-import type { JsonValue, Spec } from "./spec";
+import { enumAllowsNull, enumMembers, type JsonValue, type Spec } from "./spec";
 
 export { extractTopLevelFields, type FieldInfo } from "./sdk-scan";
 
@@ -25,16 +25,13 @@ export function specTypeSignature(node: unknown, spec?: Spec): TypeSignature {
     const n = node as any;
     const raw = n?.type;
     const types: string[] = Array.isArray(raw) ? raw : raw ? [raw] : [];
-    // blindpay-v2 emits a nullable enum as `enum: [..., null]`: null is nullability, not a member.
     const rawEnum: unknown[] | null = Array.isArray(n?.enum)
         ? n.enum
         : Array.isArray(n?.items?.enum)
           ? n.items.enum
           : null;
     const nullable =
-        types.includes("null") ||
-        alternatives(n, spec).some(allowsNull) ||
-        (Array.isArray(n?.enum) && n.enum.includes(null));
+        types.includes("null") || alternatives(n, spec).some(allowsNull) || enumAllowsNull(n?.enum);
     const nonNull = types.filter((t) => t !== "null");
     let baseKind: TypeSignature["baseKind"] = "unknown";
     if (nonNull.includes("string")) baseKind = "string";
@@ -42,7 +39,7 @@ export function specTypeSignature(node: unknown, spec?: Spec): TypeSignature {
     else if (nonNull.includes("boolean")) baseKind = "boolean";
     else if (nonNull.includes("array")) baseKind = "array";
     else if (nonNull.includes("object")) baseKind = "object";
-    const members = rawEnum?.filter((v): v is string => v !== null) ?? null;
+    const members = rawEnum ? enumMembers(rawEnum as (string | null)[]) : null;
     const enumValues: string[] | null = members && members.length > 0 ? members : null;
     return { baseKind, nullable, enumValues };
 }

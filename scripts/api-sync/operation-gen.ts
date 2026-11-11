@@ -11,6 +11,7 @@ import type { JsonValue, Spec } from "./spec";
 import {
     loadCanonicalEnums,
     loadWholeSchemaSymbols,
+    SHARED_TYPES_FILE,
     synthesizeObjectFields,
     synthesizeType,
     type TypegenContext,
@@ -73,8 +74,6 @@ function jsonContentOnly(content: Record<string, unknown> | undefined): "none" |
 }
 
 type Field = { name: string; tsType: string; required: boolean };
-
-const SHARED_TYPES_FILE = "types/index.d.ts";
 
 /** The symbol spec-map.json records for `method path` at `location` in `file`, if that file still
  * declares it. */
