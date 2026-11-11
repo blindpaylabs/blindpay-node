@@ -34,6 +34,13 @@ export type CreatePayinQuoteResponse = {
     flat_fee: number | null;
     is_otc?: boolean | null;
     billing_fee_amount?: number | null;
+    card_instruction?: {
+        provider: string;
+        tokenization_key: string;
+        checkout_public_key?: string | null;
+        checkout_token?: string | null;
+        checkout_url?: string | null;
+    } | null;
 };
 
 export type GetPayinFxRateInput = {

@@ -408,6 +408,9 @@ export type PayinTrackingTransaction = {
     card_instruction?: {
         provider: string;
         tokenization_key: string;
+        checkout_public_key?: string | null;
+        checkout_token?: string | null;
+        checkout_url?: string | null;
     } | null;
     end_to_end_id?: string | null;
     provider_name?: string | null;

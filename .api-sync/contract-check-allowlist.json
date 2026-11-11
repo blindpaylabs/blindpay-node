@@ -142,5 +142,23 @@
         "field": "is_self_custody",
         "reason": "Added by blindpay-v2 PR #2632 (BCB Resolution 588 self-custody flag); not in the spec snapshot until that ships and api-sync refreshes it. Remove once the snapshot contains is_self_custody.",
         "owner": "darlan@blindpay.com"
+    },
+    {
+        "schema": "PayoutTrackingPayment",
+        "field": "forced_provider",
+        "reason": "Removed from the public API at blindpay-v2@66144f3b2; kept as an optional @deprecated field until the next major (sdk-parity D13) so existing code compiles. The API strips it via internalTrackingPaymentKeys (packages/api-contract/src/payout.schema.ts:243).",
+        "owner": "thayto@blindpay.com"
+    },
+    {
+        "schema": "PayoutTrackingPayment",
+        "field": "provider_integration",
+        "reason": "Removed from the public API at blindpay-v2@66144f3b2; kept as an optional @deprecated field until the next major (sdk-parity D13) so existing code compiles. The API strips it via internalTrackingPaymentKeys (packages/api-contract/src/payout.schema.ts:243).",
+        "owner": "thayto@blindpay.com"
+    },
+    {
+        "schema": "GetFeesResponse",
+        "field": "partner_wallet_address",
+        "reason": "Removed from the public API at blindpay-v2@66144f3b2; kept as an optional @deprecated field until the next major (sdk-parity D13) so existing code compiles. Replaced by the per-network partner_wallets map (packages/api-contract/src/yield.schema.ts:105).",
+        "owner": "thayto@blindpay.com"
     }
 ]

@@ -2,7 +2,8 @@
     "notes": [
         "Bootstrapped by scoring each exported SDK type's field-set against each spec schema's property-set, then every entry was verified by reading the source.",
         "Scope decisions (not individually re-justified per entry): (1) path-identifier params bundled into an Input type for URL building (customer_id, id, bank_account_id, memberId, payout_id, and instance_id as a query param on UploadInput) are expected and not tracked as gaps or divergences. (2) discriminator fields injected by a factory function body (type/kyc_type on customers and bank-accounts, is_account_abstraction on blockchain wallets, the role->user_role rename on instance members) are expected to be absent from the corresponding input type. (3) nesting is curated one level deep; deeper nested sub-objects (e.g. VirtualAccountOut.us/blockchain_wallet's own inner fields, PayinTrackingTransaction's pse_instruction/transfers_instruction/ted_instruction sub-fields) are out of scope for this pass.",
-        "Reachability: every reachable schema (computed by transitive $ref from paths + the top-level webhooks object) is either referenced by an enums/types entry's spec.schema, or listed in ignore.schemas. Verified programmatically at bootstrap time."
+        "Reachability: every reachable schema (computed by transitive $ref from paths + the top-level webhooks object) is either referenced by an enums/types entry's spec.schema, or listed in ignore.schemas. Verified programmatically at bootstrap time.",
+        "PayoutTrackingPayment.forced_provider and .provider_integration (and their PayoutForcedProvider / PayoutProviderIntegration unions) were removed from the spec at blindpay-v2@66144f3b2. Per sdk-parity D13 the SDK keeps them as deprecated optional fields until the next major, so their enum entries are gone from this map and contract-check-allowlist.json records them."
     ],
     "enums": [
         {
@@ -416,32 +417,6 @@
                 }
             ],
             "notes": "Shared step union of every payin, payout and transfer tracking object; anchored on one of them."
-        },
-        {
-            "spec": {
-                "schema": "PayoutOut",
-                "property": "tracking_payment.forced_provider"
-            },
-            "sdk": [
-                {
-                    "file": "types/index.d.ts",
-                    "symbol": "PayoutForcedProvider"
-                }
-            ],
-            "notes": null
-        },
-        {
-            "spec": {
-                "schema": "PayoutOut",
-                "property": "tracking_payment.provider_integration"
-            },
-            "sdk": [
-                {
-                    "file": "types/index.d.ts",
-                    "symbol": "PayoutProviderIntegration"
-                }
-            ],
-            "notes": null
         },
         {
             "spec": {
@@ -2644,6 +2619,18 @@
                 }
             ],
             "notes": "wallet.inbound payload's token object"
+        },
+        {
+            "spec": {
+                "schema": "UpdateOfframpWalletIn"
+            },
+            "sdk": [
+                {
+                    "file": "src/resources/wallets/offramp.ts",
+                    "symbol": "UpdateOfframpWalletInput"
+                }
+            ],
+            "notes": null
         }
     ],
     "ignore": {
