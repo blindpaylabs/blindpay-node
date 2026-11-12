@@ -28,7 +28,11 @@ import {
     BlindPay,
     BlindPayError,
     constructWebhookEvent,
+    ErrorCode,
+    type ErrorCodeInfo,
+    errorCodeInfo,
     isUnknownWebhookEvent,
+    type RetryClass,
     verifyWebhook,
 } from ".";
 
@@ -75,6 +79,18 @@ describe("Package entry", () => {
         expectTypeOf<BlindPayOptions>().toHaveProperty("maxRetries");
         expectTypeOf<InitiateInput>().toHaveProperty("idempotency_key").toEqualTypeOf<string>();
         expectTypeOf<InitiateResponse>().toHaveProperty("url").toEqualTypeOf<string>();
+    });
+
+    it("exports the error-code catalogue (W2 names)", () => {
+        expect(ErrorCode.TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM).toBe(
+            "TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM"
+        );
+        expect(errorCodeInfo("TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM")).toEqual({
+            status: 400,
+            retry: "actionable",
+        });
+        expectTypeOf<"unknown">().toExtend<RetryClass>();
+        expectTypeOf<ErrorCodeInfo>().toHaveProperty("status").toEqualTypeOf<number>();
     });
 
     it("exports the types that exported types reference", () => {

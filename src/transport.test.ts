@@ -270,6 +270,7 @@ describe("errors (C4)", () => {
             status: 400,
             request_id: "req_000000000000",
             type: "api_error",
+            retry_class: "actionable",
             retryable: false,
             idempotency_key: "key-1",
         });
@@ -284,6 +285,7 @@ describe("errors (C4)", () => {
             message: "fetch failed",
             status: 0,
             type: "connection_error",
+            retry_class: "unknown",
             retryable: true,
         });
     });

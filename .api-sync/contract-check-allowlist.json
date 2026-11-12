@@ -18,6 +18,12 @@
         "owner": "thayto@blindpay.com"
     },
     {
+        "schema": "ErrorResponse",
+        "field": "retry_class",
+        "reason": "SDK-side error metadata, not a body field: the retry class (retryable, terminal, actionable, unknown) the spec's Errors table gives the response's code, looked up in the generated src/error-codes.ts.",
+        "owner": "thayto@blindpay.com"
+    },
+    {
         "schema": "RequestOptions",
         "field": "timeoutMs",
         "reason": "Client-side per-call option, not a body field: the per-attempt timeout.",

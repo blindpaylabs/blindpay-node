@@ -16,6 +16,7 @@ import { changesetFileName, classifyBump, mergeChangeset } from "./changeset";
 import { computeCoverageGaps } from "./coverage";
 import { detectNewSchemas, detectRemovals } from "./diff";
 import { findUnmappedEnumProperties } from "./enum-coverage";
+import { diffCatalogue, ERROR_CODES_FILE, parseErrorCodes, renderErrorCodes } from "./error-codes";
 import { isIgnoredOperation, loadSpecMap, loadUnmodeled, withPendingMapEntries } from "./map";
 import { classifyNewOperation, HTTP_METHODS, loadCanonicalEnums } from "./operation-gen";
 import { reconcile } from "./reconcile";
@@ -131,6 +132,37 @@ function persistNewMapEntries(specMapPath: string, entries: NewSchemaMapEntry[])
     writeFileSync(specMapPath, `${JSON.stringify(withPendingMapEntries(raw, entries), null, 4)}\n`);
 }
 
+/**
+ * The error-code catalogue regenerated from the spec's `Errors` tag, compared with the committed
+ * `src/error-codes.ts`. A dropped code is a removal (breaking for anyone naming the constant), so
+ * it needs a human like every other removal; new codes and status/retry/description changes are
+ * applied by regenerating the file.
+ */
+function errorCatalogueDrift(
+    spec: Spec,
+    repoRoot: string
+): { next: string; pending: string[]; needsHuman: string[] } {
+    const next = renderErrorCodes(parseErrorCodes(spec));
+    const path = resolve(repoRoot, ERROR_CODES_FILE);
+    const current = existsSync(path) ? readFileSync(path, "utf8") : "";
+    if (current === next) return { next, pending: [], needsHuman: [] };
+    const { added, removed, changed } = diffCatalogue(current, next);
+    const pending = [
+        ...added.map((c) => `add error code "${c}" to ${ERROR_CODES_FILE}:ErrorCode`),
+        ...changed.map(
+            (c) => `update the status/retry class of error code "${c}" in ${ERROR_CODES_FILE}`
+        ),
+    ];
+    if (pending.length === 0 && removed.length === 0) {
+        pending.push(`regenerate ${ERROR_CODES_FILE} (error-code descriptions or layout changed)`);
+    }
+    const needsHuman = removed.map(
+        (c) =>
+            `error code "${c}" is no longer in the spec's Errors tag; removing ErrorCode.${c} is a breaking change, so it needs a human (major) decision.`
+    );
+    return { next, pending, needsHuman };
+}
+
 function main(): void {
     const args = parseArgs(process.argv.slice(2));
     const specMapPath = resolve(REPO_ROOT, ".api-sync/spec-map.json");
@@ -214,8 +246,11 @@ function main(): void {
             `enum-constrained property "${g.schema}.${g.property}" (${g.kind}) is not mapped in spec-map.json's enums[], not covered by the ordinary field-type audit, and has no recorded omission in .api-sync/unmodeled.json's enumPropertyOmissions.`
     );
 
+    const catalogue = errorCatalogueDrift(spec, REPO_ROOT);
+
     const allNeedsHuman = [
         ...needsHuman,
+        ...catalogue.needsHuman,
         ...removalMessages,
         ...newSchemaMessages,
         ...operationGaps.needsHuman,
@@ -237,9 +272,10 @@ function main(): void {
     }
 
     if (args.mode === "check") {
-        if (applicable.length > 0) {
+        if (applicable.length > 0 || catalogue.pending.length > 0) {
             console.error("\n[api-sync] FAIL: pending drift not yet applied (run with --apply):\n");
             for (const c of applicable) console.error(`  - ${describeChange(c)}`);
+            for (const c of catalogue.pending) console.error(`  - ${c}`);
             process.exit(1);
         }
         console.log(
@@ -281,13 +317,21 @@ function main(): void {
         writeFileSync(resolve(REPO_ROOT, file), content);
     }
     persistNewMapEntries(specMapPath, newMapEntries);
+    if (catalogue.pending.length > 0) {
+        writeFileSync(resolve(REPO_ROOT, ERROR_CODES_FILE), catalogue.next);
+        applied.push(...catalogue.pending);
+    }
 
     refreshSnapshot(args.specPath, snapshotPath);
 
     const hasEnumInsert = applicable.some((c) => c.kind === "enum-insert");
     const hasFieldInsert = applicable.some((c) => c.kind === "field-insert");
     const hasOperationInsert = applicable.some((c) => c.kind === "operation-insert");
-    const bump = classifyBump(hasEnumInsert, hasFieldInsert, hasOperationInsert);
+    const bump = classifyBump(
+        hasEnumInsert || catalogue.pending.length > 0,
+        hasFieldInsert,
+        hasOperationInsert
+    );
 
     applied.sort();
     let changeset: string | null = null;

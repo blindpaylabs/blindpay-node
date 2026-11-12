@@ -1,5 +1,6 @@
 import { randomInt, randomUUID } from "node:crypto";
 import type { BlindpayApiResponse, ErrorResponse, ErrorType, RequestOptions } from "../../types";
+import { retryClassOf } from "../error-codes";
 import { toErrorResponse } from "./error-response";
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -356,7 +357,9 @@ function failure(fields: ErrorResponse & { type: ErrorType }): {
     error: ErrorResponse;
 } {
     const error = Object.fromEntries(
-        Object.entries(fields).filter(([, value]) => value !== undefined)
+        Object.entries({ ...fields, retry_class: retryClassOf(fields.code) }).filter(
+            ([, value]) => value !== undefined
+        )
     ) as ErrorResponse;
     return { data: null, error };
 }

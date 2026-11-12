@@ -48,6 +48,8 @@ export type {
     WalletToken,
 } from "../types";
 export * from "./client";
+export type { ErrorCodeInfo, RetryClass } from "./error-codes";
+export { ErrorCode, errorCodeInfo } from "./error-codes";
 export { BlindPayError } from "./internal/blindpay-error";
 export * from "./resources/available";
 export * from "./resources/bank-accounts";

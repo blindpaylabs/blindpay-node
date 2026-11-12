@@ -76,12 +76,36 @@ console.log(data); // fully typed
 | `message` | Always present. |
 | `status` | HTTP status; `0` when no response arrived. |
 | `type` | `api_error`, `connection_error`, `timeout_error`, `aborted`, `invalid_request` (rejected before sending) or `invalid_response`. |
-| `code` | Stable, UPPERCASE error code from the API (e.g. `PAYOUTS_INSUFFICIENT_BALANCE`), when it sends one. Branch on this, not on `message`. |
+| `code` | Stable, UPPERCASE error code from the API (e.g. `PAYOUTS_INSUFFICIENT_BALANCE`), when it sends one. Branch on this, not on `message`. Typed as `ErrorCode`: the known codes autocomplete, and codes newer than the SDK still arrive as plain strings. |
+| `retry_class` | What the API's error catalogue says about `code`: `retryable` (send it again as is), `terminal` (don't retry), `actionable` (fix something first, such as funding a balance), or `unknown` (no code, or a code newer than the SDK). |
 | `description` | Text that is safe to show to end users, when present. |
 | `errors` | Field-level validation errors, when present. |
 | `trace_id`, `request_id` | Include them when you contact support. |
 | `retryable` | `true` when resending the same request is safe. |
 | `idempotency_key` | The `Idempotency-Key` the request used (yours, or the one the SDK generated). |
+
+Branch on `code` with the `ErrorCode` constants. Some errors (idempotency conflicts, for instance) carry no `code`, so keep `message` as the fallback:
+
+```typescript
+import { ErrorCode, errorCodeInfo } from '@blindpay/node';
+
+const { data, error } = await blindpay.transfers.quotes.create(input);
+
+if (error) {
+  if (error.code === ErrorCode.TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM) {
+    // Swaps between different tokens need at least 100 USDC, measured on the USDC side.
+    return askForALargerAmount();
+  }
+  if (error.retry_class === 'actionable') {
+    return showToUser(error.description ?? error.message);
+  }
+  throw new Error(error.code ?? error.message);
+}
+
+errorCodeInfo('QUOTES_EXPIRED'); // { status: 400, retry: 'actionable' }; undefined for unknown codes
+```
+
+`ErrorCode` is generated from the API's error catalogue (the "Errors" section of the [API reference](https://api.blindpay.com/reference)). `retry_class` is advice for your own handling; the SDK's automatic retries are described under [Idempotency and retries](#idempotency-and-retries).
 
 A non-JSON error body (an HTML 502 page, for instance) becomes `HTTP 502 Bad Gateway`. Errors never contain your API key or the request body.
 
