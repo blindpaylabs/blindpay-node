@@ -3,7 +3,7 @@ import { BlindPay } from "./client";
 import { ErrorCode, type ErrorCodeInfo, errorCodeInfo, type RetryClass } from "./error-codes";
 import type { ErrorResponse } from "./index";
 
-describe("error codes (W2)", () => {
+describe("error codes", () => {
     afterEach(() => fetchMock.resetMocks());
 
     const blindpay = new BlindPay({
