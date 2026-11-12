@@ -270,6 +270,7 @@ describe("errors (C4)", () => {
             status: 400,
             request_id: "req_000000000000",
             type: "api_error",
+            retry_class: "actionable",
             retryable: false,
             idempotency_key: "key-1",
         });

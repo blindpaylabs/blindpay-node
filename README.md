@@ -76,12 +76,36 @@ console.log(data); // fully typed
 | `message` | Always present. |
 | `status` | HTTP status; `0` when no response arrived. |
 | `type` | `api_error`, `connection_error`, `timeout_error`, `aborted`, `invalid_request` (rejected before sending) or `invalid_response`. |
-| `code` | Stable, UPPERCASE error code from the API (e.g. `PAYOUTS_INSUFFICIENT_BALANCE`), when it sends one. Branch on this, not on `message`. |
+| `code` | Stable, UPPERCASE error code from the API (e.g. `PAYOUTS_INSUFFICIENT_BALANCE`), when it sends one. Branch on this, not on `message`. Typed as `ErrorCode`: the known codes autocomplete, and codes newer than the SDK still arrive as plain strings. |
+| `retry_class` | What the API's error catalogue says about `code`: `retryable` (send it again as is), `terminal` (don't retry), `actionable` (fix something first, such as funding a balance), or `unknown` (a code newer than the SDK). Present only when `code` is. |
 | `description` | Text that is safe to show to end users, when present. |
 | `errors` | Field-level validation errors, when present. |
 | `trace_id`, `request_id` | Include them when you contact support. |
 | `retryable` | `true` when resending the same request is safe. |
 | `idempotency_key` | The `Idempotency-Key` the request used (yours, or the one the SDK generated). |
+
+Branch on `code` with the `ErrorCode` constants. Some errors (idempotency conflicts, for instance) carry no `code`, so keep `message` as the fallback:
+
+```typescript
+import { ErrorCode, errorCodeInfo } from '@blindpay/node';
+
+const { data, error } = await blindpay.transfers.quotes.create(input);
+
+if (error) {
+  if (error.code === ErrorCode.TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM) {
+    // Swaps between different tokens need at least 100 USDC, measured on the USDC side.
+    return askForALargerAmount();
+  }
+  if (error.retry_class === 'actionable') {
+    return showToUser(error.description ?? error.message);
+  }
+  throw new Error(error.code ?? error.message);
+}
+
+errorCodeInfo('QUOTES_EXPIRED'); // { status: 400, retry: 'actionable' }; undefined for unknown codes
+```
+
+`ErrorCode` is generated from the API's error catalogue (the "Errors" section of the [API reference](https://api.blindpay.com/reference)). `retry_class` is advice for your own handling; the SDK's automatic retries are described under [Idempotency and retries](#idempotency-and-retries).
 
 A non-JSON error body (an HTML 502 page, for instance) becomes `HTTP 502 Bad Gateway`. Errors never contain your API key or the request body.
 
@@ -112,6 +136,10 @@ The SDK retries on its own (up to `maxRetries`, with exponential backoff and `Re
 
 Uploads are never retried and never carry an idempotency key.
 
+## Rate limits
+
+Indicative FX quote endpoints are rate limited per instance; a limited call returns 429 `AUTH_RATE_LIMITED` with a `Retry-After` header, which the SDK honours when it retries.
+
 ## Pagination
 
 `list()` on payouts, payins, customers and payables returns a bare array when you pass no `limit`, `starting_after` or `ending_before`, and **that array holds every matching row**. With any of them it returns `{ data, pagination: { has_more, next_page, prev_page } }`; pass `next_page` back as `starting_after`. Transfers and wallet deposits always return the envelope. Other lists (bank accounts, wallets, partner fees, ...) are always plain arrays.
@@ -131,6 +159,7 @@ Auto-pagers exist for `payouts`, `payins`, `customers`, `payables` and `transfer
 - Payout, payin, quote and limit **amounts are integer cents**: `1000` is 10.00.
 - Partner **percentage fees are basis points** (`100` is 1%); partner flat fees are cents.
 - **Wallet balances are whole tokens** (`10.5` is 10.5 USDC), and so is `total_fee_amount` on payouts and payins.
+- Swaps between different tokens (`transfers.quotes.create` with `sender_token` and `customer_token` that differ) need **at least 100 USDC**, measured on the USDC side; smaller ones fail with `ErrorCode.TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM`.
 - Payout creates take **exactly one of** `sender_wallet_address` and `wallet_id`; quotes take exactly one of `bank_account_id` and `payable_id`. The API returns 400 otherwise.
 
 ## File uploads
@@ -181,7 +210,11 @@ app.post('/webhooks/blindpay', express.raw({ type: 'application/json' }), (req, 
 });
 ```
 
-`verifyWebhook(payload, headers, secret)` returns a boolean instead. Both accept `{ tolerance }` (seconds, default 300) as a last argument. Never log the `whsec_` secret. The client methods `blindpay.constructWebhookEvent({ secret, headers, payload })` and `blindpay.verifyWebhookSignature(...)` keep working as before.
+`verifyWebhook(payload, headers, secret)` returns a boolean instead. Both accept `{ tolerance, now }` as a last argument: `tolerance` in seconds (default 300), and `now` (a `Date` or Unix seconds) to check the timestamp against a fixed time in tests or replays. Never log the `whsec_` secret. The client methods `blindpay.constructWebhookEvent({ secret, headers, payload })` and `blindpay.verifyWebhookSignature(...)` keep working as before.
+
+## Limit increases
+
+`customers.getLimitIncreaseRequests(customerId)` and the `limitIncrease.new` / `limitIncrease.update` webhooks carry `review_reason`: why compliance rejected the request or approved lower limits than requested, and what to send to get the full amount. It is set when the request is rejected or approved below the requested limits, and `null` otherwise.
 
 ## Tracking endpoints
 
@@ -192,15 +225,19 @@ app.post('/webhooks/blindpay', express.raw({ type: 'application/json' }), (req, 
 - A payout of `66600` (666.00) fails and one of `77700` refunds.
 - Payins complete in about 30 seconds.
 - Quotes expire after 5 minutes (OTC payin quotes after 10 seconds; SEPA quotes can expire sooner).
-- Development instances allow 40 requests a minute; the SDK retries a 429 after its `Retry-After`.
+- Development instances are rate limited on every instance route; the SDK retries a 429 after its `Retry-After`.
 
 ## Examples
 
-[`examples/`](examples) has four end-to-end workflows, type-checked in CI: webhook setup and verification, a managed-wallet payout, a fiat payin, and reconciliation with the auto-pager.
+[`examples/`](examples) has four end-to-end workflows, type-checked in CI: webhook setup, verification and dedupe (E1), funding a managed wallet with a payin and paying out from it with `wallet_id` (E2), a fiat payin, and reconciliation with the auto-pager.
 
 For the full API documentation, see:
 - [BlindPay API documentation](https://blindpay.com/docs/getting-started/overview)
 - [API Reference](https://api.blindpay.com/reference)
+
+## Releasing
+
+Maintainers: see [RELEASING.md](RELEASING.md) for the release flow, secrets and how to verify a published version.
 
 ## Support
 

@@ -2641,43 +2641,53 @@
             },
             {
                 "name": "BankAccountWebhookOut",
-                "reason": "Webhook payload body for bankAccount.new. Typed as BankAccountWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & ListBankAccountsResponse[number]: the payload has the same property set as BankAccountOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+                "reason": "Webhook payload body for bankAccount.new. Typed as BankAccountWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & ListBankAccountsResponse[number]: the payload has the same property set as BankAccountOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection.",
+                "sameShapeAs": "BankAccountOut"
             },
             {
                 "name": "BlockchainWalletUpdateWebhookOut",
-                "reason": "Webhook payload body for blockchainWallet.update. Typed as BlockchainWalletWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetBlockchainWalletResponse: the payload has the same property set as BlockchainWalletOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+                "reason": "Webhook payload body for blockchainWallet.update. Typed as BlockchainWalletWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetBlockchainWalletResponse: the payload has the same property set as BlockchainWalletOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection.",
+                "sameShapeAs": "BlockchainWalletOut"
             },
             {
                 "name": "BlockchainWalletWebhookOut",
-                "reason": "Webhook payload body for blockchainWallet.new. Typed as BlockchainWalletWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetBlockchainWalletResponse: the payload has the same property set as BlockchainWalletOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+                "reason": "Webhook payload body for blockchainWallet.new. Typed as BlockchainWalletWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetBlockchainWalletResponse: the payload has the same property set as BlockchainWalletOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection.",
+                "sameShapeAs": "BlockchainWalletOut"
             },
             {
                 "name": "CustomerNewWebhookOut",
-                "reason": "Webhook payload body for customer.new. Typed as CustomerWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetCustomerResponse: the payload has the same property set as CustomerOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+                "reason": "Webhook payload body for customer.new. Typed as CustomerWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetCustomerResponse: the payload has the same property set as CustomerOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection.",
+                "sameShapeAs": "CustomerOut"
             },
             {
                 "name": "CustomerUpdateWebhookOut",
-                "reason": "Webhook payload body for customer.update. Typed as CustomerWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetCustomerResponse: the payload has the same property set as CustomerOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+                "reason": "Webhook payload body for customer.update. Typed as CustomerWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetCustomerResponse: the payload has the same property set as CustomerOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection.",
+                "sameShapeAs": "CustomerOut"
             },
             {
                 "name": "LimitIncreaseNewWebhookOut",
-                "reason": "Webhook payload body for limitIncrease.new. Typed as LimitIncreaseWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetLimitIncreaseRequestsResponse[number]: the payload has the same property set as GetCustomerLimitIncreaseOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+                "reason": "Webhook payload body for limitIncrease.new. Typed as LimitIncreaseWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetLimitIncreaseRequestsResponse[number]: the payload has the same property set as GetCustomerLimitIncreaseOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection.",
+                "sameShapeAs": "GetCustomerLimitIncreaseOut"
             },
             {
                 "name": "LimitIncreaseUpdateWebhookOut",
-                "reason": "Webhook payload body for limitIncrease.update. Typed as LimitIncreaseWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetLimitIncreaseRequestsResponse[number]: the payload has the same property set as GetCustomerLimitIncreaseOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection. Still the reachable anchor for the LimitIncreaseRequestStatus enum above."
+                "reason": "Webhook payload body for limitIncrease.update. Typed as LimitIncreaseWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & GetLimitIncreaseRequestsResponse[number]: the payload has the same property set as GetCustomerLimitIncreaseOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection. Still the reachable anchor for the LimitIncreaseRequestStatus enum above.",
+                "sameShapeAs": "GetCustomerLimitIncreaseOut"
             },
             {
                 "name": "PayableCompleteWebhookOut",
-                "reason": "Webhook payload body for payable.complete. Typed as PayableWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & Payable: the payload has the same property set as PayableOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+                "reason": "Webhook payload body for payable.complete. Typed as PayableWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & Payable: the payload has the same property set as PayableOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection.",
+                "sameShapeAs": "PayableOut"
             },
             {
                 "name": "PayableNewWebhookOut",
-                "reason": "Webhook payload body for payable.new. Typed as PayableWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & Payable: the payload has the same property set as PayableOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+                "reason": "Webhook payload body for payable.new. Typed as PayableWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & Payable: the payload has the same property set as PayableOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection.",
+                "sameShapeAs": "PayableOut"
             },
             {
                 "name": "PayableUpdateWebhookOut",
-                "reason": "Webhook payload body for payable.update. Typed as PayableWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & Payable: the payload has the same property set as PayableOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+                "reason": "Webhook payload body for payable.update. Typed as PayableWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & Payable: the payload has the same property set as PayableOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection.",
+                "sameShapeAs": "PayableOut"
             },
             {
                 "name": "PayinCompleteWebhookOut",
@@ -2729,19 +2739,23 @@
             },
             {
                 "name": "VirtualAccountCompleteWebhookOut",
-                "reason": "Webhook payload body for virtualAccount.complete. Typed as VirtualAccountWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & VirtualAccount: the payload has the same property set as VirtualAccountOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+                "reason": "Webhook payload body for virtualAccount.complete. Typed as VirtualAccountWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & VirtualAccount: the payload has the same property set as VirtualAccountOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection.",
+                "sameShapeAs": "VirtualAccountOut"
             },
             {
                 "name": "VirtualAccountNewWebhookOut",
-                "reason": "Webhook payload body for virtualAccount.new. Typed as VirtualAccountWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & VirtualAccount: the payload has the same property set as VirtualAccountOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+                "reason": "Webhook payload body for virtualAccount.new. Typed as VirtualAccountWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & VirtualAccount: the payload has the same property set as VirtualAccountOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection.",
+                "sameShapeAs": "VirtualAccountOut"
             },
             {
                 "name": "WalletNewWebhookOut",
-                "reason": "Webhook payload body for wallet.new. Typed as WalletWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & CustodialWallet: the payload has the same property set as WalletOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+                "reason": "Webhook payload body for wallet.new. Typed as WalletWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & CustodialWallet: the payload has the same property set as WalletOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection.",
+                "sameShapeAs": "WalletOut"
             },
             {
                 "name": "WalletUpdateWebhookOut",
-                "reason": "Webhook payload body for wallet.update. Typed as WalletWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & CustodialWallet: the payload has the same property set as WalletOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection."
+                "reason": "Webhook payload body for wallet.update. Typed as WalletWebhookEvent in src/resources/webhooks/events.ts, which is { webhook_event } & CustodialWallet: the payload has the same property set as WalletOut, whose mapping already checks those fields. Not mapped here because the patcher's field scan cannot read through an intersection.",
+                "sameShapeAs": "WalletOut"
             },
             {
                 "name": "YieldFee",

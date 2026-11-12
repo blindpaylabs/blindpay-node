@@ -36,6 +36,12 @@ export type TypeMapEntry = {
 export type IgnoreEntry = {
     name: string;
     reason: string;
+    /**
+     * A webhook payload schema left unmapped because its SDK type reuses another schema's type
+     * (`{ webhook_event } & X`): the schema whose properties it must keep matching, minus
+     * `webhook_event`. sync:check fails as soon as the two differ (webhook-shapes.ts).
+     */
+    sameShapeAs?: string;
 };
 
 export type SpecMap = {

@@ -113,6 +113,12 @@ function listTsFiles(dir: string, out: string[] = []): string[] {
     return out;
 }
 
+/**
+ * Named types that are open strings: known values for autocomplete plus `(string & {})`, so any
+ * string is accepted. `ErrorCode` is generated from the spec's Errors tag (`src/error-codes.ts`).
+ */
+const OPEN_STRING_TYPES: ReadonlySet<string> = new Set(["ErrorCode"]);
+
 /** Classifies a TypeScript type expression (the text after `field?:` up to its terminating `;`). */
 export function classifySdkType(
     typeExpr: string,
@@ -169,6 +175,9 @@ export function classifySdkType(
         return { baseKind: "array", nullable, enumValues: null };
     }
 
+    if (OPEN_STRING_TYPES.has(withoutNull)) {
+        return { baseKind: "string", nullable, enumValues: null };
+    }
     if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(withoutNull)) {
         const values = resolveNamedUnion(repoRoot, currentFile, withoutNull);
         if (values)

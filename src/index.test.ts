@@ -3,15 +3,19 @@ import type * as Entry from ".";
 import type {
     BlindPayOptions,
     BlindpayApiResponse,
+    BlindpayErrorResponse,
+    BlindpaySuccessResponse,
     Country,
     Currency,
     ErrorResponse,
     ErrorType,
+    EstimatedTimeOfArrival,
     InitiateInput,
     InitiateResponse,
     Network,
     PaginationMetadata,
     PaginationParams,
+    PayoutTrackingPayment,
     Rail,
     RequestOptions,
     StablecoinToken,
@@ -24,7 +28,11 @@ import {
     BlindPay,
     BlindPayError,
     constructWebhookEvent,
+    ErrorCode,
+    type ErrorCodeInfo,
+    errorCodeInfo,
     isUnknownWebhookEvent,
+    type RetryClass,
     verifyWebhook,
 } from ".";
 
@@ -73,6 +81,32 @@ describe("Package entry", () => {
         expectTypeOf<InitiateResponse>().toHaveProperty("url").toEqualTypeOf<string>();
     });
 
+    it("exports the error-code catalogue (W2 names)", () => {
+        expect(ErrorCode.TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM).toBe(
+            "TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM"
+        );
+        expect(errorCodeInfo("TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM")).toEqual({
+            status: 400,
+            retry: "actionable",
+        });
+        expectTypeOf<"unknown">().toExtend<RetryClass>();
+        expectTypeOf<ErrorCodeInfo>().toHaveProperty("status").toEqualTypeOf<number>();
+    });
+
+    it("exports the types that exported types reference", () => {
+        expectTypeOf<"5_min">().toExtend<EstimatedTimeOfArrival>();
+        expectTypeOf<PayoutTrackingPayment>()
+            .toHaveProperty("estimated_time_of_arrival")
+            .toEqualTypeOf<EstimatedTimeOfArrival | null | undefined>();
+        expectTypeOf<BlindpaySuccessResponse<SuccessResponse>>().toExtend<
+            BlindpayApiResponse<SuccessResponse>
+        >();
+        expectTypeOf<BlindpayErrorResponse>().toExtend<BlindpayApiResponse<SuccessResponse>>();
+        expectTypeOf<BlindpayErrorResponse>()
+            .toHaveProperty("error")
+            .toEqualTypeOf<ErrorResponse>();
+    });
+
     it("keeps dead or stale shared types out of the public API", () => {
         // Checked by `bun run check-types`: each name must fail to resolve, so the expect-error
         // directive below it becomes a build error the day one of these gets exported.
@@ -80,11 +114,5 @@ describe("Package entry", () => {
         expectTypeOf<Entry.PayoutForcedProvider>();
         // @ts-expect-error stale payout tracking field type (removed from the spec)
         expectTypeOf<Entry.PayoutProviderIntegration>();
-        // @ts-expect-error not used by any SDK type
-        expectTypeOf<Entry.EstimatedTimeOfArrival>();
-        // @ts-expect-error the BlindpayApiResponse branches aren't meant to be named
-        expectTypeOf<Entry.BlindpayErrorResponse>();
-        // @ts-expect-error the BlindpayApiResponse branches aren't meant to be named
-        expectTypeOf<Entry.BlindpaySuccessResponse>();
     });
 });

@@ -65,6 +65,10 @@ export type CreateTransferQuoteInput = {
     customer_wallet_address: string;
     customer_token: WalletToken;
     customer_network: Network;
+    /**
+     * Swaps between different tokens need at least 100 USDC, measured on the USDC side; smaller
+     * ones fail with `ErrorCode.TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM` (400).
+     */
     request_amount: number;
     cover_fees?: boolean | null;
     amount_reference: "sender" | "receiver";

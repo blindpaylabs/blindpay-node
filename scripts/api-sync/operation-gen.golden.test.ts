@@ -121,6 +121,7 @@ describe("operation-insert golden self-test", () => {
             "get(payinId: GetPayinInput, options?: RequestOptions): Promise<BlindpayApiResponse<GetPayinResponse>> {"
         );
         expect(payins).toContain(
+            // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts the generated source text, placeholders included
             "return client.get(`/instances/${instanceId}/payins/${encodeURIComponent(payinId)}`, options);"
         );
 
@@ -132,6 +133,7 @@ describe("operation-insert golden self-test", () => {
             "create({ ...data }: CreateQuoteInput, options?: RequestOptions): Promise<BlindpayApiResponse<CreateQuoteResponse>> {"
         );
         expect(quotes).toContain(
+            // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts the generated source text, placeholders included
             "return client.post(`/instances/${instanceId}/quotes`, data, options);"
         );
 

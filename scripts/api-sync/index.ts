@@ -16,6 +16,7 @@ import { changesetFileName, classifyBump, mergeChangeset } from "./changeset";
 import { computeCoverageGaps } from "./coverage";
 import { detectNewSchemas, detectRemovals } from "./diff";
 import { findUnmappedEnumProperties } from "./enum-coverage";
+import { ERROR_CODES_FILE, errorCatalogueDrift } from "./error-codes";
 import { isIgnoredOperation, loadSpecMap, loadUnmodeled, withPendingMapEntries } from "./map";
 import { classifyNewOperation, HTTP_METHODS, loadCanonicalEnums } from "./operation-gen";
 import { reconcile } from "./reconcile";
@@ -29,6 +30,7 @@ import type {
     SpecMap,
     SyncReport,
 } from "./types";
+import { findWebhookShapeDrift } from "./webhook-shapes";
 
 /**
  * Every "METHOD path" in the spec with no matching SDK endpoint, classified: STANDARD ones
@@ -214,8 +216,12 @@ function main(): void {
             `enum-constrained property "${g.schema}.${g.property}" (${g.kind}) is not mapped in spec-map.json's enums[], not covered by the ordinary field-type audit, and has no recorded omission in .api-sync/unmodeled.json's enumPropertyOmissions.`
     );
 
+    const catalogue = errorCatalogueDrift(spec, REPO_ROOT);
+
     const allNeedsHuman = [
         ...needsHuman,
+        ...catalogue.needsHuman,
+        ...findWebhookShapeDrift(spec, map),
         ...removalMessages,
         ...newSchemaMessages,
         ...operationGaps.needsHuman,
@@ -237,9 +243,10 @@ function main(): void {
     }
 
     if (args.mode === "check") {
-        if (applicable.length > 0) {
+        if (applicable.length > 0 || catalogue.pending.length > 0) {
             console.error("\n[api-sync] FAIL: pending drift not yet applied (run with --apply):\n");
             for (const c of applicable) console.error(`  - ${describeChange(c)}`);
+            for (const c of catalogue.pending) console.error(`  - ${c}`);
             process.exit(1);
         }
         console.log(
@@ -281,13 +288,21 @@ function main(): void {
         writeFileSync(resolve(REPO_ROOT, file), content);
     }
     persistNewMapEntries(specMapPath, newMapEntries);
+    if (catalogue.pending.length > 0) {
+        writeFileSync(resolve(REPO_ROOT, ERROR_CODES_FILE), catalogue.next);
+        applied.push(...catalogue.pending);
+    }
 
     refreshSnapshot(args.specPath, snapshotPath);
 
     const hasEnumInsert = applicable.some((c) => c.kind === "enum-insert");
     const hasFieldInsert = applicable.some((c) => c.kind === "field-insert");
     const hasOperationInsert = applicable.some((c) => c.kind === "operation-insert");
-    const bump = classifyBump(hasEnumInsert, hasFieldInsert, hasOperationInsert);
+    const bump = classifyBump(
+        hasEnumInsert || catalogue.pending.length > 0,
+        hasFieldInsert,
+        hasOperationInsert
+    );
 
     applied.sort();
     let changeset: string | null = null;

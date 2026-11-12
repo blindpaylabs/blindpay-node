@@ -6,9 +6,10 @@ on:
     branches:
       - main
 
+# Every job only reads the repo (checkout, then local commands); nothing here pushes or
+# publishes, so PR-triggered runs get no write token or OIDC token.
 permissions:
-  contents: write
-  id-token: write
+  contents: read
 
 jobs:
   lint:
@@ -17,6 +18,8 @@ jobs:
     uses: ./.github/workflows/contract-check.yaml
   api-sync-check:
     uses: ./.github/workflows/api-sync-check.yaml
+  package:
+    uses: ./.github/workflows/package.yaml
   type-checking:
     uses: ./.github/workflows/type-checking.yaml
     needs: [lint]

@@ -20,6 +20,7 @@
           "file": "https://example.com/document.pdf"
         }
       ],
+      "review_reason": "The bank statement does not cover the last 3 months. Send statements from August to October showing the income that supports the requested limit.",
       "customer_id": "re_000000000000",
       "created_at": "2021-01-01T00:00:00Z",
       "updated_at": "2021-01-01T00:00:00Z"
@@ -43,6 +44,7 @@
       "supporting_document_type": null,
       "supporting_document_file": null,
       "supporting_documents": null,
+      "review_reason": null,
       "customer_id": "re_000000000000",
       "created_at": null,
       "updated_at": null
@@ -65,6 +67,7 @@
           "file": "https://example.com/document.pdf"
         }
       ],
+      "review_reason": "The bank statement does not cover the last 3 months. Send statements from August to October showing the income that supports the requested limit.",
       "customer_id": "re_000000000000",
       "created_at": "2021-01-01T00:00:00Z",
       "updated_at": "2021-01-01T00:00:00Z"
@@ -87,6 +90,7 @@
           "file": "https://example.com/document.pdf"
         }
       ],
+      "review_reason": "The bank statement does not cover the last 3 months. Send statements from August to October showing the income that supports the requested limit.",
       "customer_id": "re_000000000000",
       "created_at": "2021-01-01T00:00:00Z",
       "updated_at": "2021-01-01T00:00:00Z"

@@ -1,18 +1,22 @@
-import { copyFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 /**
- * Refreshes the committed snapshot with the delivered spec's exact bytes: read bytes, write
- * bytes, never a JSON.parse + JSON.stringify round trip (that reformats the file in this
- * language's own JSON style even when semantically unchanged, producing a huge diff on every
- * future sync PR and leaving the committed snapshot no longer byte-identical to what
- * blindpay-v2 ships as spec-current.json).
- *
- * A no-op when `specPath` already IS `snapshotPath` (e.g. a determinism proof run against the
- * committed baseline itself): copying a file onto itself is never useful, and some copyfile()
- * implementations truncate the destination before reading the identical source, destroying it.
+ * The committed snapshot's layout: 2-space JSON with a trailing newline, the layout blindpay-v2
+ * ships and the public spec uses. Parsing and re-serialising a spec already in that layout gives
+ * back the same bytes, so a pretty delivery is copied unchanged, while a minified delivery is
+ * expanded instead of turning every future snapshot refresh into a one-line, whole-file diff.
+ */
+export function formatSnapshot(specText: string): string {
+    return `${JSON.stringify(JSON.parse(specText), null, 2)}\n`;
+}
+
+/**
+ * Refreshes the committed snapshot from the delivered spec, in the snapshot layout
+ * (`formatSnapshot`). A no-op when `specPath` already IS `snapshotPath` (e.g. a determinism
+ * proof run against the committed baseline itself).
  */
 export function refreshSnapshot(specPath: string, snapshotPath: string): void {
     if (resolve(specPath) === resolve(snapshotPath)) return;
-    copyFileSync(specPath, snapshotPath);
+    writeFileSync(snapshotPath, formatSnapshot(readFileSync(specPath, "utf8")));
 }

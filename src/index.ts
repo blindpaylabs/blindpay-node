@@ -8,6 +8,8 @@ export type {
     ArgentinaTransfers,
     BankAccountType,
     BlindpayApiResponse,
+    BlindpayErrorResponse,
+    BlindpaySuccessResponse,
     BusinessIndustry,
     BusinessType,
     Country,
@@ -16,6 +18,7 @@ export type {
     ErrorResponse,
     ErrorType,
     EstimatedAnnualRevenue,
+    EstimatedTimeOfArrival,
     KycStatus,
     Network,
     PaginationMetadata,
@@ -45,6 +48,8 @@ export type {
     WalletToken,
 } from "../types";
 export * from "./client";
+export type { ErrorCodeInfo, RetryClass } from "./error-codes";
+export { ErrorCode, errorCodeInfo } from "./error-codes";
 export { BlindPayError } from "./internal/blindpay-error";
 export * from "./resources/available";
 export * from "./resources/bank-accounts";
@@ -71,6 +76,7 @@ export * from "./resources/webhooks/events";
 export type {
     UnknownWebhookEvent,
     UnknownWebhookEventName,
+    WebhookClock,
     WebhookHeaders,
     WebhookVerifyOptions,
 } from "./webhooks";

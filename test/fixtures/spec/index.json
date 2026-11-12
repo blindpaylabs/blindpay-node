@@ -1,6 +1,6 @@
 {
   "generated_from": "reference/openapi-public.json",
-  "spec_sha": "66144f3b2",
+  "spec_sha": "7e49addd9",
   "operations": {
     "GET /v1/instances/{instance_id}/onboarding/business_details": "responses/get__instances_instance_id_onboarding_business_details.json",
     "GET /v1/instances/{instance_id}/onboarding/business_profile": "responses/get__instances_instance_id_onboarding_business_profile.json",

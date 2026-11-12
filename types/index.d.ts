@@ -1,10 +1,18 @@
+import type { ErrorCode, RetryClass } from "../src/error-codes";
+
 export type BlindpayApiResponse<T> = BlindpayErrorResponse | BlindpaySuccessResponse<T>
 
 export type ErrorResponse = {
-    /** Legacy machine-readable message; prefer `code` for programmatic handling. */
+    /**
+     * Legacy machine-readable message; prefer `code` for programmatic handling. Some errors
+     * (e.g. idempotency conflicts) carry no `code`, and only `message` tells them apart.
+     */
     message: string;
-    /** Stable error code, e.g. `PAYOUTS_INSUFFICIENT_BALANCE`. */
-    code?: string;
+    /**
+     * Stable error code, e.g. `ErrorCode.TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM`. Codes newer than
+     * this SDK arrive as plain strings; `errorCodeInfo(code)` returns the catalogue entry.
+     */
+    code?: ErrorCode;
     /** Human-readable explanation, safe to show to end users. */
     description?: string;
     errors?: string[];
@@ -27,6 +35,12 @@ export type ErrorResponse = {
     retryable?: boolean;
     /** What went wrong; see `ErrorType`. */
     type?: ErrorType;
+    /**
+     * How the error catalogue says to react to `code` (`retryable`, `terminal`, `actionable`),
+     * or `unknown` for a code newer than this SDK. Set only when the error has a `code`.
+     * Advice for your own handling: automatic retries follow `retryable`.
+     */
+    retry_class?: RetryClass;
 }
 
 /**

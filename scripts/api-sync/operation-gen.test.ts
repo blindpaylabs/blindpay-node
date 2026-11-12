@@ -97,6 +97,7 @@ describe("operation-insert classifier", () => {
             "get(widgetId: GetWidgetInput, options?: RequestOptions)"
         );
         expect(result.change.methodSource).toContain(
+            // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts the generated source text, placeholders included
             "client.get(`/instances/${instanceId}/widgets/${encodeURIComponent(widgetId)}`, options)"
         );
     });
@@ -131,6 +132,7 @@ describe("operation-insert classifier", () => {
         expect(result.change.typeDecls).toContain("customer_id: string;");
         expect(result.change.methodSource).toContain("customer_id,");
         expect(result.change.methodSource).toContain(
+            // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts the generated source text, placeholders included
             "`/instances/${instanceId}/customers/${encodeURIComponent(customer_id)}/widgets/plaid`"
         );
     });
@@ -162,6 +164,7 @@ describe("operation-insert classifier", () => {
                 "create({ ...data }: CreateWidgetInput, options?: RequestOptions)"
             );
             expect(change.methodSource).toContain(
+                // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts the generated source text, placeholders included
                 "return client.post(`/instances/${instanceId}/widgets`, data, options);"
             );
             expect(change.importsNeeded).toContain("RequestOptions");
@@ -174,6 +177,7 @@ describe("operation-insert classifier", () => {
             });
             expect(change.methodSource).toContain(", options?: RequestOptions)");
             expect(change.methodSource).toContain(
+                // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts the generated source text, placeholders included
                 "client.delete(`/instances/${instanceId}/widgets/${encodeURIComponent(widgetId)}`, options);"
             );
         });
@@ -309,6 +313,7 @@ describe("operation-insert classifier", () => {
         if (!result.standard) throw new Error("unreachable");
         expect(result.change.methodSource).toContain("(customerId: ");
         expect(result.change.methodSource).toContain(
+            // biome-ignore lint/suspicious/noTemplateCurlyInString: asserts the generated source text, placeholders included
             "/customers/${encodeURIComponent(customerId)}/widgets"
         );
     });

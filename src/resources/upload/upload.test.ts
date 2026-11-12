@@ -218,6 +218,7 @@ describe("Upload", () => {
                 trace_id: "0af7651916cd43dd8448eb211c80319c",
                 status: 400,
                 type: "api_error",
+                retry_class: "unknown",
                 retryable: false,
             });
         });

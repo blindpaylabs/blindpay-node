@@ -40,6 +40,7 @@ describe("BlindPay client", () => {
             trace_id: "0af7651916cd43dd8448eb211c80319c",
             status: 400,
             type: "api_error",
+            retry_class: "actionable",
             retryable: false,
         });
     });
@@ -65,6 +66,7 @@ describe("BlindPay client", () => {
             errors: [],
             status: 500,
             type: "api_error",
+            retry_class: "unknown",
             retryable: true,
         });
     });

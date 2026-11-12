@@ -2,7 +2,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { refreshSnapshot } from "./snapshot";
+import { formatSnapshot, refreshSnapshot } from "./snapshot";
 
 let dir: string | null = null;
 
@@ -36,18 +36,25 @@ describe("refreshSnapshot", () => {
         expect(readFileSync(snapshotPath, "utf8")).toBe(content);
     });
 
-    it("does not reformat: byte-for-byte, not a JSON.parse + JSON.stringify round trip", () => {
+    it("writes a minified spec as 2-space JSON with a trailing newline", () => {
         dir = mkdtempSync(join(tmpdir(), "api-sync-snapshot-"));
         const specPath = join(dir, "spec-current.json");
         const snapshotPath = join(dir, "spec-snapshot.json");
-        // Deliberately unusual (but valid) JSON formatting: a JSON.stringify round trip would
-        // normalize this away, so a byte-for-byte copy is the only way to preserve it.
-        const content = '{"a":1,   "b":  2,\r\n"c":3}';
-        writeFileSync(specPath, content);
+        writeFileSync(specPath, '{"openapi":"3.1.0","info":{"title":"x"},"tags":["é"]}');
         writeFileSync(snapshotPath, "{}");
 
         refreshSnapshot(specPath, snapshotPath);
 
-        expect(readFileSync(snapshotPath, "utf8")).toBe(content);
+        expect(readFileSync(snapshotPath, "utf8")).toBe(
+            '{\n  "openapi": "3.1.0",\n  "info": {\n    "title": "x"\n  },\n  "tags": [\n    "é"\n  ]\n}\n'
+        );
+    });
+
+    it("gives back the committed snapshot's exact bytes (the layout is a fixed point)", () => {
+        const committed = readFileSync(
+            join(__dirname, "../../.api-sync/spec-snapshot.json"),
+            "utf8"
+        );
+        expect(formatSnapshot(committed)).toBe(committed);
     });
 });

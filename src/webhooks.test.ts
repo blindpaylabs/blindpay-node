@@ -78,6 +78,47 @@ describe("tolerance", () => {
     });
 });
 
+describe("injectable clock (options.now), real timers", () => {
+    describe.each(vectors)("$name", (vector) => {
+        const valid = vector.expect === "valid";
+
+        it(`returns ${valid} with now as Unix seconds and as a Date`, () => {
+            const { payload, headers, secret } = vector;
+            expect(verifyWebhook(payload, headers, secret, { now: vector.now })).toBe(valid);
+            expect(
+                verifyWebhook(payload, headers, secret, { now: new Date(vector.now * 1000) })
+            ).toBe(valid);
+            const construct = () =>
+                constructWebhookEvent(payload, headers, secret, { now: vector.now });
+            if (valid) expect(construct).not.toThrow();
+            else expect(construct).toThrow(BlindPayError);
+        });
+
+        it("gives the same answer through the client's verifyWebhookSignature", () => {
+            const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
+            const result = blindpay.verifyWebhookSignature({
+                secret: vector.secret,
+                payload: vector.payload,
+                headers: {
+                    id: vector.headers["svix-id"] ?? "",
+                    timestamp: vector.headers["svix-timestamp"] ?? "",
+                    signature: vector.headers["svix-signature"] ?? "",
+                },
+                now: vector.now,
+            });
+            expect(result).toBe(valid);
+        });
+    });
+
+    it("rejects a non-finite now instead of skipping the timestamp check", () => {
+        const vector = vectors.find((v) => v.expect === "valid");
+        if (!vector) throw new Error("no valid vector");
+        const { payload, headers, secret } = vector;
+        expect(verifyWebhook(payload, headers, secret, { now: Number.NaN })).toBe(false);
+        expect(verifyWebhook(payload, headers, secret, { now: new Date(Number.NaN) })).toBe(false);
+    });
+});
+
 describe("webhook test vectors (sdk-parity, 14 cases)", () => {
     it("has all 14 vectors", () => {
         expect(vectors).toHaveLength(14);
