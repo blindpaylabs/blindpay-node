@@ -680,6 +680,12 @@ export type GetLimitIncreaseRequestsResponse = Array<{
     approved_per_transaction?: number | null;
     approved_daily?: number | null;
     approved_monthly?: number | null;
+    /**
+     * Why compliance rejected the request or approved lower limits than requested, and what to
+     * send to get the full amount (1-2000 characters). Set when `status` is `rejected` or the
+     * request was approved below the requested limits; `null` otherwise.
+     */
+    review_reason?: string | null;
 }>;
 
 export type RequestLimitIncreaseInput = {
