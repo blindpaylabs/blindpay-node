@@ -4,7 +4,7 @@ import { readFixture, responseVariants } from "../internal/test-fixtures";
 import { OPERATIONS } from "../internal/test-operations";
 
 /**
- * The op-coverage test (sdk-parity A8): every SDK operation of the spec, through the method that
+ * The op-coverage test: every SDK operation of the spec, through the method that
  * implements it. Each call must hit the operation's method and path, and every shared
  * spec-shaped fixture variant (test/fixtures/spec) served as its response must come back as
  * `data`, unchanged, with `error: null`: envelope and bare array, required-only, nullable and

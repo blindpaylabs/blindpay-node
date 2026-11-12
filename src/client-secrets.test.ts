@@ -15,7 +15,7 @@ function renderings(value: unknown): string[] {
     ];
 }
 
-describe("API key redaction (sdk-parity C13)", () => {
+describe("API key redaction", () => {
     afterEach(() => fetchMock.resetMocks());
 
     const blindpay = new BlindPay({
@@ -125,7 +125,7 @@ describe("query strings in transport errors", () => {
     });
 });
 
-describe("webhook secret redaction (sdk-parity C13)", () => {
+describe("webhook secret redaction", () => {
     // Fake secrets built at runtime; not credentials.
     const secret = `whsec_${Buffer.from("blindpay-node-secret-redaction-probe").toString("base64")}`;
     const malformed = `whsec_${["not", "base64", "probe"].join("!")}`;

@@ -119,7 +119,7 @@ describe("injectable clock (options.now), real timers", () => {
     });
 });
 
-describe("webhook test vectors (sdk-parity, 14 cases)", () => {
+describe("shared webhook test vectors (14 cases)", () => {
     it("has all 14 vectors", () => {
         expect(vectors).toHaveLength(14);
     });

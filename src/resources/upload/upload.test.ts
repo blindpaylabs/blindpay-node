@@ -75,7 +75,7 @@ describe("Upload", () => {
         });
     });
 
-    describe("File input (C9)", () => {
+    describe("File input", () => {
         /** The `file` part of the single multipart request sent. */
         async function sentFile(call: () => Promise<unknown>): Promise<File> {
             fetchMock.mockResponseOnce(JSON.stringify({ file_url: "https://x" }));

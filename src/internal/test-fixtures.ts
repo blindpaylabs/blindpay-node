@@ -2,8 +2,8 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 /**
- * Test-only loader for the shared spec-shaped fixtures in test/fixtures/spec (copied from the
- * sdk-parity reference set; see its README). Never import this from SDK code: it reads files.
+ * Test-only loader for the shared spec-shaped fixtures in test/fixtures/spec (generated from
+ * the public spec and shared by every BlindPay SDK; see its README). Never import this from SDK code: it reads files.
  */
 
 const FIXTURES = join(__dirname, "../../test/fixtures/spec");

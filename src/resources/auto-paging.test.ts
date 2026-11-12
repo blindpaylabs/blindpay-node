@@ -3,7 +3,7 @@ import { BlindPay } from "../client";
 import { BlindPayError } from "../internal/blindpay-error";
 
 /**
- * Auto-pagers (sdk-parity C5, D4). Pages are hand-written: the shared `.b0` fixtures carry a
+ * Auto-pagers. Pages are hand-written: the shared `.b0` fixtures carry a
  * synthetic, constant `next_page` with `has_more: true`, so following them would never end.
  */
 

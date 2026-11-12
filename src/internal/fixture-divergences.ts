@@ -1,6 +1,6 @@
 /**
  * Test-only: where the SDK's response types deliberately differ from the spec-shaped fixtures,
- * each verified against the API source (blindpay-v2). Used by
+ * each verified against the API source. Used by
  * src/resources/fixture-types.test.ts, which fails when an entry stops matching a real
  * difference. Never import this from SDK code.
  *
@@ -19,27 +19,27 @@ export type KnownDivergence = {
     placeholder?: unknown;
 };
 
-// Classified per handler against blindpay-v2@66144f3b2; regenerate the groups when the spec moves.
+// Classified per API handler; re-check the groups when the spec moves.
 const C =
-    "NEXT MAJOR: the API can omit this key (payin tracking external_id: process-*-deposit.ts assign `?? undefined`; tracking_*.error_message: added only on failure, finalize-transfer-tracking.ts:37-39; blockchain_wallet: absent on development-instance creates, post...virtual-accounts.ts:141-147). Making it optional widens a response type, which the repo's semver rules make a major change (sdk-parity E4), so it stays as typed and becomes optional in the next major.";
+    "NEXT MAJOR: the API can omit this key (payin tracking external_id: the deposit processors assign `?? undefined`; tracking_*.error_message: added only on failure by the transfer tracking finalizer; blockchain_wallet: absent on development-instance virtual-account creates). Making it optional widens a response type, which the repo's semver rules make a major change, so it stays as typed and becomes optional in the next major.";
 const PAGE =
-    "Always sent (null when there is no page): every list handler sets both keys with `?? null` (e.g. modules/payouts/endpoints/get.instances.[instance_id].payouts.ts:151-152). Spec issue: the spec marks them optional.";
+    "Always sent (null when there is no page): every list handler sets both keys with `?? null` (e.g. the payouts list handler). Spec issue: the spec marks them optional.";
 const TS =
-    "Always sent, never null: WithTimestampSchema coerces it to a string (packages/api-contract/src/generic.schema.ts:7-25). Spec issue: the spec marks it optional and nullable.";
+    "Always sent, never null: the API's shared timestamp schema coerces it to a string. Spec issue: the spec marks it optional and nullable.";
 const DEFAULT =
-    "Always sent: a zod .default()/coerce output (e.g. blockchain-wallet.schema.ts:21, available.schema.ts:29, payin.schema.ts:14-45 via use-payin.ts:105-122). Spec issue: zod-openapi documents the input side, so the spec marks it optional.";
+    "Always sent: a zod .default()/coerce output in the API's response schemas (blockchain wallets, available rails, payins). Spec issue: zod-openapi documents the input side, so the spec marks it optional.";
 const COERCE =
-    "Never null: CustomerLimitSchema uses z.coerce.number(), so a missing limit row comes out as 0 (customer-limit.schema.ts, picked at customer.schema.ts:1727). Spec issue: the spec allows null.";
+    "Never null: CustomerLimitSchema uses z.coerce.number(), so a missing limit row comes out as 0 (the customer limit schema). Spec issue: the spec allows null.";
 const LITERAL =
-    "Always sent: the handler returns it from a literal or initialises it (prepare-delegate-solana.ts:196; transfer-quotes.ts:180-190; execute-transfer.ts:114-127). Spec issue: the spec marks it optional.";
+    "Always sent: the handler returns it from a literal or initialises it (the Solana delegation, transfer quote and transfer handlers). Spec issue: the spec marks it optional.";
 const ROW =
     "Always sent (null when unset): the handler zod-parses a full DB row (selectAll/returningAll) or an explicit select that includes the column, so the key is present. Spec issue: one schema covers every variant (e.g. every bank-account rail), so the spec marks the key optional.";
 
 const SHARED =
-    "NEXT MAJOR: never sent by this method, but the shared type is right for the method that does send it (is_tos_accepted: only customers.get computes it, get.instances.[instance_id].customers.[id].ts:36; has_virtual_account: payouts.get/getTrack set it, get.instances.[instance_id].payouts.[id].ts:159, while the list's use-payout.ts buildListBaseQuery never does). Widening the shared type is a major change for those callers, so it stays required and documented until the next major.";
+    "NEXT MAJOR: never sent by this method, but the shared type is right for the method that does send it (is_tos_accepted: only the customers.get handler computes it; has_virtual_account: the payouts.get/getTrack handlers set it, while the list query never does). Widening the shared type is a major change for those callers, so it stays required and documented until the next major.";
 
 const NEVER =
-    "NEXT MAJOR: the API never sends it here, but the type was released as required, and widening a response type is a major change under the repo's semver rules (sdk-parity E4). Documented on the field (tracking_partner_fee: payout.schema.ts:274; create-response customer_id: build-payout-response.ts); optional in the next major.";
+    "NEXT MAJOR: the API never sends it here, but the type was released as required, and widening a response type is a major change under the repo's semver rules. Documented on the field (tracking_partner_fee: not in the API's payout schema; create-response customer_id: not in the create response builder); optional in the next major.";
 
 export const KNOWN_DIVERGENCES: KnownDivergence[] = [
     {

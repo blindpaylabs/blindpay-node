@@ -139,7 +139,7 @@ describe("List query strings", () => {
 describe("limit as a number", () => {
     afterEach(() => fetchMock.resetMocks());
 
-    it("is sent as the same decimal string (sdk-parity D6)", async () => {
+    it("is sent as the same decimal string", async () => {
         const blindpay = new BlindPay({ apiKey: "test-key", instanceId: "in_000000000000" });
         fetchMock.mockResponseOnce(JSON.stringify([]));
         await blindpay.payouts.list({ limit: 50 });
