@@ -25,7 +25,7 @@
             "kind": "property",
             "schema": "CreateBankAccountIn",
             "field": "status",
-            "reason": "Bank-account status is present on the shared create schema (likely a server-computed/back-office field, not client-settable) but not modeled on any of the 11 rail create input types; needs confirmation of intended write access before modeling.",
+            "reason": "Not client-settable: the API overwrites it with status 'approved' on create (blindpay-v2 apps/api/src/modules/bank-accounts/lib/create-bank-account.ts:282), so modeling it as an input would promise an effect it never has. Reported to the spec owner as a spec issue (round 2).",
             "owner": "eric@blindpay.com"
         },
         {
