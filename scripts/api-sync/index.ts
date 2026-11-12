@@ -30,6 +30,7 @@ import type {
     SpecMap,
     SyncReport,
 } from "./types";
+import { findWebhookShapeDrift } from "./webhook-shapes";
 
 /**
  * Every "METHOD path" in the spec with no matching SDK endpoint, classified: STANDARD ones
@@ -257,6 +258,7 @@ function main(): void {
     const allNeedsHuman = [
         ...needsHuman,
         ...catalogue.needsHuman,
+        ...findWebhookShapeDrift(spec, map),
         ...removalMessages,
         ...newSchemaMessages,
         ...operationGaps.needsHuman,

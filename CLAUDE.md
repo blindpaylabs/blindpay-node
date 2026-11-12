@@ -182,6 +182,8 @@ It also owns `src/error-codes.ts`: `--apply` regenerates it from the table in th
 
 A type may share fields through a same-file base joined with `&` (`BankAccountCreateCommon & { ... }`, `PayoutSourceWallet & { ... }`): api-sync resolves those fields (`extractResolvedFields` in `sdk-scan.ts`). A base from another file is not resolved, so keep shared bases next to their users.
 
+Webhook payload schemas typed as `{ webhook_event } & X` sit in `spec-map.json`'s `ignore.schemas` with `sameShapeAs: "<X's schema>"`; sync:check fails (needs-human) when such a webhook schema stops having exactly that schema's properties and required list (`scripts/api-sync/webhook-shapes.ts`), so drift on a webhook alone is never silent.
+
 Deliberate differences from the spec are recorded in `.api-sync/unmodeled.json` with an owner and a reason. Never silence a finding by editing that file without the reason being true.
 
 ## How to: Add a New Resource
