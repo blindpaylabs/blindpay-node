@@ -118,7 +118,7 @@
             "kind": "property",
             "schema": "CreateTransferOut",
             "field": "tracking_partner_fee",
-            "reason": "Already tracked in .api-sync/contract-check-allowlist.json as CreateTransferResponse.tracking_partner_fee; mirrored here.",
+            "reason": "Stale since the spec re-added tracking_partner_fee to CreateTransferOut (modeled as TransferTrackingStep | null, see nestedShapeOmissions); informational only, nothing reads property-kind divergences.",
             "owner": "eric@blindpay.com"
         },
         {
@@ -146,14 +146,14 @@
             "kind": "property",
             "schema": "PayinOut",
             "field": "tracking_partner_fee",
-            "reason": "Already tracked in .api-sync/contract-check-allowlist.json (no longer exists on PayinOut in the spec); mirrored here.",
+            "reason": "SDK-only: Payin.tracking_partner_fee no longer exists on PayinOut in the spec; the SDK keeps it until the next major.",
             "owner": "eric@blindpay.com"
         },
         {
             "kind": "property",
             "schema": "PayoutOnEvmOut",
             "field": "tracking_partner_fee",
-            "reason": "Already tracked in .api-sync/contract-check-allowlist.json as CreateStellarPayoutResponse/CreateEvmPayoutResponse/CreateSolanaPayoutResponse.tracking_partner_fee; mirrored here.",
+            "reason": "SDK-only: tracking_partner_fee on CreateStellarPayoutResponse/CreateEvmPayoutResponse/CreateSolanaPayoutResponse no longer exists on PayoutOnEvmOut in the spec; kept until the next major.",
             "owner": "eric@blindpay.com"
         },
         {
@@ -174,14 +174,14 @@
             "kind": "property",
             "schema": "PayoutOut",
             "field": "tracking_partner_fee",
-            "reason": "Already tracked in .api-sync/contract-check-allowlist.json (no longer exists on any Payout schema in the spec); mirrored here.",
+            "reason": "SDK-only: Payout.tracking_partner_fee (@deprecated) no longer exists on any Payout schema in the spec; kept until the next major.",
             "owner": "eric@blindpay.com"
         },
         {
             "kind": "property",
             "schema": "TransferOut",
             "field": "tracking_partner_fee",
-            "reason": "Already tracked in .api-sync/contract-check-allowlist.json (no longer exists on TransferOut in the spec); mirrored here.",
+            "reason": "Stale since the spec re-added tracking_partner_fee to TransferOut (modeled as TransferTrackingStep | null, see nestedShapeOmissions); informational only, nothing reads property-kind divergences.",
             "owner": "eric@blindpay.com"
         },
         {
