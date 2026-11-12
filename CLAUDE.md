@@ -693,6 +693,7 @@ Rules:
 - Never edit `version` in `package.json` by hand, and never run `changeset version` or `changeset publish` locally. A merge without a changeset releases nothing.
 - api-sync PRs write `.changeset/api-sync-<spec sha>.md` instead of bumping the version, so they release through the same Version Packages PR.
 - Keep the workflow file name `publish.yaml`: npm's trusted publisher is bound to it.
+- A stuck or failed Publish run is re-run with `workflow_dispatch` on `main` (Actions, then Publish, then Run workflow). [`RELEASING.md`](RELEASING.md) is the runbook: secrets, re-runs, verifying the published artifact, known traps.
 
 ## OpenAPI to SDK Mapping Rules
 

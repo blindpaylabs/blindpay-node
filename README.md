@@ -235,6 +235,10 @@ For the full API documentation, see:
 - [BlindPay API documentation](https://blindpay.com/docs/getting-started/overview)
 - [API Reference](https://api.blindpay.com/reference)
 
+## Releasing
+
+Maintainers: see [RELEASING.md](RELEASING.md) for the release flow, secrets and how to verify a published version.
+
 ## Support
 
 - 📧 Email: [support@blindpay.com](mailto:support@blindpay.com)
