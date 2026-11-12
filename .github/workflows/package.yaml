@@ -55,6 +55,17 @@ jobs:
           grep -qx 'dist/index.d.mts' /tmp/pack-files.txt
           grep -qx 'dist/index.js' /tmp/pack-files.txt
 
+      # Comments ship in dist (JSDoc shows in IDE hovers): no internal plan, repo or local path refs.
+      - name: Assert no internal references ship
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/pkg && npm pack --pack-destination /tmp/pkg > /dev/null
+          tar -xzf /tmp/pkg/*.tgz -C /tmp/pkg
+          if grep -rnE 'sdk-parity|/Users/|blindpay-v2' /tmp/pkg/package; then
+            echo "::error::internal references in the package (see above)"
+            exit 1
+          fi
+
       # Types resolve correctly under node10, node16 (CJS and ESM) and bundler resolution.
       - name: Are the types wrong?
         run: npx -y @arethetypeswrong/cli@0.18.5 --pack .

@@ -7,7 +7,7 @@ export type Page<T> = { data: T[]; pagination: PaginationMetadata } | T[];
 type CursorParams = { limit?: string | number; starting_after?: string; ending_before?: string };
 
 /**
- * Iterates every item of a cursor-paginated list (sdk-parity C5/D4): sends `limit` (default
+ * Iterates every item of a cursor-paginated list: sends `limit` (default
  * `"100"`, valid for every list) so the API answers with the envelope, then follows
  * `pagination.next_page` as `starting_after` while `has_more` is true.
  *

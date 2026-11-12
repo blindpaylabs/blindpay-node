@@ -19,7 +19,7 @@ export function toErrorResponse(body: unknown): ErrorResponse {
         const value = fields[key];
         if (typeof value === "string") error[key] = value;
     }
-    // Only `success` and `message` are guaranteed (sdk-parity C4): `errors` defaults to [].
+    // Only `success` and `message` are guaranteed: `errors` defaults to [].
     error.errors =
         Array.isArray(fields.errors) && fields.errors.every((e) => typeof e === "string")
             ? fields.errors

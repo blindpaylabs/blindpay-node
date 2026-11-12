@@ -80,7 +80,7 @@ const DEFAULT_MAX_RETRIES = 2;
 export class BlindPay {
     // Options
     // ECMAScript-private, so the API key never shows in util.inspect (even showHidden),
-    // JSON.stringify or a debugger's property list (sdk-parity C13).
+    // JSON.stringify or a debugger's property list.
     readonly #transport: TransportConfig;
     private readonly instanceId: string;
     private readonly api: InternalApiClient;

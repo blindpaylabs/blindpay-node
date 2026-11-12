@@ -121,7 +121,7 @@ export function verifyOrThrow(
 }
 
 /**
- * Svix verification (sdk-parity A4) with a configurable tolerance: svix's own `verify` fixes it
+ * Svix verification with a configurable tolerance: svix's own `verify` fixes it
  * at 5 minutes, so this checks the headers and timestamp itself and uses svix's `sign` for the
  * HMAC, comparing each `v1,` signature in constant time. Returns the parsed body or throws.
  */

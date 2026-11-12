@@ -46,14 +46,14 @@ const RESERVED_HEADERS = new Set(["authorization", "user-agent", "accept", "cont
 type Decision = {
     /** Safe to send the same request again (same bytes, same Idempotency-Key). */
     retryable: boolean;
-    /** The SDK resends it on its own (v3 C3: never a mutation that got a 5xx). */
+    /** The SDK resends it on its own (never a mutation that got a 5xx). */
     autoRetry: boolean;
     /** Wait before the next attempt, when the server said how long (Retry-After <= 60 s). */
     retryAfterMs?: number;
 };
 
 /**
- * Sends one API call through the retry loop (sdk-parity Appendix A2) and returns the SDK's
+ * Sends one API call through the retry loop (`decide()`) and returns the SDK's
  * `{ data, error }` result. It never throws: network failures, timeouts, aborts, non-JSON
  * bodies and rejected options all come back as `error`.
  */
@@ -182,7 +182,7 @@ async function sendOnce(
             }
             return { kind: "failure", type: "connection_error", message: messageOf(error) };
         }
-        // The status line has arrived: from here on the attempt is judged by its status (A2),
+        // The status line has arrived: from here on the attempt is judged by its status,
         // even when reading the body fails, so a 5xx mutation is never resent.
         try {
             return { kind: "response", response, text: await response.text() };
@@ -217,7 +217,7 @@ function isValidIdempotencyKey(key: string): boolean {
 }
 
 /**
- * Appendix A2, top to bottom. `retryable` is what the error reports to the caller;
+ * The retry table, top to bottom. `retryable` is what the error reports to the caller;
  * `autoRetry` is whether the loop resends on its own. Both come from here so they can't drift.
  */
 function decide(ctx: {
@@ -234,7 +234,7 @@ function decide(ctx: {
     const resendable = isGet || (hasKey && !isMultipart);
     const no: Decision = { retryable: false, autoRetry: false };
 
-    if (attempt.kind === "failure" && attempt.type === "aborted") return no; // A2 row 1
+    if (attempt.kind === "failure" && attempt.type === "aborted") return no; // row 1: the caller aborted
     // Rows 2-3, before any status rule: a multipart or unkeyed mutation is never safe to resend.
     if (!resendable) return no;
 
