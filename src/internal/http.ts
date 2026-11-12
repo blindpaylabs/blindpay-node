@@ -361,11 +361,20 @@ function failure(fields: ErrorResponse & { type: ErrorType }): {
     return { data: null, error };
 }
 
+/** A thrown value's message, with any URL query string removed (list filters can carry PII). */
 function messageOf(error: unknown): string {
-    if (error instanceof Error) return error.message;
+    if (error instanceof Error) return withoutQueryStrings(error.message);
     if (error && typeof error === "object" && "message" in error) {
         const { message } = error as { message: unknown };
-        if (typeof message === "string") return message;
+        if (typeof message === "string") return withoutQueryStrings(message);
     }
     return "Unknown error";
+}
+
+/**
+ * Drops the query string of every URL in `text`: a custom `fetch` (or a proxy agent) may put
+ * the request URL in its error message, and filters such as `customer_name` are personal data.
+ */
+function withoutQueryStrings(text: string): string {
+    return text.replace(/(\bhttps?:\/\/[^\s?#"'<>]*)\?[^\s#"'<>]*/gi, "$1");
 }
