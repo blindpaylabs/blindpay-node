@@ -89,6 +89,42 @@ describe("API key redaction (sdk-parity C13)", () => {
     });
 });
 
+describe("query strings in transport errors", () => {
+    const name = "Maria Probe Silva";
+
+    it.each([
+        [
+            "an absolute URL",
+            (url: string) => `request to ${url} failed`,
+            "request to https://api.blindpay.com/v1/instances/in_000000000000/customers failed",
+        ],
+        [
+            "a relative path",
+            (url: string) =>
+                `GET ${new URL(url).pathname}${new URL(url).search} failed: ECONNRESET`,
+            "GET /v1/instances/in_000000000000/customers failed: ECONNRESET",
+        ],
+        [
+            "a quoted path inside a longer message",
+            (url: string) =>
+                `proxy error for "${new URL(url).pathname}${new URL(url).search}" (socket closed)`,
+            'proxy error for "/v1/instances/in_000000000000/customers" (socket closed)',
+        ],
+    ])("strips it from %s", async (_label, message, expected) => {
+        const client = new BlindPay({
+            apiKey: API_KEY,
+            instanceId: "in_000000000000",
+            maxRetries: 0,
+            fetch: async (input: RequestInfo | URL): Promise<Response> => {
+                throw new Error(message(String(input)));
+            },
+        });
+        const { error } = await client.customers.list({ customer_name: name });
+        expect(error?.message).toBe(expected);
+        expect(error?.message).not.toContain("customer_name");
+    });
+});
+
 describe("webhook secret redaction (sdk-parity C13)", () => {
     // Fake secrets built at runtime; not credentials.
     const secret = `whsec_${Buffer.from("blindpay-node-secret-redaction-probe").toString("base64")}`;

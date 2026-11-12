@@ -376,9 +376,10 @@ function messageOf(error: unknown): string {
 }
 
 /**
- * Drops the query string of every URL in `text`: a custom `fetch` (or a proxy agent) may put
- * the request URL in its error message, and filters such as `customer_name` are personal data.
+ * Drops the query string of every URL or path in `text` (any word with a `/` followed by `?`):
+ * a custom `fetch` (or a proxy agent) may put the request URL, or just its path, in its error
+ * message, and filters such as `customer_name` are personal data.
  */
 function withoutQueryStrings(text: string): string {
-    return text.replace(/(\bhttps?:\/\/[^\s?#"'<>]*)\?[^\s#"'<>]*/gi, "$1");
+    return text.replace(/([^\s?#"'<>]*\/[^\s?#"'<>]*)\?[^\s#"'<>]*/g, "$1");
 }
