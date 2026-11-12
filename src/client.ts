@@ -69,11 +69,6 @@ export type BlindPayOptions = {
 };
 
 const DEFAULT_BASE_URL = "https://api.blindpay.com";
-
-/** The host part of `baseUrl`: trailing slashes and one trailing `/v1` dropped (paths add `/v1`). */
-function normalizeBaseUrl(baseUrl: string): string {
-    return baseUrl.replace(/\/+$/, "").replace(/\/v1$/i, "").replace(/\/+$/, "");
-}
 const DEFAULT_TIMEOUT_MS = 60_000;
 const DEFAULT_MAX_RETRIES = 2;
 
@@ -313,6 +308,14 @@ export class BlindPay {
             now: params.now,
         }) as WebhookEvent;
     }
+}
+
+/**
+ * `baseUrl` without trailing slashes and without one trailing `/v1`, since every request path
+ * starts with `/v1` (`http://host/v1/` becomes `http://host`; `http://host/v1/v1` keeps one).
+ */
+function normalizeBaseUrl(baseUrl: string): string {
+    return baseUrl.replace(/(?:\/+v1)?\/*$/i, "");
 }
 
 function svixHeaders({ headers }: WebhookVerificationInput): Record<string, string> {

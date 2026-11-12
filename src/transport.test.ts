@@ -4,7 +4,7 @@ import { BlindPay, type BlindPayOptions } from "./client";
 import { errorFixtures } from "./internal/test-fixtures";
 
 /**
- * The transport contract (sdk-parity C1-C4, retry table Appendix A2), driven through real
+ * The transport contract (config, errors, the retry table in `decide()`), driven through real
  * resource methods with an injected `fetch` and a fake clock: no test sleeps for real.
  */
 
@@ -77,7 +77,7 @@ afterEach(() => {
     vi.restoreAllMocks();
 });
 
-describe("client configuration (C1)", () => {
+describe("client configuration", () => {
     it.each([
         "http://localhost:4010",
         "http://localhost:4010/",
@@ -91,6 +91,16 @@ describe("client configuration (C1)", () => {
 
         expect(calls[0]?.url).toBe(
             "http://localhost:4010/v1/instances/in_000000000000/payouts/pa_000000000000"
+        );
+    });
+
+    it("strips a single trailing /v1 only (a proxy mounted at .../v1 passes it twice)", async () => {
+        const { fetch, calls } = fakeFetch(json({}));
+
+        await getPayout(client(fetch, { baseUrl: "https://proxy.example.com/api/v1/v1//" }));
+
+        expect(calls[0]?.url).toBe(
+            "https://proxy.example.com/api/v1/v1/instances/in_000000000000/payouts/pa_000000000000"
         );
     });
 
@@ -267,7 +277,7 @@ describe("client configuration (C1)", () => {
     });
 });
 
-describe("errors (C4)", () => {
+describe("errors", () => {
     it("carries status, request_id (X-Request-Id), the envelope and the idempotency key", async () => {
         const { fetch } = fakeFetch(
             json(
@@ -363,7 +373,7 @@ describe("errors (C4)", () => {
     });
 });
 
-describe("retries (C3, Appendix A2)", () => {
+describe("retries (the decide() table)", () => {
     describe("GET", () => {
         it.each([408, 429, 500, 502, 503, 504])(
             "is retried on %i, then succeeds",
@@ -648,7 +658,7 @@ describe("retries (C3, Appendix A2)", () => {
             }
         );
 
-        it("without a key (retries off), a 5xx is not retryable: A2 row 3 comes first", async () => {
+        it("without a key (retries off), a 5xx is not retryable: the unkeyed-mutation row comes first", async () => {
             const { fetch, calls } = fakeFetch(json({ message: "boom" }, 503));
 
             const { error } = await client(fetch, { maxRetries: 0 }).payouts.createEvm(payout);
@@ -659,7 +669,7 @@ describe("retries (C3, Appendix A2)", () => {
             expect(error?.idempotency_key).toBeUndefined();
         });
 
-        it("isn't retried, nor retryable, on a 408 (A2 row 10)", async () => {
+        it("isn't retried, nor retryable, on a 408", async () => {
             const { fetch, calls } = fakeFetch(json({ message: "timeout" }, 408));
 
             const { error } = await settle(createPayout(client(fetch)));

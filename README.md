@@ -34,7 +34,7 @@ const blindpay = new BlindPay({
 });
 ```
 
-`baseUrl` is the host only: the SDK adds `/v1` to every path. A trailing `/` or `/v1` is accepted and dropped, so `http://localhost:4010` and `http://localhost:4010/v1/` send the same requests. Options set to `undefined` (say, `baseUrl: process.env.BLINDPAY_BASE_URL`) fall back to their defaults.
+`baseUrl` is the host only: the SDK adds `/v1` to every path. Trailing slashes and a single trailing `/v1` are dropped, so `http://localhost:4010` and `http://localhost:4010/v1/` send the same requests. If your proxy itself is mounted at a path ending in `/v1`, pass that full mount path followed by the API's `/v1` (`baseUrl: 'https://proxy.example.com/v1/v1'`): only one trailing `/v1` is stripped, so requests go to `https://proxy.example.com/v1/v1/...`. Options set to `undefined` (say, `baseUrl: process.env.BLINDPAY_BASE_URL`) fall back to their defaults.
 
 The snippets below use this `blindpay` client.
 
