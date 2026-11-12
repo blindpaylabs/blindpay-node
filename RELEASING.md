@@ -10,9 +10,9 @@
 
 1. `select-mode` decides between two modes.
 2. **Changesets pending** (`version` job): opens or updates the PR "chore(release): version packages", which bumps `package.json`, writes `CHANGELOG.md` and deletes the consumed changesets.
-3. **That PR merged** (`pack` then `publish` jobs): type-check, test, build and pack, then publish to npm with trusted publishing (OIDC, provenance), tag `vX.Y.Z` and create the GitHub release.
+3. **That PR merged** (`pack` then `publish` jobs): `bun run check-types`, `bun run test`, `bun run build` and `changesets/action/pack`, then publish to npm with trusted publishing (OIDC, provenance), tag `vX.Y.Z` and create the GitHub release.
 
-`main` has no required checks today, so check that the "Main" workflow is green on a PR before merging it. That includes api-sync's auto-merged PRs and the Version Packages PR. `pack` re-runs only check-types and tests.
+`main` has no required checks today, so check that the "Main" workflow is green on a PR before merging it. That includes api-sync's auto-merged PRs and the Version Packages PR. `pack` runs `bun run check-types`, `bun run test` and `bun run build` before packing; it doesn't run lint, contract-check or sync:check.
 
 ## Secrets and OIDC
 
@@ -29,7 +29,7 @@
 
 - Publish run stuck in `queued` or failed for an infrastructure reason: Actions, then **Publish**, then **Run workflow** on `main` (`workflow_dispatch`), or `gh workflow run publish.yaml --ref main`. It picks the mode again from the state of `main`. If a version did reach npm, npm refuses a second publish of that version, so check `npm view @blindpay/node versions` before re-running a failed `publish` job.
 - Only `main` can publish (`select-mode` is skipped on other refs).
-- A failed `pack` (tests or build) needs a fix PR. Merge it, and the next push re-runs the flow.
+- A failed `pack` (type-check, tests or build) needs a fix PR. Merge it, and the next push re-runs the flow.
 
 ## Verifying the published artifact
 
