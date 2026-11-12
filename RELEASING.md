@@ -19,7 +19,7 @@
 | What | Used by | Notes |
 |---|---|---|
 | npm trusted publisher for `@blindpay/node`, bound to `blindpaylabs/blindpay-node` + `publish.yaml` | `publish` job (`id-token: write`) | No npm token is used. Renaming `publish.yaml` breaks publishing until the trusted publisher is updated on npmjs.com by an npm org owner |
-| `SDK_SYNC_PAT` | `version` job, `api-sync.yml` | A PAT, so the PRs it opens start workflows (a `GITHUB_TOKEN` push does not). Owned by a BlindPay org admin; when it expires, the `version` job fails with "SDK_SYNC_PAT is not set" or a 401 |
+| `SDK_SYNC_PAT` | `version` job, `api-sync.yml` | A PAT, so the PRs it opens start workflows (a `GITHUB_TOKEN` push does not). Owner: not recorded in the repo, ask a BlindPay org admin. When it expires, the `version` job fails with "SDK_SYNC_PAT is not set" or a 401 |
 | `SLACK_WEBHOOK_URL` | `pipeline-alert.yml` | Failure alerts for API Sync, Publish and Main |
 | `SNYK_TOKEN` | `snyk.yaml` | Dependency scan |
 
@@ -27,7 +27,7 @@
 
 ## Re-running a stuck or failed release
 
-- Publish run stuck in `queued` or failed for an infrastructure reason: Actions, then **Publish**, then **Run workflow** on `main` (`workflow_dispatch`), or `gh workflow run publish.yaml --ref main`. It picks the mode again from the state of `main`, and Changesets publishes only versions that are not on npm yet, so repeating it is safe.
+- Publish run stuck in `queued` or failed for an infrastructure reason: Actions, then **Publish**, then **Run workflow** on `main` (`workflow_dispatch`), or `gh workflow run publish.yaml --ref main`. It picks the mode again from the state of `main`. If a version did reach npm, npm refuses a second publish of that version, so check `npm view @blindpay/node versions` before re-running a failed `publish` job.
 - Only `main` can publish (`select-mode` is skipped on other refs).
 - A failed `pack` (tests or build) needs a fix PR. Merge it, and the next push re-runs the flow.
 
@@ -45,7 +45,7 @@ Expect `function QUOTES_EXPIRED`, `function false`, a provenance attestation, an
 
 ## Known traps
 
-- `main` is unprotected and `allow_auto_merge` is on, so `gh pr merge --auto` in `api-sync.yml` merges without waiting for checks.
+- `main` is unprotected (no required checks) and `allow_auto_merge` is on, so `gh pr merge --auto` in `api-sync.yml` most likely merges without waiting for CI (inferred, not observed).
 - Three Publish/Main runs from the 2026-11-11 GitHub incident are still `queued`. They don't block later runs.
 - api-sync last ran on 2026-08-08. If blindpay-v2's `sdk-sync.yml` stops dispatching, drift only shows up in a manual `bun scripts/api-sync/index.ts --check --spec <current public spec>`.
 - The Changesets CLI needs Node `^22.11 || >=24` locally. CI uses Node 24 for publishing.

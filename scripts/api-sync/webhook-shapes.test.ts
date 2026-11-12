@@ -50,6 +50,27 @@ describe("findWebhookShapeDrift", () => {
         expect(problems[1]).toContain("different required list");
     });
 
+    it("ignores a reworded description or example, but not a nested property named description", () => {
+        const reworded = specWith((s) => {
+            s.LimitIncreaseUpdateWebhookOut.properties.review_reason = {
+                ...s.LimitIncreaseUpdateWebhookOut.properties.review_reason,
+                description: "Reworded on the webhook only.",
+                example: "Something else",
+            };
+        });
+        expect(findWebhookShapeDrift(reworded, map)).toEqual([]);
+
+        const nested = specWith((s) => {
+            s.LimitIncreaseUpdateWebhookOut.properties.supporting_documents = {
+                type: "object",
+                properties: { description: { type: "string" } },
+            };
+        });
+        expect(findWebhookShapeDrift(nested, map)).toEqual([
+            expect.stringContaining("different definition: supporting_documents"),
+        ]);
+    });
+
     it("fails on an ignored, unmapped webhook schema with no sameShapeAs", () => {
         const bare: SpecMap = {
             ...map,

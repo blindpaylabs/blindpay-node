@@ -12,13 +12,24 @@ function withoutWebhookEvent(schema: JsonValue): { properties: JsonValue; requir
     return { properties, required };
 }
 
-/** JSON with object keys sorted, so key order never counts as a difference. */
-function canonical(value: JsonValue): string {
-    if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
+/** Schema keywords that document a value without changing its shape or type. */
+const ANNOTATIONS: ReadonlySet<string> = new Set(["description", "example", "examples", "title"]);
+
+/**
+ * JSON with object keys sorted and annotation keywords dropped, so neither key order nor a
+ * reworded description counts as a shape difference. Keys of a `properties` map are property
+ * names, not keywords, so they are always kept.
+ */
+function canonical(value: JsonValue, isPropertyMap = false): string {
+    if (Array.isArray(value)) return `[${value.map((v) => canonical(v)).join(",")}]`;
     if (value && typeof value === "object") {
         return `{${Object.keys(value)
+            .filter((k) => isPropertyMap || !ANNOTATIONS.has(k))
             .sort()
-            .map((k) => `${JSON.stringify(k)}:${canonical(value[k])}`)
+            .map(
+                (k) =>
+                    `${JSON.stringify(k)}:${canonical(value[k], !isPropertyMap && k === "properties")}`
+            )
             .join(",")}}`;
     }
     return JSON.stringify(value);

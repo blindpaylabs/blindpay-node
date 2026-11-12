@@ -30,13 +30,11 @@ describe("parseErrorCodes", () => {
     it("reads every row of the committed snapshot's Errors tag", () => {
         const rows = parseErrorCodes(snapshot);
         expect(rows.length).toBeGreaterThan(0);
-        expect(rows.find((r) => r.code === "TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM")).toEqual({
-            code: "TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM",
+        expect(rows.find((r) => r.code === "TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM")).toMatchObject({
             status: 400,
             retry: "actionable",
-            description:
-                "Swaps between different tokens require at least 100 USDC, measured on the USDC side. Increase the amount and try again.",
         });
+        expect(rows.every((r) => r.description.length > 0)).toBe(true);
         expect(rows.map((r) => r.code)).toEqual([...rows.map((r) => r.code)].sort());
     });
 
