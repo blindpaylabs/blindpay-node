@@ -142,13 +142,15 @@ Examples: `createPayinsResource`, `createPartnerFeesResource`, `createBlockchain
 
 ### Code style
 
-- Comments ship: JSDoc ends up in `dist/*.d.ts` and IDE hovers. Never cite internal plans, ledgers, other repos' file paths or local paths in them (the Package workflow fails on `sdk-parity`, `blindpay-v2` or `/Users/` in the tarball).
-- Every optional option property is typed `?: T | undefined`, so consumers on `exactOptionalPropertyTypes` can pass an unset env value (`test/consumer-types/exact-optional.mts`).
-- Every README ```typescript block must compile on its own as an ES module (it may use the `blindpay` client from Configuration): `bun run check-consumer-types`.
-
 - Formatter: 4-space indent, double quotes, trailing commas (ES5), semicolons always, LF line endings, 100-char line width.
 - Linter: Biome recommended rules. No unused variables (error). `import type` required (error). No explicit `any` (warn).
 - TypeScript: `verbatimModuleSyntax: true` (must use `import type` for type-only imports). `strict: true`.
+
+### Consumer-facing rules
+
+- Comments ship: JSDoc ends up in `dist/*.d.ts` and IDE hovers. Never cite internal plans, ledgers, other repos' file paths or local paths in any comment under `src/` or `types/`, tests included (the Package workflow fails on `sdk-parity`, `blindpay-v2`, `/Users/`, `C10`-`C15` or `Appendix A<n>` in the tarball).
+- Every optional option property is typed `?: T | undefined`, so consumers on `exactOptionalPropertyTypes` can pass an unset env value (`test/consumer-types/exact-optional.mts`).
+- Every README ```typescript block must compile on its own as an ES module (it may use the `blindpay` client from Configuration): `bun run check-consumer-types`.
 
 ## Transport (`src/internal/http.ts`)
 
