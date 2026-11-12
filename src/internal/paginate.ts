@@ -13,6 +13,8 @@ type CursorParams = { limit?: string | number; starting_after?: string; ending_b
  *
  * Forward only: `ending_before` is rejected. A failed page throws a `BlindPayError` whose
  * `error` is the page's `ErrorResponse` (each page goes through the normal retry policy first).
+ * A `next_page` the iterator already requested (repeated or cyclic cursors) throws instead of
+ * looping forever.
  */
 export async function* autoPage<T, P extends CursorParams>(
     fetchPage: (params: P) => Promise<BlindpayApiResponse<Page<T>>>,
@@ -24,6 +26,9 @@ export async function* autoPage<T, P extends CursorParams>(
         );
     }
     let cursor = params?.starting_after;
+    // Every cursor sent so far: a server that hands back one it already gave (the same token
+    // twice in a row, or a cycle such as a -> b -> a) would otherwise be paged forever.
+    const sent = new Set<string>(cursor === undefined ? [] : [cursor]);
     for (;;) {
         const { data, error } = await fetchPage({
             ...params,
@@ -38,11 +43,14 @@ export async function* autoPage<T, P extends CursorParams>(
         yield* data.data;
         const next = data.pagination?.has_more ? data.pagination.next_page : null;
         if (!next) return;
-        if (next === cursor) {
+        if (sent.has(next)) {
             throw new BlindPayError(
-                `Pagination did not advance: next_page is still "${next}" while has_more is true`
+                next === cursor
+                    ? `Pagination did not advance: next_page is still "${next}" while has_more is true`
+                    : `Pagination looped: next_page "${next}" was already requested while has_more is true`
             );
         }
+        sent.add(next);
         cursor = next;
     }
 }

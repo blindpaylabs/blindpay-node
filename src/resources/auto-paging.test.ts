@@ -149,4 +149,36 @@ describe.each(pagers)("$name", ({ path, iterate }) => {
         await expect(collect(iterate(blindpay))).rejects.toThrow("did not advance");
         expect(requestedUrls()).toHaveLength(2);
     });
+
+    it("throws when the server returns the same next_page twice in a row", async () => {
+        mockPages(page(["a"], "cur_1"), page(["b"], "cur_1"));
+
+        const seen: unknown[] = [];
+        const thrown = await (async () => {
+            for await (const item of iterate(blindpay)) seen.push(item);
+        })().catch((e: unknown) => e);
+
+        expect(thrown).toBeInstanceOf(BlindPayError);
+        expect((thrown as Error).message).toContain('next_page is still "cur_1"');
+        expect(seen).toEqual([{ id: "a" }, { id: "b" }]);
+        expect(requestedUrls()).toHaveLength(2);
+    });
+
+    it("throws instead of cycling when next_page comes back to an earlier cursor", async () => {
+        mockPages(page(["a"], "cur_1"), page(["b"], "cur_2"), page(["c"], "cur_1"));
+
+        await expect(collect(iterate(blindpay))).rejects.toThrow(
+            'Pagination looped: next_page "cur_1" was already requested'
+        );
+        expect(requestedUrls()).toHaveLength(3);
+    });
+
+    it("throws when next_page points back at the caller's starting_after", async () => {
+        mockPages(page(["a"], "start"));
+
+        await expect(collect(iterate(blindpay, { starting_after: "start" }))).rejects.toThrow(
+            "did not advance"
+        );
+        expect(requestedUrls()).toHaveLength(1);
+    });
 });
