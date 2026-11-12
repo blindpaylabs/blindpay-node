@@ -1,0 +1,55 @@
+name: Package
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Build and check the npm package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.18
+
+      # The Node publish.yaml uses (.github/actions/setup), so npm pack behaves the same.
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # tsup only runs in publish.yaml's pack job otherwise, so a build break would surface at release time.
+      - name: Build
+        run: bun run build
+
+      - name: Pack (dry run) and assert no test or fixture files ship
+        run: |
+          set -euo pipefail
+          npm pack --dry-run --json > /tmp/pack.json
+          jq -r '.[0].files[].path' /tmp/pack.json > /tmp/pack-files.txt
+          echo "$(wc -l < /tmp/pack-files.txt) files, $(jq -r '.[0].size' /tmp/pack.json) bytes packed"
+          leaked=$(grep -E '\.test\.|(^|/)test/|fixtures' /tmp/pack-files.txt || true)
+          if [ -n "$leaked" ]; then
+            echo "::error::test or fixture files in the package:"
+            echo "$leaked"
+            exit 1
+          fi
+          grep -qx 'dist/index.d.mts' /tmp/pack-files.txt
+          grep -qx 'dist/index.js' /tmp/pack-files.txt
+
+      # Types resolve correctly under node10, node16 (CJS and ESM) and bundler resolution.
+      - name: Are the types wrong?
+        run: npx -y @arethetypeswrong/cli@0.18.5 --pack .
