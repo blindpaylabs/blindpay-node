@@ -142,7 +142,13 @@ function errorCatalogueDrift(
     spec: Spec,
     repoRoot: string
 ): { next: string; pending: string[]; needsHuman: string[] } {
-    const next = renderErrorCodes(parseErrorCodes(spec));
+    let next: string;
+    try {
+        next = renderErrorCodes(parseErrorCodes(spec));
+    } catch (error) {
+        const reason = error instanceof Error ? error.message : String(error);
+        return { next: "", pending: [], needsHuman: [`error-code catalogue: ${reason}`] };
+    }
     const path = resolve(repoRoot, ERROR_CODES_FILE);
     const current = existsSync(path) ? readFileSync(path, "utf8") : "";
     if (current === next) return { next, pending: [], needsHuman: [] };
