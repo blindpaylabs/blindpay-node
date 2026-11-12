@@ -229,7 +229,7 @@ app.post('/webhooks/blindpay', express.raw({ type: 'application/json' }), (req, 
 
 ## Examples
 
-[`examples/`](examples) has four end-to-end workflows, type-checked in CI: webhook setup and verification, a managed-wallet payout, a fiat payin, and reconciliation with the auto-pager.
+[`examples/`](examples) has four end-to-end workflows, type-checked in CI: webhook setup, verification and dedupe (E1), funding a managed wallet with a payin and paying out from it with `wallet_id` (E2), a fiat payin, and reconciliation with the auto-pager.
 
 For the full API documentation, see:
 - [BlindPay API documentation](https://blindpay.com/docs/getting-started/overview)
