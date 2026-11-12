@@ -35,13 +35,13 @@ export type WebhookClock = number | Date;
 
 export type WebhookVerifyOptions = {
     /** How far `svix-timestamp` may be from now, in seconds, either way. Defaults to 300 (5 minutes). */
-    tolerance?: number;
+    tolerance?: number | undefined;
     /**
      * The time to check `svix-timestamp` against, for tests and replays: a `Date`, or Unix time
      * in **seconds** (the unit of `svix-timestamp`, not `Date.now()` milliseconds). Defaults to
      * the current time.
      */
-    now?: WebhookClock;
+    now?: WebhookClock | undefined;
 };
 
 /**
@@ -121,7 +121,7 @@ export function verifyOrThrow(
 }
 
 /**
- * Svix verification (sdk-parity A4) with a configurable tolerance: svix's own `verify` fixes it
+ * Svix verification with a configurable tolerance: svix's own `verify` fixes it
  * at 5 minutes, so this checks the headers and timestamp itself and uses svix's `sign` for the
  * HMAC, comparing each `v1,` signature in constant time. Returns the parsed body or throws.
  */

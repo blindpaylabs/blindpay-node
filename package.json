@@ -51,6 +51,7 @@
         "build": "tsup",
         "check-types": "tsc --noEmit && tsc --noEmit -p examples",
         "contract-check": "node scripts/contract-check.mjs",
+        "check-consumer-types": "node scripts/check-consumer-types.mjs",
         "lint:check": "biome check .",
         "lint:fix": "biome check --write .",
         "test": "vitest run",

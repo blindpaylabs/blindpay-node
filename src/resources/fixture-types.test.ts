@@ -6,7 +6,7 @@ import { readFixture, responseVariants } from "../internal/test-fixtures";
 import { OPERATIONS, RAIL_TYPES } from "../internal/test-operations";
 
 /**
- * The type half of the fixture test (sdk-parity C8): every shared spec-shaped fixture variant is
+ * The type half of the fixture test (nullability): every shared spec-shaped fixture variant is
  * assigned, as a literal, to the response type its SDK method declares, and every webhook
  * fixture to `WebhookEvent`, then type-checked with the repo's tsconfig. A field the SDK types
  * as required that a `required_only` variant omits, or as non-null that `nullables_null` sets to

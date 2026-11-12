@@ -35,10 +35,17 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Pack (dry run) and assert no test or fixture files ship
+      # README snippets and test/consumer-types/ against dist/ with a strict consumer tsconfig
+      # (nodenext, exactOptionalPropertyTypes, noUncheckedIndexedAccess, skipLibCheck false).
+      - name: Consumer type-check (README snippets, type tests)
+        run: bun run check-consumer-types
+
+      # One real pack; every check below reads this tarball.
+      - name: Pack and assert no test or fixture files ship
         run: |
           set -euo pipefail
-          npm pack --dry-run --json > /tmp/pack.json
+          mkdir -p /tmp/pkg
+          npm pack --json --pack-destination /tmp/pkg > /tmp/pack.json
           jq -r '.[0].files[].path' /tmp/pack.json > /tmp/pack-files.txt
           echo "$(wc -l < /tmp/pack-files.txt) files, $(jq -r '.[0].size' /tmp/pack.json) bytes packed"
           leaked=$(grep -E '\.test\.|(^|/)test/|fixtures' /tmp/pack-files.txt || true)
@@ -49,7 +56,17 @@ jobs:
           fi
           grep -qx 'dist/index.d.mts' /tmp/pack-files.txt
           grep -qx 'dist/index.js' /tmp/pack-files.txt
+          tar -xzf "/tmp/pkg/$(jq -r '.[0].filename' /tmp/pack.json)" -C /tmp/pkg
+
+      # Comments ship in dist (JSDoc shows in IDE hovers): no internal plan, repo or local path refs.
+      - name: Assert no internal references ship
+        run: |
+          set -euo pipefail
+          if grep -rnE 'sdk-parity|/Users/|blindpay-v2|\bC1[0-5]\b|Appendix A[0-9]' /tmp/pkg/package; then
+            echo "::error::internal references in the package (see above)"
+            exit 1
+          fi
 
       # Types resolve correctly under node10, node16 (CJS and ESM) and bundler resolution.
       - name: Are the types wrong?
-        run: npx -y @arethetypeswrong/cli@0.18.5 --pack .
+        run: npx -y @arethetypeswrong/cli@0.18.5 "/tmp/pkg/$(jq -r '.[0].filename' /tmp/pack.json)"

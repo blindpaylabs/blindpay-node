@@ -4,7 +4,7 @@ import { BlindPay, type BlindPayOptions } from "./client";
 import { errorFixtures } from "./internal/test-fixtures";
 
 /**
- * The transport contract (sdk-parity C1-C4, retry table Appendix A2), driven through real
+ * The transport contract (config, errors, the retry table in `decide()`), driven through real
  * resource methods with an injected `fetch` and a fake clock: no test sleeps for real.
  */
 
@@ -77,7 +77,43 @@ afterEach(() => {
     vi.restoreAllMocks();
 });
 
-describe("client configuration (C1)", () => {
+describe("client configuration", () => {
+    it.each([
+        "http://localhost:4010",
+        "http://localhost:4010/",
+        "http://localhost:4010/v1",
+        "http://localhost:4010/v1/",
+        "http://localhost:4010/V1",
+    ])("accepts baseUrl %s and requests /v1 exactly once", async (baseUrl) => {
+        const { fetch, calls } = fakeFetch(json({ id: "pa_000000000000" }));
+
+        await getPayout(client(fetch, { baseUrl }));
+
+        expect(calls[0]?.url).toBe(
+            "http://localhost:4010/v1/instances/in_000000000000/payouts/pa_000000000000"
+        );
+    });
+
+    it("strips a single trailing /v1 only (a proxy mounted at .../v1 passes it twice)", async () => {
+        const { fetch, calls } = fakeFetch(json({}));
+
+        await getPayout(client(fetch, { baseUrl: "https://proxy.example.com/api/v1/v1//" }));
+
+        expect(calls[0]?.url).toBe(
+            "https://proxy.example.com/api/v1/v1/instances/in_000000000000/payouts/pa_000000000000"
+        );
+    });
+
+    it("keeps a proxy path prefix in baseUrl", async () => {
+        const { fetch, calls } = fakeFetch(json({}));
+
+        await getPayout(client(fetch, { baseUrl: "https://proxy.example.com/blindpay/v1/" }));
+
+        expect(calls[0]?.url).toBe(
+            "https://proxy.example.com/blindpay/v1/instances/in_000000000000/payouts/pa_000000000000"
+        );
+    });
+
     it("sends to baseUrl + /v1, ignoring a trailing slash, through the injected fetch", async () => {
         const { fetch, calls } = fakeFetch(json({ id: "pa_000000000000" }));
 
@@ -241,7 +277,7 @@ describe("client configuration (C1)", () => {
     });
 });
 
-describe("errors (C4)", () => {
+describe("errors", () => {
     it("carries status, request_id (X-Request-Id), the envelope and the idempotency key", async () => {
         const { fetch } = fakeFetch(
             json(
@@ -337,7 +373,7 @@ describe("errors (C4)", () => {
     });
 });
 
-describe("retries (C3, Appendix A2)", () => {
+describe("retries (the decide() table)", () => {
     describe("GET", () => {
         it.each([408, 429, 500, 502, 503, 504])(
             "is retried on %i, then succeeds",
@@ -354,6 +390,26 @@ describe("retries (C3, Appendix A2)", () => {
                 expect(data).toEqual({ id: "pa_000000000000" });
             }
         );
+
+        it("returns aborted, not the earlier 500, when the caller aborts during the backoff", async () => {
+            const { fetch, calls } = fakeFetch(
+                json({ code: "INTERNAL_ERROR", message: "internal_error" }, 500)
+            );
+            const controller = new AbortController();
+            const call = client(fetch, { maxRetries: 5 }).payouts.get("pa_000000000000", {
+                signal: controller.signal,
+            });
+
+            await vi.advanceTimersByTimeAsync(100); // inside the first wait (250-500 ms)
+            controller.abort();
+            const { data, error } = await call;
+
+            expect(calls).toHaveLength(1);
+            expect(data).toBeNull();
+            expect(error).toMatchObject({ type: "aborted", status: 0 });
+            expect(error?.code).toBeUndefined();
+            expect(vi.getTimerCount()).toBe(0);
+        });
 
         it("is retried on a connection error and a timeout, without an Idempotency-Key", async () => {
             const { fetch, calls } = fakeFetch(
@@ -578,7 +634,7 @@ describe("retries (C3, Appendix A2)", () => {
                 json({ message: "idempotency_key_in_flight" }, 409, { "Retry-After": "30" }),
             ],
         ])(
-            "stops the wait after %s when the caller aborts, keeping the API's error and the key",
+            "stops the wait after %s when the caller aborts, returning aborted with the key",
             async (_label, response) => {
                 const { fetch, calls } = fakeFetch(response);
                 const controller = new AbortController();
@@ -593,8 +649,8 @@ describe("retries (C3, Appendix A2)", () => {
 
                 expect(calls).toHaveLength(1);
                 expect(error).toMatchObject({
-                    status: response.status,
-                    type: "api_error",
+                    status: 0,
+                    type: "aborted",
                     retryable: true,
                     idempotency_key: "key-1",
                 });
@@ -602,7 +658,7 @@ describe("retries (C3, Appendix A2)", () => {
             }
         );
 
-        it("without a key (retries off), a 5xx is not retryable: A2 row 3 comes first", async () => {
+        it("without a key (retries off), a 5xx is not retryable: the unkeyed-mutation row comes first", async () => {
             const { fetch, calls } = fakeFetch(json({ message: "boom" }, 503));
 
             const { error } = await client(fetch, { maxRetries: 0 }).payouts.createEvm(payout);
@@ -613,7 +669,7 @@ describe("retries (C3, Appendix A2)", () => {
             expect(error?.idempotency_key).toBeUndefined();
         });
 
-        it("isn't retried, nor retryable, on a 408 (A2 row 10)", async () => {
+        it("isn't retried, nor retryable, on a 408", async () => {
             const { fetch, calls } = fakeFetch(json({ message: "timeout" }, 408));
 
             const { error } = await settle(createPayout(client(fetch)));
