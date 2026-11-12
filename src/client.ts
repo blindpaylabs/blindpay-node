@@ -39,6 +39,8 @@ export type WebhookVerificationInput = {
     payload: string;
     /** Allowed distance of the timestamp from now, in seconds (default 300). */
     tolerance?: number;
+    /** The time to check the timestamp against: a `Date` or Unix seconds (default: the current time). */
+    now?: number | Date;
 };
 
 /** Options for `new BlindPay(...)`. */
@@ -286,6 +288,7 @@ export class BlindPay {
     verifyWebhookSignature(params: WebhookVerificationInput): boolean {
         return verifyWebhook(params.payload, svixHeaders(params), params.secret, {
             tolerance: params.tolerance,
+            now: params.now,
         });
     }
 
@@ -301,6 +304,7 @@ export class BlindPay {
     constructWebhookEvent(params: WebhookVerificationInput): WebhookEvent {
         return verifyOrThrow(params.payload, svixHeaders(params), params.secret, {
             tolerance: params.tolerance,
+            now: params.now,
         }) as WebhookEvent;
     }
 }

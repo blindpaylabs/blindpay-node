@@ -33,6 +33,12 @@ const DEFAULT_TOLERANCE_SECONDS = 300;
 export type WebhookVerifyOptions = {
     /** How far `svix-timestamp` may be from now, in seconds, either way. Defaults to 300 (5 minutes). */
     tolerance?: number;
+    /**
+     * The time to check `svix-timestamp` against, for tests and replays: a `Date`, or Unix time
+     * in **seconds** (the unit of `svix-timestamp`, not `Date.now()` milliseconds). Defaults to
+     * the current time.
+     */
+    now?: number | Date;
 };
 
 /**
@@ -130,7 +136,7 @@ function verifySignature(
     if (!id || !timestamp || !signatures) throw new Error("Missing required headers");
     if (!/^\d+$/.test(timestamp)) throw new Error("Invalid timestamp");
     const seconds = Number(timestamp);
-    if (Math.abs(Math.floor(Date.now() / 1000) - seconds) > tolerance) {
+    if (Math.abs(nowSeconds(options.now) - seconds) > tolerance) {
         throw new Error("Message timestamp is outside the tolerance");
     }
     // svix takes a string or a Buffer; a Buffer view over the same bytes avoids a copy.
@@ -149,6 +155,14 @@ function verifySignature(
     });
     if (!matches) throw new Error("No matching signature found");
     return JSON.parse(body.toString());
+}
+
+/** `now` as whole Unix seconds; the current time when it is absent. */
+function nowSeconds(now: number | Date | undefined): number {
+    if (now === undefined) return Math.floor(Date.now() / 1000);
+    const seconds = now instanceof Date ? now.getTime() / 1000 : now;
+    if (!Number.isFinite(seconds)) throw new Error("Invalid now");
+    return Math.floor(seconds);
 }
 
 function toHeaderRecord(headers: WebhookHeaders): Record<string, string> {

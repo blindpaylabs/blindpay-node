@@ -153,7 +153,7 @@ Retry tests use `vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] })`; 
 
 Verification uses the official `svix` package for the HMAC (sdk-parity D20): `verifySignature` checks the headers and the timestamp against `options.tolerance` (seconds, default 300; svix's own `verify` hard-codes 5 minutes), signs with svix's `sign` and compares each `v1,` signature in constant time. The standalone `verifyWebhook(payload, headers, secret, options?)` (never throws) and `constructWebhookEvent(payload, headers, secret, options?)` (throws `BlindPayError`) need no client; the client's `verifyWebhookSignature` / `constructWebhookEvent` methods delegate to them and keep their old signatures and return types. The standalone `constructWebhookEvent` returns an event this SDK doesn't know as `UnknownWebhookEvent` (`{ webhook_event, raw }`); callers check `isUnknownWebhookEvent` before a `switch`. Never add a `string` member to the `WebhookEvent` union: it would stop the switch from narrowing.
 
-When a webhook event is added to the `WebhookEvents` union, add it to `src/internal/webhook-event-names.ts` too (a type test fails otherwise). The 14 vectors in `test/fixtures/webhook-vectors.json` run with only `Date` faked (`vi.useFakeTimers({ toFake: ["Date"] })` + `vi.setSystemTime`).
+When a webhook event is added to the `WebhookEvents` union, add it to `src/internal/webhook-event-names.ts` too (a type test fails otherwise). The 14 vectors in `test/fixtures/webhook-vectors.json` run twice: with only `Date` faked (`vi.useFakeTimers({ toFake: ["Date"] })` + `vi.setSystemTime`), and on real timers through the injectable clock `options.now` (a `Date` or Unix **seconds**, the unit of `svix-timestamp`).
 
 ## Generate before you hand-write
 
