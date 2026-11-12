@@ -1,5 +1,22 @@
 # @blindpay/node
 
+## 6.2.0
+
+### Minor Changes
+
+- [#90](https://github.com/blindpaylabs/blindpay-node/pull/90) [`4cfa7d9`](https://github.com/blindpaylabs/blindpay-node/commit/4cfa7d90572484960c0ffebcd1e0790d13ae8b93) Thanks [@rafa-thayto](https://github.com/rafa-thayto)! - Sync SDK with API changes:
+  
+  - add field "review_reason?: string | null" to src/resources/customers/index.ts:GetLimitIncreaseRequestsResponse (GetCustomerLimitIncreaseOut)
+
+- [#90](https://github.com/blindpaylabs/blindpay-node/pull/90) [`4cfa7d9`](https://github.com/blindpaylabs/blindpay-node/commit/4cfa7d90572484960c0ffebcd1e0790d13ae8b93) Thanks [@rafa-thayto](https://github.com/rafa-thayto)! - Typed error codes, an injectable webhook clock and package fixes:
+  
+  - `ErrorCode` (every code in the API's error catalogue, generated from the spec; codes newer than the SDK still arrive as plain strings), `errorCodeInfo(code)` (typical status and retry class), and `RetryClass` / `ErrorCodeInfo` types. `ErrorResponse.code` is now typed `ErrorCode`, and errors that have a `code` now also carry `retry_class` (`retryable`, `terminal`, `actionable`, or `unknown` for a code newer than the SDK); errors without a code (network failures, timeouts) don't. Automatic retries are unchanged. **Upgrading:** tests that compare an API error exactly (`toEqual` / `toStrictEqual`) may need the new `retry_class` key.
+  - Webhook verification takes `now` (`WebhookClock`: a `Date` or Unix seconds) in `WebhookVerifyOptions` and in the client's `verifyWebhookSignature` / `constructWebhookEvent` input.
+  - `EstimatedTimeOfArrival`, `BlindpaySuccessResponse` and `BlindpayErrorResponse` are exported from the package root.
+  - `package.json` `exports` gives ESM consumers `index.d.mts` (fixes the "masquerading as CJS" types under `node16`/`nodenext`) and exposes `@blindpay/node/package.json`.
+  - Transport error messages no longer include a URL query string (list filters can carry personal data).
+  - `CreateTransferQuoteInput.request_amount` documents the 100 USDC minimum for swaps between different tokens (`TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM`).
+
 ## 6.1.0
 
 ### Minor Changes
