@@ -1,5 +1,5 @@
 ---
-"@blindpay/node": patch
+"@blindpay/node": minor
 ---
 
 Sync SDK with API changes:

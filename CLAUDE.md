@@ -174,7 +174,7 @@ mkdir -p /tmp/v2 && git archive origin/main apps/api/openapi.json apps/api/src/s
 (cd /tmp/v2 && bun scripts/openapi-public-filter.ts --in apps/api/openapi.json --out /tmp/openapi.public.json)
 ```
 
-Normally the api-sync workflow does this for you: blindpay-v2's `sdk-sync.yml` delivers the spec and dispatches the run. A successful `--apply` also refreshes the snapshot.
+Normally the api-sync workflow does this for you: blindpay-v2's `sdk-sync.yml` delivers the spec and dispatches the run. A successful `--apply` also refreshes the snapshot, written as 2-space JSON with a trailing newline (`formatSnapshot`), so a refresh is a small diff even when the delivered spec is minified.
 
 It applies three kinds of change on its own: new enum members, new optional fields, and new methods for standard operations on an existing resource (instance-scoped path, JSON request and response, an existing `create{X}Resource(instanceId, client)` factory). For anything else it prints the exact reason it stopped. Only then use the manual recipes below: a brand-new resource, non-instance paths (`/available/*`, `/e/*`), multipart uploads, non-GET operations with query parameters, and resource files with a non-standard factory. After a manual change, `bun run sync:check` names any `.api-sync/spec-map.json` entry still missing.
 
@@ -449,7 +449,7 @@ export function createWidgetsResource(instanceId: string, client: InternalApiCli
 
 ### Step 3: Add tests and a changeset
 
-Follow the same test pattern. Add a `patch` changeset.
+Follow the same test pattern. Add a `minor` changeset (a new method is a new feature).
 
 ## How to: Modify Types
 
@@ -653,8 +653,8 @@ This project uses [Changesets](https://github.com/changesets/changesets).
 
 ### Semantic versioning rules
 
-- `patch`: Bug fixes, type corrections, adding optional fields to existing types.
-- `minor`: New resources, new methods on existing resources, new sub-resources.
+- `patch`: Bug fixes and type corrections that add nothing new to the public API.
+- `minor`: New resources, new methods on existing resources, new sub-resources, new exports, new optional fields on existing types, new enum members. api-sync's `classifyBump` follows the same rule: anything it applies is a minor.
 - `major`: Removing resources/methods, renaming fields, removing fields, changing required/optional status of input fields, adding `| null` to a response field, narrowing a response field from `string` to a union, removing an enum member.
 
 ### Creating a changeset

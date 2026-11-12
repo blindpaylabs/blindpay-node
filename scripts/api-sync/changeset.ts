@@ -1,10 +1,9 @@
 import type { BumpType } from "./types";
 
 /**
- * minor: any enum member was inserted this run, or (never reachable in practice, since a new
- *   operation always hard-fails as needs-human before a bump is computed, kept only so the
- *   rule stated by the design is total, not because it can currently fire) an operation changed.
- * patch: only field additions were inserted.
+ * minor: anything was applied. New enum members, new optional fields, new methods and new error
+ *   codes all widen the public API without breaking callers, which the repo's semver rules ship
+ *   as a minor (an added optional field is a new feature callers can use, not a fix).
  * none: nothing was applied.
  * major is never automatic: removals hard-fail long before this point.
  */
@@ -13,8 +12,7 @@ export function classifyBump(
     hasFieldInsert: boolean,
     hasOperationChange: boolean
 ): BumpType {
-    if (hasOperationChange || hasEnumInsert) return "minor";
-    if (hasFieldInsert) return "patch";
+    if (hasOperationChange || hasEnumInsert || hasFieldInsert) return "minor";
     return "none";
 }
 

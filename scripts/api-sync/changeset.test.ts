@@ -7,8 +7,12 @@ describe("classifyBump", () => {
         expect(classifyBump(true, true, false)).toBe("minor");
     });
 
-    it("is patch when only field additions were inserted", () => {
-        expect(classifyBump(false, true, false)).toBe("patch");
+    it("is minor when only optional fields were added", () => {
+        expect(classifyBump(false, true, false)).toBe("minor");
+    });
+
+    it("is minor when an operation was added", () => {
+        expect(classifyBump(false, false, true)).toBe("minor");
     });
 
     it("is none when nothing was applied", () => {
