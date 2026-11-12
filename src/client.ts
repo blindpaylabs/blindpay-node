@@ -25,7 +25,7 @@ import { createCustodialWalletsResource } from "./resources/wallets/custodial";
 import { createOfframpWalletsResource } from "./resources/wallets/offramp";
 import { createWebhookEndpointsResource } from "./resources/webhooks";
 import type { WebhookEvent } from "./resources/webhooks/events";
-import { verifyOrThrow, verifyWebhook } from "./webhooks";
+import { verifyOrThrow, verifyWebhook, type WebhookClock } from "./webhooks";
 
 /** What `verifyWebhookSignature` and `constructWebhookEvent` check: the svix-* headers. */
 export type WebhookVerificationInput = {
@@ -40,7 +40,7 @@ export type WebhookVerificationInput = {
     /** Allowed distance of the timestamp from now, in seconds (default 300). */
     tolerance?: number;
     /** The time to check the timestamp against: a `Date` or Unix seconds (default: the current time). */
-    now?: number | Date;
+    now?: WebhookClock;
 };
 
 /** Options for `new BlindPay(...)`. */

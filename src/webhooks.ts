@@ -30,6 +30,9 @@ const KNOWN_EVENTS: ReadonlySet<string> = new Set(WEBHOOK_EVENT_NAMES);
 
 const DEFAULT_TOLERANCE_SECONDS = 300;
 
+/** A fixed time to check `svix-timestamp` against: a `Date`, or Unix time in **seconds**. */
+export type WebhookClock = number | Date;
+
 export type WebhookVerifyOptions = {
     /** How far `svix-timestamp` may be from now, in seconds, either way. Defaults to 300 (5 minutes). */
     tolerance?: number;
@@ -38,7 +41,7 @@ export type WebhookVerifyOptions = {
      * in **seconds** (the unit of `svix-timestamp`, not `Date.now()` milliseconds). Defaults to
      * the current time.
      */
-    now?: number | Date;
+    now?: WebhookClock;
 };
 
 /**
@@ -158,7 +161,7 @@ function verifySignature(
 }
 
 /** `now` as whole Unix seconds; the current time when it is absent. */
-function nowSeconds(now: number | Date | undefined): number {
+function nowSeconds(now: WebhookClock | undefined): number {
     if (now === undefined) return Math.floor(Date.now() / 1000);
     const seconds = now instanceof Date ? now.getTime() / 1000 : now;
     if (!Number.isFinite(seconds)) throw new Error("Invalid now");

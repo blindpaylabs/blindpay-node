@@ -16,7 +16,7 @@ import { changesetFileName, classifyBump, mergeChangeset } from "./changeset";
 import { computeCoverageGaps } from "./coverage";
 import { detectNewSchemas, detectRemovals } from "./diff";
 import { findUnmappedEnumProperties } from "./enum-coverage";
-import { diffCatalogue, ERROR_CODES_FILE, parseErrorCodes, renderErrorCodes } from "./error-codes";
+import { ERROR_CODES_FILE, errorCatalogueDrift } from "./error-codes";
 import { isIgnoredOperation, loadSpecMap, loadUnmodeled, withPendingMapEntries } from "./map";
 import { classifyNewOperation, HTTP_METHODS, loadCanonicalEnums } from "./operation-gen";
 import { reconcile } from "./reconcile";
@@ -131,43 +131,6 @@ function persistNewMapEntries(specMapPath: string, entries: NewSchemaMapEntry[])
     if (entries.length === 0) return;
     const raw: SpecMap = JSON.parse(readFileSync(specMapPath, "utf8"));
     writeFileSync(specMapPath, `${JSON.stringify(withPendingMapEntries(raw, entries), null, 4)}\n`);
-}
-
-/**
- * The error-code catalogue regenerated from the spec's `Errors` tag, compared with the committed
- * `src/error-codes.ts`. A dropped code is a removal (breaking for anyone naming the constant), so
- * it needs a human like every other removal; new codes and status/retry/description changes are
- * applied by regenerating the file.
- */
-function errorCatalogueDrift(
-    spec: Spec,
-    repoRoot: string
-): { next: string; pending: string[]; needsHuman: string[] } {
-    let next: string;
-    try {
-        next = renderErrorCodes(parseErrorCodes(spec));
-    } catch (error) {
-        const reason = error instanceof Error ? error.message : String(error);
-        return { next: "", pending: [], needsHuman: [`error-code catalogue: ${reason}`] };
-    }
-    const path = resolve(repoRoot, ERROR_CODES_FILE);
-    const current = existsSync(path) ? readFileSync(path, "utf8") : "";
-    if (current === next) return { next, pending: [], needsHuman: [] };
-    const { added, removed, changed } = diffCatalogue(current, next);
-    const pending = [
-        ...added.map((c) => `add error code "${c}" to ${ERROR_CODES_FILE}:ErrorCode`),
-        ...changed.map(
-            (c) => `update the status/retry class of error code "${c}" in ${ERROR_CODES_FILE}`
-        ),
-    ];
-    if (pending.length === 0 && removed.length === 0) {
-        pending.push(`regenerate ${ERROR_CODES_FILE} (error-code descriptions or layout changed)`);
-    }
-    const needsHuman = removed.map(
-        (c) =>
-            `error code "${c}" is no longer in the spec's Errors tag; removing ErrorCode.${c} is a breaking change, so it needs a human (major) decision.`
-    );
-    return { next, pending, needsHuman };
 }
 
 function main(): void {

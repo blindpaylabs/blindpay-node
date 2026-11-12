@@ -1,4 +1,6 @@
-import type { JsonValue } from "./spec";
+import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import type { JsonValue, Spec } from "./spec";
 
 /** The committed, generated error-code catalogue (`src/error-codes.ts`), relative to the repo root. */
 export const ERROR_CODES_FILE = "src/error-codes.ts";
@@ -131,4 +133,41 @@ export function diffCatalogue(before: string, after: string): CatalogueDiff {
         removed: [...a.keys()].filter((c) => !b.has(c)).sort(),
         changed: [...b.keys()].filter((c) => a.has(c) && a.get(c) !== b.get(c)).sort(),
     };
+}
+
+/**
+ * The error-code catalogue regenerated from the spec's `Errors` tag, compared with the committed
+ * `src/error-codes.ts`. A dropped code is a removal (breaking for anyone naming the constant), so
+ * it needs a human like every other removal; new codes and status/retry/description changes are
+ * applied by regenerating the file.
+ */
+export function errorCatalogueDrift(
+    spec: Spec,
+    repoRoot: string
+): { next: string; pending: string[]; needsHuman: string[] } {
+    let next: string;
+    try {
+        next = renderErrorCodes(parseErrorCodes(spec));
+    } catch (error) {
+        const reason = error instanceof Error ? error.message : String(error);
+        return { next: "", pending: [], needsHuman: [`error-code catalogue: ${reason}`] };
+    }
+    const path = resolve(repoRoot, ERROR_CODES_FILE);
+    const current = existsSync(path) ? readFileSync(path, "utf8") : "";
+    if (current === next) return { next, pending: [], needsHuman: [] };
+    const { added, removed, changed } = diffCatalogue(current, next);
+    const pending = [
+        ...added.map((c) => `add error code "${c}" to ${ERROR_CODES_FILE}:ErrorCode`),
+        ...changed.map(
+            (c) => `update the status/retry class of error code "${c}" in ${ERROR_CODES_FILE}`
+        ),
+    ];
+    if (pending.length === 0 && removed.length === 0) {
+        pending.push(`regenerate ${ERROR_CODES_FILE} (error-code descriptions or layout changed)`);
+    }
+    const needsHuman = removed.map(
+        (c) =>
+            `error code "${c}" is no longer in the spec's Errors tag; removing ErrorCode.${c} is a breaking change, so it needs a human (major) decision.`
+    );
+    return { next, pending, needsHuman };
 }

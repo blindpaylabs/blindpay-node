@@ -76,6 +76,7 @@ export * from "./resources/webhooks/events";
 export type {
     UnknownWebhookEvent,
     UnknownWebhookEventName,
+    WebhookClock,
     WebhookHeaders,
     WebhookVerifyOptions,
 } from "./webhooks";
