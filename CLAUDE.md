@@ -9,6 +9,7 @@ bun run test:coverage      # Run tests with coverage
 bun run check-types        # TypeScript type-check (no emit): src, then examples/
 bun run lint:check         # Biome lint + format check
 bun run lint:fix           # Biome auto-fix
+bun run check-consumer-types  # After build: README snippets + test/consumer-types/*.mts against dist/ (nodenext, exactOptionalPropertyTypes)
 ```
 
 ## Project Structure
@@ -141,6 +142,10 @@ Examples: `createPayinsResource`, `createPartnerFeesResource`, `createBlockchain
 
 ### Code style
 
+- Comments ship: JSDoc ends up in `dist/*.d.ts` and IDE hovers. Never cite internal plans, ledgers, other repos' file paths or local paths in them (the Package workflow fails on `sdk-parity`, `blindpay-v2` or `/Users/` in the tarball).
+- Every optional option property is typed `?: T | undefined`, so consumers on `exactOptionalPropertyTypes` can pass an unset env value (`test/consumer-types/exact-optional.mts`).
+- Every README ```typescript block must compile on its own as an ES module (it may use the `blindpay` client from Configuration): `bun run check-consumer-types`.
+
 - Formatter: 4-space indent, double quotes, trailing commas (ES5), semicolons always, LF line endings, 100-char line width.
 - Linter: Biome recommended rules. No unused variables (error). `import type` required (error). No explicit `any` (warn).
 - TypeScript: `verbatimModuleSyntax: true` (must use `import type` for type-only imports). `strict: true`.
@@ -149,7 +154,7 @@ Examples: `createPayinsResource`, `createPartnerFeesResource`, `createBlockchain
 
 Every request, JSON or multipart, goes through `send()`; resources never call `fetch`. It owns:
 
-- **Config** (`BlindPayOptions`): `baseUrl` (default `https://api.blindpay.com`, paths start `/v1`), `timeoutMs` (60 s per attempt, body read included), `maxRetries` (2), `fetch` (injectable; tests pass a fake one).
+- **Config** (`BlindPayOptions`): `baseUrl` (default `https://api.blindpay.com`; the host only, since paths start `/v1`: trailing `/` and one trailing `/v1` are dropped by `normalizeBaseUrl`), `timeoutMs` (60 s per attempt, body read included), `maxRetries` (2), `fetch` (injectable; tests pass a fake one).
 - **Idempotency**: an `idempotencyKey` that is empty, longer than 255 characters or not equal to its trimmed form, or an `Idempotency-Key` in `options.headers` (any casing), is rejected with `type: "invalid_request"` before anything is sent. Per-call headers named `Authorization`, `User-Agent`, `Accept` or `Content-Type` (any casing) are dropped. With retries on, a non-multipart mutation without a key gets a `randomUUID()` key **before the first attempt**. Multipart never sends one.
 - **Attempts**: a `fetch()` failure is "no response"; once the status line has arrived, a failure while reading the body is judged by that status (A2), so a 5xx mutation is never resent and a 2xx whose body can't be read is an `invalid_response` error, not a retry.
 - **Retries** follow the sdk-parity Appendix A2 table in `decide()`, which also sets `error.retryable`, so the two can't drift. GETs: no response, 408, 429, 500/502/503/504. Mutations: only no response, 429 and `409 idempotency_key_in_flight`, and **never a 5xx** (the API releases the key on a 5xx, so a resend re-executes). `Retry-After` is honoured when it is an integer of at most 60 s; otherwise `min(8 s, 0.5 s * 2^attempt)` with jitter. Rows 2-3 come first: a multipart or unkeyed mutation is never `retryable`, whatever the status. The body is serialised once. Jitter comes from `node:crypto` `randomInt`. Sleeps stop on the caller's `signal`, returning an `aborted` error (status 0) that keeps the `idempotency_key` and the earlier failure's `retryable`, so the call can be resumed. A per-call `timeoutMs` that isn't positive is rejected.
