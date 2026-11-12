@@ -79,17 +79,17 @@ export type RequestOptions = {
      * with leading or trailing whitespace, is rejected without sending anything. Ignored on GETs
      * and file uploads.
      */
-    idempotencyKey?: string;
+    idempotencyKey?: string | undefined;
     /** Per-attempt timeout in milliseconds for this call; defaults to the client's `timeoutMs`. */
-    timeoutMs?: number;
+    timeoutMs?: number | undefined;
     /**
      * Extra request headers. `Authorization`, `User-Agent`, `Accept` and `Content-Type` are the
      * SDK's: matching names are dropped, in any casing. An `Idempotency-Key` header is rejected
      * without sending anything; pass `idempotencyKey` instead.
      */
-    headers?: Record<string, string>;
+    headers?: Record<string, string> | undefined;
     /** Aborts the call, including a pending retry wait. */
-    signal?: AbortSignal;
+    signal?: AbortSignal | undefined;
 }
 
 /** Body of every endpoint whose only answer is `{ success: true }` (deletes, most updates). */

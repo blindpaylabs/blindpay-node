@@ -78,6 +78,32 @@ afterEach(() => {
 });
 
 describe("client configuration (C1)", () => {
+    it.each([
+        "http://localhost:4010",
+        "http://localhost:4010/",
+        "http://localhost:4010/v1",
+        "http://localhost:4010/v1/",
+        "http://localhost:4010/V1",
+    ])("accepts baseUrl %s and requests /v1 exactly once", async (baseUrl) => {
+        const { fetch, calls } = fakeFetch(json({ id: "pa_000000000000" }));
+
+        await getPayout(client(fetch, { baseUrl }));
+
+        expect(calls[0]?.url).toBe(
+            "http://localhost:4010/v1/instances/in_000000000000/payouts/pa_000000000000"
+        );
+    });
+
+    it("keeps a proxy path prefix in baseUrl", async () => {
+        const { fetch, calls } = fakeFetch(json({}));
+
+        await getPayout(client(fetch, { baseUrl: "https://proxy.example.com/blindpay/v1/" }));
+
+        expect(calls[0]?.url).toBe(
+            "https://proxy.example.com/blindpay/v1/instances/in_000000000000/payouts/pa_000000000000"
+        );
+    });
+
     it("sends to baseUrl + /v1, ignoring a trailing slash, through the injected fetch", async () => {
         const { fetch, calls } = fakeFetch(json({ id: "pa_000000000000" }));
 

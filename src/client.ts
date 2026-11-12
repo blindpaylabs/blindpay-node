@@ -38,9 +38,9 @@ export type WebhookVerificationInput = {
     /** The raw request body: re-serialized JSON changes the bytes and fails verification. */
     payload: string;
     /** Allowed distance of the timestamp from now, in seconds (default 300). */
-    tolerance?: number;
+    tolerance?: number | undefined;
     /** The time to check the timestamp against: a `Date` or Unix seconds (default: the current time). */
-    now?: WebhookClock;
+    now?: WebhookClock | undefined;
 };
 
 /** Options for `new BlindPay(...)`. */
@@ -50,24 +50,30 @@ export type BlindPayOptions = {
     /** Instance the client acts on; every instance-scoped path uses it. */
     instanceId: string;
     /**
-     * API origin, default `https://api.blindpay.com` (paths start with `/v1`). Change it only
-     * for a proxy or a test server: it receives your API key.
+     * API host, default `https://api.blindpay.com`. The SDK adds `/v1` itself; a trailing `/v1`
+     * or `/` is accepted and dropped (`http://localhost:4010/v1/` works). Change it only for a
+     * proxy or a test server: it receives your API key.
      */
-    baseUrl?: string;
+    baseUrl?: string | undefined;
     /** Per-attempt timeout in milliseconds, default 60 000. A call can override it. */
-    timeoutMs?: number;
+    timeoutMs?: number | undefined;
     /**
      * Automatic retries after the first attempt, default 2; `0` turns them off. GETs are
      * retried on connection errors, timeouts, 408, 429 and 5xx. Mutations are retried only
      * under an `Idempotency-Key` (generated when you don't pass one) and only when the API
      * can't have acted: no response, 429, or a concurrent duplicate (409); never on a 5xx.
      */
-    maxRetries?: number;
+    maxRetries?: number | undefined;
     /** `fetch` implementation to use (tests, proxies, instrumentation); default the global one. */
-    fetch?: typeof fetch;
+    fetch?: typeof fetch | undefined;
 };
 
 const DEFAULT_BASE_URL = "https://api.blindpay.com";
+
+/** The host part of `baseUrl`: trailing slashes and one trailing `/v1` dropped (paths add `/v1`). */
+function normalizeBaseUrl(baseUrl: string): string {
+    return baseUrl.replace(/\/+$/, "").replace(/\/v1$/i, "").replace(/\/+$/, "");
+}
 const DEFAULT_TIMEOUT_MS = 60_000;
 const DEFAULT_MAX_RETRIES = 2;
 
@@ -142,7 +148,7 @@ export class BlindPay {
         this.instanceId = instanceId;
 
         this.#transport = {
-            baseUrl: baseUrl.replace(/\/+$/, ""),
+            baseUrl: normalizeBaseUrl(baseUrl),
             apiKey,
             userAgent: `blindpay-node/${version}`,
             timeoutMs,
