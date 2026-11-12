@@ -34,6 +34,10 @@ const blindpay = new BlindPay({
 });
 ```
 
+`baseUrl` is the host only: the SDK adds `/v1` to every path. A trailing `/` or `/v1` is accepted and dropped, so `http://localhost:4010` and `http://localhost:4010/v1/` send the same requests. Options set to `undefined` (say, `baseUrl: process.env.BLINDPAY_BASE_URL`) fall back to their defaults.
+
+The snippets below use this `blindpay` client.
+
 Every call uses this API key and instance id. A configured client is immutable: create it once and share it, since per-call options never change it. `console.log(blindpay)` and `JSON.stringify(blindpay)` show the configuration with the API key redacted.
 
 Every method also takes an optional last argument with per-call options: `idempotencyKey` (on create, update and delete calls), `timeoutMs`, `headers` and an `AbortSignal` as `signal`. Aborting, even while the SDK waits to retry, resolves to an error with `type: 'aborted'`.
@@ -59,14 +63,16 @@ console.log('Rails:', data);
 Methods never throw for API or network failures. They resolve to `{ data, error }`: exactly one of the two is `null`.
 
 ```typescript
-const { data, error } = await blindpay.payins.list();
+async function listPayins() {
+  const { data, error } = await blindpay.payins.list();
 
-if (error) {
-  console.error(error.status, error.code ?? error.message, error.request_id);
-  return;
+  if (error) {
+    console.error(error.status, error.code ?? error.message, error.request_id);
+    return;
+  }
+
+  console.log(data); // fully typed
 }
-
-console.log(data); // fully typed
 ```
 
 `error` is an `ErrorResponse`:
@@ -87,19 +93,23 @@ console.log(data); // fully typed
 Branch on `code` with the `ErrorCode` constants. Some errors (idempotency conflicts, for instance) carry no `code`, so keep `message` as the fallback:
 
 ```typescript
-import { ErrorCode, errorCodeInfo } from '@blindpay/node';
+import { ErrorCode, errorCodeInfo, type CreateTransferQuoteInput } from '@blindpay/node';
 
-const { data, error } = await blindpay.transfers.quotes.create(input);
+async function quoteTransfer(input: CreateTransferQuoteInput) {
+  const { data, error } = await blindpay.transfers.quotes.create(input);
 
-if (error) {
-  if (error.code === ErrorCode.TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM) {
-    // Swaps between different tokens need at least 100 USDC, measured on the USDC side.
-    return askForALargerAmount();
+  if (error) {
+    if (error.code === ErrorCode.TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM) {
+      // Swaps between different tokens need at least 100 USDC, measured on the USDC side.
+      return { ok: false, reason: 'Send at least 100 USDC' } as const;
+    }
+    if (error.retry_class === 'actionable') {
+      return { ok: false, reason: error.description ?? error.message } as const; // safe to show
+    }
+    throw new Error(error.code ?? error.message);
   }
-  if (error.retry_class === 'actionable') {
-    return showToUser(error.description ?? error.message);
-  }
-  throw new Error(error.code ?? error.message);
+
+  return { ok: true, quote: data } as const;
 }
 
 errorCodeInfo('QUOTES_EXPIRED'); // { status: 400, retry: 'actionable' }; undefined for unknown codes
@@ -181,7 +191,11 @@ const link = await blindpay.upload.presign({ file_url: uploaded.data!.file_url }
 Verify every delivery against the **raw** request body (with Express: `express.raw({ type: 'application/json' })`); a re-serialized object never matches the signature. `constructWebhookEvent` needs no client; it throws a `BlindPayError` when verification fails, and returns an event newer than this SDK as an `UnknownWebhookEvent`.
 
 ```typescript
+import express from 'express';
 import { constructWebhookEvent, isUnknownWebhookEvent } from '@blindpay/node';
+
+const app = express();
+const handled = new Set<string>(); // use your database
 
 app.post('/webhooks/blindpay', express.raw({ type: 'application/json' }), (req, res) => {
   let event;
@@ -192,7 +206,9 @@ app.post('/webhooks/blindpay', express.raw({ type: 'application/json' }), (req, 
   }
 
   // Deliveries can repeat: skip an svix-id you already handled.
-  if (alreadyHandled(req.headers['svix-id'])) return res.sendStatus(200);
+  const deliveryId = String(req.headers['svix-id']);
+  if (handled.has(deliveryId)) return res.sendStatus(200);
+  handled.add(deliveryId);
 
   if (!isUnknownWebhookEvent(event)) {
     switch (event.webhook_event) {

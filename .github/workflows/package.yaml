@@ -35,6 +35,11 @@ jobs:
       - name: Build
         run: bun run build
 
+      # README snippets and test/consumer-types/ against dist/ with a strict consumer tsconfig
+      # (nodenext, exactOptionalPropertyTypes, noUncheckedIndexedAccess, skipLibCheck false).
+      - name: Consumer type-check (README snippets, type tests)
+        run: bun run check-consumer-types
+
       - name: Pack (dry run) and assert no test or fixture files ship
         run: |
           set -euo pipefail
