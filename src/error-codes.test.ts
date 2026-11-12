@@ -70,19 +70,19 @@ describe("error codes (W2)", () => {
         expect(error.retry_class).toBe("actionable");
     });
 
-    it("sets retry_class to unknown for a code newer than this SDK, or no code", async () => {
+    it("sets retry_class to unknown for a code newer than this SDK, and leaves it out without a code", async () => {
         expect((await apiError({ code: "BRAND_NEW_CODE", message: "x" })).retry_class).toBe(
             "unknown"
         );
         const noCode = await apiError({ message: "idempotency_key_reused" }, 422);
         expect(noCode.code).toBeUndefined();
-        expect(noCode.retry_class).toBe("unknown");
+        expect(noCode).not.toHaveProperty("retry_class");
     });
 
-    it("sets retry_class to unknown when no response arrived", async () => {
+    it("leaves retry_class out when no response arrived (no code)", async () => {
         fetchMock.mockRejectOnce(new TypeError("fetch failed"));
         const { error } = await blindpay.payouts.get("po_000000000000");
         expect(error?.type).toBe("connection_error");
-        expect(error?.retry_class).toBe("unknown");
+        expect(error).not.toHaveProperty("retry_class");
     });
 });

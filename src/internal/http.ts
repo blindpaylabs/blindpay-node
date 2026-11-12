@@ -357,9 +357,10 @@ function failure(fields: ErrorResponse & { type: ErrorType }): {
     error: ErrorResponse;
 } {
     const error = Object.fromEntries(
-        Object.entries({ ...fields, retry_class: retryClassOf(fields.code) }).filter(
-            ([, value]) => value !== undefined
-        )
+        Object.entries({
+            ...fields,
+            retry_class: fields.code === undefined ? undefined : retryClassOf(fields.code),
+        }).filter(([, value]) => value !== undefined)
     ) as ErrorResponse;
     return { data: null, error };
 }

@@ -37,8 +37,8 @@ export type ErrorResponse = {
     type?: ErrorType;
     /**
      * How the error catalogue says to react to `code` (`retryable`, `terminal`, `actionable`),
-     * or `unknown` when there is no code or the code is newer than this SDK. Set on every error
-     * the SDK returns. Advice for your own handling: automatic retries follow `retryable`.
+     * or `unknown` for a code newer than this SDK. Set only when the error has a `code`.
+     * Advice for your own handling: automatic retries follow `retryable`.
      */
     retry_class?: RetryClass;
 }

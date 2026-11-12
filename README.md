@@ -77,7 +77,7 @@ console.log(data); // fully typed
 | `status` | HTTP status; `0` when no response arrived. |
 | `type` | `api_error`, `connection_error`, `timeout_error`, `aborted`, `invalid_request` (rejected before sending) or `invalid_response`. |
 | `code` | Stable, UPPERCASE error code from the API (e.g. `PAYOUTS_INSUFFICIENT_BALANCE`), when it sends one. Branch on this, not on `message`. Typed as `ErrorCode`: the known codes autocomplete, and codes newer than the SDK still arrive as plain strings. |
-| `retry_class` | What the API's error catalogue says about `code`: `retryable` (send it again as is), `terminal` (don't retry), `actionable` (fix something first, such as funding a balance), or `unknown` (no code, or a code newer than the SDK). |
+| `retry_class` | What the API's error catalogue says about `code`: `retryable` (send it again as is), `terminal` (don't retry), `actionable` (fix something first, such as funding a balance), or `unknown` (a code newer than the SDK). Present only when `code` is. |
 | `description` | Text that is safe to show to end users, when present. |
 | `errors` | Field-level validation errors, when present. |
 | `trace_id`, `request_id` | Include them when you contact support. |

@@ -285,7 +285,6 @@ describe("errors (C4)", () => {
             message: "fetch failed",
             status: 0,
             type: "connection_error",
-            retry_class: "unknown",
             retryable: true,
         });
     });

@@ -296,7 +296,6 @@ describe("Upload", () => {
                     message: "fetch failed",
                     status: 0,
                     type: "connection_error",
-                    retry_class: "unknown",
                     retryable: false,
                 });
             });
@@ -316,7 +315,6 @@ describe("Upload", () => {
                     message: "HTTP 502 Bad Gateway",
                     status: 502,
                     type: "api_error",
-                    retry_class: "unknown",
                     retryable: false,
                 });
             });
@@ -331,7 +329,6 @@ describe("Upload", () => {
                     message: "HTTP 200: the response body is not valid JSON",
                     status: 200,
                     type: "invalid_response",
-                    retry_class: "unknown",
                     retryable: false,
                 });
             });

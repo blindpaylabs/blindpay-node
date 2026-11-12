@@ -81,7 +81,6 @@ describe("BlindPay client", () => {
             errors: [],
             status: 502,
             type: "api_error",
-            retry_class: "unknown",
             retryable: true,
         });
     });
