@@ -132,9 +132,10 @@ export async function send<T>(
         if (decision.autoRetry && attempt < config.maxRetries) {
             const delayMs = decision.retryAfterMs ?? backoffMs(attempt);
             if (await sleep(delayMs, options.signal)) continue;
-            // Cancelled while waiting: return what the API last said, with the key to resume.
+            // Cancelled while waiting: the caller's abort is what ended the call, so say so, and
+            // keep the key (and whether resending is safe) so the call can be resumed.
             return failure({
-                ...(result.kind === "response" ? error : abortedError()),
+                ...abortedError(),
                 retryable: decision.retryable,
                 idempotency_key: idempotencyKey,
             });

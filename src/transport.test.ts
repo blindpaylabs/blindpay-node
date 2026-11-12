@@ -355,6 +355,26 @@ describe("retries (C3, Appendix A2)", () => {
             }
         );
 
+        it("returns aborted, not the earlier 500, when the caller aborts during the backoff", async () => {
+            const { fetch, calls } = fakeFetch(
+                json({ code: "INTERNAL_ERROR", message: "internal_error" }, 500)
+            );
+            const controller = new AbortController();
+            const call = client(fetch, { maxRetries: 5 }).payouts.get("pa_000000000000", {
+                signal: controller.signal,
+            });
+
+            await vi.advanceTimersByTimeAsync(100); // inside the first wait (250-500 ms)
+            controller.abort();
+            const { data, error } = await call;
+
+            expect(calls).toHaveLength(1);
+            expect(data).toBeNull();
+            expect(error).toMatchObject({ type: "aborted", status: 0 });
+            expect(error?.code).toBeUndefined();
+            expect(vi.getTimerCount()).toBe(0);
+        });
+
         it("is retried on a connection error and a timeout, without an Idempotency-Key", async () => {
             const { fetch, calls } = fakeFetch(
                 new TypeError("fetch failed"),
@@ -578,7 +598,7 @@ describe("retries (C3, Appendix A2)", () => {
                 json({ message: "idempotency_key_in_flight" }, 409, { "Retry-After": "30" }),
             ],
         ])(
-            "stops the wait after %s when the caller aborts, keeping the API's error and the key",
+            "stops the wait after %s when the caller aborts, returning aborted with the key",
             async (_label, response) => {
                 const { fetch, calls } = fakeFetch(response);
                 const controller = new AbortController();
@@ -593,8 +613,8 @@ describe("retries (C3, Appendix A2)", () => {
 
                 expect(calls).toHaveLength(1);
                 expect(error).toMatchObject({
-                    status: response.status,
-                    type: "api_error",
+                    status: 0,
+                    type: "aborted",
                     retryable: true,
                     idempotency_key: "key-1",
                 });

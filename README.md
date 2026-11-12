@@ -36,7 +36,7 @@ const blindpay = new BlindPay({
 
 Every call uses this API key and instance id. A configured client is immutable: create it once and share it, since per-call options never change it. `console.log(blindpay)` and `JSON.stringify(blindpay)` show the configuration with the API key redacted.
 
-Every method also takes an optional last argument with per-call options: `idempotencyKey` (on create, update and delete calls), `timeoutMs`, `headers` and an `AbortSignal` as `signal`.
+Every method also takes an optional last argument with per-call options: `idempotencyKey` (on create, update and delete calls), `timeoutMs`, `headers` and an `AbortSignal` as `signal`. Aborting, even while the SDK waits to retry, resolves to an error with `type: 'aborted'`.
 
 ```typescript
 const { data, error } = await blindpay.payouts.get('po_000000000000', { timeoutMs: 10_000 });
