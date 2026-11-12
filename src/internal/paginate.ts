@@ -44,11 +44,9 @@ export async function* autoPage<T, P extends CursorParams>(
         const next = data.pagination?.has_more ? data.pagination.next_page : null;
         if (!next) return;
         if (sent.has(next)) {
-            throw new BlindPayError(
-                next === cursor
-                    ? `Pagination did not advance: next_page is still "${next}" while has_more is true`
-                    : `Pagination looped: next_page "${next}" was already requested while has_more is true`
-            );
+            const repeated = `Pagination did not advance: next_page is still "${next}" while has_more is true`;
+            const cycled = `Pagination looped: next_page "${next}" was already requested while has_more is true`;
+            throw new BlindPayError(next === cursor ? repeated : cycled);
         }
         sent.add(next);
         cursor = next;
