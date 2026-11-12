@@ -136,6 +136,10 @@ The SDK retries on its own (up to `maxRetries`, with exponential backoff and `Re
 
 Uploads are never retried and never carry an idempotency key.
 
+## Rate limits
+
+Indicative FX quote endpoints are rate limited per instance; a limited call returns 429 `AUTH_RATE_LIMITED` with a `Retry-After` header, which the SDK honours when it retries.
+
 ## Pagination
 
 `list()` on payouts, payins, customers and payables returns a bare array when you pass no `limit`, `starting_after` or `ending_before`, and **that array holds every matching row**. With any of them it returns `{ data, pagination: { has_more, next_page, prev_page } }`; pass `next_page` back as `starting_after`. Transfers and wallet deposits always return the envelope. Other lists (bank accounts, wallets, partner fees, ...) are always plain arrays.
@@ -155,6 +159,7 @@ Auto-pagers exist for `payouts`, `payins`, `customers`, `payables` and `transfer
 - Payout, payin, quote and limit **amounts are integer cents**: `1000` is 10.00.
 - Partner **percentage fees are basis points** (`100` is 1%); partner flat fees are cents.
 - **Wallet balances are whole tokens** (`10.5` is 10.5 USDC), and so is `total_fee_amount` on payouts and payins.
+- Swaps between different tokens (`transfers.quotes.create` with `sender_token` and `customer_token` that differ) need **at least 100 USDC**, measured on the USDC side; smaller ones fail with `ErrorCode.TRANSFERS_SWAP_AMOUNT_BELOW_MINIMUM`.
 - Payout creates take **exactly one of** `sender_wallet_address` and `wallet_id`; quotes take exactly one of `bank_account_id` and `payable_id`. The API returns 400 otherwise.
 
 ## File uploads
@@ -205,7 +210,11 @@ app.post('/webhooks/blindpay', express.raw({ type: 'application/json' }), (req, 
 });
 ```
 
-`verifyWebhook(payload, headers, secret)` returns a boolean instead. Both accept `{ tolerance }` (seconds, default 300) as a last argument. Never log the `whsec_` secret. The client methods `blindpay.constructWebhookEvent({ secret, headers, payload })` and `blindpay.verifyWebhookSignature(...)` keep working as before.
+`verifyWebhook(payload, headers, secret)` returns a boolean instead. Both accept `{ tolerance, now }` as a last argument: `tolerance` in seconds (default 300), and `now` (a `Date` or Unix seconds) to check the timestamp against a fixed time in tests or replays. Never log the `whsec_` secret. The client methods `blindpay.constructWebhookEvent({ secret, headers, payload })` and `blindpay.verifyWebhookSignature(...)` keep working as before.
+
+## Limit increases
+
+`customers.getLimitIncreaseRequests(customerId)` and the `limitIncrease.new` / `limitIncrease.update` webhooks carry `review_reason`: why compliance rejected the request or approved lower limits than requested, and what to send to get the full amount. It is set when the request is rejected or approved below the requested limits, and `null` otherwise.
 
 ## Tracking endpoints
 
@@ -216,7 +225,7 @@ app.post('/webhooks/blindpay', express.raw({ type: 'application/json' }), (req, 
 - A payout of `66600` (666.00) fails and one of `77700` refunds.
 - Payins complete in about 30 seconds.
 - Quotes expire after 5 minutes (OTC payin quotes after 10 seconds; SEPA quotes can expire sooner).
-- Development instances allow 40 requests a minute; the SDK retries a 429 after its `Retry-After`.
+- Development instances are rate limited on every instance route; the SDK retries a 429 after its `Retry-After`.
 
 ## Examples
 
