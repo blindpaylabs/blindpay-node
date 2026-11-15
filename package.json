@@ -1,6 +1,6 @@
 {
     "name": "@blindpay/node",
-    "version": "6.2.0",
+    "version": "6.2.1",
     "description": "Official Node.js SDK for Blindpay API - Stablecoin API for global payments",
     "keywords": [
         "blindpay",
