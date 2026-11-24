@@ -265,3 +265,5 @@ Maintainers: see [RELEASING.md](RELEASING.md) for the release flow, secrets and 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 Made with ❤️ by the [BlindPay](https://blindpay.com) team
+
+<!-- integration sync marker -->
